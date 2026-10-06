@@ -22,6 +22,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Reject committed secrets
+        run: |
+          set -euo pipefail
+          if git ls-files | awk '
+            $0 != ".env.example" && $0 ~ /(^|\/)\.env($|\.)/ { print; found = 1 }
+            END { exit found ? 0 : 1 }
+          '; then
+            echo "Tracked env files are not allowed" >&2
+            exit 1
+          fi
+          if git grep -nE 'sb_secret_|SERVICE_ROLE_KEY=|SUPABASE_SERVICE_ROLE' -- . \
+            ':!.github/workflows/ci.yml'; then
+            echo "Secret-like material is committed" >&2
+            exit 1
+          fi
+
       - name: Install pnpm and Node.js
         uses: pnpm/setup@c9883cc79df532ad1a7b81bf9ab944ceb090d65c # v2.0.0
         with:
