@@ -57,3 +57,11 @@ pnpm build
 ```
 
 `pnpm test` requires local Supabase to be running. Unit tests live in `tests/unit`. RLS and integration tests live in `tests/rls` and `tests/integration`.
+
+## CI
+
+Every pull request to `main`, and every push to `main`, runs the `CI / prove` GitHub Actions job on `ubuntu-24.04`.
+
+That job installs Node 24.21.0 and pnpm 12.9.1, then runs typecheck, lint, local Supabase (`supabase start` + `db reset` from committed migrations and seed), the existing Slice 0.1 tests, and a production build. It does not use hosted Supabase, Vercel, or service-role credentials.
+
+Requiring the check before merge is a GitHub setting, not repository code. After the workflow has run once, set a branch protection rule on `main` that requires **`CI / prove`**.

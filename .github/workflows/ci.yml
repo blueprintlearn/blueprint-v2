@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  prove:
+    name: prove
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install pnpm and Node.js
+        uses: pnpm/setup@c9883cc79df532ad1a7b81bf9ab944ceb090d65c # v2.0.0
+        with:
+          runtime: node@24.21.0
+          cache: true
+
+      - name: Assert Node and pnpm versions
+        run: |
+          test "$(node -v)" = "v24.21.0"
+          test "$(pnpm --version)" = "12.9.1"
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Start local Supabase
+        run: pnpm exec supabase start
+
+      - name: Reset database from committed migrations and seed
+        run: pnpm exec supabase db reset
+
+      - name: Write public Supabase env for tests
+        run: |
+          set -euo pipefail
+          status_env="$(pnpm exec supabase status -o env)"
+          value_for() {
+            local key="$1"
+            printf '%s\n' "$status_env" | awk -F= -v key="$key" '
+              $1 == key {
+                value = substr($0, index($0, "=") + 1)
+                gsub(/^"/, "", value)
+                gsub(/"$/, "", value)
+                print value
+                exit
+              }
+            '
+          }
+          api_url="$(value_for API_URL)"
+          publishable_key="$(value_for PUBLISHABLE_KEY)"
+          if [ -z "$publishable_key" ]; then
+            publishable_key="$(value_for ANON_KEY)"
+          fi
+          if [ -z "$api_url" ] || [ -z "$publishable_key" ]; then
+            echo "Failed to extract public Supabase environment variables" >&2
+            exit 1
+          fi
+          printf 'NEXT_PUBLIC_SUPABASE_URL=%s\n' "$api_url" > .env.local
+          printf 'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=%s\n' "$publishable_key" >> .env.local
+          echo "Wrote NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY to .env.local"
+
+      - name: Verify generated types match the committed contract
+        run: |
+          pnpm exec supabase gen types typescript --local > /tmp/database.types.ts
+          diff -u types/database.ts /tmp/database.types.ts
+
+      - name: Test
+        run: pnpm test
+
+      - name: Production build
+        run: pnpm build
