@@ -2,7 +2,7 @@
 
 Talent-development operating system for multi-op DJ companies.
 
-Slice 0.1 is the local engineering foundation: authentication, companies, memberships, and tenant isolation.
+Slice 0.1 is the local engineering foundation: authentication, companies, memberships, and tenant isolation. Slice 0.2 is the GitHub `CI / prove` gate. Slice 0.3 is complete: local, staging, and production exist and are separate.
 
 ## Requirements
 
@@ -39,7 +39,7 @@ pnpm dev
 | `owner-a@blueprint.test` | `blueprint-local-password` | Company A |
 | `owner-b@blueprint.test` | `blueprint-local-password` | Company B |
 
-These accounts are synthetic. They are allowed in local development, and on staging once 0.3B exists. They must never be applied to production. Do not change `supabase/seed.sql` in Slice 0.3A.
+These accounts are synthetic. They are allowed in local development and on staging. They must never be applied to production.
 
 ## Commands that must pass
 
@@ -66,17 +66,19 @@ That job installs Node 24.21.0 and pnpm 12.9.1, then rejects committed secrets, 
 
 `CI / prove` fails if a tracked `.env*` file other than `.env.example` is committed, or if a committed file contains a hosted secret-key prefix, a service-role key assignment, or the service-role environment-variable name.
 
-Requiring the check before merge is a GitHub setting, not repository code. After the workflow has run once, set a branch protection rule on `main` that requires **`CI / prove`**.
+Requiring the check before merge is a GitHub setting, not repository code. `main` requires **`CI / prove`**.
 
 ## Environments
 
-These are the Slice 0.3 environment rules. Staging and production infrastructure are created in 0.3B and 0.3C; they do not exist yet.
+Slice 0.3 is verified. Local, staging, and production are separate. Staging has the synthetic Company A / Company B seed. Production has the same schema and RLS, zero companies, and zero auth users.
+
+`staging` is a deployment branch. Documentation and product PRs target `main`.
 
 | Environment | Where it runs | Database | Seed |
 | --- | --- | --- | --- |
 | Development | Laptop | Local Supabase | `db reset` |
-| Staging | Vercel Preview on branch `staging` (0.3B) | Dedicated hosted staging project | Existing `seed.sql` only |
-| Production | Vercel Production on `main` (0.3C) | Dedicated hosted production project | Never |
+| Staging | Vercel Preview on branch `staging` | Dedicated hosted staging project | Existing `seed.sql` only |
+| Production | Vercel Production on `main` | Dedicated hosted production project | Never |
 
 One Vercel project. Two hosted Supabase projects. No fourth hosted “dev” project. No custom domains in Slice 0.3.
 
@@ -103,7 +105,7 @@ Forbidden everywhere, including Vercel Production: service-role keys, hosted sec
 - Never run `supabase db reset --linked`, `--project-ref`, or `--db-url` against a hosted project.
 - Never change hosted schema in the Supabase dashboard.
 
-### Staging seed (0.3B only)
+### Staging seed
 
 ```bash
 pnpm exec supabase db push --project-ref "$STAGING_REF" --include-seed --dry-run
@@ -118,7 +120,7 @@ pnpm exec supabase db query --project-ref "$STAGING_REF" --file supabase/seed.sq
 
 Then prove Company A / Company B and the two seed emails exist on staging.
 
-### Production migration (0.3C only)
+### Production migration
 
 ```bash
 test "$PRODUCTION_REF" != "$STAGING_REF"
@@ -131,9 +133,10 @@ Do not pass `--include-seed`. Do not run `seed.sql` against production. Prove `p
 
 ### Vercel / Preview / RED gate
 
-- Production branch is `main`. Staging is the `staging` branch (created in 0.3B, not in 0.3A).
-- Disable auto-assignment of production domains. A `main` Production build is not live until explicit Promote.
+- Production branch is `main`. Staging is the `staging` deployment branch.
+- Preview (including `staging`) uses staging public keys. Production uses production public keys.
+- Preview must never receive production credentials. Production must never receive the synthetic seed.
 - Do not use a Vercel “staged production” deployment as staging (it uses production env vars).
 - Do not use the Vercel ↔ Supabase marketplace integration.
-- Production Promote requires written RED approval after staging is verified.
+- RED production changes still need staging verification and explicit human approval before Promote.
 - Do not run `vercel --prod` as a substitute for that approval.
