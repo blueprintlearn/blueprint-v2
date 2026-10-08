@@ -54,15 +54,16 @@ pnpm typecheck
 pnpm lint
 pnpm test
 pnpm build
+pnpm test:e2e
 ```
 
-`pnpm test` requires local Supabase to be running. Unit tests live in `tests/unit`. RLS and integration tests live in `tests/rls` and `tests/integration`.
+`pnpm test` and `pnpm test:e2e` require local Supabase to be running. Unit tests live in `tests/unit`. RLS and integration tests live in `tests/rls` and `tests/integration`. Browser E2E tests live in `e2e` and run against `pnpm start` after `pnpm build`.
 
 ## CI
 
 Every pull request to `main`, and every push to `main`, runs the `CI / prove` GitHub Actions job on `ubuntu-24.04`.
 
-That job installs Node 24.21.0 and pnpm 12.9.1, then rejects committed secrets, runs typecheck, lint, local Supabase (`supabase start` + `db reset` from committed migrations and seed), the existing Slice 0.1 tests, and a production build. It does not use hosted Supabase, Vercel, or service-role credentials.
+That job installs Node 24.21.0 and pnpm 12.9.1, then rejects committed secrets, runs typecheck, lint, local Supabase (`supabase start` + `db reset` from committed migrations and seed), the existing Slice 0.1 tests, a production build, and Chromium Playwright E2E against that local stack. It does not use hosted Supabase, Vercel, or service-role credentials.
 
 `CI / prove` fails if a tracked `.env*` file other than `.env.example` is committed, or if a committed file contains a hosted secret-key prefix, a service-role key assignment, or the service-role environment-variable name.
 
