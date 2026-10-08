@@ -2,7 +2,7 @@
 
 Talent-development operating system for multi-op DJ companies.
 
-Slice 0.1 is the local engineering foundation: authentication, companies, memberships, and tenant isolation. Slice 0.2 is the GitHub `CI / prove` gate. Slice 0.3 is complete: local, staging, and production exist and are separate.
+Slice 0.1 is the local engineering foundation: authentication, companies, memberships, and tenant isolation. Slice 0.2 is the GitHub `CI / prove` gate. Slice 0.3 is complete: local, staging, and production exist and are separate. Slice 0.5A adds optional Sentry error monitoring. It stays disabled unless a DSN is set.
 
 ## Requirements
 
@@ -89,15 +89,23 @@ Only these names, in Vercel and in `.env.example`:
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `NEXT_PUBLIC_SENTRY_DSN`
+- `SENTRY_DSN`
+- `SENTRY_ENVIRONMENT`
 
 | Target | Values |
 | --- | --- |
-| Local `.env.local` | Local API URL + publishable/anon key |
-| Vercel Preview (all non-`main`, including PRs and `staging`) | Staging URL + staging publishable key |
-| Vercel Production | Production URL + production publishable key |
+| Local `.env.local` | Local API URL + publishable/anon key. Leave Sentry unset. |
+| GitHub `CI / prove` | Local Supabase public keys only. Leave Sentry unset. |
+| Vercel Preview (all non-`main`, including PRs and `staging`) | Staging Supabase public keys + staging Sentry DSN. `SENTRY_ENVIRONMENT=staging`. |
+| Vercel Production | Production Supabase public keys. Do not set a production Sentry DSN in Slice 0.5A. |
 | Vercel Development | Unset |
 
-Forbidden everywhere, including Vercel Production: service-role keys, hosted secret API keys, database passwords, JWT secret, and any `NEXT_PUBLIC_*` secret. Preview must never receive production credentials.
+`NEXT_PUBLIC_SENTRY_DSN` and `SENTRY_DSN` must be the same project DSN for a given target. Staging and production must use different Sentry projects. Source-map upload is deferred: do not set `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, or `SENTRY_PROJECT`.
+
+Forbidden everywhere, including Vercel Production: service-role keys, hosted secret API keys, database passwords, JWT secret, Sentry auth tokens, and any `NEXT_PUBLIC_*` secret other than the publishable Supabase key and the public Sentry DSN. Preview must never receive production credentials or the production Sentry DSN.
+
+Sentry is fail-closed. If the DSN is missing, sanitization fails, or Sentry is down, the app continues. Raw `Error.message` values are replaced with `Application error` unless they match an explicit allowlisted error code. Request bodies, cookies, users, breadcrumbs, extras, traces, replay, logs, and unknown metadata are discarded. There is no permanent test endpoint.
 
 ### How migrations are applied
 

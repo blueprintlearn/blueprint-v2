@@ -32,9 +32,14 @@ jobs:
             echo "Tracked env files are not allowed" >&2
             exit 1
           fi
-          if git grep -nE 'sb_secret_|SERVICE_ROLE_KEY=|SUPABASE_SERVICE_ROLE' -- . \
+          if git grep -nE 'sb_secret_|SERVICE_ROLE_KEY=|SUPABASE_SERVICE_ROLE|SENTRY_AUTH_TOKEN=' -- . \
             ':!.github/workflows/ci.yml'; then
             echo "Secret-like material is committed" >&2
+            exit 1
+          fi
+          if git grep -nE 'https://[^[:space:]/]+@o[0-9]+\.ingest[.-]' -- . \
+            ':!.github/workflows/ci.yml'; then
+            echo "Committed Sentry DSN is not allowed" >&2
             exit 1
           fi
 
