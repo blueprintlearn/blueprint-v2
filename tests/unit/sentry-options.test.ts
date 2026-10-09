@@ -43,12 +43,26 @@ async function initCapturingClient() {
 
 describe("Sentry env and init options", () => {
   it("is disabled without a DSN and does not throw", () => {
-    const source = {}
+    const previousPublicDsn = process.env.NEXT_PUBLIC_SENTRY_DSN
+    const previousDsn = process.env.SENTRY_DSN
+    delete process.env.NEXT_PUBLIC_SENTRY_DSN
+    delete process.env.SENTRY_DSN
 
-    expect(getSentryDsn(source)).toBeUndefined()
-    expect(isSentryEnabled(source)).toBe(false)
-    expect(getSentryInitOptions(source)).toBeNull()
-    expect(getSentryEnvironment({ VERCEL_ENV: "development" })).toBeUndefined()
+    try {
+      const source = {}
+
+      expect(getSentryDsn(source)).toBeUndefined()
+      expect(isSentryEnabled(source)).toBe(false)
+      expect(getSentryInitOptions(source)).toBeNull()
+      expect(getSentryEnvironment({ VERCEL_ENV: "development" })).toBeUndefined()
+    } finally {
+      if (previousPublicDsn !== undefined) {
+        process.env.NEXT_PUBLIC_SENTRY_DSN = previousPublicDsn
+      }
+      if (previousDsn !== undefined) {
+        process.env.SENTRY_DSN = previousDsn
+      }
+    }
   })
 
   it("maps preview to staging and keeps production separate", () => {
@@ -70,6 +84,18 @@ describe("Sentry env and init options", () => {
         VERCEL_ENV: "production",
       })?.environment,
     ).toBe("production")
+
+    const previousPublicVercelEnv = process.env.NEXT_PUBLIC_VERCEL_ENV
+    process.env.NEXT_PUBLIC_VERCEL_ENV = "preview"
+    try {
+      expect(getSentryEnvironment({ SENTRY_DSN: testDsn })).toBe("staging")
+    } finally {
+      if (previousPublicVercelEnv === undefined) {
+        delete process.env.NEXT_PUBLIC_VERCEL_ENV
+      } else {
+        process.env.NEXT_PUBLIC_VERCEL_ENV = previousPublicVercelEnv
+      }
+    }
   })
 
   it("disables breadcrumbs, tracing, replay, logs, and request context", () => {

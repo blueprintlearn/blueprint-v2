@@ -5,7 +5,10 @@ export type SentryEnvironment = "staging" | "production"
 export function getSentryDsn(
   source: ObservabilityEnvSource = process.env,
 ): string | undefined {
-  const dsn = source.SENTRY_DSN?.trim() || source.NEXT_PUBLIC_SENTRY_DSN?.trim()
+  const dsn =
+    source.SENTRY_DSN?.trim() ||
+    source.NEXT_PUBLIC_SENTRY_DSN?.trim() ||
+    process.env.NEXT_PUBLIC_SENTRY_DSN?.trim()
   return dsn || undefined
 }
 
@@ -16,11 +19,13 @@ export function getSentryEnvironment(
     return source.SENTRY_ENVIRONMENT
   }
 
-  if (source.VERCEL_ENV === "production") {
+  const vercelEnv = source.VERCEL_ENV || process.env.NEXT_PUBLIC_VERCEL_ENV
+
+  if (vercelEnv === "production") {
     return "production"
   }
 
-  if (source.VERCEL_ENV === "preview") {
+  if (vercelEnv === "preview") {
     return "staging"
   }
 
