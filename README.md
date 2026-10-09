@@ -2,7 +2,7 @@
 
 Talent-development operating system for multi-op DJ companies.
 
-Slice 0.1 is the local engineering foundation: authentication, companies, memberships, and tenant isolation. Slice 0.2 is the GitHub `CI / prove` gate. Slice 0.3 is complete: local, staging, and production exist and are separate. Slice 0.5 is complete: fail-closed Sentry error monitoring is configured for staging and production as separate Sentry projects. Local development and CI leave Sentry unset.
+Slice 0.1 is the local engineering foundation: authentication, companies, memberships, and tenant isolation. Slice 0.2 is the GitHub `CI / prove` gate. Slice 0.3 is complete: local, staging, and production exist and are separate. Slice 0.5 is complete: fail-closed Sentry error monitoring is configured for staging and production as separate Sentry projects. Local development and CI leave Sentry unset. Slice 1.1 adds a tenant-owned Owner Goal on the signed-in home page.
 
 ## Requirements
 

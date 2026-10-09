@@ -36,6 +36,25 @@ export type Database = {
                   Relationships: [
                     
                   ]
+                },"company_blueprints": {
+                  Row: {
+                    "company_id": string,"created_at": string,"owner_goal": Database["public"]['Enums']["owner_goal_code"],"owner_goal_other": string | null,"updated_at": string
+                  }
+                  Insert: {
+                    "company_id": string,"created_at"?: string,"owner_goal": Database["public"]['Enums']["owner_goal_code"],"owner_goal_other"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "company_id"?: string,"created_at"?: string,"owner_goal"?: Database["public"]['Enums']["owner_goal_code"],"owner_goal_other"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_blueprints_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: true
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"company_memberships": {
                   Row: {
                     "company_id": string,"created_at": string,"id": string,"role": Database["public"]['Enums']["system_role"],"status": string,"user_id": string
@@ -76,7 +95,7 @@ isOneToOne: false
       } }
           }
           Enums: {
-            "system_role": "owner_admin"|"manager"|"trainer_mentor"|"dj_trainee"
+            "owner_goal_code": "dj_less"|"stop_djing"|"scale"|"expand"|"improve_quality"|"create_leadership"|"other","system_role": "owner_admin"|"manager"|"trainer_mentor"|"dj_trainee"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -196,7 +215,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "system_role": ["owner_admin", "manager", "trainer_mentor", "dj_trainee"]
+            "owner_goal_code": ["dj_less", "stop_djing", "scale", "expand", "improve_quality", "create_leadership", "other"],"system_role": ["owner_admin", "manager", "trainer_mentor", "dj_trainee"]
           }
         }
 } as const
