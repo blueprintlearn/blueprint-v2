@@ -10,7 +10,6 @@ export default withSentryConfig(nextConfig, {
     disable: true,
   },
   silent: true,
-  tunnelRoute: "/sentry-tunnel",
   suppressOnRouterTransitionStartWarning: true,
   webpack: {
     automaticVercelMonitors: false,
