@@ -2,7 +2,7 @@
 
 Talent-development operating system for multi-op DJ companies.
 
-Slice 0.1 is the local engineering foundation: authentication, companies, memberships, and tenant isolation. Slice 0.2 is the GitHub `CI / prove` gate. Slice 0.3 is complete: local, staging, and production exist and are separate. Slice 0.5A adds optional Sentry error monitoring. It stays disabled unless a DSN is set.
+Slice 0.1 is the local engineering foundation: authentication, companies, memberships, and tenant isolation. Slice 0.2 is the GitHub `CI / prove` gate. Slice 0.3 is complete: local, staging, and production exist and are separate. Slice 0.5 is complete: fail-closed Sentry error monitoring is configured for staging and production as separate Sentry projects. Local development and CI leave Sentry unset.
 
 ## Requirements
 
@@ -98,14 +98,33 @@ Only these names, in Vercel and in `.env.example`:
 | Local `.env.local` | Local API URL + publishable/anon key. Leave Sentry unset. |
 | GitHub `CI / prove` | Local Supabase public keys only. Leave Sentry unset. |
 | Vercel Preview (all non-`main`, including PRs and `staging`) | Staging Supabase public keys + staging Sentry DSN. `SENTRY_ENVIRONMENT=staging`. |
-| Vercel Production | Production Supabase public keys. Do not set a production Sentry DSN in Slice 0.5A. |
+| Vercel Production | Production Supabase public keys + production Sentry DSN. `SENTRY_ENVIRONMENT=production`. |
 | Vercel Development | Unset |
 
-`NEXT_PUBLIC_SENTRY_DSN` and `SENTRY_DSN` must be the same project DSN for a given target. Staging and production must use different Sentry projects. Source-map upload is deferred: do not set `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, or `SENTRY_PROJECT`.
+`NEXT_PUBLIC_SENTRY_DSN` and `SENTRY_DSN` must be the same project DSN for a given target. Staging and production must use different Sentry projects. The browser SDK only initializes when `NEXT_PUBLIC_SENTRY_DSN` is a static `process.env.NEXT_PUBLIC_SENTRY_DSN` lookup that Next.js can inline. Do not send browser events through a Sentry tunnel; unique Vercel URLs are behind Deployment Protection, and a tunnel would be swallowed by SSO.
 
-Forbidden everywhere, including Vercel Production: service-role keys, hosted secret API keys, database passwords, JWT secret, Sentry auth tokens, and any `NEXT_PUBLIC_*` secret other than the publishable Supabase key and the public Sentry DSN. Preview must never receive production credentials or the production Sentry DSN.
+Source-map upload is deferred: do not set `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, or `SENTRY_PROJECT`.
 
-Sentry is fail-closed. If the DSN is missing, sanitization fails, or Sentry is down, the app continues. Raw `Error.message` values are replaced with `Application error` unless they match an explicit allowlisted error code. Request bodies, cookies, users, breadcrumbs, extras, traces, replay, logs, and unknown metadata are discarded. There is no permanent test endpoint.
+Forbidden everywhere, including Vercel Production: service-role keys, hosted secret API keys, database passwords, JWT secret, Sentry auth tokens, temporary verification keys, and any `NEXT_PUBLIC_*` secret other than the publishable Supabase key and the public Sentry DSN. Preview must never receive production credentials or the production Sentry DSN. Production must never receive the staging Sentry DSN or the synthetic seed.
+
+Sentry is fail-closed. If the DSN is missing, sanitization fails, or Sentry is down, the app continues. Raw `Error.message` values are replaced with `Application error` unless they match an explicit allowlisted error code. Request bodies, cookies, users, breadcrumbs, extras, traces, replay, logs, and unknown metadata are discarded. There is no permanent test endpoint and no `/sentry-verify` route.
+
+Sentry's ingest still attaches geolocation from the network path even when the app sends `ip_address` as null. Both Sentry projects must keep Advanced Data Scrubbing `[Remove] [Anything] from [$user.geo.**]`. That rule lives in Sentry settings, not application code.
+
+### Slice 0.5 verification
+
+| Check | Result |
+| --- | --- |
+| Staging Sentry project | `4512220113469440` |
+| Production Sentry project | `4512220125593600` |
+| Production deploy | Ready on `2719a14` |
+| Production browser bundle | Contains the production Sentry project, not the staging project |
+| Staging browser and server error reporting | Verified, including sanitized messages and scrubbed geolocation |
+| Production live error delivery | Not tested. Production is not a test environment. Do not throw synthetic production errors. |
+| Temporary `/sentry-verify` routes and `SENTRY_VERIFY_KEY` | Removed |
+| Production Supabase | Unseeded: zero companies and zero auth users |
+
+Identify Sentry issues by time, `environment`, platform (`javascript` vs `node`), and stack frames. Do not rely on message text; allowed messages are generic.
 
 ### How migrations are applied
 
