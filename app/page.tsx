@@ -42,6 +42,7 @@ export default async function HomePage() {
           </p>
           {membership.role === OWNER_ADMIN_ROLE ? (
             <OwnerGoalForm
+              key={`${membership.companyId}:${ownerGoal?.ownerGoal ?? ""}:${ownerGoal?.ownerGoalOther ?? ""}`}
               ownerGoal={ownerGoal?.ownerGoal ?? null}
               ownerGoalOther={ownerGoal?.ownerGoalOther ?? null}
             />
