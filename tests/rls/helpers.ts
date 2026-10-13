@@ -8,6 +8,8 @@ export const COMPANY_A_ID = "00000000-0000-4000-8000-0000000000a1"
 export const COMPANY_B_ID = "00000000-0000-4000-8000-0000000000b1"
 export const OWNER_A_EMAIL = "owner-a@blueprint.test"
 export const OWNER_B_EMAIL = "owner-b@blueprint.test"
+export const MANAGER_A_EMAIL = "manager-a@blueprint.test"
+export const INACTIVE_A_EMAIL = "inactive-a@blueprint.test"
 
 export function createAnonClient(): SupabaseClient<Database> {
   const { url, publishableKey } = getPublicEnv()

@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto"
+
 import { expect, test, type Page } from "@playwright/test"
 
 const password = "blueprint-local-password"
@@ -48,5 +50,29 @@ test.describe("team today in the browser", () => {
     await expect(page.getByLabel("Current DJ count")).not.toHaveValue(uniqueDjCount)
     await expect(page.getByLabel("Current DJ count")).not.toHaveValue(nextDjCount)
     await expect(page.getByText("Company A")).toHaveCount(0)
+  })
+
+  test("a new owner sees Not set until a saved 0", async ({ page }) => {
+    const email = `zero-dj-${randomUUID()}@blueprint.test`
+    await page.goto("/sign-up")
+    await page.getByLabel("Email").fill(email)
+    await page.getByLabel("Password").fill(password)
+    await page.getByRole("button", { name: "Create account" }).click()
+    await expect(page).toHaveURL("/")
+    await page.getByLabel("Company name").fill(`Zero Count ${randomUUID()}`)
+    await page.getByRole("button", { name: "Create company" }).click()
+    await expect(page.getByText("DJs today:")).toBeVisible()
+    const djsToday = page.locator("p").filter({ hasText: "DJs today:" })
+    const teamTodayForm = page.locator("form").filter({ has: page.getByLabel("Current DJ count") })
+    await expect(djsToday).toHaveText(/DJs today:\s*Not set/)
+    await expect(teamTodayForm).toHaveAttribute("data-saved-current-dj-count", "")
+    await expect(page.getByLabel("Current DJ count")).toHaveValue("")
+
+    await page.getByLabel("Current DJ count").fill("0")
+    await page.getByRole("button", { name: "Save DJ count" }).click()
+    await expect(djsToday).toHaveText(/DJs today:\s*0$/)
+    await expect(djsToday).not.toContainText("Not set")
+    await expect(teamTodayForm).toHaveAttribute("data-saved-current-dj-count", "0")
+    await expect(page.getByLabel("Current DJ count")).toHaveValue("0")
   })
 })

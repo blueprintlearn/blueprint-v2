@@ -37,6 +37,8 @@ pnpm dev
 | Email | Password | Company |
 | --- | --- | --- |
 | `owner-a@blueprint.test` | `blueprint-local-password` | Company A |
+| `manager-a@blueprint.test` | `blueprint-local-password` | Company A (active manager) |
+| `inactive-a@blueprint.test` | `blueprint-local-password` | Company A (inactive) |
 | `owner-b@blueprint.test` | `blueprint-local-password` | Company B |
 
 These accounts are synthetic. They are allowed in local development and on staging. They must never be applied to production.

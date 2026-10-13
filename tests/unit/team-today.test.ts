@@ -17,6 +17,12 @@ describe("team today DJ count validation", () => {
     expect(parseCurrentDjCount(String(CURRENT_DJ_COUNT_MAX))).toBe(999)
   })
 
+  it("treats a blank count as unset and a zero as a saved value", () => {
+    expect(parseCurrentDjCount("")).toBeNull()
+    expect(parseCurrentDjCount("   ")).toBeNull()
+    expect(parseCurrentDjCount("0")).toBe(0)
+  })
+
   it("does not add system roles", () => {
     expect([...SYSTEM_ROLES]).toEqual([
       "owner_admin",

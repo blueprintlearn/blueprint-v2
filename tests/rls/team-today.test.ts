@@ -5,6 +5,8 @@ import {
   COMPANY_A_ID,
   COMPANY_B_ID,
   createAnonClient,
+  INACTIVE_A_EMAIL,
+  MANAGER_A_EMAIL,
   OWNER_A_EMAIL,
   OWNER_B_EMAIL,
 } from "./helpers"
@@ -123,5 +125,99 @@ describe("team today isolation", () => {
     const counts = await anon.from("company_team_today").select("company_id")
     expect(counts.data ?? []).toEqual([])
     expect(counts.error).toBeTruthy()
+  })
+
+  it("lets an active non-owner read and denies their writes", async () => {
+    const companyAOwner = await asUser(OWNER_A_EMAIL)
+    const saved = await companyAOwner.from("company_team_today").upsert(
+      {
+        company_id: COMPANY_A_ID,
+        current_dj_count: 6,
+      },
+      { onConflict: "company_id" },
+    )
+    expect(saved.error).toBeNull()
+
+    const manager = await asUser(MANAGER_A_EMAIL)
+    const visible = await manager
+      .from("company_team_today")
+      .select("company_id, current_dj_count")
+      .eq("company_id", COMPANY_A_ID)
+    expect(visible.error).toBeNull()
+    expect(visible.data).toEqual([
+      {
+        company_id: COMPANY_A_ID,
+        current_dj_count: 6,
+      },
+    ])
+
+    const insertOwn = await manager.from("company_team_today").insert({
+      company_id: COMPANY_A_ID,
+      current_dj_count: 8,
+    })
+    expect(insertOwn.error).not.toBeNull()
+
+    await manager
+      .from("company_team_today")
+      .update({ current_dj_count: 8 })
+      .eq("company_id", COMPANY_A_ID)
+
+    const insertB = await manager.from("company_team_today").insert({
+      company_id: COMPANY_B_ID,
+      current_dj_count: 8,
+    })
+    expect(insertB.error).not.toBeNull()
+
+    const otherCompany = await manager
+      .from("company_team_today")
+      .select("company_id")
+      .eq("company_id", COMPANY_B_ID)
+    expect(otherCompany.data ?? []).toEqual([])
+
+    const stillA = await companyAOwner
+      .from("company_team_today")
+      .select("current_dj_count")
+      .eq("company_id", COMPANY_A_ID)
+      .maybeSingle()
+    expect(stillA.error).toBeNull()
+    expect(stillA.data?.current_dj_count).toBe(6)
+  })
+
+  it("denies an inactive member read and write", async () => {
+    const companyAOwner = await asUser(OWNER_A_EMAIL)
+    const saved = await companyAOwner.from("company_team_today").upsert(
+      {
+        company_id: COMPANY_A_ID,
+        current_dj_count: 6,
+      },
+      { onConflict: "company_id" },
+    )
+    expect(saved.error).toBeNull()
+
+    const inactive = await asUser(INACTIVE_A_EMAIL)
+    const hidden = await inactive
+      .from("company_team_today")
+      .select("company_id, current_dj_count")
+      .eq("company_id", COMPANY_A_ID)
+    expect(hidden.data ?? []).toEqual([])
+
+    const insertOwn = await inactive.from("company_team_today").insert({
+      company_id: COMPANY_A_ID,
+      current_dj_count: 8,
+    })
+    expect(insertOwn.error).not.toBeNull()
+
+    await inactive
+      .from("company_team_today")
+      .update({ current_dj_count: 8 })
+      .eq("company_id", COMPANY_A_ID)
+
+    const stillA = await companyAOwner
+      .from("company_team_today")
+      .select("current_dj_count")
+      .eq("company_id", COMPANY_A_ID)
+      .maybeSingle()
+    expect(stillA.error).toBeNull()
+    expect(stillA.data?.current_dj_count).toBe(6)
   })
 })
