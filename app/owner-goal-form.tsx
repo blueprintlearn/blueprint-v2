@@ -22,7 +22,12 @@ export function OwnerGoalForm({
   const [state, action] = useActionState(saveOwnerGoal, initialState)
 
   return (
-    <form action={action} className="flex flex-col gap-3">
+    <form
+      action={action}
+      className="flex flex-col gap-3"
+      data-saved-owner-goal={ownerGoal ?? ""}
+      data-saved-owner-goal-other={ownerGoalOther ?? ""}
+    >
       <label className="flex flex-col gap-1">
         Owner goal
         <select className="border px-3 py-2" defaultValue={ownerGoal ?? ""} name="ownerGoal" required>
