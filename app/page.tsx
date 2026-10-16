@@ -58,7 +58,7 @@ export default async function HomePage() {
           {membership.role === OWNER_ADMIN_ROLE ? (
             <>
               <div
-                key={`${membership.companyId}:${teamToday == null ? "" : teamToday.currentDjCount}:${teamToday?.desiredDjCount ?? ""}`}
+                key={`team-today:${membership.companyId}:${teamToday == null ? "" : teamToday.currentDjCount}:${teamToday?.desiredDjCount ?? ""}`}
                 className="flex flex-col gap-6"
               >
                 <TeamTodayForm
@@ -67,7 +67,7 @@ export default async function HomePage() {
                 <DesiredDjCountForm desiredDjCount={teamToday?.desiredDjCount ?? null} />
               </div>
               <OwnerGoalForm
-                key={`${membership.companyId}:${ownerGoal?.ownerGoal ?? ""}:${ownerGoal?.ownerGoalOther ?? ""}`}
+                key={`owner-goal:${membership.companyId}:${ownerGoal?.ownerGoal ?? ""}:${ownerGoal?.ownerGoalOther ?? ""}`}
                 ownerGoal={ownerGoal?.ownerGoal ?? null}
                 ownerGoalOther={ownerGoal?.ownerGoalOther ?? null}
               />
