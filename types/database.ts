@@ -76,13 +76,13 @@ isOneToOne: false
                   ]
                 },"company_team_today": {
                   Row: {
-                    "company_id": string,"created_at": string,"current_dj_count": number,"updated_at": string
+                    "company_id": string,"created_at": string,"current_dj_count": number,"desired_dj_count": number | null,"updated_at": string
                   }
                   Insert: {
-                    "company_id": string,"created_at"?: string,"current_dj_count": number,"updated_at"?: string
+                    "company_id": string,"created_at"?: string,"current_dj_count": number,"desired_dj_count"?: number | null,"updated_at"?: string
                   }
                   Update: {
-                    "company_id"?: string,"created_at"?: string,"current_dj_count"?: number,"updated_at"?: string
+                    "company_id"?: string,"created_at"?: string,"current_dj_count"?: number,"desired_dj_count"?: number | null,"updated_at"?: string
                   }
                   Relationships: [
                     {

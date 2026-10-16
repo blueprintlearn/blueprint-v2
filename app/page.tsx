@@ -6,6 +6,7 @@ import { getCurrentMembership } from "@/lib/tenancy/queries"
 
 import { AuthLinks } from "./auth-links"
 import { CreateCompanyForm } from "./create-company-form"
+import { DesiredDjCountForm } from "./desired-dj-count-form"
 import { OwnerGoalForm } from "./owner-goal-form"
 import { SignOutButton } from "./sign-out-button"
 import { TeamTodayForm } from "./team-today-form"
@@ -41,6 +42,14 @@ export default async function HomePage() {
             <strong>{teamToday == null ? "Not set" : teamToday.currentDjCount}</strong>
           </p>
           <p>
+            Desired DJs:{" "}
+            <strong>
+              {teamToday == null || teamToday.desiredDjCount == null
+                ? "Not set"
+                : teamToday.desiredDjCount}
+            </strong>
+          </p>
+          <p>
             Owner goal: <strong>{ownerGoalLabel}</strong>
             {ownerGoal?.ownerGoal === "other" && ownerGoal.ownerGoalOther
               ? ` (${ownerGoal.ownerGoalOther})`
@@ -48,10 +57,15 @@ export default async function HomePage() {
           </p>
           {membership.role === OWNER_ADMIN_ROLE ? (
             <>
-              <TeamTodayForm
-                key={`${membership.companyId}:${teamToday == null ? "" : teamToday.currentDjCount}`}
-                currentDjCount={teamToday == null ? null : teamToday.currentDjCount}
-              />
+              <div
+                key={`${membership.companyId}:${teamToday == null ? "" : teamToday.currentDjCount}:${teamToday?.desiredDjCount ?? ""}`}
+                className="flex flex-col gap-6"
+              >
+                <TeamTodayForm
+                  currentDjCount={teamToday == null ? null : teamToday.currentDjCount}
+                />
+                <DesiredDjCountForm desiredDjCount={teamToday?.desiredDjCount ?? null} />
+              </div>
               <OwnerGoalForm
                 ownerGoal={ownerGoal?.ownerGoal ?? null}
                 ownerGoalOther={ownerGoal?.ownerGoalOther ?? null}
