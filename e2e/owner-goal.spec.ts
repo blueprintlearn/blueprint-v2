@@ -17,8 +17,8 @@ test.describe("owner goal in the browser", () => {
     await expect(page.getByText("Owner goal:")).toBeVisible()
     await page.getByLabel("Owner goal").selectOption("other")
     await page.getByLabel("Other goal").fill(uniqueOtherGoal)
-    await page.getByRole("button", { name: "Save owner goal" }).click()
-    const ownerGoalForm = page.locator("form").filter({ has: page.getByLabel("Owner goal") })
+    await page.getByRole("button", { name: "Save owner goal", exact: true }).click()
+    const ownerGoalForm = page.locator("form[data-saved-owner-goal]")
     await expect(page.locator("p").filter({ hasText: "Owner goal:" })).toContainText(
       `Other (${uniqueOtherGoal})`,
     )
@@ -30,7 +30,7 @@ test.describe("owner goal in the browser", () => {
 
     await page.getByLabel("Owner goal").selectOption("scale")
     await expect(page.getByLabel("Owner goal")).toHaveValue("scale")
-    await page.getByRole("button", { name: "Save owner goal" }).click()
+    await page.getByRole("button", { name: "Save owner goal", exact: true }).click()
     await expect(page.locator("p").filter({ hasText: "Owner goal:" })).toContainText("Scale")
     await expect(ownerGoalForm).toHaveAttribute("data-saved-owner-goal", "scale")
     await expect(ownerGoalForm).toHaveAttribute("data-saved-owner-goal-other", "")
@@ -46,7 +46,7 @@ test.describe("owner goal in the browser", () => {
     await signIn(page, "owner-b@blueprint.test")
     await expect(page.getByText("Owner goal:")).toBeVisible()
     await expect(page.getByText(uniqueOtherGoal)).toHaveCount(0)
-    const companyBForm = page.locator("form").filter({ has: page.getByLabel("Owner goal") })
+    const companyBForm = page.locator("form[data-saved-owner-goal]")
     await expect(companyBForm).not.toHaveAttribute("data-saved-owner-goal-other", uniqueOtherGoal)
     await expect(page.getByLabel("Other goal")).not.toHaveValue(uniqueOtherGoal)
     await expect(page.getByText("Company A")).toHaveCount(0)
