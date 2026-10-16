@@ -74,6 +74,25 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"company_team_today": {
+                  Row: {
+                    "company_id": string,"created_at": string,"current_dj_count": number,"desired_dj_count": number | null,"updated_at": string
+                  }
+                  Insert: {
+                    "company_id": string,"created_at"?: string,"current_dj_count": number,"desired_dj_count"?: number | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "company_id"?: string,"created_at"?: string,"current_dj_count"?: number,"desired_dj_count"?: number | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_team_today_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: true
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
                 }
           }
           Views: {

@@ -2,7 +2,7 @@
 
 Talent-development operating system for multi-op DJ companies.
 
-Slice 0.1 is the local engineering foundation: authentication, companies, memberships, and tenant isolation. Slice 0.2 is the GitHub `CI / prove` gate. Slice 0.3 is complete: local, staging, and production exist and are separate. Slice 0.5 is complete: fail-closed Sentry error monitoring is configured for staging and production as separate Sentry projects. Local development and CI leave Sentry unset. Slice 1.1 adds a tenant-owned Owner Goal on the signed-in home page.
+Slice 0.1 is the local engineering foundation: authentication, companies, memberships, and tenant isolation. Slice 0.2 is the GitHub `CI / prove` gate. Slice 0.3 is complete: local, staging, and production exist and are separate. Slice 0.5 is complete: fail-closed Sentry error monitoring is configured for staging and production as separate Sentry projects. Local development and CI leave Sentry unset. Slice 1.1 adds a tenant-owned Owner Goal on the signed-in home page. Slice 1.2 adds a tenant-owned current DJ count on the same page.
 
 ## Requirements
 
@@ -37,6 +37,8 @@ pnpm dev
 | Email | Password | Company |
 | --- | --- | --- |
 | `owner-a@blueprint.test` | `blueprint-local-password` | Company A |
+| `manager-a@blueprint.test` | `blueprint-local-password` | Company A (active manager) |
+| `inactive-a@blueprint.test` | `blueprint-local-password` | Company A (inactive) |
 | `owner-b@blueprint.test` | `blueprint-local-password` | Company B |
 
 These accounts are synthetic. They are allowed in local development and on staging. They must never be applied to production.
