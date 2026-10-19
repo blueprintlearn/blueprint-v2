@@ -1,0 +1,757 @@
+# DeckHouse LMS Curriculum Tree
+
+Source: https://woocommerce-989891-6333451.cloudwaysapps.com
+Export date: 2026-08-03T11:39:44.751Z
+
+## 1. Beatmixing Basics (`beatmixing-basics`)
+- **BEATMIXING BASICS: What is Beatmixing? [!]** (`beatmixing-basics-what-is-beatmixing-2`)
+- **BEATMIXING BASICS: Phrase Mixing [!]** (`beatmixing-basics-phrase-mixing-2`)
+- **BEATMIXING BASICS: Low EQ Knob [!]** (`beatmixing-basics-low-eq-knob-2`)
+- **BEATMIXING BASICS: Filter Knob [!]** (`beatmixing-basics-filter-knob-2`)
+- **BEATMIXING BASICS: Echo Out + BPM Cycle [!]** (`beatmixing-basics-echo-out-bpm-cycle-2`)
+  _→ 5 lessons · 0 quizzes · 0 questions_
+
+## 2. Controller Extension (`controller-extension`)
+- **CONTROLLER EXTENSION: Beatgrids** (`controller-extension-beatgrids-2`)
+- **CONTROLLER EXTENSION: Hot Cues [!]** (`controller-extension-hot-cues-2`)
+- **CONTROLLER EXTENSION: Looping** (`controller-extension-looping-2`)
+- **CONTROLLER EXTENSION: Slip Mode+** (`controller-extension-slip-mode-2`)
+- **CONTROLLER EXTENSION: Sampler** (`controller-extension-sampler-2`)
+- **CONTROLLER EXTENSION: FX** (`controller-extension-fx-2`)
+- **CONTROLLER EXTENSION: Midi Mapping** (`controller-extension-midi-mapping-2`)
+- **CONTROLLER EXTENSION: Extra Features+ [!]** (`controller-extension-extra-features-2`)
+  _→ 8 lessons · 0 quizzes · 0 questions_
+
+## 3. How to Train an Event DJ (`how-to-train-an-event-dj-2`)
+- **1. Start Here** (`1-start-here-2`)
+- **2. Strategic Steps** (`2-strategic-steps-2`)
+  - Quiz: *How to Train a DJ - lesson 2 Quiz* (3 Q)
+    - What is a common mistake made by multi-op owners and managers?
+    - What analogy is used to describe generating enough leads needed to grow your team?
+    - Reflecting on changes in your personal life highlights the importance of:
+- **3. Cultivating Core Values** (`3-cultivating-core-values-2`)
+  - Quiz: *How to Train an Event DJ - lesson 3* (3 Q)
+    - What is the impact of core value alignment in your DJ business?
+    - How many core values are recommended?
+    - What is the reason for making core values into verbs?
+- **4. Your Perfect DJ** (`4-your-perfect-dj-2`)
+  - Quiz: *How to Train an Event DJ - Lesson 4 Quiz* (3 Q)
+    - What does "Core Essentials" refer to in the context of creating a DJ avatar?
+    - What is the distinction between hard and soft skills?
+    - What is the primary goal of identifying the perfect DJ avatar for your company?
+- **5. Rockstar Recruitment** (`5-rockstar-recruitment-2`)
+  - Quiz: *How to Train an Event DJ - Lesson 5 Quiz* (4 Q)
+    - What is the function of a recruitment funnel?
+    - What is a key aspect of digital recruiting?
+    - How can you use multiple job listing sites effectively?
+    - What overarching strategy for recruitment is suggested?
+- **6. Filtering Your Funnel** (`6-filtering-your-funnel-2`)
+  - Quiz: *How to Train an Event DJ - Lesson 6 Quiz* (3 Q)
+    - What is the primary objective of the "tripwire task”?
+    - In the "real-life rapport" interview, what is the first aspect to screen for?
+    - Why is it essential to meet a candidate in person?
+- **7. Training Structure** (`7-training-structure-2`)
+  - Quiz: *How to Train an Event DJ - Lesson 7 Quiz* (4 Q)
+    - What is the primary goal of the 3-part framework for an effective DJ training program?
+    - How does the Online Instruction component of the training program contribute to a trainee's developm
+    - What is the purpose of the Observations component in the training program?
+    - Why is the apprentice training model considered less effective in the lesson?
+- **8. Training Management** (`8-training-management-2`)
+  - Quiz: *How to Train an Event DJ - Lesson 8 Quiz* (5 Q)
+    - What is the purpose of setting deadlines in the training management process?
+    - In the context of the DQR framework, what does 'Quality' refer to?
+    - What is the role of the 'Report' component in the DQR framework?
+    - How is the training plan used in managing trainees?
+    - What is the function of observation evaluation documents?
+- **9. Growth Mindset** (`9-growth-mindset-2`)
+  - Quiz: *How to Train an Event DJ - Lesson 9 Quiz* (2 Q)
+    - What is the primary goal of continuing training for DJs after they complete the foundation course?
+    - How are 'Launch Events' used in the post-training process?
+  _→ 9 lessons · 8 quizzes · 27 questions_
+
+## 4. Onboarding [For Instructors] (`onboarding-for-instructors`)
+- **Lesson 1 - Blueprint for Success** (`lesson-1-blueprint-for-success`)
+- **Lesson 2 - Roadmap** (`lesson-2-roadmap`)
+- **Lesson 3 - Instructor Account Walkthrough** (`lesson-3-instructor-account-walkthrough`)
+  - Quiz: *Onboarding Instructor Account* (3 Q)
+    - Where can you find short instructional videos on how to use Blueprint Teams?
+    - Why did we intentionally leave out a "not approved button" on the assignment page?
+    - Where do you go to change your profile picture?
+- **Lesson 4 - Student Account Walkthrough** (`lesson-4-student-account-walkthrough`)
+- **Lesson 5 - Student Management** (`lesson-5-student-management`)
+- **Lesson 6 - Training Plans** (`lesson-6-training-plans`)
+  _→ 6 lessons · 1 quizzes · 3 questions_
+
+## 5. Social Media Success (`social-media-success`)
+- **1. The Identity** (`1-the-identity-2`)
+  - Quiz: *1. Social Media: Identity* (5 Q)
+    - How does Malike define a brand?
+    - What is an avatar in the context of branding?
+    - Which of the following is NOT considered a visual element of a brand?
+    - According to the lesson, what should your brand's tone of voice be consistent in?
+    - Why is it important to know your story and your reader before learning about content capture, creati
+- **2. The Voice** (`2-the-voice`)
+  - Quiz: *2. The Voice* (5 Q)
+    - What is the significance of core values for a brand?
+    - What are core qualities described as in the lesson?
+    - What is the easiest way to find out your core qualities according to the lesson?
+    - What must your brand voice match?
+    - What should every piece of content reflect?
+- **3. The Setup** (`3-the-setup`)
+  - Quiz: *3. The Setup* (6 Q)
+    - Which phone model is recommended for capturing high-quality videos?
+    - When should HDR be turned off?
+    - True or False: Always use auto-exposure on a phone camera
+    - What orientation is recommended for shooting social media content on a phone?
+    - Why is it important to clean the lens before shooting?
+    - What is recommended for audio settings when filming educational content?
+- **4. The Capture** (`the-capture-2`)
+  - Quiz: *4. The Capture* (6 Q)
+    - What should you use to position the phone camera for proper framing at events?
+    - Why is it important to plan out spots to capture content during setup and sound check?
+    - What is the purpose of adding motion to your shots?
+    - What does a "pan" refer to in camera motion?
+    - What is a "push in" motion?
+    - Why is it recommended to practice camera movements at home or in your office/warehouse?
+- **5. The Content** (`5-the-content`)
+  - Quiz: *5. The Content* (5 Q)
+    - Why is it important to "shoot to edit"?
+    - What type of content should you aim to capture for entertainment and inspiration?
+    - How long should you generally keep your clips for easier editing?
+    - What should you do with clearly unusable footage at the end of the event?
+    - What is recommended for file transfer to avoid quality loss?
+- **6. The Creation** (`6-the-creation`)
+  - Quiz: *6. The Creation* (3 Q)
+    - What is the critical timeframe to hook a viewer's attention?
+    - What type of content should you put at the beginning of your video to engage viewers?
+    - What is crucial to staying relevant on social media?
+- **7. The Delivery** (`7-the-delivery`)
+  - Quiz: *7. The Delivery* (2 Q)
+    - Why is it important to make content easy to consume?
+    - How often should you post content?
+- **8. The Engagement** (`8-the-engagement`)
+  - Quiz: *8. The Engagement* (5 Q)
+    - What should you do before posting content on social media?
+    - What type of comments should you avoid when engaging with other accounts?
+    - What should you do if you tag a vendor twice and still get no reaction?
+    - What should you do after posting content?
+    - When should you sponsor a post?
+- **9. The Strategy** (`9-the-strategy`)
+  - Quiz: *9. The Strategy* (5 Q)
+    - How long does it typically take to see the results of your social media efforts?
+    - What should a sales scorecard include besides leads per week and bookings?
+    - What is one purpose of tracking secondary level information about inquiries?
+    - What is suggested if you are not good at clerical tasks related to scorecards?
+    - What is a nurture list?
+  _→ 9 lessons · 9 quizzes · 42 questions_
+
+## 6. The Art of Networking (`the-art-of-networking`)
+- **Networking Mindset** (`networking-mindset`)
+  - Quiz: *Networking Mindset* (3 Q)
+    - What is the main goal of networking?
+    - What do ALL networking events have in common?
+    - Which option is NOT a reason for attending networking events?
+- **Invest** (`invest`)
+  - Quiz: *Networking: Invest* (5 Q)
+    - Which of the following is a crucial step in preparing for a networking event?
+    - What does Toryn suggest about making an impression at networking events?
+    - Why should you carry business cards to networking events?
+    - Why is intentionality important at networking events?
+    - What is the significance of 'investing effort'?
+- **Initiate** (`initiate`)
+  - Quiz: *Networking: Initiate* (5 Q)
+    - What is one of the primary objectives when attending networking events?
+    - What strategy is recommended for those feeling anxious or unsure of where to start at a networking e
+    - What benefit does arriving early at a networking event provide?
+    - What is crucial about your handshake when introducing yourself?
+    - How should you handle introductions when joining a group conversation?
+- **Interact** (`interact`)
+  - Quiz: *Networking: Interact* (5 Q)
+    - What is NOT part of the interesting-intro framework?
+    - According to the lesson, what is NOT a useful technique for remembering names after meeting someone 
+    - How can you deepen a conversation at a networking event?
+    - Finding a common interest outside of the professional sphere is crucial for what reason?
+    - What should you do if you're ready to exit a conversation at a networking event?
+- **Integrate** (`integrate`)
+  - Quiz: *Networking: Integrate* (5 Q)
+    - Following up after meeting new contacts at a networking event is crucial because:
+    - Adding new contacts to a CRM system shortly after meeting them benefits your networking efforts by:
+    - Personalized notes in your follow-up messages enhance the connection with new contacts by:
+    - The language used in an invitation to a one-on-one meeting affects the likelihood of getting a posit
+    - According to Jeffrey Hall's 2018 study, it typically takes:
+  _→ 5 lessons · 5 quizzes · 23 questions_
+
+## 7. ⚙️ Event Assistant (`event-assistant`)
+- **SUPPORT BASICS: Electricity Basics [assistant]** (`support-basics-electricity-basics-copy`)
+  - Quiz: *[QUIZ] Amps & Volts [assistant]* (4 Q)
+    - What is the standard Amperage of a residential circuit?
+    - What is the standard Amperage of a commercial circuit?
+    - Are outlets on separate circuits?
+    - What is the standard voltage of a circuit?
+- **SUPPORT BASICS: Power Management [assistant]** (`support-basics-power-management-copy`)
+- **SUPPORT BASICS: Tables/Linens [assistant]** (`support-basics-tables-linens-copy`)
+- **SUPPORT BASICS: Gaff Tape [assistant]** (`support-basics-gaff-tape-copy`)
+  - Quiz: *[QUIZ] Securing Cables [assistant]* (4 Q)
+    - Why is cable management important?
+    - What are the characteristics of Gaff tape?
+    - How can you secure cables on outdoor surfaces such as dirt or grass?
+    - Which is the correct way to tape cables to a speaker stand?
+- **SUPPORT BASICS: Gear Transportation [!] [assistant]** (`support-basics-gear-transportation-copy`)
+- **CABLES & CONNECTIONS: Balanced vs. Unbalanced [assistant]** (`cables-connections-balanced-vs-unbalanced-assistant`)
+  - Quiz: *[QUIZ] Balanced vs Unbalanced [assistant]* (3 Q)
+    - How many wires are inside of an unbalanced cable?
+    - Why is a balanced audio cable preferred over an unbalanced audio cable for longer applications?
+    - How many wires are inside of a balanced audio cable?
+- **CABLES & CONNECTIONS: Unbalanced Connections [assistant]** (`cables-connections-unbalanced-connections-assistant`)
+- **CABLES & CONNECTIONS: Balanced Connections [assistant]** (`cables-connections-balanced-connections-assistant`)
+  - Quiz: *[QUIZ] Connector Sorting [assistant]* (1 Q)
+    - Drag each connector type (name) to match each picture
+- **CABLES & CONNECTIONS: Adapters [assistant]** (`cables-connections-adapters-assistant`)
+- **CABLES & CONNECTIONS: Cable Management [!] [assistant]** (`cables-connections-cable-management-assistant`)
+- **SPEAKER BASICS: Overview [assistant]** (`speaker-basics-overview-copy`)
+  - Quiz: *[QUIZ] Speaker Types [assistant]* (2 Q)
+    - What's the difference between a 2-way and 3-way speaker?
+    - How is a speaker's size determined?
+- **SPEAKER BASICS: Passive vs. Active [assistant]** (`speaker-basics-passive-vs-active-copy`)
+- **SPEAKER BASICS: Speaker Stand Assembly [assistant]** (`speaker-basics-speaker-stand-assembly-copy`)
+  - Quiz: *[QUIZ] Speaker Stand [assistant]* (1 Q)
+    - Which is the correct speaker stand leg position?
+- **SPEAKER BASICS: Speaker Specifications [assistant]** (`speaker-basics-speaker-specifications-copy`)
+  - Quiz: *[QUIZ] Speaker Specs [assistant]* (3 Q)
+    - What dB (decibel) level is the pain threshold?
+    - How many decibels (dB) is equal to twice the perceived volume?
+    - Besides being louder, what is a benefit of a higher speaker SPL rating?
+- **SPEAKER BASICS: Coverage Angle [assistant]** (`speaker-basics-coverage-angle-copy`)
+  - Quiz: *[QUIZ] Coverage Angle [assistant]* (2 Q)
+    - Which speaker has the widest coverage angle?
+    - Which speaker likely has the longest "throw distance" (sound carries the furthest)?
+- **MICROPHONE BASICS: Microphone Descriptors [assistant]** (`microphone-basics-microphone-descriptors-copy`)
+- **MICROPHONE BASICS: Mic Stand Assembly [assistant]** (`microphone-basics-mic-stand-assembly-copy`)
+- **MICROPHONE BASICS: Signal / Noise Ratio [assistant]** (`microphone-basics-signal-noise-ratio-copy`)
+  - Quiz: *[QUIZ] Signal : Noise [assistant]* (3 Q)
+    - What is microphone feedback?
+    - How can you increase the signal/noise ratio, lowering feedback?
+    - Which is the correct way to hold a handheld microphone?
+- **MICROPHONE BASICS: Music and Mic Balance [!] [assistant]** (`microphone-basics-music-and-mic-balance-copy`)
+- **CONTROLLER BASICS: Rear Panel Connections [assistant]** (`controller-basics-rear-panel-connections-copy`)
+- **CONTROLLER BASICS: Gain Staging [assistant]** (`controller-basics-gain-staging-copy`)
+- **WIRELESS MICROPHONES: Wireless Overview [assistant]** (`wireless-microphones-wireless-overview-copy`)
+  - Quiz: *[QUIZ] Wireless Mic Basics [assistant]* (5 Q)
+    - What is the device called that wirelessly sends an audio signal?
+    - What is the device calls the accepts the wireless audio signal?
+    - What is RF (for wireless microphones)?
+    - What is AF (for wireless microphones)?
+    - Can all wireless microphone transmitters work with all wireless microphone receivers?
+- **WIRELESS MICROPHONES: Antennae Types [assistant]** (`wireless-microphones-antennae-types-copy`)
+  - Quiz: *[QUIZ] RF [assistant]* (3 Q)
+    - What can cause interference?
+    - What is "line-of-sight" (for wireless microphones)?
+    - Which antenna should you use (when you have a choice)?
+- **WIRELESS MICROPHONES: Sync + Output [assistant]** (`wireless-microphones-sync-output-copy`)
+  - Quiz: *[QUIZ] RF + AF [assistant]* (5 Q)
+    - When should you scan for open/available microphone frequencies?
+    - Should two receivers use the same frequency?
+    - Can two wireless transmitters on the same channel use the same receiver?
+    - Why would you adjust the microphone sensitivity?
+    - What visual readout can be used to measure the incoming audio level?
+- **WIRELESS MICROPHONES: Handheld Wireless [assistant]** (`wireless-microphones-handheld-wireless-copy`)
+- **WIRELESS MICROPHONES: Worn Wireless [!] [assistant]** (`wireless-microphones-worn-wireless-copy`)
+- **LIGHTING BASICS: Lighting Overview [assistant]** (`lighting-basics-lighting-overview-copy`)
+  - Quiz: *[QUIZ] Lighting Basics [assistant]* (2 Q)
+    - What's the most disruptive outdoor light source?
+    - When should you find the venue lighting controls?
+- **LIGHTING BASICS: Basic Lighting Terms [assistant]** (`lighting-basics-basic-lighting-terms-copy`)
+  - Quiz: *[QUIZ] Lighting Terms [assistant]* (3 Q)
+    - What value represents maximum diode intensity?
+    - Mixing additional colors make the resulting light:
+    - How can you increase the Sound-Active sensitivity?
+- **LIGHTING BASICS: Lighting Menus [assistant]** (`lighting-basics-lighting-menus-copy`)
+- **LIGHTING BASICS: Dancefloor Lighting [!] [assistant]** (`lighting-basics-dancefloor-lighting-copy`)
+- **PERFORMANCE SYSTEMS: Sound Mixer [assistant]** (`performance-systems-sound-mixer-copy`)
+  - Quiz: *[QUIZ] Sound Mixer [assistant]* (7 Q)
+    - Is this an appropriate audio level setting?
+    - What is this knob's function?
+    - What is a channel strip?
+    - Which has a louder audio signal?
+    - What does an input channel need to boost an incoming mic level signal?
+    - Do channels 3/4 have a mic preamp?
+    - If you connect a line level input to channel 2, how can you lower the incoming dB level?
+- **PERFORMANCE SYSTEMS: Speaker Pair Connection [assistant]** (`performance-systems-speaker-pair-connection-copy`)
+  - Quiz: *[QUIZ] Speaker Pair [assistant]* (3 Q)
+    - What connection type is required to connect a controller DIRECTLY to a pair of powered speakers?
+    - Which connection method facilitates using more microphones?
+    - Which daisy chain output option passes channel A audio only?
+- **PERFORMANCE SYSTEMS: Speaker Placement [assistant]** (`performance-systems-speaker-placement-copy`)
+  - Quiz: *[QUIZ] Speaker Placement [assistant]* (4 Q)
+    - When using fixed-height column array speakers, how can you increase the sound coverage?
+    - Which speaker position is better for speeches/toasts?
+    - Which speaker position is better for dancing?
+    - Which is the optimal speaker positioning?
+- **PERFORMANCE SYSTEMS: Adding Subwoofers [assistant]** (`performance-systems-adding-subwoofers-copy`)
+  - Quiz: *[QUIZ] Subwoofers [assistant]* (3 Q)
+    - Volume knob positions on the subwoofers and main speakers should:
+    - What are two common crowd control issues with subwoofers?
+    - What is subwoofer coupling used for?
+- **PERFORMANCE SYSTEMS: Single Speaker [assistant]** (`performance-systems-single-speaker-copy`)
+- **PERFORMANCE SYSTEMS: Choosing Systems [assistant]** (`performance-systems-choosing-systems-copy`)
+  - Quiz: *[QUIZ] Speaker Systems [assistant]* (3 Q)
+    - Which performance system is optimal for a High School Dance Indoor venue 100' x 50' 275 Guests
+    - Which performance system is optimal for a: Law Office Grand Opening Outdoor parking lot 45 Guests
+    - Which performance system is optimal for a Wedding Indoor ballroom 40' x 75' 175 Guests
+- **PERFORMANCE SYSTEMS: Gear Protection [!] [assistant]** (`performance-systems-gear-protection-copy`)
+- **WEDDING DJ/MC: Ceremony [assistant]** (`wedding-dj-mc-ceremony-copy`)
+  - Quiz: *[QUIZ] Wedding Ceremony [assistant]* (4 Q)
+    - True or False: The pre-ceremony sound check is the only time to check/adjust microphone volume level
+    - Where should the officiant stand during their sound check?
+    - What is the standard length for prelude music?
+    - Why do you ask the officiant for their "final words before the recessional song"?
+- **WEDDING DJ/MC: Cocktail Hour [assistant]** (`wedding-dj-mc-cocktail-hour-copy`)
+- **WEDDING DJ/MC: Dinner [assistant]** (`wedding-dj-mc-dinner-copy`)
+  - Quiz: *[QUIZ] Wedding Dinner [assistant]* (3 Q)
+    - When you are eating a vendor meal in a separate room you are:
+    - When the father of the bride comes up to you behind your DJ table to ask a question, you both are:
+    - When you have a conversation with the photographer on the dancefloor you are:
+- **SOCIAL STRATEGY: Strategic Mindset [assistant]** (`social-strategy-strategic-mindset-copy`)
+- **SOCIAL STRATEGY: Vendor Relationships [assistant]** (`social-strategy-vendor-relationships-copy`)
+  - Quiz: *[QUIZ] Vendors [assistant]* (3 Q)
+    - Which is NOT a coomon source of repeat business for DJs?
+    - When you arrive on site for an event you should:
+    - Which is NOT a benefit of reaching out to planners several weeks before an event?
+  _→ 42 lessons · 22 quizzes · 71 questions_
+
+## 8. 🎶 Beatmixing Bootcamp (`beatmixing-bootcamp-instructor`)
+- **CONTROLLER EXTENSION: Beatgrids** (`controller-extension-beatgrids`)
+- **CONTROLLER EXTENSION: Hot Cues [!]** (`controller-extension-hot-cues`)
+- **CONTROLLER EXTENSION: Looping** (`controller-extension-looping`)
+- **CONTROLLER EXTENSION: Slip Mode+** (`controller-extension-slip-mode`)
+- **CONTROLLER EXTENSION: Sampler** (`controller-extension-sampler`)
+- **CONTROLLER EXTENSION: FX** (`controller-extension-fx`)
+- **CONTROLLER EXTENSION: Midi Mapping** (`controller-extension-midi-mapping`)
+- **CONTROLLER EXTENSION: Extra Features+ [!]** (`controller-extension-extra-features`)
+- **BEATMIXING BASICS: What is Beatmixing? [!]** (`beatmixing-basics-what-is-beatmixing`)
+- **BEATMIXING BASICS: Phrase Mixing [!]** (`beatmixing-basics-phrase-mixing`)
+- **BEATMIXING BASICS: Low EQ Knob [!]** (`beatmixing-basics-low-eq-knob`)
+- **BEATMIXING BASICS: Filter Knob [!]** (`beatmixing-basics-filter-knob`)
+- **BEATMIXING BASICS: Echo Out + BPM Cycle [!]** (`beatmixing-basics-echo-out-bpm-cycle`)
+- **REMIX READY: Incoming Loops [!]** (`remix-ready-incoming-loops`)
+- **REMIX READY: Beat Jump Catch Up [!]** (`remix-ready-beat-jump-catch-up`)
+- **REMIX READY: Outgoing Loops [!]** (`remix-ready-outgoing-loops`)
+- **REMIX READY: Beatmixing Originals [!]** (`remix-ready-beatmixing-originals`)
+- **REMIX READY: Loop Buildup [!]** (`remix-ready-loop-buildup`)
+- **MIX & MASH: Instrumentals & Acapellas [!]** (`mix-mash-instrumentals-acapellas`)
+- **MIX & MASH: Mixing in Key [!]** (`mix-mash-mixing-in-key`)
+- **MIX & MASH: Acapella In & out [!]** (`mix-mash-acapella-in-out`)
+- **MIX & MASH: Large Tempo Transitions [!]** (`mix-mash-large-tempo-transitions`)
+- **MIX & MASH: Open Format [!]** (`mix-mash-open-format`)
+  _→ 23 lessons · 0 quizzes · 0 questions_
+
+## 9. 💻 Curating A Vibe (`curating-a-vibe-2`)
+- **Curating a Vibe: Next-Level Programming** (`curating-a-vibe-next-level-programming`)
+- **Curating a Vibe: Programming Energy** (`curating-a-vibe-programming-energy`)
+- **Curating a Vibe: Tagging System** (`curating-a-vibe-tagging-system`)
+- **Curating a Vibe: Smart Crates** (`curating-a-vibe-smart-crates`)
+- **Curating a Vibe: Curated Collection** (`curating-a-vibe-curated-collection`)
+  _→ 5 lessons · 0 quizzes · 0 questions_
+
+## 10. 🎉 Event DJ Foundations (`event-dj-foundations-instructor`)
+- **MUSIC BASICS: Song Sections** (`music-basics-song-sections`)
+  - Quiz: *QUIZ: Song Sections* (3 Q)
+    - At what timestamp does the first chorus begin? [audio mp3="https://woocommerce-989891-6333451.cloudw
+    - At what timestamp does the intro end? [audio mp3="https://woocommerce-989891-6333451.cloudwaysapps.c
+    - At what timestamp does the bridge begin? [audio mp3="https://woocommerce-989891-6333451.cloudwaysapp
+- **MUSIC BASICS: Genre** (`music-basics-genre`)
+- **MUSIC BASICS: Time Period** (`music-basics-time-period`)
+- **MUSIC BASICS: Beats Per Minute** (`music-basics-beats-per-minute`)
+- **MUSIC BASICS: Grouping Beats** (`music-basics-grouping-beats`)
+  - Quiz: *QUIZ: Tempo | BPM | Genre | Time Period* (3 Q)
+    - Which song is 4/4 meter and 120 BPM?
+    - Which song is late 1970's Disco?
+    - Which song has the oldest release date?
+- **MUSICAL CONTROL: Personal Device** (`musical-control-personal-device`)
+  - Quiz: *QUIZ: Personal Device* (2 Q)
+    - How can you prevent playback interruptions on a personal device?
+    - Why is it important to be able to use a personal device as a DJ?
+- **MUSICAL CONTROL: Playback Control** (`musical-control-playback-control`)
+- **MUSICAL CONTROL: Fades** (`musical-control-fades`)
+- **MUSICAL CONTROL: Performing Fades [!]** (`musical-control-performing-fades`)
+- **MC BASICS: What is an MC?** (`mc-basics-what-is-an-mc`)
+- **MC BASICS: Coach Role** (`mc-basics-coach-role`)
+- **MC BASICS: Cheerleader Role** (`mc-basics-cheerleader-role`)
+- **MC BASICS: Counselor Role** (`mc-basics-counselor-role`)
+- **MC BASICS: MC Script [!]** (`mc-basics-mc-script`)
+- **PROGRAMMING BASICS: Reading the Crowd [!]** (`programming-basics-reading-the-crowd`)
+- **PROGRAMMING BASICS: Charts [!]** (`programming-basics-charts`)
+- **PROGRAMMING BASICS: Playlist Creation [!]** (`programming-basics-playlist-creation`)
+- **PROGRAMMING BASICS: Dancer Types [!]** (`programming-basics-dancer-types`)
+- **PROGRAMMING BASICS: Mini Sets [!]** (`programming-basics-mini-sets`)
+- **CABLES & CONNECTIONS: Balanced vs. Unbalanced** (`cables-connections-balanced-vs-unbalanced`)
+  - Quiz: *[QUIZ] Balanced vs Unbalanced* (3 Q)
+    - How many wires are inside of an unbalanced cable?
+    - How many wires are inside of a balanced audio cable?
+    - Why is a balanced audio cable preferred over an unbalanced audio cable for longer applications?
+- **CABLES & CONNECTIONS: Unbalanced Connections** (`cables-connections-unbalanced-connections`)
+- **CABLES & CONNECTIONS: Balanced Connections** (`cables-connections-balanced-connections`)
+  - Quiz: *[QUIZ] Connector Sorting* (1 Q)
+    - Drag each connector type (name) to match each picture
+- **CABLES & CONNECTIONS: Adapters** (`cables-connections-adapters`)
+- **CABLES & CONNECTIONS: Cable Management [!]** (`cables-connections-cable-management`)
+- **SPEAKER BASICS: Overview** (`speaker-basics-overview`)
+  - Quiz: *[QUIZ] Speaker Types* (2 Q)
+    - How is a speaker's size determined?
+    - What's the difference between a 2-way and 3-way speaker?
+- **SPEAKER BASICS: Passive vs. Active** (`speaker-basics-passive-vs-active`)
+- **SPEAKER BASICS: Speaker Stand Assembly** (`speaker-basics-speaker-stand-assembly`)
+  - Quiz: *[QUIZ] Speaker Stand* (1 Q)
+    - Which is the correct speaker stand leg position?
+- **SPEAKER BASICS: Speaker Specifications** (`speaker-basics-speaker-specifications`)
+  - Quiz: *[QUIZ] Speaker Specs* (3 Q)
+    - How many decibels (dB) is equal to twice the perceived volume?
+    - What dB (decibel) level is the pain threshold?
+    - Besides being louder, what is a benefit of a higher speaker SPL rating?
+- **SPEAKER BASICS: Coverage Angle** (`speaker-basics-coverage-angle`)
+  - Quiz: *[QUIZ] Coverage Angle* (2 Q)
+    - Which speaker has the widest coverage angle?
+    - Which speaker likely has the longest "throw distance" (sound carries the furthest)?
+- **MICROPHONE BASICS: Microphone Descriptors** (`microphone-basics-microphone-descriptors`)
+- **MICROPHONE BASICS: Mic Stand Assembly** (`microphone-basics-mic-stand-assembly`)
+- **MICROPHONE BASICS: Signal / Noise Ratio** (`microphone-basics-signal-noise-ratio`)
+  - Quiz: *[QUIZ] Signal : Noise* (3 Q)
+    - What is microphone feedback?
+    - How can you increase the signal/noise ratio, lowering feedback?
+    - Which is the correct way to hold a handheld microphone?
+- **MICROPHONE BASICS: Music and Mic Balance [!]** (`microphone-basics-music-and-mic-balance`)
+- **SUPPORT BASICS: Electricity Basics** (`support-basics-electricity-basics`)
+  - Quiz: *[QUIZ] Amps & Volts* (4 Q)
+    - What is the standard Amperage of a residential circuit?
+    - What is the standard Amperage of a commercial circuit?
+    - Are outlets on separate circuits?
+    - What is the standard voltage of a circuit?
+- **SUPPORT BASICS: Power Management** (`support-basics-power-management`)
+- **SUPPORT BASICS: Tables/Linens** (`support-basics-tables-linens`)
+- **SUPPORT BASICS: Gaff Tape** (`support-basics-gaff-tape`)
+  - Quiz: *[QUIZ] Securing Cables* (4 Q)
+    - Why is cable management important?
+    - What are the characteristics of Gaff tape?
+    - How can you secure cables on outdoor surfaces such as dirt or grass?
+    - Which is the correct way to tape cables to a speaker stand?
+- **SUPPORT BASICS: Gear Transportation [!]** (`support-basics-gear-transportation`)
+- **CONTROLLER BASICS: Controller Overview** (`controller-basics-controller-overview`)
+- **CONTROLLER BASICS: Serato Overview** (`controller-basics-serato-overview`)
+- **CONTROLLER BASICS: Rear Panel Connections** (`controller-basics-rear-panel-connections`)
+- **CONTROLLER BASICS: Playback Control** (`controller-basics-playback-control`)
+- **CONTROLLER BASICS: Gain Staging** (`controller-basics-gain-staging`)
+- **CONTROLLER BASICS: Extra Control** (`controller-basics-extra-control`)
+- **CONTROLLER BASICS: Extra Features [!]** (`controller-basics-extra-features`)
+- **LIGHTING BASICS: Lighting Overview** (`lighting-basics-lighting-overview`)
+  - Quiz: *[QUIZ] Lighting Basics* (2 Q)
+    - What's the most disruptive outdoor light source?
+    - When should you find the venue lighting controls?
+- **LIGHTING BASICS: Basic Lighting Terms** (`lighting-basics-basic-lighting-terms`)
+  - Quiz: *[QUIZ] Lighting Terms* (3 Q)
+    - What value represents maximum diode intensity?
+    - Mixing additional colors make the resulting light:
+    - How can you increase the Sound-Active sensitivity?
+- **LIGHTING BASICS: Lighting Menus** (`lighting-basics-lighting-menus`)
+- **LIGHTING BASICS: Dancefloor Lighting [!]** (`lighting-basics-dancefloor-lighting`)
+- **WIRELESS MICROPHONES: Wireless Overview** (`wireless-microphones-wireless-overview`)
+  - Quiz: *[QUIZ] Wireless Mic Basics* (5 Q)
+    - What is the device called that wirelessly sends an audio signal?
+    - What is the device calls the accepts the wireless audio signal?
+    - What is RF (for wireless microphones)?
+    - Can all wireless microphone transmitters work with all wireless microphone receivers?
+    - What is AF (for wireless microphones)?
+- **WIRELESS MICROPHONES: Antennae Types** (`wireless-microphones-antennae-types`)
+  - Quiz: *[QUIZ] RF* (3 Q)
+    - What can cause interference?
+    - What is "line-of-sight" (for wireless microphones)?
+    - Which antenna should you use (when you have a choice)?
+- **WIRELESS MICROPHONES: Sync + Output** (`wireless-microphones-sync-output`)
+  - Quiz: *[QUIZ] RF + AF* (5 Q)
+    - When should you scan for open/available microphone frequencies?
+    - Should two receivers use the same frequency?
+    - Can two wireless transmitters on the same channel use the same receiver?
+    - Why would you adjust the microphone sensitivity?
+    - What visual readout can be used to measure the incoming audio level?
+- **WIRELESS MICROPHONES: Handheld Wireless** (`wireless-microphones-handheld-wireless`)
+- **WIRELESS MICROPHONES: Worn Wireless [!]** (`wireless-microphones-worn-wireless`)
+- **PERFORMANCE SYSTEMS: Sound Mixer** (`performance-systems-sound-mixer`)
+  - Quiz: *[QUIZ] Sound Mixer* (7 Q)
+    - What is a channel strip?
+    - Which has a louder audio signal?
+    - What does an input channel need to boost an incoming mic level signal?
+    - Do channels 3/4 have a mic preamp?
+    - If you connect a line level input to channel 2, how can you lower the incoming dB level?
+    - What is this knob's function?
+    - Is this an appropriate audio level setting?
+- **PERFORMANCE SYSTEMS: Speaker Pair Connection** (`performance-systems-speaker-pair-connection`)
+  - Quiz: *[QUIZ] Speaker Pair* (3 Q)
+    - What connection type is required to connect a controller DIRECTLY to a pair of powered speakers?
+    - Which connection method facilitates using more microphones?
+    - Which daisy chain output option passes channel A audio only?
+- **PERFORMANCE SYSTEMS: Speaker Placement** (`performance-systems-speaker-placement`)
+  - Quiz: *[QUIZ] Speaker Placement* (5 Q)
+    - How high should a 2-way speaker be positioned?
+    - When using fixed-height column array speakers, how can you increase the sound coverage?
+    - Which speaker position is better for speeches/toasts?
+    - Which speaker position is better for dancing?
+    - Which is the optimal speaker positioning?
+- **PERFORMANCE SYSTEMS: Adding Subwoofers** (`performance-systems-adding-subwoofers`)
+  - Quiz: *[QUIZ] Subwoofers* (3 Q)
+    - What are two common crowd control issues with subwoofers?
+    - Volume knob positions on the subwoofers and main speakers should:
+    - What is subwoofer coupling used for?
+- **PERFORMANCE SYSTEMS: Single Speaker** (`performance-systems-single-speaker`)
+- **PERFORMANCE SYSTEMS: Choosing Systems** (`performance-systems-choosing-systems`)
+  - Quiz: *[QUIZ] Speaker Systems* (3 Q)
+    - Which performance system is optimal for a Wedding Indoor ballroom 40' x 75' 175 Guests
+    - Which performance system is optimal for a: Law Office Grand Opening Outdoor parking lot 45 Guests
+    - Which performance system is optimal for a High School Dance Indoor venue 100' x 50' 275 Guests
+- **PERFORMANCE SYSTEMS: Gear Protection [!]** (`performance-systems-gear-protection`)
+- **WEDDING DJ/MC: Ceremony** (`wedding-dj-mc-ceremony`)
+  - Quiz: *[QUIZ] Wedding Ceremony* (4 Q)
+    - Where should the officiant stand during their sound check?
+    - What is the standard length for prelude music?
+    - True or False: The pre-ceremony sound check is the only time to check/adjust microphone volume level
+    - Why do you ask the officiant for their "final words before the recessional song"?
+- **WEDDING DJ/MC: Cocktail Hour** (`wedding-dj-mc-cocktail-hour`)
+  - Quiz: *[QUIZ] Wedding Cocktail Hour* (2 Q)
+    - Is the cocktail hour part of the wedding ceremony or the reception?
+    - How long should your cocktail hour playlist be?
+- **WEDDING DJ/MC: Formality Block #1 [!]** (`wedding-dj-mc-formality-block-1`)
+- **WEDDING DJ/MC: Dinner** (`wedding-dj-mc-dinner`)
+  - Quiz: *[QUIZ] Wedding Dinner* (3 Q)
+    - When you are eating a vendor meal in a separate room you are:
+    - When the father of the bride comes up to you behind your DJ table to ask a question, you both are:
+    - When you have a conversation with the photographer on the dancefloor you are:
+- **WEDDING DJ/MC: Formality Block #2** (`wedding-dj-mc-formality-block-2`)
+  - Quiz: *[QUIZ] Cake | Speeches | Parent Dances* (5 Q)
+    - How much attention should the cake cutting get?
+    - When making announcements you should:
+    - Why should you coach speech/toast givers on handling a microphone?
+    - True or False: Making sure the parents are in the room (or nearby) before announcing their special d
+    - What should you do during the parent dances?
+- **WEDDING DJ/MC: Interactive Activities** (`wedding-dj-mc-interactive-activities`)
+- **WEDDING DJ/MC: Dancing** (`wedding-dj-mc-dancing`)
+  - Quiz: *[QUIZ] Dancing* (5 Q)
+    - True or False: Your job as a DJ is to get the most people dancing for the most amount of time
+    - Generally speaking, how often will you reset the dance floor?
+    - How many beats does a jump cue typically last?
+    - For a clap cue, you should:
+    - What is a benefit of the sing cue?
+- **WEDDING DJ/MC: Ending the Reception [!]** (`wedding-dj-mc-ending-the-reception`)
+- **SOCIAL STRATEGY: Strategic Mindset** (`social-strategy-strategic-mindset`)
+  - Quiz: *[QUIZ] Mindset* (3 Q)
+    - Which of the following does NOT help you look more confident?
+    - Which action does NOT help you be more curious?
+    - When a dance party isn't going well:
+- **SOCIAL STRATEGY: Client Relationship** (`social-strategy-client-relationship`)
+  - Quiz: *[QUIZ] Client Relationship* (2 Q)
+    - Which of the following should you NOT include in your client planning meetings?
+    - True or False: Replying to client messages quickly helps to build trust
+- **SOCIAL STRATEGY: Vendor Relationships** (`social-strategy-vendor-relationships`)
+  - Quiz: *[QUIZ] Vendors* (3 Q)
+    - Which is NOT a coomon source of repeat business for DJs?
+    - When you arrive on site for an event you should:
+    - Which is NOT a benefit of reaching out to planners several weeks before an event?
+- **SOCIAL STRATEGY: Guest Relationships** (`social-strategy-guest-relationships`)
+  - Quiz: *[QUIZ] Guests* (2 Q)
+    - What's an easy way to build trust with guests
+    - Do all crowds with the same demographics respond the same way?
+- **SONG STRATEGY: Programming Puzzle** (`song-strategy-programming-puzzle`)
+  - Quiz: *[QUIZ] Knowing Music* (2 Q)
+    - Which is NOT a way to get familiar with more songs?
+    - Which is NOT indicator that you are familiar with a song?
+- **SONG STRATEGY: Reasonable Requests** (`song-strategy-reasonable-requests`)
+  - Quiz: *[QUIZ] Requests* (2 Q)
+    - Which is the correct mindset?
+    - True or False: It's a good idea to program a challenging request before a formality, planned dance f
+- **SONG STRATEGY: Participation Songs** (`song-strategy-participation-songs`)
+- **SONG STRATEGY: Increasing Impact** (`song-strategy-increasing-impact`)
+  _→ 77 lessons · 33 quizzes · 103 questions_
+
+## 11. 💡 Event Lighting Course (`event-lighting-instructor`)
+- **UPLIGHTING: Overview** (`uplighting-overview`)
+  - Quiz: *QUIZ: Uplighting Overview* (3 Q)
+    - What is beam angle?
+    - What does the W stand for in RGBAW?
+    - Which uses more battery power?
+- **UPLIGHTING: Static Color** (`uplighting-static-color`)
+  - Quiz: *QUIZ: Uplighting Static Color* (3 Q)
+    - Choose the diode intensity value that is closest to 50% brightness
+    - True or False: All uplight brands produce the exact same resulting colors and can used interchangeab
+    - What color uplighting is most challenging for photographers?
+- **UPLIGHTING: Application** (`uplighting-application`)
+  - Quiz: *QUIZ: Uplighting Application* (4 Q)
+    - How many uplights do you need for an event?
+    - How important is symmetry in uplighting placement?
+    - True or False: It's a good idea to place uplights in front of window and/or mirrors
+    - Which direction should the menu face?
+- **UPLIGHTING: Management [!]** (`uplighting-management`)
+- **LIGHTING CONTROL: DMX** (`lighting-control-dmx`)
+  - Quiz: *QUIZ: DMX Basics* (2 Q)
+    - How many channels are in a DMX universe?
+    - A fixture is set to 6-channel mode and it's starting address is 16. What are all the channels it wil
+- **LIGHTING CONTROL: DMX Control** (`lighting-control-dmx-control`)
+  - Quiz: *QUIZ: DMX Control* (3 Q)
+    - What is NOT a difference between DMX and XLR cables?
+    - True or False: With DMX control, you'll never need the manual for the lighting fixture
+    - How can you control multiple fixtures using DMX cable(s)?
+- **LIGHTING CONTROL: Wireless DMX** (`lighting-control-wireless-dmx`)
+  - Quiz: *QUIZ: Wireless DMX* (3 Q)
+    - When do you need a separate receiver antenna for your lighting fixtures?
+    - What is the primary benefit of using a wireless DMX transmitter that includes a DMX output connectio
+    - If the transmitter and receiver antennae are on different wireless channels, will they respond to DM
+- **LIGHTING CONTROL: Remote Control [!]** (`lighting-control-remote-control`)
+- **MOUNTING FIXTURES: Truss Basics** (`mounting-fixtures-truss-basics`)
+  - Quiz: *QUIZ: Truss* (3 Q)
+    - What unit is used to measure truss length?
+    - What is deflection length?
+    - Which side should the scrim seam face?
+- **MOUNTING FIXTURES: Clamps** (`mounting-fixtures-clamps`)
+  - Quiz: *QUIZ: Safety Cables* (3 Q)
+    - When should safety cables be used?
+    - What two things does a safety cable connect?
+    - Will safety cables work on all fixtures?
+- **MOUNTING FIXTURES: Mounted Application [!]** (`mounting-fixtures-mounted-application`)
+- **MOVING HEADS: Spot Mover Overview** (`moving-heads-spot-mover-overview`)
+  - Quiz: *QUIZ: Spot Movers* (5 Q)
+    - Which function allows for gradual change in brightness?
+    - What unit is used to measure brightness?
+    - What does the prism function do?
+    - What is a color wheel used for?
+    - What is a GOBO?
+- **MOVING HEADS: Haze** (`moving-heads-haze`)
+  - Quiz: *QUIZ: Haze* (3 Q)
+    - What is the benefit of using haze?
+    - Do water-based hazers need a warm-up period?
+    - Can haze set off a fire alarm?
+- **MOVING HEADS: Beam & Wash Movers** (`moving-heads-beam-wash-movers`)
+- **MOVING HEADS: Mover Placement [!]** (`moving-heads-mover-placement`)
+- **MOVING HEADS: Mover Movements** (`moving-heads-mover-movements`)
+  _→ 16 lessons · 10 quizzes · 32 questions_
+
+## 12. 🎉 Observation Basics (`%f0%9f%8e%89-observer-basics`)
+- **OBSERVATION BASICS: Observer Role** (`observation-basics-observer-role`)
+  - Quiz: *[QUIZ] OBSERVATION BASICS: Role* (4 Q)
+    - Which of these will you NOT be asked to do at an observation?
+    - Which is NOT a way to "Serve Others" at an event?
+    - Which is NOT a way to "Share Joy" at an event?
+    - Which is NOT a way to "Take Action" at an event?
+- **OBSERVATION BASICS: Observer Attire** (`observation-basics-observer-attire`)
+  - Quiz: *[QUIZ] OBSERVATION BASICS: Attire* (3 Q)
+    - Why should you (as an observer or assistant) wear stage black?
+    - What is NOT included in a "stage black" outfit?
+    - You will be asked to upload a picture of your stage black outfit in the next lesson.
+- **OBSERVATION BASICS: Observer Behavior [!]** (`observation-basics-observer-behavior`)
+  - Quiz: *[QUIZ] OBSERVATION BASICS: Observer Behavior* (4 Q)
+    - When should you arrive at the venue?
+    - What is the first thing you should do when you arrive at the venue?
+    - What is NOT a way to be more likable?
+    - Why should you NOT fold your arms during the event (when in view of guests)?
+  _→ 3 lessons · 3 quizzes · 11 questions_
+
+## 13. 🎧 Scratch Toolkit (`scratch-toolkit-2`)
+- **SCRATCH TOOLKIT: Scratching Foundations** (`scratch-toolkit-scratching-foundations`)
+- **SCRATCH TOOLKIT: Setup + Settings** (`scratch-toolkit-setup-settings`)
+- **SCRATCH TOOLKIT: Baby Scratch** (`scratch-toolkit-baby-scratch`)
+- **SCRATCH TOOLKIT: Push, Drag, Release Scratch** (`scratch-toolkit-push-drag-release-scratch`)
+- **SCRATCH TOOLKIT: Stab Scratch** (`scratch-toolkit-stab-scratch`)
+- **SCRATCH TOOLKIT: Chirp Scratch** (`scratch-toolkit-chirp-scratch`)
+- **SCRATCH TOOLKIT: Transformer Scratch** (`scratch-toolkit-transformer-scratch`)
+- **SCRATCH TOOLKIT: Crab Scratch** (`scratch-toolkit-crab-scratch`)
+- **SCRACH TOOLKIT: Beat Juggling** (`scrach-toolkit-beat-juggling`)
+- **SCRATCH TOOLKIT: Scratching in Sets** (`scratch-toolkit-scratching-in-sets`)
+  _→ 10 lessons · 0 quizzes · 0 questions_
+
+## 14. 🎤 The Master MC (`the-master-mc-2`)
+- **Course Introduction** (`course-introduction-2`)
+- **1:  Three MC Roles** (`1-three-mc-roles-2`)
+  - Quiz: *[QUIZ] Master MC_3 Roles* (6 Q)
+    - Which MC Role is this? [embed]https://vimeo.com/866827686?share=copy[/embed]
+    - Which MC Role is this? [embed]https://vimeo.com/866827752?share=copy[/embed]
+    - Which MC Role is this? [embed]https://vimeo.com/866827708?share=copy[/embed]
+    - Which MC Role is this? [embed]https://vimeo.com/866827720?share=copy[/embed]
+    - Which MC Role is this? [embed]https://vimeo.com/866827655?share=copy[/embed]
+    - Which MC Role is this? [embed]https://vimeo.com/866827734?share=copy[/embed]
+- **2: Talking Technique [!]** (`2-talking-technique-2`)
+- **3: Polished Presentation [!]** (`3-polished-presentation-2`)
+- **4: Anatomy of Attention** (`4-anatomy-of-attention-2`)
+  - Quiz: *[QUIZ] Master MC_Attention* (4 Q)
+    - True or False: People pay the most attention to unfamiliar, unexpected, or unpredictable cues.
+    - Which is NOT a way to turn on "attention switches"?
+    - A "Foundational announcement where you energetically greet your audience, welcome them to the event,
+    - Which does NOT help you gain the attention of the audience?
+- **5: Which Words** (`5-which-words-2`)
+  - Quiz: *Master MC_What to Say* (3 Q)
+    - Match the text with it's element
+    - Match the text with it's element
+    - Which is NOT one of Rob's "Magic Words"
+- **6: Hosting Homework** (`6-hosting-homework-2`)
+- **7: Managing the Minutes [!]** (`7-managing-the-minutes-2`)
+- **8: Crowd Connection** (`8-crowd-connection-2`)
+  - Quiz: *Master MC_Crowd Connection* (5 Q)
+    - What’s a vibe check?
+    - What’s wrong with saying “you can do better than that” to the crowd?
+    - What is NOT a way to endear the crowd to you?
+    - True or False: When you are at a much different energy level from your crowd, you can appear inauthe
+    - Why does involving audience members on stage maximize the moment?
+- **9: Ferre's Final Thoughts** (`9-ferres-final-thoughts-2`)
+  _→ 10 lessons · 4 quizzes · 18 questions_
+
+## 15. 💡 UPLIGHTING (`%f0%9f%92%a1-uplighting`)
+- **UPLIGHTING COURSE: Overview** (`uplighting-course-overview`)
+  - Quiz: *QUIZ: Uplighting Overview* (3 Q)
+    - Which uses more battery power?
+    - What does the W stand for in RGBAW?
+    - What is beam angle?
+- **UPLIGHTING COURSE: Static Color** (`uplighting-course-static-color`)
+  - Quiz: *QUIZ: Uplighting Static Color* (3 Q)
+    - What color uplighting is most challenging for photographers?
+    - True or False: All uplight brands produce the exact same resulting colors and can used interchangeab
+    - Choose the diode intensity value that is closest to 50% brightness
+- **UPLIGHTING COURSE: Application** (`uplighting-course-application`)
+  - Quiz: *QUIZ: Uplighting Application* (4 Q)
+    - Which direction should the menu face?
+    - True or False: It's a good idea to place uplights in front of window and/or mirrors
+    - How important is symmetry in uplighting placement?
+    - How many uplights do you need for an event?
+- **UPLIGHTING COURSE: Management [!]** (`uplighting-course-management`)
+  _→ 4 lessons · 3 quizzes · 10 questions_
+
+## 16. 💡SoundSwitch Tutorial (`soundswitch-tutorial`)
+- **SoundSwitch: Overview** (`soundswitch-overview`)
+  - Quiz: *[QUIZ] SoundSwitch: Overview* (3 Q)
+    - What is a dongle used for?
+    - Select the 2 primary SoundSwitch modes
+    - Which is NOT a SoundSwitch lightshow type
+- **SoundSwitch: Edit Mode** (`soundswitch-edit-mode`)
+  - Quiz: *[QUIZ] SoundSwitch: Edit Mode* (4 Q)
+    - How many DMX channels are available in each SoundSwitch universe?
+    - What is wrong with this picture?
+    - What is a benefit of grouping lighting fixtures in SoundSwitch?
+    - True or False? Moving fixture position coordinates are set by default by SoundSwitch
+- **SoundSwitch: Autoloops** (`soundswitch-autoloops`)
+  - Quiz: *[QUIZ] SoundSwitch: Autoloops* (3 Q)
+    - How many total autoloops can SoundSwitch have?
+    - Which mode allows you to edit autoloops?
+    - When the playhead hits a position cue, what happens?
+- **SoundSwitch: Performance Mode [!]** (`soundswitch-performance-mode`)
+- **SoundSwitch: Static Looks [!]** (`soundswitch-static-looks`)
+- **SoundSwitch: Control One** (`soundswitch-control-one`)
+- **SoundSwitch: Autoscripts [!]** (`soundswitch-autoscripts`)
+- **SoundSwitch: Manual Scripts** (`soundswitch-manual-scripts`)
+  - Quiz: *[QUIZ] SoundSwitch: Manual Scripting* (3 Q)
+    - Why do you need a beatgrid to script a track?
+    - What is this icon?
+    - What is this an example of?
+- **SoundSwitch: Standalone Mode** (`soundswitch-standalone-mode`)
+- **SoundSwitch: Performance Tips** (`soundswitch-performance-tips`)
+  - Quiz: *[QUIZ] SoundSwitch: Disabling Strobes* (3 Q)
+    - Where is the "disable strobe" option found?
+    - Where is the "override scripted tracks" option found?
+    - Which autoloop bank should you select to guarantee slow lighting changes?
+  _→ 10 lessons · 5 quizzes · 16 questions_
+
+
+---
+**Nested totals:** 16 courses · 242 lessons · 103 quizzes · 356 questions
