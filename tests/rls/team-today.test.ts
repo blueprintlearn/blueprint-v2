@@ -391,4 +391,175 @@ describe("team today isolation", () => {
     expect(stillA.error).toBeNull()
     expect(stillA.data?.desired_dj_count).toBe(6)
   })
+
+  it("starts trainer count unset and lets Company A owner persist 0", async () => {
+    const companyAOwner = await asUser(OWNER_A_EMAIL)
+    const emptyTrainers = await companyAOwner
+      .from("company_team_today")
+      .select("company_id, current_trainer_count")
+      .eq("company_id", COMPANY_A_ID)
+      .maybeSingle()
+    expect(emptyTrainers.error).toBeNull()
+    expect(emptyTrainers.data?.current_trainer_count).toBeNull()
+
+    const saved = await companyAOwner
+      .from("company_team_today")
+      .update({ current_trainer_count: 3 })
+      .eq("company_id", COMPANY_A_ID)
+    expect(saved.error).toBeNull()
+
+    const three = await companyAOwner
+      .from("company_team_today")
+      .select("current_trainer_count")
+      .eq("company_id", COMPANY_A_ID)
+      .maybeSingle()
+    expect(three.error).toBeNull()
+    expect(three.data?.current_trainer_count).toBe(3)
+
+    const zero = await companyAOwner
+      .from("company_team_today")
+      .update({ current_trainer_count: 0 })
+      .eq("company_id", COMPANY_A_ID)
+    expect(zero.error).toBeNull()
+
+    const rereadZero = await companyAOwner
+      .from("company_team_today")
+      .select("current_trainer_count")
+      .eq("company_id", COMPANY_A_ID)
+      .maybeSingle()
+    expect(rereadZero.error).toBeNull()
+    expect(rereadZero.data?.current_trainer_count).toBe(0)
+  })
+
+  it("does not let Company A read or update Company B trainer count", async () => {
+    const companyAOwner = await asUser(OWNER_A_EMAIL)
+    const companyBOwner = await asUser(OWNER_B_EMAIL)
+
+    const savedB = await companyBOwner
+      .from("company_team_today")
+      .update({ current_trainer_count: 9 })
+      .eq("company_id", COMPANY_B_ID)
+    expect(savedB.error).toBeNull()
+
+    const readB = await companyAOwner
+      .from("company_team_today")
+      .select("current_trainer_count")
+      .eq("company_id", COMPANY_B_ID)
+    expect(readB.data ?? []).toEqual([])
+
+    await companyAOwner
+      .from("company_team_today")
+      .update({ current_trainer_count: 21 })
+      .eq("company_id", COMPANY_B_ID)
+
+    const stillB = await companyBOwner
+      .from("company_team_today")
+      .select("company_id, current_trainer_count")
+      .eq("company_id", COMPANY_B_ID)
+      .maybeSingle()
+    expect(stillB.error).toBeNull()
+    expect(stillB.data).toEqual({ company_id: COMPANY_B_ID, current_trainer_count: 9 })
+  })
+
+  it("does not let Company B change Company A trainer count", async () => {
+    const companyAOwner = await asUser(OWNER_A_EMAIL)
+    const savedA = await companyAOwner
+      .from("company_team_today")
+      .update({ current_trainer_count: 4 })
+      .eq("company_id", COMPANY_A_ID)
+    expect(savedA.error).toBeNull()
+
+    const companyBOwner = await asUser(OWNER_B_EMAIL)
+    await companyBOwner
+      .from("company_team_today")
+      .update({ current_trainer_count: 1 })
+      .eq("company_id", COMPANY_A_ID)
+
+    const { data, error } = await companyAOwner
+      .from("company_team_today")
+      .select("current_trainer_count")
+      .eq("company_id", COMPANY_A_ID)
+      .maybeSingle()
+    expect(error).toBeNull()
+    expect(data?.current_trainer_count).toBe(4)
+  })
+
+  it("rejects out-of-range trainer counts", async () => {
+    const companyAOwner = await asUser(OWNER_A_EMAIL)
+    const tooLow = await companyAOwner
+      .from("company_team_today")
+      .update({ current_trainer_count: -1 })
+      .eq("company_id", COMPANY_A_ID)
+    expect(tooLow.error).not.toBeNull()
+
+    const tooHigh = await companyAOwner
+      .from("company_team_today")
+      .update({ current_trainer_count: 1000 })
+      .eq("company_id", COMPANY_A_ID)
+    expect(tooHigh.error).not.toBeNull()
+  })
+
+  it("lets an active non-owner read trainer count and denies their writes", async () => {
+    const companyAOwner = await asUser(OWNER_A_EMAIL)
+    const saved = await companyAOwner
+      .from("company_team_today")
+      .update({ current_trainer_count: 6 })
+      .eq("company_id", COMPANY_A_ID)
+    expect(saved.error).toBeNull()
+
+    const manager = await asUser(MANAGER_A_EMAIL)
+    const visible = await manager
+      .from("company_team_today")
+      .select("company_id, current_trainer_count")
+      .eq("company_id", COMPANY_A_ID)
+    expect(visible.error).toBeNull()
+    expect(visible.data).toEqual([
+      {
+        company_id: COMPANY_A_ID,
+        current_trainer_count: 6,
+      },
+    ])
+
+    await manager
+      .from("company_team_today")
+      .update({ current_trainer_count: 8 })
+      .eq("company_id", COMPANY_A_ID)
+
+    const stillA = await companyAOwner
+      .from("company_team_today")
+      .select("current_trainer_count")
+      .eq("company_id", COMPANY_A_ID)
+      .maybeSingle()
+    expect(stillA.error).toBeNull()
+    expect(stillA.data?.current_trainer_count).toBe(6)
+  })
+
+  it("denies an inactive member trainer count read and write", async () => {
+    const companyAOwner = await asUser(OWNER_A_EMAIL)
+    const saved = await companyAOwner
+      .from("company_team_today")
+      .update({ current_trainer_count: 6 })
+      .eq("company_id", COMPANY_A_ID)
+    expect(saved.error).toBeNull()
+
+    const inactive = await asUser(INACTIVE_A_EMAIL)
+    const hidden = await inactive
+      .from("company_team_today")
+      .select("company_id, current_trainer_count")
+      .eq("company_id", COMPANY_A_ID)
+    expect(hidden.data ?? []).toEqual([])
+
+    await inactive
+      .from("company_team_today")
+      .update({ current_trainer_count: 8 })
+      .eq("company_id", COMPANY_A_ID)
+
+    const stillA = await companyAOwner
+      .from("company_team_today")
+      .select("current_trainer_count")
+      .eq("company_id", COMPANY_A_ID)
+      .maybeSingle()
+    expect(stillA.error).toBeNull()
+    expect(stillA.data?.current_trainer_count).toBe(6)
+  })
 })
