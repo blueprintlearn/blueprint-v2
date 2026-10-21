@@ -134,13 +134,13 @@
   --space-8: 44px;
   --space-9: 56px;
   --space-10: 64px;
-  --radius-drafted: 4px;
-  --radius-sm: 10px;
-  --radius-md: 18px;
-  --radius-lg: 24px;
-  --radius-xl: 30px;
-  --radius-2xl: 34px;
-  --radius-pill: 999px;
+  --bp-radius-drafted: 4px;
+  --bp-radius-sm: 10px;
+  --bp-radius-md: 18px;
+  --bp-radius-lg: 24px;
+  --bp-radius-xl: 30px;
+  --bp-radius-2xl: 34px;
+  --bp-radius-pill: 999px;
 }
 
 .bp-type-display-xl {

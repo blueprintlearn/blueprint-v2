@@ -33,12 +33,12 @@
   --font-sans: var(--font-body);
   --font-heading: var(--font-display);
 
-  --radius-bp-drafted: var(--radius-drafted);
-  --radius-bp-sm: var(--radius-sm);
-  --radius-bp-md: var(--radius-md);
-  --radius-bp-lg: var(--radius-lg);
-  --radius-bp-xl: var(--radius-xl);
-  --radius-bp-2xl: var(--radius-2xl);
+  --radius-bp-drafted: var(--bp-radius-drafted);
+  --radius-bp-sm: var(--bp-radius-sm);
+  --radius-bp-md: var(--bp-radius-md);
+  --radius-bp-lg: var(--bp-radius-lg);
+  --radius-bp-xl: var(--bp-radius-xl);
+  --radius-bp-2xl: var(--bp-radius-2xl);
 
   --shadow-bp-card: var(--shadow-card);
 }
