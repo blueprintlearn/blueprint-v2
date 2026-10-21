@@ -8,8 +8,8 @@ import { AuthLinks } from "./auth-links"
 import { CreateCompanyForm } from "./create-company-form"
 import { DesiredDjCountForm } from "./desired-dj-count-form"
 import { OwnerGoalForm } from "./owner-goal-form"
-import { SignOutButton } from "./sign-out-button"
 import { TeamTodayForm } from "./team-today-form"
+import { panelClassName } from "./ui"
 
 export default async function HomePage() {
   const supabase = await createClient()
@@ -21,42 +21,49 @@ export default async function HomePage() {
   const ownerGoalLabel = ownerGoal ? OWNER_GOAL_LABELS[ownerGoal.ownerGoal] : "Not set"
 
   return (
-    <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-6 px-6 py-16">
-      <h1 className="text-2xl font-semibold">Blueprint</h1>
+    <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-6 px-4 py-10 sm:px-6 sm:py-16">
+      <div className="flex flex-col gap-2">
+        <p className="text-xs font-medium uppercase tracking-[0.14em] text-mute">
+          Company operating system
+        </p>
+        <h1 className="text-2xl font-semibold tracking-tight">Blueprint</h1>
+      </div>
 
       {!signedIn ? (
-        <>
+        <section className={panelClassName}>
           <p>Sign in or create an account to start a company.</p>
           <AuthLinks />
-        </>
+        </section>
       ) : membership ? (
         <>
-          <p>
-            Company: <strong>{membership.companyName}</strong>
-          </p>
-          <p>
-            Role: <strong>{membership.role}</strong>
-          </p>
-          <p>
-            DJs today:{" "}
-            <strong>{teamToday == null ? "Not set" : teamToday.currentDjCount}</strong>
-          </p>
-          <p>
-            Desired DJs:{" "}
-            <strong>
-              {teamToday == null || teamToday.desiredDjCount == null
-                ? "Not set"
-                : teamToday.desiredDjCount}
-            </strong>
-          </p>
-          <p>
-            Owner goal: <strong>{ownerGoalLabel}</strong>
-            {ownerGoal?.ownerGoal === "other" && ownerGoal.ownerGoalOther
-              ? ` (${ownerGoal.ownerGoalOther})`
-              : null}
-          </p>
+          <section className={panelClassName}>
+            <p>
+              Company: <strong>{membership.companyName}</strong>
+            </p>
+            <p>
+              Role: <strong>{membership.role}</strong>
+            </p>
+            <p>
+              DJs today:{" "}
+              <strong>{teamToday == null ? "Not set" : teamToday.currentDjCount}</strong>
+            </p>
+            <p>
+              Desired DJs:{" "}
+              <strong>
+                {teamToday == null || teamToday.desiredDjCount == null
+                  ? "Not set"
+                  : teamToday.desiredDjCount}
+              </strong>
+            </p>
+            <p>
+              Owner goal: <strong>{ownerGoalLabel}</strong>
+              {ownerGoal?.ownerGoal === "other" && ownerGoal.ownerGoalOther
+                ? ` (${ownerGoal.ownerGoalOther})`
+                : null}
+            </p>
+          </section>
           {membership.role === OWNER_ADMIN_ROLE ? (
-            <>
+            <section className={panelClassName}>
               <div
                 key={`team-today:${membership.companyId}:${teamToday == null ? "" : teamToday.currentDjCount}:${teamToday?.desiredDjCount ?? ""}`}
                 className="flex flex-col gap-6"
@@ -71,16 +78,14 @@ export default async function HomePage() {
                 ownerGoal={ownerGoal?.ownerGoal ?? null}
                 ownerGoalOther={ownerGoal?.ownerGoalOther ?? null}
               />
-            </>
+            </section>
           ) : null}
-          <SignOutButton />
         </>
       ) : (
-        <>
+        <section className={panelClassName}>
           <p>You do not belong to a company yet.</p>
           <CreateCompanyForm />
-          <SignOutButton />
-        </>
+        </section>
       )}
     </main>
   )
