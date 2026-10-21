@@ -3,9 +3,12 @@ import { describe, expect, it } from "vitest"
 import {
   CURRENT_DJ_COUNT_MAX,
   CURRENT_DJ_COUNT_MIN,
+  CURRENT_TRAINER_COUNT_MAX,
+  CURRENT_TRAINER_COUNT_MIN,
   DESIRED_DJ_COUNT_MAX,
   DESIRED_DJ_COUNT_MIN,
   parseCurrentDjCount,
+  parseCurrentTrainerCount,
   parseDesiredDjCount,
 } from "@/lib/blueprint/team-today"
 import { SYSTEM_ROLES } from "@/lib/rules/system-role"
@@ -72,5 +75,33 @@ describe("team today desired DJ count validation", () => {
     expect(parseDesiredDjCount("1000")).toBeNull()
     expect(parseDesiredDjCount("abc")).toBeNull()
     expect(parseDesiredDjCount(7)).toBeNull()
+  })
+})
+
+describe("team today trainer count validation", () => {
+  it("accepts integers from 0 to 999", () => {
+    expect(CURRENT_TRAINER_COUNT_MIN).toBe(0)
+    expect(CURRENT_TRAINER_COUNT_MAX).toBe(999)
+    expect(parseCurrentTrainerCount("0")).toBe(0)
+    expect(parseCurrentTrainerCount("2")).toBe(2)
+    expect(parseCurrentTrainerCount(" 2 ")).toBe(2)
+    expect(parseCurrentTrainerCount(String(CURRENT_TRAINER_COUNT_MAX))).toBe(999)
+  })
+
+  it("treats a blank count as unset and a zero as a saved value", () => {
+    expect(parseCurrentTrainerCount("")).toBeNull()
+    expect(parseCurrentTrainerCount("   ")).toBeNull()
+    expect(parseCurrentTrainerCount("0")).toBe(0)
+  })
+
+  it("rejects empty, non-integer, and out-of-range values", () => {
+    expect(parseCurrentTrainerCount("")).toBeNull()
+    expect(parseCurrentTrainerCount("   ")).toBeNull()
+    expect(parseCurrentTrainerCount("-1")).toBeNull()
+    expect(parseCurrentTrainerCount("1.5")).toBeNull()
+    expect(parseCurrentTrainerCount("1e2")).toBeNull()
+    expect(parseCurrentTrainerCount("1000")).toBeNull()
+    expect(parseCurrentTrainerCount("abc")).toBeNull()
+    expect(parseCurrentTrainerCount(7)).toBeNull()
   })
 })

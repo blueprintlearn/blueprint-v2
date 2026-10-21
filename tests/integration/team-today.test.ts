@@ -145,4 +145,78 @@ describe("team today persistence", () => {
       desired_dj_count: 12,
     })
   })
+
+  it("does not create a row when saving trainer count first", async () => {
+    const email = `trainer-first-${randomUUID()}@blueprint.test`
+    const client = createAnonClient()
+
+    const { error: signUpError } = await client.auth.signUp({
+      email,
+      password: SEED_PASSWORD,
+    })
+    expect(signUpError).toBeNull()
+
+    const { data: company, error: companyError } = await client.rpc("create_company", {
+      p_name: `Trainer First Co ${randomUUID()}`,
+    })
+    expect(companyError).toBeNull()
+    const companyId = company?.id as string
+
+    const { data: updated, error: updateError } = await client
+      .from("company_team_today")
+      .update({ current_trainer_count: 2 })
+      .eq("company_id", companyId)
+      .select("company_id")
+    expect(updateError).toBeNull()
+    expect(updated ?? []).toEqual([])
+
+    const empty = await client.from("company_team_today").select("company_id")
+    expect(empty.data ?? []).toEqual([])
+  })
+
+  it("persists trainer count without clearing current or desired DJ counts", async () => {
+    const email = `trainer-keep-${randomUUID()}@blueprint.test`
+    const client = createAnonClient()
+
+    const { error: signUpError } = await client.auth.signUp({
+      email,
+      password: SEED_PASSWORD,
+    })
+    expect(signUpError).toBeNull()
+
+    const { data: company, error: companyError } = await client.rpc("create_company", {
+      p_name: `Trainer Keep Co ${randomUUID()}`,
+    })
+    expect(companyError).toBeNull()
+    const companyId = company?.id as string
+
+    const { error: insertError } = await client.from("company_team_today").insert({
+      company_id: companyId,
+      current_dj_count: 3,
+    })
+    expect(insertError).toBeNull()
+
+    const { error: desiredError } = await client
+      .from("company_team_today")
+      .update({ desired_dj_count: 12 })
+      .eq("company_id", companyId)
+    expect(desiredError).toBeNull()
+
+    const { error: trainerError } = await client
+      .from("company_team_today")
+      .update({ current_trainer_count: 2 })
+      .eq("company_id", companyId)
+    expect(trainerError).toBeNull()
+
+    const { data: kept } = await client
+      .from("company_team_today")
+      .select("current_dj_count, desired_dj_count, current_trainer_count")
+      .eq("company_id", companyId)
+      .maybeSingle()
+    expect(kept).toEqual({
+      current_dj_count: 3,
+      desired_dj_count: 12,
+      current_trainer_count: 2,
+    })
+  })
 })

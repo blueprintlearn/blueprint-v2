@@ -9,6 +9,8 @@ import {
 import {
   CURRENT_DJ_COUNT_MAX,
   CURRENT_DJ_COUNT_MIN,
+  CURRENT_TRAINER_COUNT_MAX,
+  CURRENT_TRAINER_COUNT_MIN,
   DESIRED_DJ_COUNT_MAX,
   DESIRED_DJ_COUNT_MIN,
 } from "@/lib/blueprint/team-today"
@@ -56,6 +58,7 @@ export type CurrentTeamToday = {
   companyId: string
   currentDjCount: number
   desiredDjCount: number | null
+  currentTrainerCount: number | null
 }
 
 function asDjCount(value: number, min: number, max: number): number | null {
@@ -74,6 +77,14 @@ function asDesiredDjCount(value: number | null): number | null {
   return asDjCount(value, DESIRED_DJ_COUNT_MIN, DESIRED_DJ_COUNT_MAX)
 }
 
+function asCurrentTrainerCount(value: number | null): number | null {
+  if (value === null) {
+    return null
+  }
+
+  return asDjCount(value, CURRENT_TRAINER_COUNT_MIN, CURRENT_TRAINER_COUNT_MAX)
+}
+
 export async function getCurrentTeamToday(): Promise<CurrentTeamToday | null> {
   const membership = await getCurrentMembership()
   if (!membership) {
@@ -83,7 +94,7 @@ export async function getCurrentTeamToday(): Promise<CurrentTeamToday | null> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from("company_team_today")
-    .select("company_id, current_dj_count, desired_dj_count")
+    .select("company_id, current_dj_count, desired_dj_count, current_trainer_count")
     .eq("company_id", membership.companyId)
     .maybeSingle()
 
@@ -100,5 +111,6 @@ export async function getCurrentTeamToday(): Promise<CurrentTeamToday | null> {
     companyId: data.company_id,
     currentDjCount,
     desiredDjCount: asDesiredDjCount(data.desired_dj_count),
+    currentTrainerCount: asCurrentTrainerCount(data.current_trainer_count),
   }
 }

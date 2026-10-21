@@ -4,6 +4,8 @@ export const CURRENT_DJ_COUNT_MIN = 0
 export const CURRENT_DJ_COUNT_MAX = 999
 export const DESIRED_DJ_COUNT_MIN = 0
 export const DESIRED_DJ_COUNT_MAX = 999
+export const CURRENT_TRAINER_COUNT_MIN = 0
+export const CURRENT_TRAINER_COUNT_MAX = 999
 
 const djCountSchema = (min: number, max: number) =>
   z
@@ -20,6 +22,10 @@ export const currentDjCountSchema = djCountSchema(
 export const desiredDjCountSchema = djCountSchema(
   DESIRED_DJ_COUNT_MIN,
   DESIRED_DJ_COUNT_MAX,
+)
+export const currentTrainerCountSchema = djCountSchema(
+  CURRENT_TRAINER_COUNT_MIN,
+  CURRENT_TRAINER_COUNT_MAX,
 )
 
 function parseDjCount(
@@ -40,4 +46,8 @@ export function parseCurrentDjCount(value: unknown): number | null {
 
 export function parseDesiredDjCount(value: unknown): number | null {
   return parseDjCount(value, desiredDjCountSchema)
+}
+
+export function parseCurrentTrainerCount(value: unknown): number | null {
+  return parseDjCount(value, currentTrainerCountSchema)
 }
