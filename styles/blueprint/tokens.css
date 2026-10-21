@@ -1,0 +1,223 @@
+/* Blueprint V2 — generated from design-tokens/tokens.json by scripts/build-blueprint-tokens.mjs. Do not edit by hand. */
+
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+  --brand: #253860;
+  --brand-deep: #253860;
+  --text-on-brand: #FFFFFF;
+  --text-on-brand-muted: #DCE4F3;
+  --paper: #F8F5EF;
+  --surface: #FFFFFF;
+  --surface-soft: #F0EBE2;
+  --line: #E5DED3;
+  --ink: #1B2742;
+  --ink-2: #3D4862;
+  --muted: #5B6374;
+  --solid: var(--brand);
+  --text-on-solid: #FFFFFF;
+  --hatch: rgba(37, 56, 96, 0.42);
+  --hatch-soft: rgba(37, 56, 96, 0.16);
+  --draft: rgba(37, 56, 96, 0.55);
+  --coral: #EE6A47;
+  --text-on-coral: #1B2742;
+  --coral-text: #B13E1D;
+  --blush: #FBE0D6;
+  --blush-ink: #8E2F13;
+  --butter: #FCEBC3;
+  --butter-ink: #6B4700;
+  --mint: #DBEFE5;
+  --mint-ink: #185F44;
+  --sky: #DDE7F4;
+  --sky-ink: #253860;
+  --lavender: #ECE3F6;
+  --lavender-ink: #53357F;
+  --danger: #FDECEA;
+  --danger-ink: #A61F14;
+  --confetti-1: var(--coral);
+  --confetti-2: #E9A92E;
+  --confetti-3: #4E9E7E;
+  --focus: var(--coral-text);
+  --shadow-card: 0 1px 2px rgba(27, 39, 66, 0.05), 0 16px 36px rgba(37, 56, 96, 0.08);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --brand: #253860;
+  --brand-deep: #22345A;
+  --text-on-brand: #FFFFFF;
+  --text-on-brand-muted: #DCE4F3;
+  --paper: #0F1626;
+  --surface: #172238;
+  --surface-soft: #1E2A44;
+  --line: #2A3651;
+  --ink: #F4F0E8;
+  --ink-2: #D2D6DF;
+  --muted: #A3ACBD;
+  --solid: #F1ECE2;
+  --text-on-solid: #1B2742;
+  --hatch: rgba(244, 240, 232, 0.40);
+  --hatch-soft: rgba(244, 240, 232, 0.14);
+  --draft: rgba(244, 240, 232, 0.50);
+  --coral: #FF8A66;
+  --text-on-coral: #1B2742;
+  --coral-text: #FF9C7C;
+  --blush: #3D2529;
+  --blush-ink: #FFB69E;
+  --butter: #3A3018;
+  --butter-ink: #F6CF7C;
+  --mint: #15322C;
+  --mint-ink: #8AD8B7;
+  --sky: #1D3150;
+  --sky-ink: #B4CCF2;
+  --lavender: #2A2642;
+  --lavender-ink: #D0BAF3;
+  --danger: #3A1A1A;
+  --danger-ink: #FF9B92;
+  --confetti-1: var(--coral);
+  --confetti-2: #F5C25A;
+  --confetti-3: #6CC39E;
+  --focus: var(--coral-text);
+  --shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 18px 40px rgba(0, 0, 0, 0.40);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --brand: #253860;
+    --brand-deep: #22345A;
+    --text-on-brand: #FFFFFF;
+    --text-on-brand-muted: #DCE4F3;
+    --paper: #0F1626;
+    --surface: #172238;
+    --surface-soft: #1E2A44;
+    --line: #2A3651;
+    --ink: #F4F0E8;
+    --ink-2: #D2D6DF;
+    --muted: #A3ACBD;
+    --solid: #F1ECE2;
+    --text-on-solid: #1B2742;
+    --hatch: rgba(244, 240, 232, 0.40);
+    --hatch-soft: rgba(244, 240, 232, 0.14);
+    --draft: rgba(244, 240, 232, 0.50);
+    --coral: #FF8A66;
+    --text-on-coral: #1B2742;
+    --coral-text: #FF9C7C;
+    --blush: #3D2529;
+    --blush-ink: #FFB69E;
+    --butter: #3A3018;
+    --butter-ink: #F6CF7C;
+    --mint: #15322C;
+    --mint-ink: #8AD8B7;
+    --sky: #1D3150;
+    --sky-ink: #B4CCF2;
+    --lavender: #2A2642;
+    --lavender-ink: #D0BAF3;
+    --danger: #3A1A1A;
+    --danger-ink: #FF9B92;
+    --confetti-1: var(--coral);
+    --confetti-2: #F5C25A;
+    --confetti-3: #6CC39E;
+    --focus: var(--coral-text);
+    --shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 18px 40px rgba(0, 0, 0, 0.40);
+  }
+}
+
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 26px;
+  --space-7: 32px;
+  --space-8: 44px;
+  --space-9: 56px;
+  --space-10: 64px;
+  --bp-radius-drafted: 4px;
+  --bp-radius-sm: 10px;
+  --bp-radius-md: 18px;
+  --bp-radius-lg: 24px;
+  --bp-radius-xl: 30px;
+  --bp-radius-2xl: 34px;
+  --bp-radius-pill: 999px;
+}
+
+.bp-type-display-xl {
+  font-family: var(--font-display, "Bricolage Grotesque"), ui-sans-serif, system-ui, sans-serif;
+  font-size: 76px;
+  line-height: 0.98;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+.bp-type-display-l {
+  font-family: var(--font-display, "Bricolage Grotesque"), ui-sans-serif, system-ui, sans-serif;
+  font-size: 46px;
+  line-height: 1.06;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+.bp-type-heading-l {
+  font-family: var(--font-display, "Bricolage Grotesque"), ui-sans-serif, system-ui, sans-serif;
+  font-size: 38px;
+  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+.bp-type-heading-m {
+  font-family: var(--font-display, "Bricolage Grotesque"), ui-sans-serif, system-ui, sans-serif;
+  font-size: 27px;
+  line-height: 1.12;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.bp-type-heading-s {
+  font-family: var(--font-display, "Bricolage Grotesque"), ui-sans-serif, system-ui, sans-serif;
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.bp-type-wordmark {
+  font-family: var(--font-display, "Bricolage Grotesque"), ui-sans-serif, system-ui, sans-serif;
+  font-size: 23px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+.bp-type-lead {
+  font-family: var(--font-body, Figtree), ui-sans-serif, system-ui, sans-serif;
+  font-size: 21px;
+  line-height: 1.45;
+  font-weight: 400;
+}
+.bp-type-body {
+  font-family: var(--font-body, Figtree), ui-sans-serif, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+.bp-type-body-strong {
+  font-family: var(--font-body, Figtree), ui-sans-serif, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 700;
+}
+.bp-type-small {
+  font-family: var(--font-body, Figtree), ui-sans-serif, system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  font-weight: 500;
+}
+.bp-type-label {
+  font-family: var(--font-body, Figtree), ui-sans-serif, system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.3;
+  font-weight: 700;
+}
+.bp-type-caption {
+  font-family: var(--font-body, Figtree), ui-sans-serif, system-ui, sans-serif;
+  font-size: 12px;
+  line-height: 1.3;
+  font-weight: 700;
+}
