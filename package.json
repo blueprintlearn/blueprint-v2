@@ -18,7 +18,9 @@
     "test:e2e": "playwright test",
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
-    "db:types": "supabase gen types typescript --local > types/database.ts"
+    "db:types": "supabase gen types typescript --local > types/database.ts",
+    "tokens:build": "node scripts/build-blueprint-tokens.mjs",
+    "tokens:check": "node scripts/build-blueprint-tokens.mjs --check"
   },
   "dependencies": {
     "@sentry/nextjs": "11.5.0",
