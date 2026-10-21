@@ -8,6 +8,8 @@ import {
   CURRENT_DJ_COUNT_MIN,
 } from "@/lib/blueprint/team-today"
 
+import { fieldClassName, primaryButtonClassName } from "./ui"
+
 const initialState: SaveTeamTodayState = { error: null }
 
 export function TeamTodayForm({
@@ -26,7 +28,7 @@ export function TeamTodayForm({
       <label className="flex flex-col gap-1">
         Current DJ count
         <input
-          className="border px-3 py-2"
+          className={fieldClassName}
           defaultValue={currentDjCount === null ? "" : currentDjCount}
           max={CURRENT_DJ_COUNT_MAX}
           min={CURRENT_DJ_COUNT_MIN}
@@ -36,8 +38,12 @@ export function TeamTodayForm({
           type="number"
         />
       </label>
-      {state.error ? <p role="alert">{state.error}</p> : null}
-      <button className="border px-3 py-2" type="submit">
+      {state.error ? (
+        <p className="text-danger" role="alert">
+          {state.error}
+        </p>
+      ) : null}
+      <button className={primaryButtonClassName} type="submit">
         Save DJ count
       </button>
     </form>

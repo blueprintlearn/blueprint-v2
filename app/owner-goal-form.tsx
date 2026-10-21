@@ -10,6 +10,8 @@ import {
   type OwnerGoalCode,
 } from "@/lib/blueprint/goals"
 
+import { fieldClassName, primaryButtonClassName } from "./ui"
+
 const initialState: SaveOwnerGoalState = { error: null }
 
 export function OwnerGoalForm({
@@ -30,7 +32,12 @@ export function OwnerGoalForm({
     >
       <label className="flex flex-col gap-1">
         Owner goal
-        <select className="border px-3 py-2" defaultValue={ownerGoal ?? ""} name="ownerGoal" required>
+        <select
+          className={fieldClassName}
+          defaultValue={ownerGoal ?? ""}
+          name="ownerGoal"
+          required
+        >
           <option disabled value="">
             Select a goal
           </option>
@@ -44,15 +51,19 @@ export function OwnerGoalForm({
       <label className="flex flex-col gap-1">
         Other goal
         <input
-          className="border px-3 py-2"
+          className={fieldClassName}
           defaultValue={ownerGoalOther ?? ""}
           maxLength={OWNER_GOAL_OTHER_MAX_LENGTH}
           name="ownerGoalOther"
           type="text"
         />
       </label>
-      {state.error ? <p role="alert">{state.error}</p> : null}
-      <button className="border px-3 py-2" type="submit">
+      {state.error ? (
+        <p className="text-danger" role="alert">
+          {state.error}
+        </p>
+      ) : null}
+      <button className={primaryButtonClassName} type="submit">
         Save owner goal
       </button>
     </form>

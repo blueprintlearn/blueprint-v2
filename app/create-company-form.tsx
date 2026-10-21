@@ -4,6 +4,8 @@ import { useActionState } from "react"
 
 import { createCompany, type CreateCompanyState } from "@/lib/tenancy/actions"
 
+import { fieldClassName, primaryButtonClassName } from "./ui"
+
 const initialState: CreateCompanyState = { error: null }
 
 export function CreateCompanyForm() {
@@ -14,15 +16,19 @@ export function CreateCompanyForm() {
       <label className="flex flex-col gap-1">
         Company name
         <input
-          className="border px-3 py-2"
+          className={fieldClassName}
           name="name"
           required
           maxLength={80}
           type="text"
         />
       </label>
-      {state.error ? <p role="alert">{state.error}</p> : null}
-      <button className="border px-3 py-2" type="submit">
+      {state.error ? (
+        <p className="text-danger" role="alert">
+          {state.error}
+        </p>
+      ) : null}
+      <button className={primaryButtonClassName} type="submit">
         Create company
       </button>
     </form>

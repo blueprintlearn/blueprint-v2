@@ -3,7 +3,7 @@ import { signOut } from "@/lib/auth/actions"
 export function SignOutButton() {
   return (
     <form action={signOut}>
-      <button className="underline" type="submit">
+      <button className="text-sm text-mute underline" type="submit">
         Sign out
       </button>
     </form>
