@@ -1,0 +1,44 @@
+/* Blueprint tokens exposed to Tailwind v4 utilities: bg-paper, text-ink, bg-solid, rounded-bp-xl, shadow-bp-card, font-heading …
+   Names are chosen so no Tailwind theme variable has the same name as a Blueprint token (which would create a var() cycle). */
+@theme inline {
+  --color-brand: var(--brand);
+  --color-brand-deep: var(--brand-deep);
+  --color-on-brand: var(--text-on-brand);
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-surface-soft: var(--surface-soft);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-solid: var(--solid);
+  --color-on-solid: var(--text-on-solid);
+  --color-coral: var(--coral);
+  --color-on-coral: var(--text-on-coral);
+  --color-coral-text: var(--coral-text);
+  --color-blush: var(--blush);
+  --color-blush-ink: var(--blush-ink);
+  --color-butter: var(--butter);
+  --color-butter-ink: var(--butter-ink);
+  --color-mint: var(--mint);
+  --color-mint-ink: var(--mint-ink);
+  --color-sky: var(--sky);
+  --color-sky-ink: var(--sky-ink);
+  --color-lavender: var(--lavender);
+  --color-lavender-ink: var(--lavender-ink);
+  --color-danger: var(--danger);
+  --color-danger-ink: var(--danger-ink);
+  --color-focus: var(--focus);
+
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-display);
+
+  --radius-bp-drafted: var(--radius-drafted);
+  --radius-bp-sm: var(--radius-sm);
+  --radius-bp-md: var(--radius-md);
+  --radius-bp-lg: var(--radius-lg);
+  --radius-bp-xl: var(--radius-xl);
+  --radius-bp-2xl: var(--radius-2xl);
+
+  --shadow-bp-card: var(--shadow-card);
+}
