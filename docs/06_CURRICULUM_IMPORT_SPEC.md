@@ -27,7 +27,7 @@ About 20–30 lessons:
 1. `beatmixing-basics` — 5 lessons, Vimeo, assignment upload, no quizzes
 2. `how-to-train-an-event-dj-2` — 9 lessons, 8 quizzes, 27 single-choice questions
 3. `onboarding-for-instructors` — 6 lessons, private course, 1 quiz, 1 assignment
-4. One edge course: `soundswitch-tutorial` (multiple-choice) **or** `the-master-mc-2` (matrix sort)
+4. Edge course: `the-master-mc-2` — 10 lessons, 4 quizzes, 18 questions, including `matrix_sort_answer`, and 3 assignment-upload lessons
 
 This is enough to prove course → lesson → video → quiz → assignment without Event DJ Foundations (77 lessons) or Event Assistant (42).
 
@@ -52,11 +52,14 @@ Rules from the constitutions:
 
 Bravo will not write competency verifications or advancement rows.
 
-## Open decisions (David)
+## Decisions (David, 2026-10-21)
 
-1. Land `scripts/data/` on `main` via `curriculum-learndash-export`, or keep the export off `main` until the importer exists.
-2. First edge course: SoundSwitch or Master MC.
-3. Hosted staging import: only after a named migrate yes. Never production seed.
+1. Raw exports stay off `main`.
+2. Edge course is The Master MC.
+
+## Still requires a named yes
+
+Hosted staging import. Never production seed.
 
 ## Out of scope until a later Bravo slice
 
