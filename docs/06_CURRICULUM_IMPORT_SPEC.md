@@ -6,7 +6,9 @@ Source of truth for product rules remains `docs/01`–`05`. This spec only says 
 
 ## Canonical export
 
-Use `scripts/data/learndash-export-production.json` (Cloudways LearnDash, generated 2026-08-03). It is on branch `curriculum-learndash-export` (`7129e75`) and is **not** on `main` yet.
+Use `scripts/data/learndash-export-production.json` (Cloudways LearnDash, generated 2026-08-03). It is on branch `curriculum-learndash-export` (`7129e75`).
+
+Raw LearnDash exports stay off `main`. They contain learner submissions and quiz answer keys. Any later importer must read the export from outside `main`, and only a reviewed, sanitized subset may ever be committed.
 
 Treat `scripts/data/learndash-export-v2-verified.json` as a different demo site. Use it for schema notes only.
 
