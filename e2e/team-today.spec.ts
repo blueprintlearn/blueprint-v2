@@ -160,8 +160,8 @@ test.describe("team today in the browser", () => {
   test("Company A owner can save a trainer count that Company B cannot see", async ({
     page,
   }) => {
-    const uniqueTrainers = "8"
-    const nextTrainers = "2"
+    const uniqueTrainers = "731"
+    const nextTrainers = "56"
 
     await signIn(page, "owner-a@blueprint.test")
     await expect(page.getByText("Trainers today:")).toBeVisible()
