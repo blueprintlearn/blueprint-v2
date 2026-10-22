@@ -93,8 +93,21 @@ describe("Blueprint components render and keep their accessibility promises", ()
   })
 
   it("TenantBrandScope scopes validated overrides and writes nothing for invalid input", () => {
-    expect(html(h(TenantBrandScope, { brand: { primary: "#FFD400" }, children: "x" }))).toContain("[data-tenant-brand] {")
-    expect(html(h(TenantBrandScope, { brand: { primary: "</style><script>" }, children: "x" }))).not.toContain("<style")
+    const out = html(h(TenantBrandScope, { brand: { primary: "#FFD400" }, children: "x" }))
+    expect(out).toContain('<div data-tenant-brand="FFD400-none">')
+    expect(out).toContain('[data-tenant-brand="FFD400-none"] {')
+    const hostile = html(h(TenantBrandScope, { brand: { primary: "</style><script>" }, children: "x" }))
+    expect(hostile).not.toContain("<style")
+    expect(hostile).not.toContain("<script")
+    expect(hostile).toContain('data-tenant-brand="none-none"')
+  })
+
+  it("TenantBrandScope keeps two brands on one page from restyling each other", () => {
+    const teal = html(h(TenantBrandScope, { brand: { primary: "#0F766E" }, children: "a" }))
+    const orange = html(h(TenantBrandScope, { brand: { primary: "#C2410C" }, children: "b" }))
+    const selectors = (out: string) => new Set([...out.matchAll(/\[data-tenant-brand="([^"]+)"\]/g)].map((m) => m[1]))
+    expect([...selectors(teal)]).toEqual(["0F766E-none"])
+    expect([...selectors(orange)]).toEqual(["C2410C-none"])
   })
 })
 

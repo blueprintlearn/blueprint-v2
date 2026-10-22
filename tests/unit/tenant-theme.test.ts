@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs"
+import path from "node:path"
 import { describe, expect, it } from "vitest"
 
 import {
@@ -6,6 +8,7 @@ import {
   MIN_UI,
   computeTenantTheme,
   contrastRatio,
+  tenantBrandKey,
   tenantThemeCss,
 } from "@/lib/brand/tenant-theme"
 
@@ -27,7 +30,9 @@ describe("computeTenantTheme", () => {
     // motif lines follow the solid at Blueprint's own strengths (0.42 and 0.55)
     expect(t.light.hatch).toBe("#2538606B")
     expect(t.light.draft).toBe("#2538608C")
-    expect(t.dark.hatch).toBeUndefined()
+    // dark keeps Blueprint's cream motif, restated so the light overrides cannot leak into it
+    expect(t.dark.solid).toBe(BLUEPRINT_DEFAULTS.dark.solid)
+    expect(t.dark.hatch).toBe(BLUEPRINT_DEFAULTS.dark.hatch)
     expect(t.report.allPass).toBe(true)
   })
 
@@ -109,5 +114,93 @@ describe("tenantThemeCss", () => {
 
   it("writes nothing for a full fallback", () => {
     expect(tenantThemeCss(computeTenantTheme({ primary: "not-a-color" }))).toBe("")
+  })
+
+  it("restates the cream motif in every dark block, so light overrides never reach dark theme", () => {
+    const css = tenantThemeCss(computeTenantTheme({ primary: "#0F766E" }))
+    const explicitDark = css.slice(css.indexOf('[data-theme="dark"]'), css.indexOf("@media"))
+    const systemDark = css.slice(css.indexOf("@media"))
+    for (const block of [explicitDark, systemDark]) {
+      expect(block.length).toBeGreaterThan(0)
+      expect(block).toContain(`--solid: ${BLUEPRINT_DEFAULTS.dark.solid};`)
+      expect(block).toContain(`--text-on-solid: ${BLUEPRINT_DEFAULTS.ink};`)
+      expect(block).toContain(`--hatch: ${BLUEPRINT_DEFAULTS.dark.hatch};`)
+      expect(block).toContain(`--draft: ${BLUEPRINT_DEFAULTS.dark.draft};`)
+    }
+  })
+
+  it("accepts only the tenant brand attribute as a scope", () => {
+    const theme = computeTenantTheme({ primary: "#0F766E" })
+    expect(tenantThemeCss(theme, '[data-tenant-brand="0F766E-none"]')).toContain('[data-tenant-brand="0F766E-none"] {')
+    for (const scope of ["body", "*", '[data-tenant-brand="x"], *', '[data-tenant-brand="a"]{}', '[data-tenant-brand="</style>"]']) {
+      expect(() => tenantThemeCss(theme, scope)).toThrow("Unsafe tenant brand scope")
+    }
+  })
+})
+
+describe("dark theme for customer brands", () => {
+  it("keeps Blueprint cream for solid, hatch and draft across 600 random brand colors", () => {
+    let seed = 7
+    const rand = () => {
+      seed = (seed * 1103515245 + 12345) % 2 ** 31
+      return seed / 2 ** 31
+    }
+    const hex = () => "#" + Math.floor(rand() * 0xffffff).toString(16).padStart(6, "0").toUpperCase()
+    for (let i = 0; i < 600; i++) {
+      const t = computeTenantTheme({ primary: hex(), accent: hex() })
+      if (t.report.primary.fallback) {
+        expect(t.light.solid).toBeUndefined()
+        continue
+      }
+      expect(t.dark.solid).toBe(BLUEPRINT_DEFAULTS.dark.solid)
+      expect(t.dark["text-on-solid"]).toBe(BLUEPRINT_DEFAULTS.ink)
+      expect(t.dark.hatch).toBe(BLUEPRINT_DEFAULTS.dark.hatch)
+      expect(t.dark.draft).toBe(BLUEPRINT_DEFAULTS.dark.draft)
+      const darkSolidChecks = t.report.checks.filter((c) => c.theme === "dark" && c.pair.includes("solid"))
+      expect(darkSolidChecks).toHaveLength(3)
+      expect(darkSolidChecks.every((c) => c.pass)).toBe(true)
+    }
+  })
+})
+
+describe("tenantBrandKey", () => {
+  it("is stable, case-insensitive, and made only of safe characters", () => {
+    expect(tenantBrandKey({ primary: "#0f766e", accent: "#F97316" })).toBe("0F766E-F97316")
+    expect(tenantBrandKey({ primary: "#0F766E" })).toBe("0F766E-none")
+    expect(tenantBrandKey({ primary: '"]{}</style>', accent: "url(x)" })).toBe("none-none")
+    expect(tenantBrandKey({})).toBe("none-none")
+  })
+})
+
+describe("Blueprint defaults mirror design-tokens/tokens.json", () => {
+  type Token = { name: string; value: string | { light: string; dark: string } }
+  const tokens: { color: { tokens: Token[] } } = JSON.parse(
+    readFileSync(path.resolve(__dirname, "../../design-tokens/tokens.json"), "utf8"),
+  )
+  const value = (name: string, theme: "light" | "dark") => {
+    const v = tokens.color.tokens.find((t) => t.name === name)!.value
+    return typeof v === "string" ? v : v[theme]
+  }
+  const rgbaToHex8 = (rgba: string) => {
+    const [r, g, b, a] = rgba.match(/[\d.]+/g)!.map(Number)
+    return "#" + [r, g, b, Math.round(a * 255)].map((n) => n.toString(16).padStart(2, "0")).join("").toUpperCase()
+  }
+
+  it("matches every default the engine relies on", () => {
+    const D = BLUEPRINT_DEFAULTS
+    expect(D.brand).toBe(value("brand", "light"))
+    expect(D.ink).toBe(value("ink", "light"))
+    expect(D.ink).toBe(value("text-on-solid", "dark"))
+    for (const theme of ["light", "dark"] as const) {
+      expect(D[theme].paper).toBe(value("paper", theme))
+      expect(D[theme].surface).toBe(value("surface", theme))
+      expect(D[theme].surfaceSoft).toBe(value("surface-soft", theme))
+      expect(D[theme].coral).toBe(value("coral", theme))
+      expect(D[theme].coralText).toBe(value("coral-text", theme))
+    }
+    expect(D.dark.brandDeep).toBe(value("brand-deep", "dark"))
+    expect(D.dark.solid).toBe(value("solid", "dark"))
+    expect(D.dark.hatch).toBe(rgbaToHex8(value("hatch", "dark")))
+    expect(D.dark.draft).toBe(rgbaToHex8(value("draft", "dark")))
   })
 })

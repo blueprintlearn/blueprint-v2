@@ -66,7 +66,17 @@ export const BLUEPRINT_DEFAULTS = {
   ink: "#1B2742",
   white: "#FFFFFF",
   light: { paper: "#F8F5EF", surface: "#FFFFFF", surfaceSoft: "#F0EBE2", coral: "#EE6A47", coralText: "#B13E1D" },
-  dark: { paper: "#0F1626", surface: "#172238", surfaceSoft: "#1E2A44", coral: "#FF8A66", coralText: "#FF9C7C", brandDeep: "#22345A" },
+  dark: {
+    paper: "#0F1626",
+    surface: "#172238",
+    surfaceSoft: "#1E2A44",
+    coral: "#FF8A66",
+    coralText: "#FF9C7C",
+    brandDeep: "#22345A",
+    solid: "#F1ECE2",
+    hatch: "#F4F0E866",
+    draft: "#F4F0E880",
+  },
 } as const
 
 /** WCAG thresholds used throughout. */
@@ -232,6 +242,12 @@ export function computeTenantTheme(input: TenantBrandInput): TenantTheme {
       // (42% and 55%). They are decorative companions to a text label, so no contrast minimum applies.
       light.hatch = `${lightSolid!.color}6B`
       light.draft = `${lightSolid!.color}8C`
+      // The light overrides above sit on the scope element, so they would also apply in dark
+      // theme. Dark keeps Blueprint's cream motif for every customer, so restate it here.
+      dark.solid = D.dark.solid
+      dark["text-on-solid"] = D.ink
+      dark.hatch = D.dark.hatch
+      dark.draft = D.dark.draft
       dark.brand = p
       dark["brand-deep"] = darkBrand!.color
       dark["text-on-brand"] = D.white
@@ -284,12 +300,10 @@ export function computeTenantTheme(input: TenantBrandInput): TenantTheme {
     check(theme, "text-on-brand / brand-deep", t["text-on-brand"] ?? D.white, brandDeep, MIN_TEXT)
     check(theme, "text-on-brand-muted / brand-deep", t["text-on-brand-muted"] ?? "#DCE4F3", brandDeep, MIN_TEXT)
     if (theme === "dark") check(theme, "brand-deep / paper (panel separation)", brandDeep, g.paper, MIN_PANEL_SEPARATION)
-    if (theme === "light") {
-      const solid = t.solid ?? D.brand
-      check(theme, "text-on-solid / solid", t["text-on-solid"] ?? D.white, solid, MIN_TEXT)
-      check(theme, "solid / paper", solid, g.paper, MIN_UI)
-      check(theme, "solid / surface", solid, g.surface, MIN_UI)
-    }
+    const solid = t.solid ?? (theme === "light" ? D.brand : D.dark.solid)
+    check(theme, "text-on-solid / solid", t["text-on-solid"] ?? (theme === "light" ? D.white : D.ink), solid, MIN_TEXT)
+    check(theme, "solid / paper", solid, g.paper, MIN_UI)
+    check(theme, "solid / surface", solid, g.surface, MIN_UI)
     const coral = t.coral ?? g.coral
     check(theme, "text-on-coral / coral", t["text-on-coral"] ?? D.ink, coral, MIN_TEXT)
     const coralText = t["coral-text"] ?? g.coralText
@@ -302,6 +316,17 @@ export function computeTenantTheme(input: TenantBrandInput): TenantTheme {
 }
 
 const CSS_SAFE = /^#[0-9A-F]{6}([0-9A-F]{2})?$/
+const SCOPE_SAFE = /^\[data-tenant-brand(="[0-9A-Za-z_-]{1,64}")?\]$/
+
+/**
+ * A stable attribute value for one brand input. The CSS is a pure function of the validated
+ * colors, so equal keys always carry equal CSS, and scopes with different colors on the same
+ * page never restyle each other.
+ */
+export function tenantBrandKey(input: TenantBrandInput): string {
+  const part = (v: string | null | undefined) => (isHexColor(v) ? normalizeHex(v).slice(1) : "none")
+  return `${part(input.primary)}-${part(input.accent)}`
+}
 
 function block(selector: string, vars: Partial<Record<OverridableToken, string>>): string {
   const lines = Object.entries(vars)
@@ -314,8 +339,10 @@ function block(selector: string, vars: Partial<Record<OverridableToken, string>>
  * CSS text that applies a tenant theme inside elements carrying `data-tenant-brand`.
  * Works with an explicit `data-theme` on <html> (or the scope) and with the system setting.
  * Only validated #RRGGBB values are ever written, so the output is safe to inline in <style>.
+ * The scope must be `[data-tenant-brand]` or `[data-tenant-brand="<key>"]`; anything else throws.
  */
 export function tenantThemeCss(theme: TenantTheme, scope = "[data-tenant-brand]"): string {
+  if (!SCOPE_SAFE.test(scope)) throw new Error("Unsafe tenant brand scope")
   const darkScopes = `[data-theme="dark"] ${scope}, ${scope}[data-theme="dark"]`
   const parts = [
     block(scope, theme.light),
