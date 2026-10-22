@@ -146,3 +146,14 @@
 .bp-tabbar__item{text-decoration:none}
 .bp-decision__error{margin:0;font-size:14px;font-weight:600;color:var(--danger-ink)}
 .bp-btn[aria-busy="true"]{cursor:progress;opacity:.75}
+
+/* ---------- Touch targets: every control answers to at least 44 × 44px; the drawn size is unchanged ---------- */
+.bp-btn--sm,.bp-nav__tab,.bp-nav__ws,.bp-nav__icon,.bp-nav__me,.bp-link{position:relative}
+.bp-btn--sm::after,.bp-nav__tab::after,.bp-nav__ws::after,.bp-nav__icon::after,.bp-nav__me::after,.bp-link::after{content:"";position:absolute;top:50%;left:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%)}
+
+/* ---------- TopNav controls as links, and as static content until configured ---------- */
+.bp-nav__ws,.bp-nav__icon,.bp-nav__me{text-decoration:none}
+.bp-nav a:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+.bp-nav__static{cursor:default}
+.bp-nav__static::after{content:none}
+.bp-nav__icon.bp-nav__static:hover{background:transparent}
