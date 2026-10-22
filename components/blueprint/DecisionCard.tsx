@@ -7,7 +7,30 @@ import { Chip, type Tone } from "./Chip"
 import { cx } from "./cx"
 import { Icon } from "./icons"
 
-type CardState = "open" | "confirm" | "done"
+export type CardState = "open" | "confirm" | "done"
+
+export const DECIDE_FAILED = "That didn’t save. Nothing was changed. Try again."
+export const UNDO_FAILED = "Undo didn’t save. The decision still stands. Try again."
+
+type DecisionAction = (() => void | Promise<void>) | undefined
+
+/**
+ * The only way a DecisionCard changes state after a click. Done is reached only when onDecide
+ * completes; open is reached again only when onUndo completes. A missing handler changes nothing.
+ */
+export async function runDecisionStep(
+  step: "decide" | "undo",
+  action: DecisionAction,
+  from: CardState,
+): Promise<{ state: CardState; error: string | null }> {
+  if (typeof action !== "function") return { state: from, error: null }
+  try {
+    await action()
+    return { state: step === "decide" ? "done" : "open", error: null }
+  } catch {
+    return { state: from, error: step === "decide" ? DECIDE_FAILED : UNDO_FAILED }
+  }
+}
 
 export type DecisionCardProps = {
   tone?: Tone
@@ -17,14 +40,16 @@ export type DecisionCardProps = {
   /** The evidence slot between kicker and title: an Avatar row, a quote, a MessageBubble. */
   children?: ReactNode
   primaryLabel?: string
+  /** Shown only together with onSecondary. */
   secondaryLabel?: string
   onSecondary?: () => void
   /**
    * Performs the decision (e.g. a server action). May be async. If it throws, the card returns to
    * its previous state and shows an error; nothing is shown as done unless this resolves.
+   * Without it the primary action is disabled.
    */
   onDecide?: () => void | Promise<void>
-  /** Reverses a reversible decision. Never offered for consequential ones. */
+  /** Reverses a reversible decision. Undo is offered only when this is set, never for consequential ones. */
   onUndo?: () => void | Promise<void>
   /**
    * Hiring, advancement, overrides, pay: asks for confirmation first, and the done state shows
@@ -91,26 +116,25 @@ export function DecisionCard({
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  async function run(action: (() => void | Promise<void>) | undefined, next: CardState, fallback: CardState) {
+  const canDecide = typeof onDecide === "function"
+  const canUndo = !consequential && typeof onUndo === "function"
+
+  async function run(step: "decide" | "undo", action: DecisionAction) {
     setPending(true)
     setError(null)
-    try {
-      await action?.()
-      setState(next)
-    } catch {
-      setState(fallback)
-      setError("That didn’t save. Nothing was changed. Try again.")
-    } finally {
-      setPending(false)
-    }
+    const result = await runDecisionStep(step, action, state)
+    setState(result.state)
+    setError(result.error)
+    setPending(false)
   }
 
   function primary() {
+    if (!canDecide) return
     if (consequential && state === "open") {
       setState("confirm")
       return
     }
-    void run(onDecide, "done", state)
+    void run("decide", onDecide)
   }
 
   if (state === "done") {
@@ -134,17 +158,18 @@ export function DecisionCard({
               </button>
             ) : null}
           </p>
-        ) : (
+        ) : canUndo ? (
           <button
             type="button"
             className="bp-link"
             style={{ alignSelf: "flex-start" }}
             disabled={pending}
-            onClick={() => void run(onUndo, "open", "done")}
+            aria-busy={pending}
+            onClick={() => void run("undo", onUndo)}
           >
             Undo
           </button>
-        )}
+        ) : null}
         {error ? (
           <p className="bp-decision__error" role="alert">
             {error}
@@ -172,19 +197,19 @@ export function DecisionCard({
             <Button variant="plain" disabled={pending} onClick={() => setState("open")}>
               Cancel
             </Button>
-            <Button variant="primary" aria-busy={pending} disabled={pending} onClick={primary}>
+            <Button variant="primary" aria-busy={pending} disabled={pending || !canDecide} onClick={primary}>
               {confirmLabel}
             </Button>
           </div>
         </div>
       ) : (
         <div className="bp-card__actions">
-          {secondaryLabel ? (
+          {secondaryLabel && onSecondary ? (
             <Button variant="soft" disabled={pending} onClick={onSecondary}>
               {secondaryLabel}
             </Button>
           ) : null}
-          <Button variant="primary" aria-busy={pending} disabled={pending} onClick={primary}>
+          <Button variant="primary" aria-busy={pending} disabled={pending || !canDecide} onClick={primary}>
             {primaryLabel}
           </Button>
         </div>

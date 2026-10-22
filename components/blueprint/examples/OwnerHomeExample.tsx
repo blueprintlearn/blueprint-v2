@@ -37,7 +37,16 @@ const TABS: TabItem[] = [
 export function OwnerHomeExample() {
   return (
     <div className="bp-root min-h-full flex flex-col">
-      <TopNav items={NAV} workspace="Riverside DJ Co." alerts={3} userInitial="D" />
+      <TopNav
+        items={NAV}
+        workspace="Riverside DJ Co."
+        workspaceHref="/settings/company"
+        alerts={3}
+        notificationsHref="/notifications"
+        userInitial="D"
+        accountHref="/account"
+        searchHref="/search"
+      />
       <main className="mx-auto flex w-full max-w-[1240px] flex-col gap-16 px-4 pb-11 md:px-8">
         <section className="pt-14">
           <p className="bp-type-small text-muted">Wednesday, October 21</p>
@@ -58,6 +67,9 @@ export function OwnerHomeExample() {
               title="Jake is ready to become an Assistant DJ"
               body="Three observed events, every requirement backed by evidence, and Sarah Kim says he’s ready."
               secondaryLabel="See his evidence"
+              onSecondary={() => {
+                /* router.push(`/people/${jake.id}/evidence`) */
+              }}
               primaryLabel="Approve Jake"
               consequential
               celebrate
@@ -77,7 +89,13 @@ export function OwnerHomeExample() {
               kicker="Could use a nudge"
               title="A quick note from you usually does it"
               secondaryLabel="Edit message"
+              onSecondary={() => {
+                /* open the message editor */
+              }}
               primaryLabel="Send to Devon"
+              onDecide={async () => {
+                /* await sendNudge(...) — server action sends the drafted message */
+              }}
               doneKicker="Message sent"
               doneTitle="Devon heard from you"
               doneBody="Blueprint will check in Friday."
