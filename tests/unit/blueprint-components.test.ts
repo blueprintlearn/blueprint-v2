@@ -17,6 +17,7 @@ import {
   runDecisionStep,
   SeatMap,
   StatusTag,
+  TenantBrandScope,
   TopNav,
   UNDO_FAILED,
 } from "@/components/blueprint"
@@ -89,6 +90,11 @@ describe("Blueprint components render and keep their accessibility promises", ()
     expect(tabs).toContain('aria-current="page"')
     expect(tabs).toContain("9+")
     expect(tabs).toContain(", 12 need you")
+  })
+
+  it("TenantBrandScope scopes validated overrides and writes nothing for invalid input", () => {
+    expect(html(h(TenantBrandScope, { brand: { primary: "#FFD400" }, children: "x" }))).toContain("[data-tenant-brand] {")
+    expect(html(h(TenantBrandScope, { brand: { primary: "</style><script>" }, children: "x" }))).not.toContain("<style")
   })
 })
 
