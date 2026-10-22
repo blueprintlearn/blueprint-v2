@@ -2,9 +2,9 @@ name: CI
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, production]
   push:
-    branches: [main]
+    branches: [main, production]
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -14,6 +14,26 @@ permissions:
   contents: read
 
 jobs:
+  # Production only ever receives main. Branch names come in through env,
+  # never interpolated into the script, so a hostile branch name cannot run.
+  production-source:
+    name: production-source
+    if: ${{ github.event_name == 'pull_request' && github.base_ref == 'production' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Require main from this repository as the source
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          set -euo pipefail
+          if [ "$HEAD_REF" != "main" ] || [ "$HEAD_REPO" != "$GITHUB_REPOSITORY" ]; then
+            echo "Pull requests into production must come from main in $GITHUB_REPOSITORY (got $HEAD_REPO:$HEAD_REF)" >&2
+            exit 1
+          fi
+          echo "Source is $HEAD_REPO:$HEAD_REF"
+
   prove:
     name: prove
     runs-on: ubuntu-24.04
