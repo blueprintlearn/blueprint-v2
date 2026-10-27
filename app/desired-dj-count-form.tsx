@@ -8,6 +8,8 @@ import {
   DESIRED_DJ_COUNT_MIN,
 } from "@/lib/blueprint/team-today"
 
+import { fieldClassName, primaryButtonClassName } from "./ui"
+
 const initialState: SaveDesiredDjCountState = { error: null }
 
 export function DesiredDjCountForm({
@@ -26,7 +28,7 @@ export function DesiredDjCountForm({
       <label className="flex flex-col gap-1">
         Desired DJ count
         <input
-          className="border px-3 py-2"
+          className={fieldClassName}
           defaultValue={desiredDjCount === null ? "" : desiredDjCount}
           max={DESIRED_DJ_COUNT_MAX}
           min={DESIRED_DJ_COUNT_MIN}
@@ -36,8 +38,12 @@ export function DesiredDjCountForm({
           type="number"
         />
       </label>
-      {state.error ? <p role="alert">{state.error}</p> : null}
-      <button className="border px-3 py-2" type="submit">
+      {state.error ? (
+        <p className="text-danger" role="alert">
+          {state.error}
+        </p>
+      ) : null}
+      <button className={primaryButtonClassName} type="submit">
         Save desired DJ count
       </button>
     </form>
