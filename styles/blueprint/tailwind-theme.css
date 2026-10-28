@@ -8,6 +8,7 @@
   --color-surface: var(--surface);
   --color-surface-soft: var(--surface-soft);
   --color-line: var(--line);
+  --color-control-border: var(--control-border);
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
   --color-muted: var(--muted);

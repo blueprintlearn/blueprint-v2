@@ -11,6 +11,7 @@
   --surface: #FFFFFF;
   --surface-soft: #F0EBE2;
   --line: #E5DED3;
+  --control-border: #807B73;
   --ink: #1B2742;
   --ink-2: #3D4862;
   --muted: #5B6374;
@@ -51,6 +52,7 @@
   --surface: #172238;
   --surface-soft: #1E2A44;
   --line: #2A3651;
+  --control-border: #6E7C97;
   --ink: #F4F0E8;
   --ink-2: #D2D6DF;
   --muted: #A3ACBD;
@@ -92,6 +94,7 @@
     --surface: #172238;
     --surface-soft: #1E2A44;
     --line: #2A3651;
+    --control-border: #6E7C97;
     --ink: #F4F0E8;
     --ink-2: #D2D6DF;
     --muted: #A3ACBD;

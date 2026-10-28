@@ -1,6 +1,6 @@
 # Blueprint V2 — Design System
 
-> Design-system reference (v1.1, approved by David Osborne on 2026-10-21). Visual and interaction rules only; the Product Constitution, Engineering Constitution, Data Model and Golden Paths take precedence. Where this document and the Engineering Constitution disagree on implementation (architecture, tenant isolation, testing, security, dependencies), the Engineering Constitution wins.
+> Design-system reference (v1.2, approved by David Osborne on 2026-10-28; v1.1 on 2026-10-21). Visual and interaction rules only; the Product Constitution, Engineering Constitution, Data Model and Golden Paths take precedence. Where this document and the Engineering Constitution disagree on implementation (architecture, tenant isolation, testing, security, dependencies), the Engineering Constitution wins.
 >
 > Values live in `design-tokens/tokens.json`. `styles/blueprint/tokens.css` is generated from it with `pnpm tokens:build`, and CI fails if it drifts (`pnpm tokens:check`).
 
@@ -25,6 +25,22 @@ Blueprint helps DJ-company owners build the team they need: hire, train, verify,
 - **Numbers come with meaning:** "12 of 12 competencies proven", "4 days past due", "40 things Blueprint handled for you this week". Spell out small counts in prose ("Three things need you today").
 - **No emoji in the interface.** Celebration comes from the confetti burst on a DecisionCard and the words.
 - **Use the product's own terms:** Company Blueprint, Talent Role, Competency, Development Path, Evidence, Advancement. Nav tabs are Home, People, Development, Recruiting, Library.
+- **Never show internal values:** no database codes, enum names, ids, `null` or `snake_case` anywhere a customer can see it. Map them to the words below.
+- **Labels have no colons and no "Your X: X" echoes.** If the card says "Your goal", the value is just "Scale".
+
+### Role labels
+
+**System roles** (what someone can do in Blueprint) have fixed display names. Show the role only where it changes what the person sees or can do, as plain small text, never as a chip that looks like a status.
+
+| System role (code) | Show as | Describes |
+| --- | --- | --- |
+| `owner_admin` | Owner | Runs the company account; can change company settings and approve advancement |
+| `manager` | Manager | Runs day-to-day development; reviews evidence |
+| `trainer_mentor` | Trainer | Evaluates and coaches trainees at events |
+| `dj_trainee` | DJ | Learns, practices and proves skills |
+| `applicant` (planned) | Applicant | Applying to join the company |
+
+**Talent roles** (Assistant DJ, Wedding Lead DJ, Trainer, Mentor…) are company-defined, and are shown exactly as the company names them. Never present a system role as a talent role or the other way round: "Trainer" the permission and "Trainer" the qualification are different things. Where both could appear, say "Access: Trainer" vs. "Role: Wedding Lead DJ".
 
 ## Color
 
@@ -34,6 +50,7 @@ Blueprint helps DJ-company owners build the team they need: hire, train, verify,
 - **Coral** is the secondary accent and the important-action color. Use one `coral` button per view, notification pips, and the hatched highlight under a key word (`.bp-hl`). When coral is text, use `coral-text`.
 - **Tints carry meaning, never decoration.** `blush` is advancement and celebration, `butter` is hiring and gentle attention, `sky` is nudges and info, `mint` is success and on track, `lavender` is training content, `danger` is errors only. Text on a tint uses `ink`, `ink-2`, `muted` or that tint's own `*-ink`. A chip on a card of the same tint sits on white (`onTint`).
 - **Status is never color alone.** Every status has a word, and errors also get an icon.
+- **Form controls** use `control-border` (3:1 or better on every surface in both themes), never `line`. Hover darkens to `ink`, errors turn `danger-ink`, and focus adds the `focus` ring.
 
 ## Type
 
@@ -58,6 +75,29 @@ Blueprint helps DJ-company owners build the team they need: hire, train, verify,
 - **Cards and radius:** cards use `bp-radius-xl` and feature panels `bp-radius-2xl`. Buttons, chips and tabs are pills. White cards get `shadow-card`; tinted cards don't. In CSS the radius tokens are `var(--bp-radius-*)`; in Tailwind use `rounded-bp-*`. Tailwind's own `rounded-sm` … `rounded-2xl` keep Tailwind's values, because no Blueprint custom property may share a name with a Tailwind default theme variable (a unit test enforces this).
 - **Touch targets** are at least 44px. Every interactive element shows a 2px `focus` ring at a 3px offset.
 
+## Forms
+
+- **Build every input from TextField, NumberField or Select.** Never use raw `<input>` or `<select>` styling.
+- **Anatomy:** label (body-strong, sentence case, no colon), then optional help (one short sentence, `muted`), then the 48px control, then the error.
+- **Required by default.** Label optional fields "Optional". Never use asterisks.
+- **Help text answers "why are you asking?"** in the owner's terms. Placeholders show an example ("e.g. 6"), never the only instruction.
+- **Errors** appear after a submit attempt. They're specific about what to do ("Enter a whole number from 0 to 999."), sit under the field in `danger-ink` with an alert icon, and set `aria-invalid` and `aria-describedby`.
+- **Layout:** one column on phones. Related short fields (two counts) can share a row on desktop.
+- **Buttons:** one primary button per card. When a card holds several small independent forms, each Save is `soft` and `sm`, sitting in a row with its SaveStatus. A card with one form uses one primary Save.
+- **Reveal, don't clutter:** a field that only applies to one choice (like "Other goal") appears only when that choice is selected.
+- **Editors see fields, viewers see Facts.** Never show both for the same value.
+- **In code:** `TextField`, `NumberField`, `Select`, `Fact` and `SaveStatus` live in `components/blueprint/` and are exported from `@/components/blueprint`. Server actions that save a form return `{ error, savedAt }` so the form can tell a confirmed save from the initial state.
+
+## Empty values and saving
+
+- **Empty is quiet.** A value that was never saved shows "Not set yet" (or something more specific, like "No goal chosen yet") in 16px `muted` body text, using Fact. It never appears at headline size, as a dash, as "0", or as `null`.
+- **Zero is a real answer.** A saved 0 shows "0" at full size. Code must keep NULL (never saved) and 0 (saved zero) distinct end to end.
+- **Empty fields show a placeholder example**, not a fake default.
+- **Saving:** the Save button is disabled with `aria-busy` while the request runs and keeps its label. SaveStatus reads "Saving…".
+- **Saved:** only after the server confirms, SaveStatus shows a check and "Saved" in `mint-ink` beside the button. It stays until that form is edited again, never on a timer.
+- **Failed:** the field shows the error, nothing is shown as saved, and the previous value is kept.
+- **No toasts for routine saves.** Celebration (confetti, coral) is reserved for real progress such as an advancement or a hire.
+
 ## Imagery and iconography
 
 - **Logo:** the B mark (navy tile, sketched B in a drafting frame) beside the wordmark "Blueprint" in Bricolage Grotesque. See the Logos group. Use the mark as supplied; a cleaner redraw is planned separately.
@@ -69,7 +109,6 @@ Blueprint helps DJ-company owners build the team they need: hire, train, verify,
 - Text meets WCAG AA (4.5:1) in both themes on every ground and tint it's documented for. Small labels on colored cards use the tint's `*-ink` or sit on a white chip.
 - Interactive elements are real buttons and links. Icon-only buttons carry an `aria-label`.
 - Motion is minimal: no animation is required to understand anything, and the confetti burst is static.
-
 
 ## Customer branding
 
