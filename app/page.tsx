@@ -7,6 +7,7 @@ import { getCurrentMembership } from "@/lib/tenancy/queries"
 import { AuthLinks } from "./auth-links"
 import { CreateCompanyForm } from "./create-company-form"
 import { DesiredDjCountForm } from "./desired-dj-count-form"
+import { OwnerGoalCard, OwnerHomeHeader, TeamTodayCard } from "./owner-home"
 import { OwnerGoalForm } from "./owner-goal-form"
 import { SignOutButton } from "./sign-out-button"
 import { TeamTodayForm } from "./team-today-form"
@@ -20,6 +21,56 @@ export default async function HomePage() {
   const teamToday = membership ? await getCurrentTeamToday() : null
   const ownerGoalLabel = ownerGoal ? OWNER_GOAL_LABELS[ownerGoal.ownerGoal] : "Not set"
 
+  if (membership) {
+    const canEdit = membership.role === OWNER_ADMIN_ROLE
+
+    return (
+      <main className="mx-auto flex w-full max-w-[1120px] flex-1 flex-col gap-10 px-4 pt-6 pb-16 md:gap-14 md:px-8 md:pt-8">
+        <OwnerHomeHeader
+          companyName={membership.companyName}
+          role={membership.role}
+          actions={<SignOutButton />}
+        />
+        <div className="grid items-start gap-6 lg:grid-cols-2">
+          <TeamTodayCard
+            currentDjCount={teamToday == null ? null : teamToday.currentDjCount}
+            desiredDjCount={teamToday == null ? null : teamToday.desiredDjCount}
+            editor={
+              canEdit ? (
+                <div
+                  key={`team-today:${membership.companyId}:${teamToday == null ? "" : teamToday.currentDjCount}:${teamToday?.desiredDjCount ?? ""}`}
+                  className="flex flex-col gap-6"
+                >
+                  <TeamTodayForm
+                    currentDjCount={teamToday == null ? null : teamToday.currentDjCount}
+                  />
+                  <DesiredDjCountForm desiredDjCount={teamToday?.desiredDjCount ?? null} />
+                </div>
+              ) : undefined
+            }
+          />
+          <OwnerGoalCard
+            goalLabel={ownerGoalLabel}
+            goalOther={
+              ownerGoal?.ownerGoal === "other" && ownerGoal.ownerGoalOther
+                ? ownerGoal.ownerGoalOther
+                : null
+            }
+            editor={
+              canEdit ? (
+                <OwnerGoalForm
+                  key={`owner-goal:${membership.companyId}:${ownerGoal?.ownerGoal ?? ""}:${ownerGoal?.ownerGoalOther ?? ""}`}
+                  ownerGoal={ownerGoal?.ownerGoal ?? null}
+                  ownerGoalOther={ownerGoal?.ownerGoalOther ?? null}
+                />
+              ) : undefined
+            }
+          />
+        </div>
+      </main>
+    )
+  }
+
   return (
     <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-6 px-6 py-16">
       <h1 className="text-2xl font-semibold">Blueprint</h1>
@@ -28,52 +79,6 @@ export default async function HomePage() {
         <>
           <p>Sign in or create an account to start a company.</p>
           <AuthLinks />
-        </>
-      ) : membership ? (
-        <>
-          <p>
-            Company: <strong>{membership.companyName}</strong>
-          </p>
-          <p>
-            Role: <strong>{membership.role}</strong>
-          </p>
-          <p>
-            DJs today:{" "}
-            <strong>{teamToday == null ? "Not set" : teamToday.currentDjCount}</strong>
-          </p>
-          <p>
-            Desired DJs:{" "}
-            <strong>
-              {teamToday == null || teamToday.desiredDjCount == null
-                ? "Not set"
-                : teamToday.desiredDjCount}
-            </strong>
-          </p>
-          <p>
-            Owner goal: <strong>{ownerGoalLabel}</strong>
-            {ownerGoal?.ownerGoal === "other" && ownerGoal.ownerGoalOther
-              ? ` (${ownerGoal.ownerGoalOther})`
-              : null}
-          </p>
-          {membership.role === OWNER_ADMIN_ROLE ? (
-            <>
-              <div
-                key={`team-today:${membership.companyId}:${teamToday == null ? "" : teamToday.currentDjCount}:${teamToday?.desiredDjCount ?? ""}`}
-                className="flex flex-col gap-6"
-              >
-                <TeamTodayForm
-                  currentDjCount={teamToday == null ? null : teamToday.currentDjCount}
-                />
-                <DesiredDjCountForm desiredDjCount={teamToday?.desiredDjCount ?? null} />
-              </div>
-              <OwnerGoalForm
-                key={`owner-goal:${membership.companyId}:${ownerGoal?.ownerGoal ?? ""}:${ownerGoal?.ownerGoalOther ?? ""}`}
-                ownerGoal={ownerGoal?.ownerGoal ?? null}
-                ownerGoalOther={ownerGoal?.ownerGoalOther ?? null}
-              />
-            </>
-          ) : null}
-          <SignOutButton />
         </>
       ) : (
         <>

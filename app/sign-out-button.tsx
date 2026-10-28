@@ -1,11 +1,12 @@
+import { Button } from "@/components/blueprint"
 import { signOut } from "@/lib/auth/actions"
 
 export function SignOutButton() {
   return (
     <form action={signOut}>
-      <button className="underline" type="submit">
+      <Button type="submit" variant="plain">
         Sign out
-      </button>
+      </Button>
     </form>
   )
 }

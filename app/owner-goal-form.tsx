@@ -2,6 +2,7 @@
 
 import { useActionState } from "react"
 
+import { Button } from "@/components/blueprint"
 import { saveOwnerGoal, type SaveOwnerGoalState } from "@/lib/blueprint/actions"
 import {
   OWNER_GOAL_CODES,
@@ -52,9 +53,9 @@ export function OwnerGoalForm({
         />
       </label>
       {state.error ? <p role="alert">{state.error}</p> : null}
-      <button className="border px-3 py-2" type="submit">
+      <Button className="sm:self-start" type="submit">
         Save owner goal
-      </button>
+      </Button>
     </form>
   )
 }

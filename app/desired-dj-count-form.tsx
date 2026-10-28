@@ -2,6 +2,7 @@
 
 import { useActionState } from "react"
 
+import { Button } from "@/components/blueprint"
 import { saveDesiredDjCount, type SaveDesiredDjCountState } from "@/lib/blueprint/actions"
 import {
   DESIRED_DJ_COUNT_MAX,
@@ -37,9 +38,9 @@ export function DesiredDjCountForm({
         />
       </label>
       {state.error ? <p role="alert">{state.error}</p> : null}
-      <button className="border px-3 py-2" type="submit">
+      <Button className="sm:self-start" type="submit">
         Save desired DJ count
-      </button>
+      </Button>
     </form>
   )
 }
