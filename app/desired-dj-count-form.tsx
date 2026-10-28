@@ -1,46 +1,46 @@
 "use client"
 
-import { useActionState } from "react"
-
-import { Button } from "@/components/blueprint"
-import { saveDesiredDjCount, type SaveDesiredDjCountState } from "@/lib/blueprint/actions"
+import { Button, NumberField, SaveStatus } from "@/components/blueprint"
+import { saveDesiredDjCount } from "@/lib/blueprint/actions"
 import {
   DESIRED_DJ_COUNT_MAX,
   DESIRED_DJ_COUNT_MIN,
 } from "@/lib/blueprint/team-today"
 
-const initialState: SaveDesiredDjCountState = { error: null }
+import { useSaveForm } from "./use-save-form"
 
 export function DesiredDjCountForm({
+  currentDjCount,
   desiredDjCount,
 }: {
+  /** Display only: the server still enforces current-before-desired. */
+  currentDjCount: number | null
   desiredDjCount: number | null
 }) {
-  const [state, action] = useActionState(saveDesiredDjCount, initialState)
+  const { error, pending, saveState, formProps } = useSaveForm(saveDesiredDjCount)
 
   return (
     <form
-      action={action}
+      {...formProps}
       className="flex flex-col gap-3"
       data-saved-desired-dj-count={desiredDjCount === null ? "" : String(desiredDjCount)}
     >
-      <label className="flex flex-col gap-1">
-        Desired DJ count
-        <input
-          className="border px-3 py-2"
-          defaultValue={desiredDjCount === null ? "" : desiredDjCount}
-          max={DESIRED_DJ_COUNT_MAX}
-          min={DESIRED_DJ_COUNT_MIN}
-          name="desiredDjCount"
-          required
-          step={1}
-          type="number"
-        />
-      </label>
-      {state.error ? <p role="alert">{state.error}</p> : null}
-      <Button className="sm:self-start" type="submit">
-        Save desired DJ count
-      </Button>
+      <NumberField
+        label="Desired DJ count"
+        name="desiredDjCount"
+        defaultValue={desiredDjCount}
+        min={DESIRED_DJ_COUNT_MIN}
+        max={DESIRED_DJ_COUNT_MAX}
+        placeholder="e.g. 6"
+        help={currentDjCount === null ? "Save your current DJ count first." : "How many you’d like to have."}
+        error={error}
+      />
+      <div className="bp-form-row">
+        <Button type="submit" variant="soft" size="sm" disabled={pending} aria-busy={pending || undefined}>
+          Save desired DJ count
+        </Button>
+        <SaveStatus state={saveState} />
+      </div>
     </form>
   )
 }

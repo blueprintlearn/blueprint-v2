@@ -24,6 +24,8 @@ export const OWNER_GOAL_LABELS: Record<OwnerGoalCode, string> = {
 
 export const OWNER_GOAL_OTHER_MAX_LENGTH = 80
 
+export const OWNER_GOAL_OTHER_REQUIRED_MESSAGE = "Add a few words about your goal."
+
 export type OwnerGoalInput = {
   ownerGoal: OwnerGoalCode
   ownerGoalOther: string | null
@@ -41,7 +43,7 @@ export const ownerGoalSchema = z
       context.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["ownerGoalOther"],
-        message: "Enter a company-defined goal.",
+        message: OWNER_GOAL_OTHER_REQUIRED_MESSAGE,
       })
     }
   })

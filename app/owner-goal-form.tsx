@@ -1,17 +1,20 @@
 "use client"
 
-import { useActionState } from "react"
+import { useState } from "react"
 
-import { Button } from "@/components/blueprint"
-import { saveOwnerGoal, type SaveOwnerGoalState } from "@/lib/blueprint/actions"
+import { Button, SaveStatus, Select, TextField } from "@/components/blueprint"
+import { saveOwnerGoal } from "@/lib/blueprint/actions"
 import {
   OWNER_GOAL_CODES,
   OWNER_GOAL_LABELS,
   OWNER_GOAL_OTHER_MAX_LENGTH,
+  OWNER_GOAL_OTHER_REQUIRED_MESSAGE,
   type OwnerGoalCode,
 } from "@/lib/blueprint/goals"
 
-const initialState: SaveOwnerGoalState = { error: null }
+import { useSaveForm } from "./use-save-form"
+
+const goalOptions = OWNER_GOAL_CODES.map((code) => ({ value: code, label: OWNER_GOAL_LABELS[code] }))
 
 export function OwnerGoalForm({
   ownerGoal,
@@ -20,42 +23,44 @@ export function OwnerGoalForm({
   ownerGoal: OwnerGoalCode | null
   ownerGoalOther: string | null
 }) {
-  const [state, action] = useActionState(saveOwnerGoal, initialState)
+  const { error, pending, saveState, formProps } = useSaveForm(saveOwnerGoal)
+  const [selectedGoal, setSelectedGoal] = useState<string>(ownerGoal ?? "")
+  const otherError = error === OWNER_GOAL_OTHER_REQUIRED_MESSAGE ? error : null
 
   return (
     <form
-      action={action}
+      {...formProps}
       className="flex flex-col gap-3"
       data-saved-owner-goal={ownerGoal ?? ""}
       data-saved-owner-goal-other={ownerGoalOther ?? ""}
     >
-      <label className="flex flex-col gap-1">
-        Owner goal
-        <select className="border px-3 py-2" defaultValue={ownerGoal ?? ""} name="ownerGoal" required>
-          <option disabled value="">
-            Select a goal
-          </option>
-          {OWNER_GOAL_CODES.map((code) => (
-            <option key={code} value={code}>
-              {OWNER_GOAL_LABELS[code]}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="flex flex-col gap-1">
-        Other goal
-        <input
-          className="border px-3 py-2"
+      <Select
+        label="Owner goal"
+        name="ownerGoal"
+        options={goalOptions}
+        placeholderOption="Select a goal"
+        defaultValue={ownerGoal}
+        help="What you most want Blueprint to help you do."
+        error={otherError ? null : error}
+        onChange={(event) => setSelectedGoal(event.target.value)}
+      />
+      {selectedGoal === "other" ? (
+        <TextField
+          label="Other goal"
+          name="ownerGoalOther"
           defaultValue={ownerGoalOther ?? ""}
           maxLength={OWNER_GOAL_OTHER_MAX_LENGTH}
-          name="ownerGoalOther"
-          type="text"
+          placeholder="e.g. Open a second market"
+          help="Describe your goal in a few words."
+          error={otherError}
         />
-      </label>
-      {state.error ? <p role="alert">{state.error}</p> : null}
-      <Button className="sm:self-start" type="submit">
-        Save owner goal
-      </Button>
+      ) : null}
+      <div className="bp-form-row">
+        <Button type="submit" disabled={pending} aria-busy={pending || undefined}>
+          Save owner goal
+        </Button>
+        <SaveStatus state={saveState} />
+      </div>
     </form>
   )
 }
