@@ -1,6 +1,6 @@
 # Production releases: `main` for integration, `production` for release
 
-Status: **setup and rehearsal complete (Oct 27, 2026).** Steps 1–8 are done. Step 9 (resuming normal work) is open. The first release, PR #18, deployed `b07d57c` to production. Every release from now on follows the "Release procedure" below and needs an explicit, named yes. This runbook implements the Production Release Principle (Engineering Constitution §26) and does not override it.
+Status: **setup and rehearsal complete (Oct 27, 2026).** Steps 1–7 are done. Step 8 (README update) is prepared in PR #19, pending merge. Step 9 (resuming normal work) is open. The first release, PR #18, deployed `b07d57c` to production. Every release from now on follows the "Release procedure" below and needs an explicit, named yes. This runbook implements the Production Release Principle (Engineering Constitution §26) and does not override it.
 
 ## Current state (verified Oct 27, 2026)
 
@@ -200,7 +200,7 @@ Verification after the apply:
    This is read-only and must print nothing.
 4. Preview smoke on any non-`staging` Preview, behind Vercel login:
    - sign in as `owner-a@blueprint.test`;
-   - Team Today shows staging's saved current count instead of "Not set", and Desired shows "Not set";
+   - *Historical expectation:* Team Today shows staging's saved current count instead of "Not set", and Desired shows "Not set". *Verified Oct 27:* DJs today `0` and Desired DJs "Not set", matching staging (`current_dj_count` 0, `desired_dj_count` NULL);
    - sign out.
 
    Saving a desired count, and checking it against `owner-b`, writes staging data, so it is optional and needs its own yes.
@@ -294,7 +294,7 @@ Each step needs its own approval. Stop at any failed check. No step before 7 cha
 5. ~~**[approval] Merge this infrastructure PR into `main`.**~~ **Done** Oct 27. PR #17 merged as `aff5a57` (squash, with the same tree as the reviewed head `4dee40c`). `prove` passed on `main`. Vercel created only Preview deployment 7369537734, and the production domain served the same assets as before. On `main`'s Preview, `owner-a` saw Company A with staging data: DJs today `0`, Desired "Not set", matching staging's `desired_dj_count` of NULL. The original checks were:
    - it must create a Preview deployment, with `environment: Preview` for the new SHA in the GitHub deployments API;
    - the production domain must not change;
-   - **required:** sign in to `main`'s Preview (behind Vercel login) as `owner-a@blueprint.test`. Company A's home loads with staging data, which proves the Preview publishable key works with the staging project on `main`. Team Today shows staging's saved count instead of "Not set", which proves 3b. Make no saves, then sign out;
+   - **required:** sign in to `main`'s Preview (behind Vercel login) as `owner-a@blueprint.test`. Company A's home loads with staging data, which proves the Preview publishable key works with the staging project on `main`. *Historical expectation:* Team Today shows staging's saved count instead of "Not set", which proves 3b. *Verified Oct 27:* DJs today `0` and Desired DJs "Not set". Make no saves, then sign out;
    - if 3c was done, `main`'s Preview bundle contains staging Sentry project `4512220113469440` and not `4512220125593600`.
 
    If it creates a Production deployment instead, the switch did not take effect. The app is identical to `090bbf1` (only CI and docs differ), so nothing user-facing changes, but stop and recheck Vercel.
@@ -303,7 +303,7 @@ Each step needs its own approval. Stop at any failed check. No step before 7 cha
    - `prove` and `production-source` both ran on the PR and passed (`Source is blueprintlearn/blueprint-v2:main`). Only "Create a merge commit" was offered.
    - The merge produced `b07d57c`, with parents `090bbf1` and `aff5a57`. It created exactly one Production deployment (7374377648), which succeeded. The production domain returns HTTP 200 with unchanged page content and the production Sentry project. `main` stayed at `aff5a57`.
    - A direct `git push` to `production` was not attempted. The ruleset's `pull_request` rule, with an empty bypass list, rejects it.
-8. ~~**[approval] Update the README**~~ **Done** in a docs-only PR to `main` (see "README updates").
+8. **[approval] Update the README.** Prepared in PR #19 (docs-only, into `main`), pending merge. See "README updates".
 9. Resume normal work: #14 → #15 → #16 into `main` (each retargeted to `main` so CI runs), then a release PR when you choose to ship.
 
 ## Release procedure
@@ -321,7 +321,7 @@ PRs into `main` may use any merge method. Release PRs into `production` must use
 
 ## README updates (step 8)
 
-Done in the step 8 docs-only PR. The README now describes `production` as the Production branch, with `main`, `staging`, feature branches and PRs as Preview on the staging project. It lists the required checks for both rulesets and adds a short "Releasing to production" section that points here. Historical verification tables (Slice 0.3 and 0.5) stay as written.
+Prepared in PR #19, pending merge. Once merged, the README describes `production` as the Production branch, with `main`, `staging`, feature branches and PRs as Preview on the staging project. It lists the required checks for both rulesets and adds a short "Releasing to production" section that points here. Historical verification tables (Slice 0.3 and 0.5) stay as written.
 
 ## Rollback
 
