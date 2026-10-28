@@ -63,9 +63,12 @@ function NavControl({
  * Workspace, notifications, account and search each take an href or a callback. Without one,
  * workspace and account render as plain content, notifications show only when there are alerts,
  * and search is left out.
+ *
+ * No-tabs mode: leave items empty (or omit it) on screens that don't have the main tabs yet.
+ * No <nav> is rendered. actions is a slot on the right for page-level controls such as Sign out.
  */
 export function TopNav({
-  items,
+  items = [],
   currentHref,
   logoSrc = "/brand/blueprint-b-mark.jpg",
   brandName = "Blueprint",
@@ -82,9 +85,11 @@ export function TopNav({
   searchHref,
   onOpenSearch,
   onToggleTheme,
+  actions,
   className,
 }: {
-  items: NavItem[]
+  /** The main tabs (at most 5). Empty or omitted = no-tabs mode. */
+  items?: NavItem[]
   /** Overrides route matching, e.g. on a nested page that belongs to a parent tab. */
   currentHref?: string
   logoSrc?: string
@@ -103,14 +108,17 @@ export function TopNav({
   searchHref?: string
   onOpenSearch?: () => void
   onToggleTheme?: () => void
+  /** Page-level controls on the far right, e.g. <SignOutButton />. Keep it to one or two quiet buttons. */
+  actions?: ReactNode
   className?: string
 }) {
   const pathname = usePathname()
   const workspaceActive = Boolean(workspaceHref || onOpenWorkspace)
   const notificationsActive = Boolean(notificationsHref || onOpenNotifications)
   const notificationsLabel = alerts ? `Notifications, ${alerts} new` : "Notifications"
+  const tabs = items.slice(0, 5)
   return (
-    <header className={cx("bp-nav", className)}>
+    <header className={cx("bp-nav", tabs.length === 0 && "bp-nav--no-tabs", className)}>
       <div className="bp-nav__in">
         <div className="bp-nav__brand">
           <Image src={logoSrc} alt="" width={38} height={38} priority />
@@ -127,16 +135,18 @@ export function TopNav({
             </NavControl>
           ) : null}
         </div>
-        <nav className="bp-nav__tabs" aria-label="Main">
-          {items.slice(0, 5).map((it) => {
-            const current = currentHref ? currentHref === it.href : isCurrentPath(it.href, pathname)
-            return (
-              <Link key={it.href} href={it.href} className="bp-nav__tab" aria-current={current ? "page" : undefined}>
-                {it.label}
-              </Link>
-            )
-          })}
-        </nav>
+        {tabs.length > 0 ? (
+          <nav className="bp-nav__tabs" aria-label="Main">
+            {tabs.map((it) => {
+              const current = currentHref ? currentHref === it.href : isCurrentPath(it.href, pathname)
+              return (
+                <Link key={it.href} href={it.href} className="bp-nav__tab" aria-current={current ? "page" : undefined}>
+                  {it.label}
+                </Link>
+              )
+            })}
+          </nav>
+        ) : null}
         <div className="bp-nav__right">
           {searchHref || onOpenSearch ? (
             <NavControl href={searchHref} onSelect={onOpenSearch} className="bp-nav__icon bp-nav__search" label="Search">
@@ -171,6 +181,7 @@ export function TopNav({
               {userInitial}
             </NavControl>
           ) : null}
+          {actions ? <div className="bp-nav__actions">{actions}</div> : null}
         </div>
       </div>
     </header>

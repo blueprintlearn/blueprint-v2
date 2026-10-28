@@ -11,10 +11,15 @@ export {
   type CardState,
   type DecisionCardProps,
 } from "./DecisionCard"
+export { Fact } from "./Fact"
 export { Icon, ICON_PATHS, type IconName } from "./icons"
 export { DEFAULT_STAGES, JourneyTrack } from "./JourneyTrack"
 export { MessageBubble } from "./MessageBubble"
+export { NumberField, type NumberFieldProps } from "./NumberField"
+export { SaveStatus, type SaveState } from "./SaveStatus"
+export { Select, type SelectOption, type SelectProps } from "./Select"
 export { SeatMap, type Seat, type SeatLegend } from "./SeatMap"
 export { STATUS_WORDS, StatusTag, type MotifStatus } from "./StatusTag"
 export { TenantBrandScope } from "./TenantBrandScope"
+export { TextField, type TextFieldProps } from "./TextField"
 export { TopNav, type NavItem } from "./TopNav"

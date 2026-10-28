@@ -14,6 +14,7 @@ export function Card({
   as: Tag = "article",
   className,
   style,
+  "aria-labelledby": labelledBy,
   children,
 }: {
   tone?: CardTone
@@ -23,11 +24,13 @@ export function Card({
   as?: "article" | "section" | "div" | "aside" | "li"
   className?: string
   style?: CSSProperties
+  /** id of the heading that names this card. Use with as="section" so the card is a named region. */
+  "aria-labelledby"?: string
   children?: ReactNode
 }) {
   const chipTone = tone === "surface" || tone === "brand" ? "neutral" : tone
   return (
-    <Tag className={cx("bp-card", `bp-card--${tone}`, className)} style={style}>
+    <Tag className={cx("bp-card", `bp-card--${tone}`, className)} style={style} aria-labelledby={labelledBy}>
       {kicker ? (
         <Chip tone={chipTone} onTint={tone !== "surface" && tone !== "brand"}>
           {kicker}
