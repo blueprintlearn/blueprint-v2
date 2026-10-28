@@ -1,10 +1,17 @@
 # Production releases: `main` for integration, `production` for release
 
-Status: **in progress.**
-- Step 1 is done: `production` exists at `090bbf1`.
-- Step 2 is done: "Protect Production" is active (ruleset 25639327), verified Oct 22.
-- Step 3 (environment audit) is done, with findings below.
-- Steps 3a–3c are open. Every later step marked **[approval]** needs an explicit, named yes before anyone performs it. This runbook implements the Production Release Principle (Engineering Constitution §26) and does not override it.
+Status: **setup and rehearsal complete (Oct 27, 2026).** Steps 1–7 are done. Step 8 (README update) is prepared in PR #19, pending merge. Step 9 (resuming normal work) is open. The first release, PR #18, deployed `b07d57c` to production. Every release from now on follows the "Release procedure" below and needs an explicit, named yes. This runbook implements the Production Release Principle (Engineering Constitution §26) and does not override it.
+
+## Current state (verified Oct 27, 2026)
+
+- **Vercel:** Production tracks `production`. `main`, `staging`, feature branches and PRs deploy as Preview on the staging project.
+- **Branches:** `production` is at `b07d57c`, the merge commit of release PR #18 with parents `090bbf1` and `aff5a57`. `main` is at `aff5a57`.
+- **Production deployment:** 7374377648 for `b07d57c` succeeded. The production domain returns HTTP 200, and its bundle contains production Sentry project `4512220125593600` and not staging's `4512220113469440`.
+- **Rulesets:** "Protect Main" (24578499) requires `prove`. "Protect Production" (25639327) requires `prove` and `production-source`, allows merge commits only, and has an empty bypass list. Both checks are pinned to GitHub Actions (integration id 15368).
+- **Staging:** all four migrations are applied (`20261015120000` on Oct 23). All three staging Sentry variables cover every Preview branch.
+- **Vercel build settings:** defaults, with no Ignored Build Step.
+
+The sections below record how the setup was planned and verified. The "Before the change" state is historical.
 
 ## Target
 
@@ -17,7 +24,7 @@ Status: **in progress.**
 
 `production` only ever receives `main`, through a pull request that passes CI. It never receives direct pushes, feature branches, `staging`, or hotfixes. A hotfix lands on `main` first and is then released.
 
-## Current state (verified Oct 22, 2026)
+## Before the change (verified Oct 22, 2026)
 
 - **Vercel production branch:** `main`. Every merge to `main` has produced a Production deployment (`02e6d6e`, `606303f`, `f85844d`, `16f5faa`, `090bbf1`). All other branches produce Preview deployments. There is no `vercel.json`, so this comes from Vercel's project settings.
 - **Production URL:** `https://blueprint-v2-three.vercel.app` (the repository homepage). It currently serves `090bbf1`. Its browser bundle contains the production Sentry project and not the staging one.
@@ -43,7 +50,7 @@ Status: **in progress.**
 - **Account:** the repository is owned by the personal account `blueprintlearn`, which authors and merges every PR. GitHub does not let an author approve their own PR, so a required approval count above 0 would block every merge.
 - **CI** (`.github/workflows/ci.yml`): before this change it ran only for PRs to and pushes on `main`. Its single job reports the check `prove`, from the GitHub Actions app (integration id 15368).
 
-## Repository changes (this PR)
+## Repository changes (PR #17)
 
 1. `ci.yml` now also runs on PRs to `production` and on pushes to `production`.
 2. New job `production-source` runs only on PRs whose base is `production`. It fails unless the head branch is `main` in this repository. Branch names reach the script through environment variables and are never interpolated into it.
@@ -120,7 +127,7 @@ Behavioural cross-check (optional, non-destructive): while logged into Vercel, o
 | Supabase URL | Production is `vuiuhptuytbsadkdotca`. Preview is `tvttoiiamdmylhlsiprg` (`blueprint-v2-staging`). They are separate entries. | Pass |
 | Supabase URL scope | It applies to all Preview branches. A feature-branch Preview (PR #9, Oct 14) ran against staging, which would fail with "Missing NEXT_PUBLIC_SUPABASE_URL" if the variable were limited to `staging`. | Pass |
 | Publishable key | Production and Preview have separate entries. The Preview key is marked Sensitive, so the values can't be compared directly. On Oct 14, the PR #9 Preview signed in as `owner-a` and `owner-b`, persisted values and kept the companies isolated. Those users exist only on staging (production has 0 auth users), and a mismatched key would fail with "Invalid API key". | Leave unchanged. Reconfirm by signing in on `main`'s Preview in step 5. |
-| Sentry (Preview) | `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_DSN` and `SENTRY_ENVIRONMENT` are Preview-scoped to the Git branch `staging` only. Every other Preview, including `main` after the switch, builds without a DSN, so Sentry stays off (fail-closed) and the app is unaffected. This differs from README line 102. | Expand to all Preview branches: step 3c. |
+| Sentry (Preview) | `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_DSN` and `SENTRY_ENVIRONMENT` are Preview-scoped to the Git branch `staging` only. Every other Preview, including `main` after the switch, builds without a DSN, so Sentry stays off (fail-closed) and the app is unaffected. This differs from README line 102. | Expand to all Preview branches: step 3c. **Done:** all three now cover every Preview branch. |
 | Sentry (Production) | Vercel only allows branch-specific values in Preview, so Production values belong to the Production environment and are unaffected by the switch. | Pass |
 
 ## Staging migration history [step 3a, read-only]
@@ -132,7 +139,9 @@ The repository's `main` (`090bbf1`) has four migrations:
 | `20261006120000` | `companies_and_memberships.sql` | `23d98d54df9c2d02` | applied | applied |
 | `20261009200000` | `company_blueprints_owner_goal.sql` | `78e4192dea4149f6` | applied Oct 16 | applied |
 | `20261013130000` | `company_team_today_dj_count.sql` | `1dd9fc47560abb3f` | applied Oct 16 | applied Oct 14, the identical file from `6c4e65f` |
-| `20261015120000` | `company_team_today_desired_dj_count.sql` | `195a00a071cf8a79` | applied Oct 16 | **no record of any apply. Presumed missing.** |
+| `20261015120000` | `company_team_today_desired_dj_count.sql` | `195a00a071cf8a79` | applied Oct 16 | **no record of any apply. Presumed missing.** Applied Oct 23 (step 3b). |
+
+**Resolved Oct 23:** staging now has all four migrations, with none pending and existing data unchanged. The rest of this section records the finding.
 
 So production is ahead of staging. That reverses the required order ("staging is migrated before production"). The "Staging" column comes from the Oct 14 `migration list` output and the session record, not a fresh read. Hosted reads need Supabase credentials that the Cloud Agent VM does not have. Confirm it with either read-only method:
 
@@ -191,7 +200,7 @@ Verification after the apply:
    This is read-only and must print nothing.
 4. Preview smoke on any non-`staging` Preview, behind Vercel login:
    - sign in as `owner-a@blueprint.test`;
-   - Team Today shows staging's saved current count instead of "Not set", and Desired shows "Not set";
+   - *Historical expectation:* Team Today shows staging's saved current count instead of "Not set", and Desired shows "Not set". *Verified Oct 27:* DJs today `0` and Desired DJs "Not set", matching staging (`current_dj_count` 0, `desired_dj_count` NULL);
    - sign out.
 
    Saving a desired count, and checking it against `owner-b`, writes staging data, so it is optional and needs its own yes.
@@ -200,6 +209,8 @@ Verification after the apply:
 Rollback: this migration is additive and nothing depends on it except the app code already on `main`. If it must be undone on staging, do it with a new forward migration through the normal process, never `db reset` or a dashboard edit.
 
 ## Sentry Preview coverage [step 3c, approval]
+
+**Done.** All three variables now cover every Preview branch; Production entries are unchanged. The plan is kept below for reference.
 
 Proposed Vercel change. Only the scope changes; values stay the same. Before editing, confirm no other Preview entry exists for these names, because Vercel rejects a duplicate for the same scope.
 
@@ -230,7 +241,7 @@ Rollback: set the three entries back to Git branch `staging`. Only builds made a
 | Supabase GitHub integration or branching that applies migrations automatically | No Supabase app check runs, statuses, comments or deployments on any commit or migration PR (#7, #9, #10). Only `github-actions` and Vercel appear. Production's migration table held only `20261006120000` on Oct 16, after `main` already contained three more migrations. That is impossible if merges applied migrations automatically. | None active. |
 | Vercel ↔ Supabase marketplace integration | It is forbidden by the README. No Supabase-created environment variables were found in the audit. | None. |
 | `vercel.json`, `vercel-build` script, `.vercelignore` | None in the repository. `build` is `next build`. | None. |
-| Ignored Build Step or build command override | These are not visible from GitHub. Every merge to `main` since #1 produced exactly one Production deployment (10 of 10), and feature branches deploy as Preview, so nothing branch-specific skips builds today. | **Check in the dashboard** before step 4: Settings → Build and Deployment → Ignored Build Step is "Automatic" or empty, and the build command is the default. A script naming `main` must be updated together with the switch. |
+| Ignored Build Step or build command override | These are not visible from GitHub. Every merge to `main` since #1 produced exactly one Production deployment (10 of 10), and feature branches deploy as Preview, so nothing branch-specific skips builds today. | **Check in the dashboard** before step 4: Settings → Build and Deployment → Ignored Build Step is "Automatic" or empty, and the build command is the default. A script naming `main` must be updated together with the switch. **Confirmed (step 3d):** defaults, no Ignored Build Step. |
 | Manual production deployments | All 10 Production deployments are `vercel[bot]` Git deployments of `main` commits. | None. |
 
 ## Vercel configuration [approval, step 4]
@@ -250,7 +261,7 @@ Project → Settings → Environments → **Production** → **Branch Tracking**
 
 ## Risk: staging migrations can lag application code
 
-This is already happening: staging appears to lack `20261015120000` (see step 3a).
+This happened once: staging lacked `20261015120000` until Oct 23 (steps 3a and 3b).
 
 Hosted migrations are applied by hand with `supabase db push --project-ref`. After the switch, `main` deploys straight onto the staging database. If `main` contains a migration that has not been pushed to staging (for example PR #12's), the `main` Preview will fail wherever it touches the new schema. That failure is visible only in Preview, never in production.
 
@@ -269,55 +280,54 @@ Each step needs its own approval. Stop at any failed check. No step before 7 cha
 1. ~~Create `production` at `090bbf1`.~~ **Done.** Read back at `090bbf1`. `main` unchanged, no PR merged, the production deployment and ETag unchanged. Vercel created no deployment for the new branch and no CI ran.
 2. ~~Create "Protect Production".~~ **Done.** Ruleset 25639327 is active and verified Oct 22. Its bypass list is hidden from non-admins, so confirm in the UI that it is empty. From this point no PR into `production` can merge until `main` carries this PR's `production-source` job. That is intentional.
 3. ~~Environment-variable audit.~~ **Done** (Oct 23), with the findings above.
-   - **3a. [read-only] Confirm staging's migration history** against the table above.
-   - **3b. [approval] Only if `20261015120000` is missing on staging:** apply it, then verify (see "Staging catch-up").
-   - **3c. [approval] Expand staging Sentry to all Preview branches,** then verify (see "Sentry Preview coverage").
-   - **3d. [read-only, dashboard] Confirm** the Ignored Build Step is "Automatic" or empty, and the build command is the default.
+   - ~~**3a. [read-only] Confirm staging's migration history**~~ **Done.** `20261015120000` was missing.
+   - ~~**3b. [approval] Apply `20261015120000` to staging**~~ **Done** Oct 23. All four migrations present, none pending, existing data unchanged.
+   - ~~**3c. [approval] Expand staging Sentry to all Preview branches**~~ **Done.**
+   - ~~**3d. [read-only, dashboard] Confirm build settings**~~ **Done.** Defaults, no Ignored Build Step.
 
-   3a, 3b and 3d must be complete before step 4. 3c is approved in principle. Do it before step 5, so that `main`'s first Preview also proves Sentry coverage.
-4. **[approval] Switch Vercel branch tracking to `production`.** Confirm:
+   3a, 3b and 3d had to be complete before step 4, and 3c before step 5.
+4. ~~**[approval] Switch Vercel branch tracking to `production`.**~~ **Done** Oct 27. The production domain kept serving `090bbf1`, and no deployment was created. The original checks were:
    - the production domain still serves `090bbf1`;
    - the `blueprint-v2-blueprintlearn.vercel.app` alias still points at the production deployment.
 
    `blueprint-v2-git-main-…` will start following `main`'s Preview. It is behind Vercel login, so this is expected.
-5. **[approval] Merge this infrastructure PR into `main`.** This is the test that the switch worked:
+5. ~~**[approval] Merge this infrastructure PR into `main`.**~~ **Done** Oct 27. PR #17 merged as `aff5a57` (squash, with the same tree as the reviewed head `4dee40c`). `prove` passed on `main`. Vercel created only Preview deployment 7369537734, and the production domain served the same assets as before. On `main`'s Preview, `owner-a` saw Company A with staging data: DJs today `0`, Desired "Not set", matching staging's `desired_dj_count` of NULL. The original checks were:
    - it must create a Preview deployment, with `environment: Preview` for the new SHA in the GitHub deployments API;
    - the production domain must not change;
-   - **required:** sign in to `main`'s Preview (behind Vercel login) as `owner-a@blueprint.test`. Company A's home loads with staging data, which proves the Preview publishable key works with the staging project on `main`. Team Today shows staging's saved count instead of "Not set", which proves 3b. Make no saves, then sign out;
+   - **required:** sign in to `main`'s Preview (behind Vercel login) as `owner-a@blueprint.test`. Company A's home loads with staging data, which proves the Preview publishable key works with the staging project on `main`. *Historical expectation:* Team Today shows staging's saved count instead of "Not set", which proves 3b. *Verified Oct 27:* DJs today `0` and Desired DJs "Not set". Make no saves, then sign out;
    - if 3c was done, `main`'s Preview bundle contains staging Sentry project `4512220113469440` and not `4512220125593600`.
 
    If it creates a Production deployment instead, the switch did not take effect. The app is identical to `090bbf1` (only CI and docs differ), so nothing user-facing changes, but stop and recheck Vercel.
-6. **[approval] Update "Protect Main"** to require `prove`.
-7. **[approval] Run a dry-run release.** Open a PR from `main` to `production` that contains only this PR's commit. Confirm:
-   - the PR cannot merge until `prove` and `production-source` pass;
-   - a direct `git push` to `production` is rejected;
-   - merging produces exactly one Production deployment of the merge commit, with app behaviour unchanged.
-8. **[approval] Update the README** (next section) in a docs-only PR to `main`.
+6. ~~**[approval] Update "Protect Main"** to require `prove`.~~ **Done** Oct 27. `prove` (integration 15368) is the only required check. Nothing else in either ruleset changed.
+7. ~~**[approval] Run a dry-run release.**~~ **Done** Oct 27 with release PR #18 (`main` → `production`, containing only `aff5a57`):
+   - `prove` and `production-source` both ran on the PR and passed (`Source is blueprintlearn/blueprint-v2:main`). Only "Create a merge commit" was offered.
+   - The merge produced `b07d57c`, with parents `090bbf1` and `aff5a57`. It created exactly one Production deployment (7374377648), which succeeded. The production domain returns HTTP 200 with unchanged page content and the production Sentry project. `main` stayed at `aff5a57`.
+   - A direct `git push` to `production` was not attempted. The ruleset's `pull_request` rule, with an empty bypass list, rejects it.
+8. **[approval] Update the README.** Prepared in PR #19 (docs-only, into `main`), pending merge. See "README updates".
 9. Resume normal work: #14 → #15 → #16 into `main` (each retargeted to `main` so CI runs), then a release PR when you choose to ship.
 
-**Release procedure from then on:** open a PR from `main` to `production` and title it "Release YYYY-MM-DD". In the body, answer §26's questions: what is released, what evidence says it works, the risk, how failure would be noticed, and how to recover. Include the migration statement above if relevant. Wait for checks, get the named yes, then merge using "Create a merge commit". Verify the production deployment and the golden paths, not just HTTP 200.
+## Release procedure
 
-## README updates after the switch (step 8)
+1. Open a PR from `main` to `production` titled "Release YYYY-MM-DD". In the body, answer §26's questions: what is released, the evidence that it works, the risk, how failure would be noticed, and how to recover. Include the migration statement from "Risk: staging migrations can lag application code" if relevant.
+2. Wait for `prove` and `production-source` to pass. Get the named yes on the PR.
+3. Merge using **Create a merge commit**. Protect Production allows no other method.
+4. Verify:
+   - `production` is a merge commit whose parents are the previous `production` commit and `main`'s head;
+   - exactly one new Production deployment, for that merge commit, and it succeeded;
+   - the production domain serves the new build, its bundle contains production Sentry project `4512220125593600` and not `4512220113469440`, and the golden paths work, not just HTTP 200;
+   - `main` did not move, and no other deployments appeared.
 
-These lines describe the old arrangement where `main` was the production branch. Update them only after step 5 confirms the switch; until then they are accurate. The exception is line 72, which is already inaccurate.
+PRs into `main` may use any merge method. Release PRs into `production` must use a merge commit, so `production`'s tree always equals the `main` commit it released.
 
-| README line | Current text | Change to |
-|---|---|---|
-| 66 | "Every pull request to `main`, and every push to `main`, runs the `CI / prove` …" | "… to `main` or `production` …", and mention `production-source`. |
-| 72 | "`main` requires **`CI / prove`**." | It is inaccurate today. Once step 6 is done, state that `main` requires `prove` and `production` requires `prove` and `production-source`. |
-| 78 | "`staging` is a deployment branch. Documentation and product PRs target `main`." | Add: "`production` is the release branch and only receives `main` through a release PR." |
-| 84 | "Production \| Vercel Production on `main`" | "Vercel Production on `production`". Add a row for `main` as a Vercel Preview on the staging project. |
-| 102 | "Vercel Preview (all non-`main`, including PRs and `staging`)" | "all non-`production`, including `main`, PRs and `staging`". |
-| 166 | "Production branch is `main`. Staging is the `staging` deployment branch." | "Production branch is `production`; `main` and `staging` are Preview branches." |
-| 171 | "… explicit human approval before Promote." | "… before merging the release PR into `production`." |
+## README updates (step 8)
 
-Historical verification tables (Slice 0.3 and 0.5) stay as written.
+Prepared in PR #19, pending merge. Once merged, the README describes `production` as the Production branch, with `main`, `staging`, feature branches and PRs as Preview on the staging project. It lists the required checks for both rulesets and adds a short "Releasing to production" section that points here. Historical verification tables (Slice 0.3 and 0.5) stay as written.
 
 ## Rollback
 
 - **A bad production release:** use Vercel → Project → Production Deployment → **Instant Rollback** to the previous production deployment. This takes effect immediately and needs no Git change. After a rollback, Vercel stops assigning production domains automatically, so new merges to `production` will not go live. Fix on `main`, release through a PR, then use **Undo Rollback** or promote the fixed deployment. On the Hobby plan, rollback only goes back one deployment.
 - **Database changes are not rolled back by Vercel.** Migrations must stay backward compatible with the previous release (expand, then contract), so rolling back the app is always safe.
-- **The branch switch misbehaves** (step 4 or 5): set branch tracking back to `main`. No deployment changes when you do. Leave `production` and its ruleset in place, or set the ruleset's enforcement to `disabled`.
+- **Abandoning the branch split:** set Vercel branch tracking back to `main`. No deployment changes when you do. Leave `production` and its ruleset in place, or set the ruleset's enforcement to `disabled`.
 - **The rulesets block legitimate work:** set the affected ruleset's enforcement to `disabled` (or `evaluate`). Don't delete it, so its configuration is kept.
-- **CI change:** revert this PR on `main`. Until the required checks are removed, release PRs then cannot merge.
-- **The `production` branch itself:** it is a plain pointer to `090bbf1` until the first release. If the plan is abandoned before step 4, an admin can disable its ruleset and delete the branch. Nothing deploys from it before the switch.
+- **CI change:** revert PR #17 on `main`. Until the required checks are removed, release PRs then cannot merge.
+- **Never repair `production` by hand.** Fix forward on `main` and release through a PR, or use Vercel Instant Rollback.
