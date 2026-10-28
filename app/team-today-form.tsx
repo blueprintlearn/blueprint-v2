@@ -1,45 +1,43 @@
 "use client"
 
-import { useActionState } from "react"
-
-import { saveTeamToday, type SaveTeamTodayState } from "@/lib/blueprint/actions"
+import { Button, NumberField, SaveStatus } from "@/components/blueprint"
+import { saveTeamToday } from "@/lib/blueprint/actions"
 import {
   CURRENT_DJ_COUNT_MAX,
   CURRENT_DJ_COUNT_MIN,
 } from "@/lib/blueprint/team-today"
 
-const initialState: SaveTeamTodayState = { error: null }
+import { useSaveForm } from "./use-save-form"
 
 export function TeamTodayForm({
   currentDjCount,
 }: {
   currentDjCount: number | null
 }) {
-  const [state, action] = useActionState(saveTeamToday, initialState)
+  const { error, pending, saveState, formProps } = useSaveForm(saveTeamToday)
 
   return (
     <form
-      action={action}
+      {...formProps}
       className="flex flex-col gap-3"
       data-saved-current-dj-count={currentDjCount === null ? "" : String(currentDjCount)}
     >
-      <label className="flex flex-col gap-1">
-        Current DJ count
-        <input
-          className="border px-3 py-2"
-          defaultValue={currentDjCount === null ? "" : currentDjCount}
-          max={CURRENT_DJ_COUNT_MAX}
-          min={CURRENT_DJ_COUNT_MIN}
-          name="currentDjCount"
-          required
-          step={1}
-          type="number"
-        />
-      </label>
-      {state.error ? <p role="alert">{state.error}</p> : null}
-      <button className="border px-3 py-2" type="submit">
-        Save DJ count
-      </button>
+      <NumberField
+        label="Current DJ count"
+        name="currentDjCount"
+        defaultValue={currentDjCount}
+        min={CURRENT_DJ_COUNT_MIN}
+        max={CURRENT_DJ_COUNT_MAX}
+        placeholder="e.g. 6"
+        help="DJs who work events for you now."
+        error={error}
+      />
+      <div className="bp-form-row">
+        <Button type="submit" variant="soft" size="sm" disabled={pending} aria-busy={pending || undefined}>
+          Save DJ count
+        </Button>
+        <SaveStatus state={saveState} />
+      </div>
     </form>
   )
 }

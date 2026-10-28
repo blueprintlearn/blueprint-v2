@@ -2,22 +2,31 @@
 
 import { revalidatePath } from "next/cache"
 
-import { parseOwnerGoal } from "@/lib/blueprint/goals"
+import { OWNER_GOAL_OTHER_REQUIRED_MESSAGE, parseOwnerGoal } from "@/lib/blueprint/goals"
 import { parseCurrentDjCount, parseDesiredDjCount } from "@/lib/blueprint/team-today"
 import { createClient } from "@/lib/supabase/server"
 import { OWNER_ADMIN_ROLE } from "@/lib/rules/system-role"
 import { getCurrentMembership } from "@/lib/tenancy/queries"
 
+const OWNER_ONLY_MESSAGE = "Only the company owner can change this."
+const SAVE_FAILED_MESSAGE = "That didn’t save. Please try again."
+
 export type SaveOwnerGoalState = {
   error: string | null
+  /** Set only when the server confirmed the save. Lets the form tell "just saved" from "never submitted". */
+  savedAt: number | null
 }
 
 export type SaveTeamTodayState = {
   error: string | null
+  /** Set only when the server confirmed the save. Lets the form tell "just saved" from "never submitted". */
+  savedAt: number | null
 }
 
 export type SaveDesiredDjCountState = {
   error: string | null
+  /** Set only when the server confirmed the save. Lets the form tell "just saved" from "never submitted". */
+  savedAt: number | null
 }
 
 export async function saveTeamToday(
@@ -27,12 +36,12 @@ export async function saveTeamToday(
   const currentDjCount = parseCurrentDjCount(formData.get("currentDjCount"))
 
   if (currentDjCount === null) {
-    return { error: "Enter a DJ count from 0 to 999." }
+    return { error: "Enter a whole number from 0 to 999.", savedAt: null }
   }
 
   const membership = await getCurrentMembership()
   if (!membership || membership.role !== OWNER_ADMIN_ROLE) {
-    return { error: "Only a company owner can save the DJ count." }
+    return { error: OWNER_ONLY_MESSAGE, savedAt: null }
   }
 
   const supabase = await createClient()
@@ -45,11 +54,11 @@ export async function saveTeamToday(
   )
 
   if (error) {
-    return { error: "The DJ count could not be saved." }
+    return { error: SAVE_FAILED_MESSAGE, savedAt: null }
   }
 
   revalidatePath("/")
-  return { error: null }
+  return { error: null, savedAt: Date.now() }
 }
 
 export async function saveDesiredDjCount(
@@ -59,12 +68,12 @@ export async function saveDesiredDjCount(
   const desiredDjCount = parseDesiredDjCount(formData.get("desiredDjCount"))
 
   if (desiredDjCount === null) {
-    return { error: "Enter a desired DJ count from 0 to 999." }
+    return { error: "Enter a whole number from 0 to 999.", savedAt: null }
   }
 
   const membership = await getCurrentMembership()
   if (!membership || membership.role !== OWNER_ADMIN_ROLE) {
-    return { error: "Only a company owner can save the desired DJ count." }
+    return { error: OWNER_ONLY_MESSAGE, savedAt: null }
   }
 
   const supabase = await createClient()
@@ -75,15 +84,15 @@ export async function saveDesiredDjCount(
     .select("company_id")
 
   if (error) {
-    return { error: "The desired DJ count could not be saved." }
+    return { error: SAVE_FAILED_MESSAGE, savedAt: null }
   }
 
   if (!data || data.length === 0) {
-    return { error: "Save current DJ count first." }
+    return { error: "Save your current DJ count first.", savedAt: null }
   }
 
   revalidatePath("/")
-  return { error: null }
+  return { error: null, savedAt: Date.now() }
 }
 
 export async function saveOwnerGoal(
@@ -96,12 +105,20 @@ export async function saveOwnerGoal(
   })
 
   if (!parsed) {
-    return { error: "Choose a valid owner goal." }
+    const otherText = formData.get("ownerGoalOther")
+    const otherIsEmpty = typeof otherText !== "string" || otherText.trim().length === 0
+    return {
+      error:
+        formData.get("ownerGoal") === "other" && otherIsEmpty
+          ? OWNER_GOAL_OTHER_REQUIRED_MESSAGE
+          : "Choose a goal from the list.",
+      savedAt: null,
+    }
   }
 
   const membership = await getCurrentMembership()
   if (!membership || membership.role !== OWNER_ADMIN_ROLE) {
-    return { error: "Only a company owner can save the owner goal." }
+    return { error: OWNER_ONLY_MESSAGE, savedAt: null }
   }
 
   const supabase = await createClient()
@@ -115,9 +132,9 @@ export async function saveOwnerGoal(
   )
 
   if (error) {
-    return { error: "The owner goal could not be saved." }
+    return { error: SAVE_FAILED_MESSAGE, savedAt: null }
   }
 
   revalidatePath("/")
-  return { error: null }
+  return { error: null, savedAt: Date.now() }
 }
