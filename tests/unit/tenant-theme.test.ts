@@ -6,10 +6,12 @@ import {
   BLUEPRINT_DEFAULTS,
   MIN_TEXT,
   MIN_UI,
+  OVERRIDABLE_TOKENS,
   computeTenantTheme,
   contrastRatio,
   tenantBrandKey,
   tenantThemeCss,
+  type TenantTheme,
 } from "@/lib/brand/tenant-theme"
 
 describe("contrastRatio", () => {
@@ -134,6 +136,54 @@ describe("tenantThemeCss", () => {
     expect(tenantThemeCss(theme, '[data-tenant-brand="0F766E-none"]')).toContain('[data-tenant-brand="0F766E-none"] {')
     for (const scope of ["body", "*", '[data-tenant-brand="x"], *', '[data-tenant-brand="a"]{}', '[data-tenant-brand="</style>"]']) {
       expect(() => tenantThemeCss(theme, scope)).toThrow("Unsafe tenant brand scope")
+    }
+  })
+
+  const MALICIOUS_NAMES = [
+    "brand: #000000; } body { display: none; } x { --a",
+    "brand;}*{background:url(https://evil.example/x)}",
+    "x</style><script>alert(1)</script>",
+    "brand\n}\nbody{color:red",
+    "BRAND",
+    " brand",
+    "brand ",
+    "--brand",
+    "brand/**/",
+    "constructor",
+    "toString",
+  ]
+
+  it("omits property names it does not generate, even in a hand-built theme", () => {
+    const forged = {
+      light: { brand: "#123456", ...Object.fromEntries(MALICIOUS_NAMES.map((k) => [k, "#000000"])) },
+      dark: Object.fromEntries(MALICIOUS_NAMES.map((k) => [k, "#000000"])),
+      report: computeTenantTheme({}).report,
+    } as unknown as TenantTheme
+    expect(tenantThemeCss(forged)).toBe("[data-tenant-brand] {\n  --brand: #123456;\n}")
+  })
+
+  it("writes nothing when every property name is unknown", () => {
+    const forged = {
+      light: Object.fromEntries(MALICIOUS_NAMES.map((k) => [k, "#000000"])),
+      dark: Object.fromEntries(MALICIOUS_NAMES.map((k) => [k, "#000000"])),
+      report: computeTenantTheme({}).report,
+    } as unknown as TenantTheme
+    expect(tenantThemeCss(forged)).toBe("")
+  })
+
+  it("still writes every supported token", () => {
+    const vars = Object.fromEntries(OVERRIDABLE_TOKENS.map((k) => [k, "#ABCDEF"]))
+    const css = tenantThemeCss({ light: vars, dark: {}, report: computeTenantTheme({}).report })
+    const written = [...css.matchAll(/^ {2}--([a-z-]+): #ABCDEF;$/gm)].map(([, name]) => name)
+    expect(written).toEqual([...OVERRIDABLE_TOKENS])
+  })
+
+  it("emits only supported token names for real brands", () => {
+    for (const input of [{ primary: "#FFD400", accent: "#14B8A6" }, { primary: "#0F766E" }, { primary: "#C62828" }]) {
+      const css = tenantThemeCss(computeTenantTheme(input))
+      const names = [...css.matchAll(/--([^:]+):/g)].map(([, name]) => name)
+      expect(names.length).toBeGreaterThan(0)
+      for (const name of names) expect(OVERRIDABLE_TOKENS).toContain(name)
     }
   })
 })

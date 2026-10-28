@@ -27,19 +27,22 @@ export type TenantBrandInput = {
   accent?: string | null
 }
 
-export type OverridableToken =
-  | "brand"
-  | "brand-deep"
-  | "text-on-brand"
-  | "text-on-brand-muted"
-  | "solid"
-  | "text-on-solid"
-  | "coral"
-  | "text-on-coral"
-  | "coral-text"
-  | "focus"
-  | "hatch"
-  | "draft"
+export const OVERRIDABLE_TOKENS = [
+  "brand",
+  "brand-deep",
+  "text-on-brand",
+  "text-on-brand-muted",
+  "solid",
+  "text-on-solid",
+  "coral",
+  "text-on-coral",
+  "coral-text",
+  "focus",
+  "hatch",
+  "draft",
+] as const
+
+export type OverridableToken = (typeof OVERRIDABLE_TOKENS)[number]
 
 export type ContrastCheck = {
   theme: ThemeId
@@ -317,6 +320,7 @@ export function computeTenantTheme(input: TenantBrandInput): TenantTheme {
 
 const CSS_SAFE = /^#[0-9A-F]{6}([0-9A-F]{2})?$/
 const SCOPE_SAFE = /^\[data-tenant-brand(="[0-9A-Za-z_-]{1,64}")?\]$/
+const KNOWN_TOKENS: ReadonlySet<string> = new Set(OVERRIDABLE_TOKENS)
 
 /**
  * A stable attribute value for one brand input. The CSS is a pure function of the validated
@@ -330,7 +334,7 @@ export function tenantBrandKey(input: TenantBrandInput): string {
 
 function block(selector: string, vars: Partial<Record<OverridableToken, string>>): string {
   const lines = Object.entries(vars)
-    .filter(([, v]) => typeof v === "string" && CSS_SAFE.test(v))
+    .filter(([k, v]) => KNOWN_TOKENS.has(k) && typeof v === "string" && CSS_SAFE.test(v))
     .map(([k, v]) => `  --${k}: ${v};`)
   return lines.length ? `${selector} {\n${lines.join("\n")}\n}` : ""
 }
@@ -338,7 +342,9 @@ function block(selector: string, vars: Partial<Record<OverridableToken, string>>
 /**
  * CSS text that applies a tenant theme inside elements carrying `data-tenant-brand`.
  * Works with an explicit `data-theme` on <html> (or the scope) and with the system setting.
- * Only validated #RRGGBB values are ever written, so the output is safe to inline in <style>.
+ * Only known token names with validated #RRGGBB values are ever written; anything else is
+ * omitted, so the output is safe to inline in <style> even for a theme not built by
+ * computeTenantTheme.
  * The scope must be `[data-tenant-brand]` or `[data-tenant-brand="<key>"]`; anything else throws.
  */
 export function tenantThemeCss(theme: TenantTheme, scope = "[data-tenant-brand]"): string {
