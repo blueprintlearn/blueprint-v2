@@ -63,25 +63,33 @@ pnpm test:e2e
 
 ## CI
 
-Every pull request to `main`, and every push to `main`, runs the `CI / prove` GitHub Actions job on `ubuntu-24.04`.
+Every pull request to `main` or `production`, and every push to either branch, runs the `CI / prove` GitHub Actions job on `ubuntu-24.04`. Pull requests into `production` also run `CI / production-source`, which fails unless the head branch is `main` in this repository.
 
 That job installs Node 24.21.0 and pnpm 12.9.1, then rejects committed secrets, runs typecheck, lint, local Supabase (`supabase start` + `db reset` from committed migrations and seed), the existing Slice 0.1 tests, a production build, and Chromium Playwright E2E against that local stack. It does not use hosted Supabase, Vercel, or service-role credentials.
 
 `CI / prove` fails if a tracked `.env*` file other than `.env.example` is committed, or if a committed file contains a hosted secret-key prefix, a service-role key assignment, or the service-role environment-variable name.
 
-Requiring the check before merge is a GitHub setting, not repository code. `main` requires **`CI / prove`**.
+Requiring checks before merge is a GitHub ruleset setting, not repository code:
+
+| Branch | Ruleset | Required checks | Other rules |
+| --- | --- | --- | --- |
+| `main` | Protect Main | `prove` | Pull request required, no force-push, no deletion |
+| `production` | Protect Production | `prove` and `production-source` | Pull request required, merge commits only, no force-push, no deletion, empty bypass list |
+
+Both checks are pinned to the GitHub Actions app (integration id 15368), so only CI can satisfy them.
 
 ## Environments
 
 Slice 0.3 is verified. Local, staging, and production are separate. Staging has the synthetic Company A / Company B seed. Production has the same schema and RLS, zero companies, and zero auth users.
 
-`staging` is a deployment branch. Documentation and product PRs target `main`.
+`staging` is a deployment branch. Documentation and product PRs target `main`. `production` is the release branch and only receives `main` through a release PR.
 
 | Environment | Where it runs | Database | Seed |
 | --- | --- | --- | --- |
 | Development | Laptop | Local Supabase | `db reset` |
+| Integration | Vercel Preview on `main`, feature branches and PRs | Dedicated hosted staging project | Shares staging's seed |
 | Staging | Vercel Preview on branch `staging` | Dedicated hosted staging project | Existing `seed.sql` only |
-| Production | Vercel Production on `main` | Dedicated hosted production project | Never |
+| Production | Vercel Production on `production` | Dedicated hosted production project | Never |
 
 One Vercel project. Two hosted Supabase projects. No fourth hosted “dev” project. No custom domains in Slice 0.3.
 
@@ -99,7 +107,7 @@ Only these names, in Vercel and in `.env.example`:
 | --- | --- |
 | Local `.env.local` | Local API URL + publishable/anon key. Leave Sentry unset. |
 | GitHub `CI / prove` | Local Supabase public keys only. Leave Sentry unset. |
-| Vercel Preview (all non-`main`, including PRs and `staging`) | Staging Supabase public keys + staging Sentry DSN. `SENTRY_ENVIRONMENT=staging`. |
+| Vercel Preview (all non-`production`, including `main`, PRs and `staging`) | Staging Supabase public keys + staging Sentry DSN. `SENTRY_ENVIRONMENT=staging`. |
 | Vercel Production | Production Supabase public keys + production Sentry DSN. `SENTRY_ENVIRONMENT=production`. |
 | Vercel Development | Unset |
 
@@ -163,10 +171,23 @@ Do not pass `--include-seed`. Do not run `seed.sql` against production. Prove `p
 
 ### Vercel / Preview / RED gate
 
-- Production branch is `main`. Staging is the `staging` deployment branch.
-- Preview (including `staging`) uses staging public keys. Production uses production public keys.
+- Production branch is `production`. `main` and `staging` are Preview branches.
+- Preview (including `main` and `staging`) uses staging public keys. Production uses production public keys.
 - Preview must never receive production credentials. Production must never receive the synthetic seed.
 - Do not use a Vercel “staged production” deployment as staging (it uses production env vars).
 - Do not use the Vercel ↔ Supabase marketplace integration.
-- RED production changes still need staging verification and explicit human approval before Promote.
+- RED production changes still need staging verification and explicit human approval before merging the release PR into `production`.
 - Do not run `vercel --prod` as a substitute for that approval.
+
+## Releasing to production
+
+Work merges into `main`, which deploys as a Vercel Preview on the staging project. Nothing reaches users until a release PR from `main` into `production` is merged. That merge produces one Vercel Production deployment on the production project.
+
+1. Merge reviewed work into `main`. `prove` must pass. If the work adds a migration, push it to staging as part of the same approved change.
+2. Verify `main`'s Preview (behind Vercel login) against staging.
+3. Open a PR from `main` into `production` titled "Release YYYY-MM-DD". In the body, state what is released, the evidence that it works, the risk, how failure would be noticed, and how to recover. If the release contains a migration, also state that it is already on staging and verified there, include the production `db push --dry-run` output, and apply it before the merge.
+4. Wait for `prove` and `production-source` to pass, and get the named approval.
+5. Merge with **Create a merge commit**, the only method `production` allows.
+6. Verify that exactly one Production deployment of the merge commit succeeded, and check the production golden paths, not just HTTP 200.
+
+Direct pushes, force-pushes and deletion of `production` are blocked. To recover from a bad release, use Vercel Instant Rollback. Full procedure, rationale and rollback: [`docs/runbooks/production-releases.md`](docs/runbooks/production-releases.md).
