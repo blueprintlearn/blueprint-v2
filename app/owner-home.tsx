@@ -19,7 +19,7 @@ export function OwnerHomeHero({
   const roleLabel = systemRoleLabel(role)
   return (
     <section className="flex flex-col gap-3 pt-7 md:pt-12">
-      <p className="bp-type-small font-bold text-muted">{companyName}</p>
+      <p className="bp-type-small font-bold! text-muted">{companyName}</p>
       <h1 className="bp-type-display-xl max-[760px]:text-[46px]!">Welcome back.</h1>
       <p className="bp-type-lead max-w-[620px] text-ink-2">{isOwner ? OWNER_LEAD : VIEWER_LEAD}</p>
       {roleLabel ? <p className="bp-type-small text-muted">Signed in as {roleLabel}</p> : null}
@@ -42,7 +42,7 @@ function CardHead({ id, title, status }: { id: string; title: string; status: Re
   )
 }
 
-const cardClass = "max-[760px]:p-[22px]"
+const cardClass = "max-[760px]:p-[22px]!"
 
 /** Derived only from saved values. 0 counts as answered; only NULL is unanswered. */
 export function TeamTodayCard({
