@@ -3,7 +3,11 @@
 import { revalidatePath } from "next/cache"
 
 import { parseOwnerGoal } from "@/lib/blueprint/goals"
-import { parseCurrentDjCount, parseDesiredDjCount } from "@/lib/blueprint/team-today"
+import {
+  parseCurrentDjCount,
+  parseCurrentTrainerCount,
+  parseDesiredDjCount,
+} from "@/lib/blueprint/team-today"
 import { createClient } from "@/lib/supabase/server"
 import { OWNER_ADMIN_ROLE } from "@/lib/rules/system-role"
 import { getCurrentMembership } from "@/lib/tenancy/queries"
@@ -17,6 +21,10 @@ export type SaveTeamTodayState = {
 }
 
 export type SaveDesiredDjCountState = {
+  error: string | null
+}
+
+export type SaveTrainerCountState = {
   error: string | null
 }
 
@@ -76,6 +84,40 @@ export async function saveDesiredDjCount(
 
   if (error) {
     return { error: "The desired DJ count could not be saved." }
+  }
+
+  if (!data || data.length === 0) {
+    return { error: "Save current DJ count first." }
+  }
+
+  revalidatePath("/")
+  return { error: null }
+}
+
+export async function saveTrainerCount(
+  _prevState: SaveTrainerCountState,
+  formData: FormData,
+): Promise<SaveTrainerCountState> {
+  const currentTrainerCount = parseCurrentTrainerCount(formData.get("currentTrainerCount"))
+
+  if (currentTrainerCount === null) {
+    return { error: "Enter a trainer count from 0 to 999." }
+  }
+
+  const membership = await getCurrentMembership()
+  if (!membership || membership.role !== OWNER_ADMIN_ROLE) {
+    return { error: "Only a company owner can save the trainer count." }
+  }
+
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("company_team_today")
+    .update({ current_trainer_count: currentTrainerCount })
+    .eq("company_id", membership.companyId)
+    .select("company_id")
+
+  if (error) {
+    return { error: "The trainer count could not be saved." }
   }
 
   if (!data || data.length === 0) {

@@ -10,6 +10,7 @@ import { DesiredDjCountForm } from "./desired-dj-count-form"
 import { OwnerGoalForm } from "./owner-goal-form"
 import { SignOutButton } from "./sign-out-button"
 import { TeamTodayForm } from "./team-today-form"
+import { TrainerCountForm } from "./trainer-count-form"
 
 export default async function HomePage() {
   const supabase = await createClient()
@@ -50,6 +51,14 @@ export default async function HomePage() {
             </strong>
           </p>
           <p>
+            Trainers today:{" "}
+            <strong>
+              {teamToday == null || teamToday.currentTrainerCount == null
+                ? "Not set"
+                : teamToday.currentTrainerCount}
+            </strong>
+          </p>
+          <p>
             Owner goal: <strong>{ownerGoalLabel}</strong>
             {ownerGoal?.ownerGoal === "other" && ownerGoal.ownerGoalOther
               ? ` (${ownerGoal.ownerGoalOther})`
@@ -58,13 +67,16 @@ export default async function HomePage() {
           {membership.role === OWNER_ADMIN_ROLE ? (
             <>
               <div
-                key={`team-today:${membership.companyId}:${teamToday == null ? "" : teamToday.currentDjCount}:${teamToday?.desiredDjCount ?? ""}`}
+                key={`team-today:${membership.companyId}:${teamToday == null ? "" : teamToday.currentDjCount}:${teamToday?.desiredDjCount ?? ""}:${teamToday?.currentTrainerCount ?? ""}`}
                 className="flex flex-col gap-6"
               >
                 <TeamTodayForm
                   currentDjCount={teamToday == null ? null : teamToday.currentDjCount}
                 />
                 <DesiredDjCountForm desiredDjCount={teamToday?.desiredDjCount ?? null} />
+                <TrainerCountForm
+                  currentTrainerCount={teamToday?.currentTrainerCount ?? null}
+                />
               </div>
               <OwnerGoalForm
                 key={`owner-goal:${membership.companyId}:${ownerGoal?.ownerGoal ?? ""}:${ownerGoal?.ownerGoalOther ?? ""}`}

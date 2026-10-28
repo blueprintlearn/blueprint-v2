@@ -156,4 +156,105 @@ test.describe("team today in the browser", () => {
     await expect(desiredForm).toHaveAttribute("data-saved-desired-dj-count", "0")
     await expect(page.getByLabel("Desired DJ count")).toHaveValue("0")
   })
+
+  test("Company A owner can save a trainer count that Company B cannot see", async ({
+    page,
+  }) => {
+    const uniqueTrainers = "731"
+    const nextTrainers = "56"
+
+    await signIn(page, "owner-a@blueprint.test")
+    await expect(page.getByText("Trainers today:")).toBeVisible()
+    await page.getByLabel("Current DJ count", { exact: true }).fill(uniqueDjCount)
+    await page.getByRole("button", { name: "Save DJ count", exact: true }).click()
+    const teamTodayForm = page.locator("form[data-saved-current-dj-count]")
+    await expect(teamTodayForm).toHaveAttribute("data-saved-current-dj-count", uniqueDjCount)
+
+    await page.getByLabel("Current trainer count", { exact: true }).fill(uniqueTrainers)
+    await page.getByRole("button", { name: "Save trainer count", exact: true }).click()
+    const trainerForm = page.locator("form[data-saved-current-trainer-count]")
+    await expect(page.locator("p").filter({ hasText: "Trainers today:" })).toContainText(
+      uniqueTrainers,
+    )
+    await expect(trainerForm).toHaveAttribute("data-saved-current-trainer-count", uniqueTrainers)
+    await expect(page.getByLabel("Current trainer count", { exact: true })).toHaveValue(
+      uniqueTrainers,
+    )
+    await expect(page.getByText("Company B")).toHaveCount(0)
+
+    await page.getByLabel("Current trainer count", { exact: true }).fill(nextTrainers)
+    await page.getByRole("button", { name: "Save trainer count", exact: true }).click()
+    await expect(page.locator("p").filter({ hasText: "Trainers today:" })).toContainText(
+      nextTrainers,
+    )
+    await expect(trainerForm).toHaveAttribute("data-saved-current-trainer-count", nextTrainers)
+    await expect(page.getByLabel("Current trainer count", { exact: true })).toHaveValue(
+      nextTrainers,
+    )
+    await expect(page.getByText(uniqueTrainers)).toHaveCount(0)
+
+    await page.getByRole("button", { name: "Sign out" }).click()
+    await expect(page).toHaveURL("/")
+    await expect(page.getByText("Trainers today:")).toHaveCount(0)
+
+    await signIn(page, "owner-b@blueprint.test")
+    await expect(page.getByText("Trainers today:")).toBeVisible()
+    await expect(page.getByText(uniqueTrainers)).toHaveCount(0)
+    await expect(page.getByText(nextTrainers)).toHaveCount(0)
+    const companyBTrainers = page.locator("form[data-saved-current-trainer-count]")
+    await expect(companyBTrainers).not.toHaveAttribute(
+      "data-saved-current-trainer-count",
+      uniqueTrainers,
+    )
+    await expect(companyBTrainers).not.toHaveAttribute(
+      "data-saved-current-trainer-count",
+      nextTrainers,
+    )
+    await expect(page.getByLabel("Current trainer count", { exact: true })).not.toHaveValue(
+      uniqueTrainers,
+    )
+    await expect(page.getByLabel("Current trainer count", { exact: true })).not.toHaveValue(
+      nextTrainers,
+    )
+    await expect(page.getByText("Company A")).toHaveCount(0)
+  })
+
+  test("a new owner must save current DJ count before trainer 0", async ({ page }) => {
+    const email = `trainer-zero-${randomUUID()}@blueprint.test`
+    await page.goto("/sign-up")
+    await page.getByLabel("Email").fill(email)
+    await page.getByLabel("Password").fill(password)
+    await page.getByRole("button", { name: "Create account" }).click()
+    await expect(page).toHaveURL("/")
+    await page.getByLabel("Company name").fill(`Trainer Zero ${randomUUID()}`)
+    await page.getByRole("button", { name: "Create company" }).click()
+    const trainersToday = page.locator("p").filter({ hasText: "Trainers today:" })
+    const trainerForm = page.locator("form[data-saved-current-trainer-count]")
+    await expect(trainersToday).toHaveText(/Trainers today:\s*Not set/)
+    await expect(trainerForm).toHaveAttribute("data-saved-current-trainer-count", "")
+
+    await page.getByLabel("Current trainer count", { exact: true }).fill("4")
+    await page.getByRole("button", { name: "Save trainer count", exact: true }).click()
+    await expect(
+      page.getByRole("alert").filter({ hasText: "Save current DJ count first." }),
+    ).toBeVisible()
+    await expect(trainersToday).toHaveText(/Trainers today:\s*Not set/)
+
+    await page.getByLabel("Current DJ count", { exact: true }).fill("3")
+    await page.getByRole("button", { name: "Save DJ count", exact: true }).click()
+    const teamTodayForm = page.locator("form[data-saved-current-dj-count]")
+    await expect(teamTodayForm).toHaveAttribute("data-saved-current-dj-count", "3")
+
+    await page.getByLabel("Current trainer count", { exact: true }).fill("0")
+    await page.getByRole("button", { name: "Save trainer count", exact: true }).click()
+    await expect(trainersToday).toHaveText(/Trainers today:\s*0$/)
+    await expect(trainersToday).not.toContainText("Not set")
+    await expect(trainerForm).toHaveAttribute("data-saved-current-trainer-count", "0")
+    await expect(page.getByLabel("Current trainer count", { exact: true })).toHaveValue("0")
+
+    await page.reload()
+    await expect(trainersToday).toHaveText(/Trainers today:\s*0$/)
+    await expect(trainerForm).toHaveAttribute("data-saved-current-trainer-count", "0")
+    await expect(page.getByLabel("Current trainer count", { exact: true })).toHaveValue("0")
+  })
 })
