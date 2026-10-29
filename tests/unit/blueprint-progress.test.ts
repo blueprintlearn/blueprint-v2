@@ -65,6 +65,29 @@ describe("getBlueprintProgress", () => {
     expect(p.doneCount).toBeLessThan(TOTAL_SECTIONS)
   })
 
+  it("uses the approved section names, in order, with the matching slugs", () => {
+    expect(BLUEPRINT_SECTIONS.map((s) => [s.slug, s.name])).toEqual([
+      ["goals", "Your goal"],
+      ["team", "Your team today"],
+      ["events", "Your events"],
+      ["services", "Your services and market"],
+      ["numbers", "Your numbers"],
+      ["development", "How you develop DJs"],
+      ["ideal-dj", "Your ideal DJ"],
+      ["review", "Your Blueprint"],
+    ])
+    expect(BLUEPRINT_SECTIONS.map((s) => s.description)).toEqual([
+      "What you want Blueprint to help you do",
+      "How many DJs you have, and how many you’d like",
+      "How many events you book, who works them, and your busiest dates",
+      "What your DJs handle at events, and where your prices sit",
+      "What each event really earns, private to you",
+      "How you hire and train today, and what to keep",
+      "Your core values and the skills you hire for",
+      "Blueprint’s recommendations, for you to approve or change",
+    ])
+  })
+
   it("has eight sections, two of them live: goals then team", () => {
     expect(TOTAL_SECTIONS).toBe(8)
     expect(BLUEPRINT_SECTIONS.map((s) => s.number)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])

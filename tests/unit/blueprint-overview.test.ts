@@ -14,7 +14,7 @@ import {
   TEAM_FOOTER_NOTE,
   TEAM_OPENING,
 } from "@/app/blueprint/blueprint-ui"
-import { BLUEPRINT_SECTIONS, blueprintSection, getBlueprintProgress } from "@/lib/blueprint/progress"
+import { blueprintSection, getBlueprintProgress } from "@/lib/blueprint/progress"
 
 const html = (el: Parameters<typeof renderToStaticMarkup>[0]) => renderToStaticMarkup(el)
 const text = (markup: string) => markup.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()
@@ -27,6 +27,17 @@ const anchors = (markup: string) =>
   }))
 const primaryLink = (markup: string) =>
   anchors(markup).find((a) => a.className.includes("bp-btn--primary"))
+
+const APPROVED = [
+  ["Your goal", "What you want Blueprint to help you do"],
+  ["Your team today", "How many DJs you have, and how many you’d like"],
+  ["Your events", "How many events you book, who works them, and your busiest dates"],
+  ["Your services and market", "What your DJs handle at events, and where your prices sit"],
+  ["Your numbers", "What each event really earns, private to you"],
+  ["How you develop DJs", "How you hire and train today, and what to keep"],
+  ["Your ideal DJ", "Your core values and the skills you hire for"],
+  ["Your Blueprint", "Blueprint’s recommendations, for you to approve or change"],
+] as const
 
 const none = getBlueprintProgress(null, null)
 const started = getBlueprintProgress({ ownerGoal: "scale" }, null)
@@ -42,14 +53,12 @@ describe("BlueprintSectionList", () => {
     expect(count(out, "<li")).toBe(8)
   })
 
-  it("shows every section name and a one-line description, in order", () => {
-    let last = -1
-    for (const section of BLUEPRINT_SECTIONS) {
-      const at = out.indexOf(`>${section.name.replace("&", "&amp;")}<`)
-      expect(at).toBeGreaterThan(last)
-      last = at
-      expect(text(out)).toContain(section.description)
-    }
+  it("shows the approved name and description for every section, in order", () => {
+    const rows = [...out.matchAll(/<li\b[\s\S]*?<\/li>/g)].map(([li]) => text(li))
+    expect(rows).toHaveLength(8)
+    APPROVED.forEach(([name, description], index) => {
+      expect(rows[index]).toContain(`${index + 1} ${name} ${description}`)
+    })
   })
 
   it("links only the two live sections and leaves six as Coming soon", () => {
@@ -155,6 +164,19 @@ describe("BlueprintSectionPage", () => {
     expect(GOALS_OPENING).toBe("Let’s start with where you want to go. Everything Blueprint suggests ties back to this.")
     expect(TEAM_OPENING).toBe("Now your team: how many DJs you have, and how many you’d like.")
     expect(TEAM_FOOTER_NOTE).toBe("The next sections are coming soon.")
+  })
+
+  it("headings use the approved names for both live sections", () => {
+    for (const [slug, name, n] of [
+      ["goals", "Your goal", 1],
+      ["team", "Your team today", 2],
+    ] as const) {
+      const out = html(
+        h(BlueprintSectionPage, { section: blueprintSection(slug)!, status: "done", opening: "x", footer: null, children: null }),
+      )
+      expect(out).toContain(`>${name}</h1>`)
+      expect(text(out)).toContain(`Section ${n} of 8`)
+    }
   })
 
   it("names the form card by the h1", () => {

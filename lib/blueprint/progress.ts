@@ -13,10 +13,8 @@ export type BlueprintSectionSlug =
 export type BlueprintSection = {
   number: number
   slug: BlueprintSectionSlug
-  /** Row label on the overview. */
+  /** Used for the overview row and the section page heading. */
   name: string
-  /** Page heading on the section page. */
-  title: string
   description: string
   /** Sections without a page yet are shown as "Coming soon". */
   live: boolean
@@ -26,51 +24,57 @@ export const BLUEPRINT_SECTIONS: readonly BlueprintSection[] = [
   {
     number: 1,
     slug: "goals",
-    name: "Goals",
-    title: "Your goal",
-    description: "Where you want your company to go",
+    name: "Your goal",
+    description: "What you want Blueprint to help you do",
     live: true,
   },
   {
     number: 2,
     slug: "team",
-    name: "Team today",
-    title: "Your team today",
+    name: "Your team today",
     description: "How many DJs you have, and how many you’d like",
     live: true,
   },
-  { number: 3, slug: "events", name: "Events", title: "Events", description: "The events you book", live: false },
+  {
+    number: 3,
+    slug: "events",
+    name: "Your events",
+    description: "How many events you book, who works them, and your busiest dates",
+    live: false,
+  },
   {
     number: 4,
     slug: "services",
-    name: "Services & market",
-    title: "Services & market",
-    description: "What you offer and where you compete",
+    name: "Your services and market",
+    description: "What your DJs handle at events, and where your prices sit",
     live: false,
   },
-  { number: 5, slug: "numbers", name: "Numbers", title: "Numbers", description: "What your events earn", live: false },
+  {
+    number: 5,
+    slug: "numbers",
+    name: "Your numbers",
+    description: "What each event really earns, private to you",
+    live: false,
+  },
   {
     number: 6,
     slug: "development",
-    name: "Development",
-    title: "Development",
-    description: "How you hire and train DJs",
+    name: "How you develop DJs",
+    description: "How you hire and train today, and what to keep",
     live: false,
   },
   {
     number: 7,
     slug: "ideal-dj",
-    name: "Ideal DJ",
-    title: "Ideal DJ",
-    description: "The values and skills you hire for",
+    name: "Your ideal DJ",
+    description: "Your core values and the skills you hire for",
     live: false,
   },
   {
     number: 8,
     slug: "review",
-    name: "Review",
-    title: "Review",
-    description: "Look over your Blueprint and approve it",
+    name: "Your Blueprint",
+    description: "Blueprint’s recommendations, for you to approve or change",
     live: false,
   },
 ]

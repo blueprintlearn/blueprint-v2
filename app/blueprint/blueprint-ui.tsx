@@ -174,7 +174,7 @@ export function BlueprintSectionPage({
         </p>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <h1 id="section-title" className="bp-type-display-xl max-[760px]:text-[46px]!">
-            {section.title}
+            {section.name}
           </h1>
           <SectionStatusTag status={status} />
         </div>

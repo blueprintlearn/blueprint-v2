@@ -10,6 +10,17 @@ async function signIn(page: Page, email: string) {
   await expect(page).toHaveURL("/")
 }
 
+const APPROVED_SECTIONS = [
+  ["Your goal", "What you want Blueprint to help you do"],
+  ["Your team today", "How many DJs you have, and how many you’d like"],
+  ["Your events", "How many events you book, who works them, and your busiest dates"],
+  ["Your services and market", "What your DJs handle at events, and where your prices sit"],
+  ["Your numbers", "What each event really earns, private to you"],
+  ["How you develop DJs", "How you hire and train today, and what to keep"],
+  ["Your ideal DJ", "Your core values and the skills you hire for"],
+  ["Your Blueprint", "Blueprint’s recommendations, for you to approve or change"],
+] as const
+
 const sectionStatus = (page: Page) => page.locator("div:has(> h1) > .bp-status")
 const doneText = (page: Page) => page.getByText(/^\d of 8 sections done$/)
 const row = (page: Page, name: string) =>
@@ -46,18 +57,21 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
 
     await expect(page.locator("ol li")).toHaveCount(8)
     await expect(page.locator("ol li a")).toHaveCount(2)
-    await expect(row(page, "Goals").getByRole("link")).toHaveAttribute("href", "/blueprint/goals")
-    await expect(row(page, "Team today").getByRole("link")).toHaveAttribute("href", "/blueprint/team")
-    for (const name of ["Events", "Services & market", "Numbers", "Development", "Ideal DJ", "Review"]) {
+    await expect(row(page, "Your goal").getByRole("link")).toHaveAttribute("href", "/blueprint/goals")
+    await expect(row(page, "Your team today").getByRole("link")).toHaveAttribute("href", "/blueprint/team")
+    for (const name of ["Your events", "Your services and market", "Your numbers", "How you develop DJs", "Your ideal DJ", "Your Blueprint"]) {
       await expect(row(page, name).getByText("Coming soon")).toBeVisible()
       await expect(row(page, name).getByRole("link")).toHaveCount(0)
+    }
+    for (const [name, description] of APPROVED_SECTIONS) {
+      await expect(row(page, name).getByText(description, { exact: true })).toBeVisible()
     }
     for (const code of ["not_started", "in_progress", "coming_soon", "owner_admin"]) {
       await expect(page.getByText(code)).toHaveCount(0)
     }
 
     // Goals
-    await row(page, "Goals").getByRole("link").click()
+    await row(page, "Your goal").getByRole("link").click()
     await expect(page).toHaveURL("/blueprint/goals")
     await expect(page.getByRole("link", { name: "Back to your Blueprint" })).toHaveAttribute("href", "/blueprint")
     await expect(page.getByText("Section 1 of 8")).toBeVisible()
@@ -103,8 +117,8 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     await page.getByRole("link", { name: "Back to your Blueprint" }).first().click()
     await expect(page).toHaveURL("/blueprint")
     await expect(doneText(page)).toHaveText("2 of 8 sections done")
-    await expect(row(page, "Goals").getByText("Done")).toBeVisible()
-    await expect(row(page, "Team today").getByText("Done")).toBeVisible()
+    await expect(row(page, "Your goal").getByText("Done")).toBeVisible()
+    await expect(row(page, "Your team today").getByText("Done")).toBeVisible()
     await expect(page.getByText("You’ve finished the sections that are ready. More are coming soon.")).toBeVisible()
     await expect(page.locator(".bp-btn--primary")).toHaveCount(0)
     await expect(page.getByRole("link", { name: /(Start|Continue) your Blueprint/ })).toHaveCount(0)
