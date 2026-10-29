@@ -102,6 +102,7 @@ Only these names, in Vercel and in `.env.example`:
 - `NEXT_PUBLIC_SENTRY_DSN`
 - `SENTRY_DSN`
 - `SENTRY_ENVIRONMENT`
+- `BLUEPRINT_GUIDED_COMPANY_IDS` (server-only, optional)
 
 | Target | Values |
 | --- | --- |
@@ -110,6 +111,8 @@ Only these names, in Vercel and in `.env.example`:
 | Vercel Preview (all non-`production`, including `main`, PRs and `staging`) | Staging Supabase public keys + staging Sentry DSN. `SENTRY_ENVIRONMENT=staging`. |
 | Vercel Production | Production Supabase public keys + production Sentry DSN. `SENTRY_ENVIRONMENT=production`. |
 | Vercel Development | Unset |
+
+`BLUEPRINT_GUIDED_COMPANY_IDS` turns the guided Company Blueprint (`/blueprint`) on per company. It is a comma-separated list of company ids (UUIDs). Unset or empty means off for everyone, which is the default in every target; leave it unset in Production until the product owner approves. It has no `NEXT_PUBLIC_` prefix on purpose, so it never reaches the browser, and no query string or cookie can change it. Browser tests set it for the seeded Company A only (`playwright.config.ts`).
 
 `NEXT_PUBLIC_SENTRY_DSN` and `SENTRY_DSN` must be the same project DSN for a given target. Staging and production must use different Sentry projects. The browser SDK only initializes when `NEXT_PUBLIC_SENTRY_DSN` is a static `process.env.NEXT_PUBLIC_SENTRY_DSN` lookup that Next.js can inline. Do not send browser events through a Sentry tunnel; unique Vercel URLs are behind Deployment Protection, and a tunnel would be swallowed by SSO.
 

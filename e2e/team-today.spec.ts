@@ -25,6 +25,13 @@ async function signUpNewOwner(page: Page, slug: string, companyPrefix: string) {
   await expect(teamTodayHeading(page)).toBeVisible()
 }
 
+const sectionStatus = (page: Page) => page.locator("div:has(> h1) > .bp-status")
+
+async function openGuidedTeamPage(page: Page) {
+  await page.goto("/blueprint/team")
+  await expect(page.getByRole("heading", { level: 1, name: "Your team today" })).toBeVisible()
+}
+
 const teamTodayHeading = (page: Page) => page.getByRole("heading", { level: 2, name: "Team today" })
 const teamTodayStatus = (page: Page) =>
   page.locator("section").filter({ has: teamTodayHeading(page) }).locator(".bp-status")
@@ -32,7 +39,7 @@ const teamTodayStatus = (page: Page) =>
 test.describe("team today in the browser", () => {
   test("Company A owner can save a DJ count that Company B cannot see", async ({ page }) => {
     await signIn(page, "owner-a@blueprint.test")
-    await expect(teamTodayHeading(page)).toBeVisible()
+    await openGuidedTeamPage(page)
     const teamTodayForm = page.locator("form[data-saved-current-dj-count]")
     const desiredForm = page.locator("form[data-saved-desired-dj-count]")
     await page.getByLabel("Current DJ count", { exact: true }).fill(uniqueDjCount)
@@ -41,6 +48,8 @@ test.describe("team today in the browser", () => {
     await expect(teamTodayForm).toHaveAttribute("data-saved-current-dj-count", uniqueDjCount)
     await expect(page.getByLabel("Current DJ count", { exact: true })).toHaveValue(uniqueDjCount)
     await expect(page.getByText(/\bCompany B\b/)).toHaveCount(0)
+    const savedDesired = await desiredForm.getAttribute("data-saved-desired-dj-count")
+    await expect(sectionStatus(page)).toHaveText(savedDesired === "" ? "In progress" : "Done")
 
     await page.reload()
     await expect(teamTodayForm).toHaveAttribute("data-saved-current-dj-count", uniqueDjCount)
@@ -113,7 +122,7 @@ test.describe("team today in the browser", () => {
     const nextDesired = "183"
 
     await signIn(page, "owner-a@blueprint.test")
-    await expect(teamTodayHeading(page)).toBeVisible()
+    await openGuidedTeamPage(page)
     await page.getByLabel("Current DJ count", { exact: true }).fill(uniqueDjCount)
     await page.getByRole("button", { name: "Save DJ count", exact: true }).click()
     const teamTodayForm = page.locator("form[data-saved-current-dj-count]")
@@ -126,6 +135,7 @@ test.describe("team today in the browser", () => {
     await expect(desiredForm).toHaveAttribute("data-saved-desired-dj-count", uniqueDesired)
     await expect(page.getByLabel("Desired DJ count")).toHaveValue(uniqueDesired)
     await expect(page.getByText(/\bCompany B\b/)).toHaveCount(0)
+    await expect(sectionStatus(page)).toHaveText("Done")
 
     await page.getByLabel("Desired DJ count").fill(nextDesired)
     await expect(page.getByLabel("Desired DJ count")).toHaveValue(nextDesired)

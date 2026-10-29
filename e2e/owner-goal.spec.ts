@@ -11,10 +11,13 @@ async function signIn(page: Page, email: string) {
   await expect(page).toHaveURL("/")
 }
 
+const sectionStatus = (page: Page) => page.locator("div:has(> h1) > .bp-status")
+
 test.describe("owner goal in the browser", () => {
   test("Company A owner can save a goal that Company B cannot see", async ({ page }) => {
     await signIn(page, "owner-a@blueprint.test")
-    await expect(page.getByRole("heading", { level: 2, name: "Your goal" })).toBeVisible()
+    await page.goto("/blueprint/goals")
+    await expect(page.getByRole("heading", { level: 1, name: "Your goal" })).toBeVisible()
     const ownerGoalForm = page.locator("form[data-saved-owner-goal]")
     const savedBefore = (await ownerGoalForm.getAttribute("data-saved-owner-goal")) ?? ""
 
@@ -40,6 +43,15 @@ test.describe("owner goal in the browser", () => {
     await expect(page.getByLabel("Owner goal")).toHaveValue("other")
     await expect(page.getByLabel("Other goal")).toHaveValue(uniqueOtherGoal)
     await expect(page.getByText(/\bCompany B\b/)).toHaveCount(0)
+    await expect(sectionStatus(page)).toHaveText("Done")
+
+    await page.goto("/blueprint")
+    await expect(page.getByText(/\d of 8 sections done/)).toBeVisible()
+    await expect(page.locator("ol li").filter({ hasText: "Goals" }).getByText("Done")).toBeVisible()
+    await page.goto("/")
+    await expect(page.getByText(uniqueOtherGoal)).toBeVisible()
+    await expect(page.locator("form[data-saved-owner-goal]")).toHaveCount(0)
+    await page.goto("/blueprint/goals")
 
     await page.reload()
     await expect(ownerGoalForm).toHaveAttribute("data-saved-owner-goal", "other")
@@ -81,6 +93,8 @@ test.describe("owner goal in the browser", () => {
 
   test("a failed save keeps the chosen goal and the Other text", async ({ page }) => {
     await signIn(page, "owner-a@blueprint.test")
+    await page.goto("/blueprint/goals")
+    await expect(page.getByRole("heading", { level: 1, name: "Your goal" })).toBeVisible()
     const ownerGoalForm = page.locator("form[data-saved-owner-goal]")
     const savedGoal = (await ownerGoalForm.getAttribute("data-saved-owner-goal")) ?? ""
     const savedOther = (await ownerGoalForm.getAttribute("data-saved-owner-goal-other")) ?? ""
