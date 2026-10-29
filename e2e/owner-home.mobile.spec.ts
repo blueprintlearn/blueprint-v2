@@ -19,7 +19,7 @@ async function hitTargetHeight(button: Locator) {
 }
 
 test.describe("owner home on a phone", () => {
-  test("Company A owner home fits the screen with the cards stacked", async ({ page }) => {
+  test("Company A owner home (switch on) fits the screen with the cards stacked", async ({ page }) => {
     await signIn(page, "owner-a@blueprint.test")
 
     await expect(page.getByRole("heading", { level: 1, name: "Welcome back." })).toBeVisible()
@@ -32,6 +32,90 @@ test.describe("owner home on a phone", () => {
     const teamToday = await page.getByRole("heading", { level: 2, name: "Team today" }).boundingBox()
     const ownerGoal = await page.getByRole("heading", { level: 2, name: "Your goal" }).boundingBox()
     expect(teamToday && ownerGoal).toBeTruthy()
+    expect(ownerGoal!.y).toBeGreaterThan(teamToday!.y)
+    expect(Math.abs(ownerGoal!.x - teamToday!.x)).toBeLessThan(2)
+
+    const viewportWidth = page.viewportSize()!.width
+    const blueprintCard = await page.getByRole("heading", { level: 2, name: "Your Company Blueprint" }).boundingBox()
+    expect(blueprintCard!.y).toBeLessThan(teamToday!.y)
+
+    const links = page.getByRole("link", { name: /^(Start|Continue|Review) your Blueprint|^Edit in your Blueprint/ })
+    expect(await links.count()).toBe(3)
+    for (const target of [...(await links.all()), page.getByRole("button", { name: "Sign out", exact: true })]) {
+      await target.scrollIntoViewIfNeeded()
+      await expect(target).toBeVisible()
+      const box = (await target.boundingBox())!
+      expect(box.x).toBeGreaterThanOrEqual(0)
+      expect(box.x + box.width).toBeLessThanOrEqual(viewportWidth)
+      expect(await hitTargetHeight(target)).toBeGreaterThanOrEqual(44)
+    }
+    await expect(page.locator("header.bp-nav").getByRole("button", { name: "Sign out" })).toBeVisible()
+
+    await page.getByRole("button", { name: "Sign out" }).click()
+    await expect(page).toHaveURL("/")
+    await expect(page.getByRole("link", { name: "Sign in" })).toBeVisible()
+  })
+
+  test("Company A owner's Blueprint pages fit the screen and keep the forms usable", async ({ page }) => {
+    await signIn(page, "owner-a@blueprint.test")
+    const viewportWidth = page.viewportSize()!.width
+    const noOverflow = async () =>
+      expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0)
+
+    await page.goto("/blueprint")
+    await expect(page.getByRole("heading", { level: 1, name: "Your Company Blueprint" })).toBeVisible()
+    await expect(page.locator("ol li")).toHaveCount(8)
+    await noOverflow()
+
+    await page.goto("/blueprint/team")
+    await expect(page.getByRole("heading", { level: 1, name: "Your team today" })).toBeVisible()
+    await noOverflow()
+    const current = await page.getByLabel("Current DJ count", { exact: true }).boundingBox()
+    const desired = await page.getByLabel("Desired DJ count").boundingBox()
+    expect(current!.height).toBeGreaterThanOrEqual(44)
+    expect(desired!.y).toBeGreaterThan(current!.y)
+
+    for (const name of ["Save DJ count", "Save desired DJ count"]) {
+      const button = page.getByRole("button", { name, exact: true })
+      await button.scrollIntoViewIfNeeded()
+      const box = (await button.boundingBox())!
+      expect(box.x).toBeGreaterThanOrEqual(0)
+      expect(box.x + box.width).toBeLessThanOrEqual(viewportWidth)
+      expect(await hitTargetHeight(button)).toBeGreaterThanOrEqual(44)
+    }
+    for (const name of ["Back to your Blueprint", "Previous: Your goal"]) {
+      for (const link of await page.getByRole("link", { name, exact: true }).all()) {
+        await link.scrollIntoViewIfNeeded()
+        expect(await hitTargetHeight(link)).toBeGreaterThanOrEqual(44)
+      }
+    }
+
+    await page.goto("/blueprint/goals")
+    await expect(page.getByRole("heading", { level: 1, name: "Your goal" })).toBeVisible()
+    await noOverflow()
+    const save = page.getByRole("button", { name: "Save owner goal", exact: true })
+    await save.scrollIntoViewIfNeeded()
+    const saveBox = (await save.boundingBox())!
+    expect(saveBox.x + saveBox.width).toBeLessThanOrEqual(viewportWidth)
+    expect(await hitTargetHeight(save)).toBeGreaterThanOrEqual(44)
+    const next = page.getByRole("link", { name: "Next: Your team today", exact: true })
+    await next.scrollIntoViewIfNeeded()
+    expect(await hitTargetHeight(next)).toBeGreaterThanOrEqual(44)
+  })
+
+  test("Company B owner home (switch off) keeps the forms stacked and usable", async ({ page }) => {
+    await signIn(page, "owner-b@blueprint.test")
+
+    await expect(page.getByRole("heading", { level: 1, name: "Welcome back." })).toBeVisible()
+    await expect(page.locator("main").getByText("Company B", { exact: true })).toBeVisible()
+    await expect(page.getByRole("heading", { level: 2, name: "Team today" })).toBeVisible()
+    await expect(page.getByRole("link")).toHaveCount(0)
+
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
+    expect(overflow).toBeLessThanOrEqual(0)
+
+    const teamToday = await page.getByRole("heading", { level: 2, name: "Team today" }).boundingBox()
+    const ownerGoal = await page.getByRole("heading", { level: 2, name: "Your goal" }).boundingBox()
     expect(ownerGoal!.y).toBeGreaterThan(teamToday!.y)
     expect(Math.abs(ownerGoal!.x - teamToday!.x)).toBeLessThan(2)
 
@@ -50,10 +134,5 @@ test.describe("owner home on a phone", () => {
       expect(box.x + box.width).toBeLessThanOrEqual(viewportWidth)
       expect(await hitTargetHeight(button)).toBeGreaterThanOrEqual(44)
     }
-    await expect(page.locator("header.bp-nav").getByRole("button", { name: "Sign out" })).toBeVisible()
-
-    await page.getByRole("button", { name: "Sign out" }).click()
-    await expect(page).toHaveURL("/")
-    await expect(page.getByRole("link", { name: "Sign in" })).toBeVisible()
   })
 })

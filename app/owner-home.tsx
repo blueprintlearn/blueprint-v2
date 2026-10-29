@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import Link from "next/link"
 
 import { Card, Fact, StatusTag } from "@/components/blueprint"
 import { OWNER_GOAL_LABELS, type OwnerGoalCode } from "@/lib/blueprint/goals"
@@ -31,6 +32,15 @@ function OwnerOnlyNote() {
   return <p className="m-0 text-[14px] text-muted">Only the company owner can change these.</p>
 }
 
+function EditInBlueprintLink({ href, about }: { href: string; about: string }) {
+  return (
+    <Link href={href} className="bp-btn bp-btn--soft bp-btn--sm self-start">
+      Edit in your Blueprint
+      <span className="bp-sr"> for {about}</span>
+    </Link>
+  )
+}
+
 function CardHead({ id, title, status }: { id: string; title: string; status: ReactNode }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
@@ -49,10 +59,13 @@ export function TeamTodayCard({
   currentDjCount,
   desiredDjCount,
   editor,
+  editHref,
 }: {
   currentDjCount: number | null
   desiredDjCount: number | null
   editor?: ReactNode
+  /** Owner of a company with the guided Blueprint on: facts here, editing in the Blueprint. */
+  editHref?: string
 }) {
   const saved = [currentDjCount, desiredDjCount].filter((value) => value !== null).length
   const status =
@@ -80,7 +93,7 @@ export function TeamTodayCard({
             <Fact label="Current DJ count" value={currentDjCount} />
             <Fact label="Desired DJ count" value={desiredDjCount} />
           </div>
-          <OwnerOnlyNote />
+          {editHref ? <EditInBlueprintLink href={editHref} about="Team today" /> : <OwnerOnlyNote />}
         </>
       )}
     </Card>
@@ -97,11 +110,13 @@ export function OwnerGoalCard({
   goal,
   goalOther,
   editor,
+  editHref,
   isOwner,
 }: {
   goal: OwnerGoalCode | null
   goalOther: string | null
   editor?: ReactNode
+  editHref?: string
   isOwner: boolean
 }) {
   return (
@@ -120,7 +135,7 @@ export function OwnerGoalCard({
       {editor ?? (
         <>
           <Fact label="Goal" value={goalFactValue(goal, goalOther)} emptyText="No goal chosen yet" />
-          <OwnerOnlyNote />
+          {editHref ? <EditInBlueprintLink href={editHref} about="your goal" /> : <OwnerOnlyNote />}
         </>
       )}
     </Card>
