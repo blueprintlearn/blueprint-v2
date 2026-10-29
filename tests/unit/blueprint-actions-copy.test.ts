@@ -47,7 +47,7 @@ describe("saveTeamToday", () => {
     expect(result.error).toBeNull()
     expect(result.savedAt).toBeGreaterThanOrEqual(before)
     expect(mocks.upsert).toHaveBeenCalledWith({ company_id: "company-a", current_dj_count: 0 }, { onConflict: "company_id" })
-    expect(mocks.revalidatePath).toHaveBeenCalledWith("/")
+    expect(mocks.revalidatePath).toHaveBeenCalledWith("/", "layout")
   })
 
   it("rejects an invalid number before touching auth or the database", async () => {
@@ -89,6 +89,7 @@ describe("saveDesiredDjCount", () => {
     expect(result.error).toBeNull()
     expect(result.savedAt).toEqual(expect.any(Number))
     expect(mocks.update).toHaveBeenCalledWith({ desired_dj_count: 0 })
+    expect(mocks.revalidatePath).toHaveBeenCalledWith("/", "layout")
   })
 
   it("keeps current-before-desired on the server", async () => {
@@ -121,6 +122,7 @@ describe("saveOwnerGoal", () => {
       { company_id: "company-a", owner_goal: "scale", owner_goal_other: null },
       { onConflict: "company_id" },
     )
+    expect(mocks.revalidatePath).toHaveBeenCalledWith("/", "layout")
   })
 
   it("asks for words when Other is chosen with empty or blank text", async () => {

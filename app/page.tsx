@@ -1,10 +1,13 @@
 import { TopNav } from "@/components/blueprint"
+import { isGuidedBlueprintEnabled } from "@/lib/blueprint/guided-switch"
+import { getBlueprintProgress } from "@/lib/blueprint/progress"
 import { getCurrentOwnerGoal, getCurrentTeamToday } from "@/lib/blueprint/queries"
 import { OWNER_ADMIN_ROLE } from "@/lib/rules/system-role"
 import { createClient } from "@/lib/supabase/server"
 import { getCurrentMembership } from "@/lib/tenancy/queries"
 
 import { AuthLinks } from "./auth-links"
+import { BlueprintHomeCard } from "./blueprint/blueprint-ui"
 import { CreateCompanyForm } from "./create-company-form"
 import { DesiredDjCountForm } from "./desired-dj-count-form"
 import { OwnerGoalCard, OwnerHomeHero, TeamTodayCard } from "./owner-home"
@@ -21,7 +24,9 @@ export default async function HomePage() {
   const teamToday = membership ? await getCurrentTeamToday() : null
 
   if (membership) {
-    const canEdit = membership.role === OWNER_ADMIN_ROLE
+    const isOwner = membership.role === OWNER_ADMIN_ROLE
+    const guided = isOwner && isGuidedBlueprintEnabled(membership.companyId)
+    const canEdit = isOwner && !guided
     const currentDjCount = teamToday == null ? null : teamToday.currentDjCount
     const desiredDjCount = teamToday?.desiredDjCount ?? null
 
@@ -29,11 +34,13 @@ export default async function HomePage() {
       <>
         <TopNav actions={<SignOutButton />} />
         <main className="mx-auto flex w-full max-w-[1240px] flex-1 flex-col gap-8 px-4 pb-11 md:gap-12 md:px-8 md:pb-16">
-          <OwnerHomeHero companyName={membership.companyName} role={membership.role} isOwner={canEdit} />
+          <OwnerHomeHero companyName={membership.companyName} role={membership.role} isOwner={isOwner} />
+          {guided ? <BlueprintHomeCard progress={getBlueprintProgress(ownerGoal, teamToday)} /> : null}
           <div className="grid items-start gap-5 lg:grid-cols-2">
             <TeamTodayCard
               currentDjCount={currentDjCount}
               desiredDjCount={desiredDjCount}
+              editHref={guided ? "/blueprint/team" : undefined}
               editor={
                 canEdit ? (
                   <div key={`team-today:${membership.companyId}`} className="grid gap-5 md:grid-cols-2">
@@ -46,7 +53,8 @@ export default async function HomePage() {
             <OwnerGoalCard
               goal={ownerGoal?.ownerGoal ?? null}
               goalOther={ownerGoal?.ownerGoalOther ?? null}
-              isOwner={canEdit}
+              isOwner={isOwner}
+              editHref={guided ? "/blueprint/goals" : undefined}
               editor={
                 canEdit ? (
                   <OwnerGoalForm

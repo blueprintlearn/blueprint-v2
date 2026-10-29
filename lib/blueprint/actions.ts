@@ -57,7 +57,7 @@ export async function saveTeamToday(
     return { error: SAVE_FAILED_MESSAGE, savedAt: null }
   }
 
-  revalidatePath("/")
+  revalidatePath("/", "layout")
   return { error: null, savedAt: Date.now() }
 }
 
@@ -91,7 +91,7 @@ export async function saveDesiredDjCount(
     return { error: "Save your current DJ count first.", savedAt: null }
   }
 
-  revalidatePath("/")
+  revalidatePath("/", "layout")
   return { error: null, savedAt: Date.now() }
 }
 
@@ -135,6 +135,6 @@ export async function saveOwnerGoal(
     return { error: SAVE_FAILED_MESSAGE, savedAt: null }
   }
 
-  revalidatePath("/")
+  revalidatePath("/", "layout")
   return { error: null, savedAt: Date.now() }
 }

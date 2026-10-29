@@ -29,5 +29,9 @@ export default defineConfig({
     command: "corepack pnpm start",
     url: "http://127.0.0.1:3000",
     reuseExistingServer: !process.env.CI,
+    env: {
+      // Company A is the seeded guided-Blueprint company; Company B stays off to cover the default.
+      BLUEPRINT_GUIDED_COMPANY_IDS: "00000000-0000-4000-8000-0000000000a1",
+    },
   },
 })
