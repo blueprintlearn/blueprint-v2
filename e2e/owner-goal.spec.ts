@@ -47,7 +47,7 @@ test.describe("owner goal in the browser", () => {
 
     await page.goto("/blueprint")
     await expect(page.getByText(/\d of 8 sections done/)).toBeVisible()
-    await expect(page.locator("ol li").filter({ hasText: "Goals" }).getByText("Done")).toBeVisible()
+    await expect(page.locator("ol li").filter({ has: page.getByText("Goals", { exact: true }) }).getByText("Done")).toBeVisible()
     await page.goto("/")
     await expect(page.getByText(uniqueOtherGoal)).toBeVisible()
     await expect(page.locator("form[data-saved-owner-goal]")).toHaveCount(0)

@@ -12,7 +12,8 @@ async function signIn(page: Page, email: string) {
 
 const sectionStatus = (page: Page) => page.locator("div:has(> h1) > .bp-status")
 const doneText = (page: Page) => page.getByText(/^\d of 8 sections done$/)
-const row = (page: Page, name: string) => page.locator("ol li").filter({ hasText: name })
+const row = (page: Page, name: string) =>
+  page.locator("ol li").filter({ has: page.getByText(name, { exact: true }) })
 
 async function doneCount(page: Page) {
   const line = (await doneText(page).textContent()) ?? ""
