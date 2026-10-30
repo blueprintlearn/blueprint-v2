@@ -151,6 +151,33 @@ describe("OwnerGoalCard", () => {
     }
   })
 
+  it("shows Your goals, Main goal and Also for a switch-on owner", () => {
+    const out = html(
+      h(OwnerGoalCard, {
+        goal: "scale",
+        goalOther: null,
+        isOwner: true,
+        editHref: "/blueprint/goals",
+        alsoLine: "Also: Expand, Improve quality",
+      }),
+    )
+    expect(out).toContain(">Your goals</h2>")
+    expect(out).toContain('<span class="bp-fact__label">Main goal</span><span class="bp-fact__value">Scale</span>')
+    expect(out).toContain("Also: Expand, Improve quality")
+    expect(out).toContain("Edit in your Blueprint")
+    expect(out).not.toContain("scale")
+    expect(out).not.toContain("expand")
+    expect(out).not.toContain("improve_quality")
+  })
+
+  it("keeps the manager card as Company goal with no Also line", () => {
+    const out = html(h(OwnerGoalCard, { goal: "scale", goalOther: null, isOwner: false }))
+    expect(out).toContain(">Company goal</h2>")
+    expect(out).toContain('<span class="bp-fact__label">Goal</span>')
+    expect(out).not.toContain("Also:")
+    expect(out).not.toContain("Your goals")
+  })
+
   it("shows Your goal with only the editor for the owner", () => {
     const out = html(h(OwnerGoalCard, { goal: "scale", goalOther: null, isOwner: true, editor: editorForm({ "data-saved-owner-goal": "scale" }) }))
     expect(out).toContain(">Your goal</h2>")

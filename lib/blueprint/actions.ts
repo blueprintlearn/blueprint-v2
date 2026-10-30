@@ -2,7 +2,13 @@
 
 import { revalidatePath } from "next/cache"
 
+import {
+  mapSaveCompanyGoalsError,
+  parseCompanyGoals,
+  SAVE_GOALS_FAILED_MESSAGE,
+} from "@/lib/blueprint/company-goals"
 import { OWNER_GOAL_OTHER_REQUIRED_MESSAGE, parseOwnerGoal } from "@/lib/blueprint/goals"
+import { isGuidedBlueprintEnabled } from "@/lib/blueprint/guided-switch"
 import { parseCurrentDjCount, parseDesiredDjCount } from "@/lib/blueprint/team-today"
 import { createClient } from "@/lib/supabase/server"
 import { OWNER_ADMIN_ROLE } from "@/lib/rules/system-role"
@@ -133,6 +139,57 @@ export async function saveOwnerGoal(
 
   if (error) {
     return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
+export type SaveCompanyGoalsState = {
+  error: string | null
+  savedAt: number | null
+}
+
+/**
+ * Guided multiple-goals write path (S2-7 option A).
+ * The server action checks the env switch and the owner role before calling
+ * save_company_goals. The RPC itself cannot see the switch: an authenticated
+ * owner can call it directly. That direct-RPC bypass is a production-release
+ * blocker and is not accepted as a permanent security design.
+ */
+export async function saveCompanyGoals(
+  _prevState: SaveCompanyGoalsState,
+  formData: FormData,
+): Promise<SaveCompanyGoalsState> {
+  const parsed = parseCompanyGoals({
+    goals: formData.getAll("goals"),
+    primary: formData.get("primary"),
+    otherText: formData.get("otherText"),
+  })
+
+  if (!parsed.ok) {
+    return { error: parsed.error, savedAt: null }
+  }
+
+  const membership = await getCurrentMembership()
+  if (!membership || membership.role !== OWNER_ADMIN_ROLE) {
+    return { error: OWNER_ONLY_MESSAGE, savedAt: null }
+  }
+
+  if (!isGuidedBlueprintEnabled(membership.companyId)) {
+    return { error: SAVE_GOALS_FAILED_MESSAGE, savedAt: null }
+  }
+
+  const supabase = await createClient()
+  const { error } = await supabase.rpc("save_company_goals", {
+    p_company_id: membership.companyId,
+    p_goals: parsed.value.goals,
+    p_primary: parsed.value.primary,
+    p_other_text: parsed.value.otherText ?? "",
+  })
+
+  if (error) {
+    return { error: mapSaveCompanyGoalsError(error.code), savedAt: null }
   }
 
   revalidatePath("/", "layout")

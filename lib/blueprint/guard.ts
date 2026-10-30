@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation"
 
 import { isGuidedBlueprintEnabled } from "@/lib/blueprint/guided-switch"
-import { getCurrentOwnerGoal, getCurrentTeamToday } from "@/lib/blueprint/queries"
+import { getCurrentCompanyGoals, getCurrentOwnerGoal, getCurrentTeamToday } from "@/lib/blueprint/queries"
 import { getBlueprintProgress } from "@/lib/blueprint/progress"
 import { OWNER_ADMIN_ROLE } from "@/lib/rules/system-role"
 import { getCurrentMembership, type CurrentMembership } from "@/lib/tenancy/queries"
@@ -31,6 +31,15 @@ export async function requireGuidedOwner(): Promise<CurrentMembership> {
 }
 
 export async function loadGuidedBlueprint() {
-  const [ownerGoal, teamToday] = await Promise.all([getCurrentOwnerGoal(), getCurrentTeamToday()])
-  return { ownerGoal, teamToday, progress: getBlueprintProgress(ownerGoal, teamToday) }
+  const [ownerGoal, teamToday, companyGoals] = await Promise.all([
+    getCurrentOwnerGoal(),
+    getCurrentTeamToday(),
+    getCurrentCompanyGoals(),
+  ])
+  return {
+    ownerGoal,
+    teamToday,
+    companyGoals,
+    progress: getBlueprintProgress(companyGoals, teamToday),
+  }
 }

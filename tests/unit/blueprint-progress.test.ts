@@ -7,10 +7,16 @@ import {
   TOTAL_SECTIONS,
 } from "@/lib/blueprint/progress"
 
-const goal = { ownerGoal: "scale" as const }
+const goal = { primary: { goal: "scale" as const } }
 const team = (desired: number | null, current = 3) => ({ currentDjCount: current, desiredDjCount: desired })
 
 describe("getBlueprintProgress", () => {
+  it("marks section 1 done only when a primary goal exists", () => {
+    expect(getBlueprintProgress(null, null).statuses.goals).toBe("not_started")
+    expect(getBlueprintProgress({ primary: null }, null).statuses.goals).toBe("not_started")
+    expect(getBlueprintProgress({ primary: { goal: "scale" } }, null).statuses.goals).toBe("done")
+  })
+
   it("is not started with nothing saved: start at Goals", () => {
     const p = getBlueprintProgress(null, null)
     expect(p.statuses.goals).toBe("not_started")
@@ -67,7 +73,7 @@ describe("getBlueprintProgress", () => {
 
   it("uses the approved section names, in order, with the matching slugs", () => {
     expect(BLUEPRINT_SECTIONS.map((s) => [s.slug, s.name])).toEqual([
-      ["goals", "Your goal"],
+      ["goals", "Your goals"],
       ["team", "Your team today"],
       ["events", "Your events"],
       ["services", "Your services and market"],

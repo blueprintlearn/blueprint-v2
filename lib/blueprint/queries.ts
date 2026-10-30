@@ -2,6 +2,12 @@ import { createClient } from "@/lib/supabase/server"
 import { getCurrentMembership } from "@/lib/tenancy/queries"
 
 import {
+  goalDisplayLabel,
+  sortGoals,
+  type CompanyGoalEntry,
+  type CurrentCompanyGoals,
+} from "@/lib/blueprint/company-goals"
+import {
   OWNER_GOAL_CODES,
   type OwnerGoalCode,
   type OwnerGoalInput,
@@ -50,6 +56,66 @@ export async function getCurrentOwnerGoal(): Promise<CurrentOwnerGoal | null> {
     ownerGoal,
     ownerGoalOther: ownerGoal === "other" ? data.owner_goal_other : null,
   }
+}
+
+export type { CompanyGoalEntry, CurrentCompanyGoals }
+
+function toGoalEntry(row: { goal: string; other_text: string | null }): CompanyGoalEntry | null {
+  const goal = asOwnerGoalCode(row.goal)
+  if (!goal) return null
+  return {
+    goal,
+    otherText: goal === "other" ? row.other_text : null,
+  }
+}
+
+/**
+ * Owner pages with the switch on. RLS applies: owners see every row;
+ * other members would only see the primary row if this were ever called for them.
+ */
+export async function getCurrentCompanyGoals(): Promise<CurrentCompanyGoals | null> {
+  const membership = await getCurrentMembership()
+  if (!membership) {
+    return null
+  }
+
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("company_goals")
+    .select("company_id, goal, other_text, is_primary")
+    .eq("company_id", membership.companyId)
+
+  if (error || !data || data.length === 0) {
+    return null
+  }
+
+  const entries = data
+    .map((row) => {
+      const entry = toGoalEntry(row)
+      return entry ? { ...entry, isPrimary: row.is_primary } : null
+    })
+    .filter((row): row is CompanyGoalEntry & { isPrimary: boolean } => row !== null)
+
+  const primary = entries.find((row) => row.isPrimary)
+  if (!primary) {
+    return null
+  }
+
+  const others = sortGoals(entries.filter((row) => !row.isPrimary)).map(({ goal, otherText }) => ({
+    goal,
+    otherText,
+  }))
+
+  return {
+    companyId: membership.companyId,
+    primary: { goal: primary.goal, otherText: primary.otherText },
+    others,
+  }
+}
+
+export function companyGoalsAlsoLine(goals: CurrentCompanyGoals | null): string | null {
+  if (!goals) return null
+  return goals.others.length === 0 ? null : `Also: ${goals.others.map(goalDisplayLabel).join(", ")}`
 }
 
 export type CurrentTeamToday = {

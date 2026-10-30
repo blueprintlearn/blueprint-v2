@@ -177,6 +177,29 @@
 .bp-select-wrap__icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--ink-2);pointer-events:none;display:grid}
 .bp-form-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
 
+/* ---------- v1.3: CheckboxGroup ---------- */
+.bp-check-group{border:0;margin:0;padding:0;min-width:0;display:block}
+.bp-check-group__legend{display:block;padding:0;margin:0 0 6px}
+.bp-check-group > .bp-field__help{margin:0 0 6px}
+.bp-check-group__list{display:flex;flex-direction:column;gap:8px;max-width:560px;margin-top:4px}
+.bp-check{display:flex;align-items:flex-start;gap:12px;min-height:44px;padding:10px 12px;border-radius:var(--bp-radius-md);cursor:pointer;transition:background-color .15s ease}
+.bp-check:hover{background:var(--surface-soft)}
+.bp-check:has(.bp-check__box:focus-visible){outline:2px solid var(--focus);outline-offset:3px}
+.bp-check__box{appearance:none;-webkit-appearance:none;flex:none;position:relative;width:22px;height:22px;margin:1px 0 0;border:1.5px solid var(--control-border);border-radius:6px;background:var(--surface);cursor:pointer;transition:border-color .15s ease,background-color .15s ease}
+.bp-check__box:focus-visible{outline:none}
+.bp-check:hover .bp-check__box{border-color:var(--ink)}
+.bp-check__box:checked{background:var(--solid);border-color:var(--solid)}
+.bp-check__box:checked::before{content:"";position:absolute;left:6px;top:2px;width:6px;height:11px;border:solid var(--text-on-solid);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.bp-check-group.is-invalid .bp-check__box:not(:checked){border-color:var(--danger-ink)}
+.bp-check__text{display:flex;flex-direction:column;gap:2px;min-width:0}
+.bp-check__name{font-size:16px;font-weight:700;line-height:1.35;color:var(--ink)}
+.bp-check__desc{font-size:14px;line-height:1.4;color:var(--muted)}
+.bp-check-group__follow{padding:4px 0 6px 46px;max-width:560px}
+.bp-check-group__note{margin:6px 0 0;font-size:14px;line-height:1.45;color:var(--ink-2)}
+.bp-check-group__note:empty{margin:0}
+.bp-check-group > .bp-field__error{margin-top:6px}
+@media (forced-colors: active){.bp-check__box:checked{background:Highlight;border-color:Highlight}.bp-check__box:checked::before{border-color:HighlightText}}
+
 /* ---------- v1.2: Fact (read-only value) and SaveStatus ---------- */
 .bp-fact{display:flex;flex-direction:column;gap:2px;min-width:0}
 .bp-fact__label{font-size:14px;font-weight:500;color:var(--muted)}

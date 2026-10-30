@@ -114,6 +114,8 @@ Only these names, in Vercel and in `.env.example`:
 
 `BLUEPRINT_GUIDED_COMPANY_IDS` turns the guided Company Blueprint (`/blueprint`) on per company. It is a comma-separated list of company ids (UUIDs). Unset or empty means off for everyone, which is the default in every target; leave it unset in Production until the product owner approves. It has no `NEXT_PUBLIC_` prefix on purpose, so it never reaches the browser, and no query string or cookie can change it. Browser tests set it for the seeded Company A only (`playwright.config.ts`).
 
+Slice 2 adds `company_goals` and `save_company_goals`. The server action checks this switch before writing (S2-7 option A). The database cannot see the switch, so an authenticated owner can call `save_company_goals` directly and bypass the rollout restriction. **That direct-RPC bypass is a production-release blocker.** It is not accepted as a permanent security design. Do not apply the Slice 2 migration to production, and do not release Slice 2, until the bypass is resolved through its own reviewed and approved change. Approval 1 covers the migration design only. Staging apply, preview activation, the production migration and the production release each need their own approval.
+
 `NEXT_PUBLIC_SENTRY_DSN` and `SENTRY_DSN` must be the same project DSN for a given target. Staging and production must use different Sentry projects. The browser SDK only initializes when `NEXT_PUBLIC_SENTRY_DSN` is a static `process.env.NEXT_PUBLIC_SENTRY_DSN` lookup that Next.js can inline. Do not send browser events through a Sentry tunnel; unique Vercel URLs are behind Deployment Protection, and a tunnel would be swallowed by SSO.
 
 Source-map upload is deferred: do not set `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, or `SENTRY_PROJECT`.

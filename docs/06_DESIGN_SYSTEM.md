@@ -142,3 +142,23 @@ Customers upload PNG, JPG or SVG. It shows at 38px tall in the top bar, on `pape
 ### In code
 
 `lib/brand/tenant-theme.ts` implements this exactly: `computeTenantTheme({ primary, accent })` returns the overrides and the report, and `tenantThemeCss()` writes them as CSS scoped to `[data-tenant-brand]`. Unit tests cover the defaults, invalid input, adjustment, fallback, reserved tokens, and 600 random colors with zero failing contrast pairs.
+
+## v1.3: CheckboxGroup
+
+Added 30 October 2026. Approved for Slice 2. Every v1.2 token, component and pattern above is unchanged.
+
+A labelled list of checkboxes for choosing any number of options from a short fixed list (2–8), with optional one-line descriptions, a follow-up field for an option like “Other”, and the same help, error and focus behaviour as the other form fields. To choose exactly one, use Select.
+
+**In code:** `CheckboxGroup` lives beside TextField, NumberField and Select in `components/blueprint/` and is exported from `@/components/blueprint`. It reuses `bp-field__label`, `bp-field__help`, `bp-field__error` and `bp-field__optional`. It is a borderless `fieldset` with a `legend`; do not wrap it in `Field` (`htmlFor` is wrong on a legend).
+
+**Props:** `label`, `name`, `options` (`{ value, label, description? }`), `value` + `onChange` or `defaultValue`, and optionally `help`, `error`, `note`, `followUp`, `optional`, `id`.
+
+**Rules between options** (two that exclude each other, a maximum) live in the form, not the component. The form updates `value` and explains the change with `note`.
+
+**Anatomy, in order:** legend (15px bold `ink`, sentence case, no colon; “Optional” when set), help (14px `muted`), options (one column, 8px gap, at most 560px), follow-up under its own checked option (indented 46px), note (14px `ink-2`, polite `role="status"`, always mounted), error (14px `danger-ink` with the alert icon, `role="alert"`).
+
+**Row:** a `label` around a real `input type="checkbox"` (`appearance: none`) and the text; at least 44px tall; padding 10px 12px; radius `bp-radius-md`. The whole row toggles the box. The box is 22×22px with a 1.5px `control-border` edge on `surface`. Name is 16px bold `ink`; description is 14px `muted`, no ending period.
+
+**States:** hover fills the row `surface-soft` and darkens the edge to `ink`. Checked fills the box `solid` with a `text-on-solid` check. Keyboard focus puts the `focus` ring around the whole row (`:has()`). An error turns unchecked edges `danger-ink` and sets `aria-invalid` on every box. Disabled options are not part of v1.3.
+
+**Phones:** the same single column, 44px rows, wrapping descriptions, no horizontal scroll at 320px or 390px. No new tokens.

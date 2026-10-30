@@ -112,18 +112,22 @@ export function OwnerGoalCard({
   editor,
   editHref,
   isOwner,
+  alsoLine,
 }: {
   goal: OwnerGoalCode | null
   goalOther: string | null
   editor?: ReactNode
   editHref?: string
   isOwner: boolean
+  /** Switch-on owner only. When passed (even as null), the card uses the goal-set copy. */
+  alsoLine?: string | null
 }) {
+  const guidedSet = isOwner && alsoLine !== undefined
   return (
     <Card as="section" aria-labelledby="owner-goal-title" className={cardClass}>
       <CardHead
         id="owner-goal-title"
-        title={isOwner ? "Your goal" : "Company goal"}
+        title={guidedSet ? "Your goals" : isOwner ? "Your goal" : "Company goal"}
         status={
           goal === null ? (
             <StatusTag status="planned" label="Not answered yet" />
@@ -134,8 +138,17 @@ export function OwnerGoalCard({
       />
       {editor ?? (
         <>
-          <Fact label="Goal" value={goalFactValue(goal, goalOther)} emptyText="No goal chosen yet" />
-          {editHref ? <EditInBlueprintLink href={editHref} about="your goal" /> : <OwnerOnlyNote />}
+          <Fact
+            label={guidedSet ? "Main goal" : "Goal"}
+            value={goalFactValue(goal, goalOther)}
+            emptyText="No goal chosen yet"
+          />
+          {guidedSet && alsoLine ? <p className="m-0 text-[14px] text-muted">{alsoLine}</p> : null}
+          {editHref ? (
+            <EditInBlueprintLink href={editHref} about={guidedSet ? "your goals" : "your goal"} />
+          ) : (
+            <OwnerOnlyNote />
+          )}
         </>
       )}
     </Card>

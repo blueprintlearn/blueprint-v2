@@ -1,4 +1,4 @@
-import type { CurrentOwnerGoal, CurrentTeamToday } from "@/lib/blueprint/queries"
+import type { CurrentTeamToday } from "@/lib/blueprint/queries"
 
 export type BlueprintSectionSlug =
   | "goals"
@@ -24,7 +24,7 @@ export const BLUEPRINT_SECTIONS: readonly BlueprintSection[] = [
   {
     number: 1,
     slug: "goals",
-    name: "Your goal",
+    name: "Your goals",
     description: "What you want Blueprint to help you do",
     live: true,
   },
@@ -104,17 +104,17 @@ export type BlueprintProgress = {
  * Derived only from saved data. A saved 0 counts as saved; only a missing value is unanswered.
  */
 export function getBlueprintProgress(
-  ownerGoal: Pick<CurrentOwnerGoal, "ownerGoal"> | null,
+  goals: { primary: unknown } | null,
   teamToday: Pick<CurrentTeamToday, "currentDjCount" | "desiredDjCount"> | null,
 ): BlueprintProgress {
-  const goals: SectionStatus = ownerGoal ? "done" : "not_started"
+  const goalsStatus: SectionStatus = goals?.primary ? "done" : "not_started"
   const team: SectionStatus =
     teamToday === null ? "not_started" : teamToday.desiredDjCount === null ? "in_progress" : "done"
 
   const statuses = Object.fromEntries(
     BLUEPRINT_SECTIONS.map((section) => [section.slug, "coming_soon" satisfies SectionStatus]),
   ) as Record<BlueprintSectionSlug, SectionStatus>
-  statuses.goals = goals
+  statuses.goals = goalsStatus
   statuses.team = team
 
   const liveStatuses = LIVE_SECTION_SLUGS.map((slug) => statuses[slug])
