@@ -30,7 +30,7 @@ test.describe("owner home on a phone", () => {
     expect(overflow).toBeLessThanOrEqual(0)
 
     const teamToday = await page.getByRole("heading", { level: 2, name: "Team today" }).boundingBox()
-    const ownerGoal = await page.getByRole("heading", { level: 2, name: "Your goal" }).boundingBox()
+    const ownerGoal = await page.getByRole("heading", { level: 2, name: "Your goals" }).boundingBox()
     expect(teamToday && ownerGoal).toBeTruthy()
     expect(ownerGoal!.y).toBeGreaterThan(teamToday!.y)
     expect(Math.abs(ownerGoal!.x - teamToday!.x)).toBeLessThan(2)
@@ -83,7 +83,7 @@ test.describe("owner home on a phone", () => {
       expect(box.x + box.width).toBeLessThanOrEqual(viewportWidth)
       expect(await hitTargetHeight(button)).toBeGreaterThanOrEqual(44)
     }
-    for (const name of ["Back to your Blueprint", "Previous: Your goal"]) {
+    for (const name of ["Back to your Blueprint", "Previous: Your goals"]) {
       for (const link of await page.getByRole("link", { name, exact: true }).all()) {
         await link.scrollIntoViewIfNeeded()
         expect(await hitTargetHeight(link)).toBeGreaterThanOrEqual(44)
@@ -91,9 +91,11 @@ test.describe("owner home on a phone", () => {
     }
 
     await page.goto("/blueprint/goals")
-    await expect(page.getByRole("heading", { level: 1, name: "Your goal" })).toBeVisible()
+    await expect(page.getByRole("heading", { level: 1, name: "Your goals" })).toBeVisible()
     await noOverflow()
-    const save = page.getByRole("button", { name: "Save owner goal", exact: true })
+    const firstRow = page.locator(".bp-check").first()
+    expect((await firstRow.boundingBox())!.height).toBeGreaterThanOrEqual(44)
+    const save = page.getByRole("button", { name: "Save goals", exact: true })
     await save.scrollIntoViewIfNeeded()
     const saveBox = (await save.boundingBox())!
     expect(saveBox.x + saveBox.width).toBeLessThanOrEqual(viewportWidth)

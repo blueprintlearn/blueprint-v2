@@ -15,6 +15,7 @@ vi.mock("@/lib/tenancy/queries", () => ({ getCurrentMembership: async () => mock
 vi.mock("@/lib/blueprint/queries", () => ({
   getCurrentOwnerGoal: async () => null,
   getCurrentTeamToday: async () => null,
+  getCurrentCompanyGoals: async () => null,
 }))
 
 import { requireGuidedOwner } from "@/lib/blueprint/guard"

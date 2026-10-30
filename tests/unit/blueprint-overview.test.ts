@@ -29,7 +29,7 @@ const primaryLink = (markup: string) =>
   anchors(markup).find((a) => a.className.includes("bp-btn--primary"))
 
 const APPROVED = [
-  ["Your goal", "What you want Blueprint to help you do"],
+  ["Your goals", "What you want Blueprint to help you do"],
   ["Your team today", "How many DJs you have, and how many you’d like"],
   ["Your events", "How many events you book, who works them, and your busiest dates"],
   ["Your services and market", "What your DJs handle at events, and where your prices sit"],
@@ -40,9 +40,9 @@ const APPROVED = [
 ] as const
 
 const none = getBlueprintProgress(null, null)
-const started = getBlueprintProgress({ ownerGoal: "scale" }, null)
-const partlyTeam = getBlueprintProgress({ ownerGoal: "scale" }, { currentDjCount: 3, desiredDjCount: null })
-const allReady = getBlueprintProgress({ ownerGoal: "scale" }, { currentDjCount: 3, desiredDjCount: 5 })
+const started = getBlueprintProgress({ primary: { goal: "scale" } }, null)
+const partlyTeam = getBlueprintProgress({ primary: { goal: "scale" } }, { currentDjCount: 3, desiredDjCount: null })
+const allReady = getBlueprintProgress({ primary: { goal: "scale" } }, { currentDjCount: 3, desiredDjCount: 5 })
 
 describe("BlueprintSectionList", () => {
   const out = html(h(BlueprintSectionList, { progress: started }))
@@ -157,7 +157,7 @@ describe("BlueprintSectionPage", () => {
     expect(anchors(out)[0].className).toContain("bp-link")
     expect(text(out)).toContain("Section 1 of 8")
     expect(out.match(/<h1[\s>]/g)).toHaveLength(1)
-    expect(out).toContain(">Your goal</h1>")
+    expect(out).toContain(">Your goals</h1>")
     expect(out).toContain("bp-status--planned")
     expect(text(out)).toContain("Not started")
     expect(text(out)).toContain("Let’s start with where you want to go. Everything Blueprint suggests ties back to this.")
@@ -168,7 +168,7 @@ describe("BlueprintSectionPage", () => {
 
   it("headings use the approved names for both live sections", () => {
     for (const [slug, name, n] of [
-      ["goals", "Your goal", 1],
+      ["goals", "Your goals", 1],
       ["team", "Your team today", 2],
     ] as const) {
       const out = html(
@@ -195,18 +195,30 @@ describe("Owner home read-only cards with the guided Blueprint on", () => {
     expect(team).not.toContain("<form")
     expect(count(team, 'class="bp-fact"')).toBe(2)
 
-    const goal = html(h(OwnerGoalCard, { goal: "scale", goalOther: null, isOwner: true, editHref: "/blueprint/goals" }))
+    const goal = html(
+      h(OwnerGoalCard, {
+        goal: "scale",
+        goalOther: null,
+        isOwner: true,
+        editHref: "/blueprint/goals",
+        alsoLine: "Also: Expand",
+      }),
+    )
     expect(goal).toContain('href="/blueprint/goals"')
     expect(text(goal)).toContain("Edit in your Blueprint")
-    expect(goal).toContain(">Your goal</h2>")
+    expect(goal).toContain(">Your goals</h2>")
+    expect(goal).toContain('<span class="bp-fact__label">Main goal</span>')
+    expect(goal).toContain("Also: Expand")
     expect(goal).not.toContain("Only the company owner can change these.")
   })
 
   it("gives the two links distinct accessible names while keeping the visible text", () => {
     const team = html(h(TeamTodayCard, { currentDjCount: 3, desiredDjCount: 4, editHref: "/blueprint/team" }))
-    const goal = html(h(OwnerGoalCard, { goal: null, goalOther: null, isOwner: true, editHref: "/blueprint/goals" }))
+    const goal = html(
+      h(OwnerGoalCard, { goal: null, goalOther: null, isOwner: true, editHref: "/blueprint/goals", alsoLine: null }),
+    )
     expect(text(team)).toContain("Edit in your Blueprint for Team today")
-    expect(text(goal)).toContain("Edit in your Blueprint for your goal")
+    expect(text(goal)).toContain("Edit in your Blueprint for your goals")
   })
 
   it("keeps the heading outline h1, h2, h2, h2 with no skipped level", () => {
@@ -217,7 +229,13 @@ describe("Owner home read-only cards with the guided Blueprint on", () => {
         h("h1", null, "Welcome back."),
         h(BlueprintHomeCard, { progress: none }),
         h(TeamTodayCard, { currentDjCount: 1, desiredDjCount: 2, editHref: "/blueprint/team" }),
-        h(OwnerGoalCard, { goal: "scale", goalOther: null, isOwner: true, editHref: "/blueprint/goals" }),
+        h(OwnerGoalCard, {
+          goal: "scale",
+          goalOther: null,
+          isOwner: true,
+          editHref: "/blueprint/goals",
+          alsoLine: null,
+        }),
       ),
     )
     expect([...out.matchAll(/<h([1-6])[\s>]/g)].map(([, level]) => level)).toEqual(["1", "2", "2", "2"])

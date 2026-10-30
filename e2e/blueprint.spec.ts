@@ -11,7 +11,7 @@ async function signIn(page: Page, email: string) {
 }
 
 const APPROVED_SECTIONS = [
-  ["Your goal", "What you want Blueprint to help you do"],
+  ["Your goals", "What you want Blueprint to help you do"],
   ["Your team today", "How many DJs you have, and how many you’d like"],
   ["Your events", "How many events you book, who works them, and your busiest dates"],
   ["Your services and market", "What your DJs handle at events, and where your prices sit"],
@@ -57,7 +57,7 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
 
     await expect(page.locator("ol li")).toHaveCount(8)
     await expect(page.locator("ol li a")).toHaveCount(2)
-    await expect(row(page, "Your goal").getByRole("link")).toHaveAttribute("href", "/blueprint/goals")
+    await expect(row(page, "Your goals").getByRole("link")).toHaveAttribute("href", "/blueprint/goals")
     await expect(row(page, "Your team today").getByRole("link")).toHaveAttribute("href", "/blueprint/team")
     for (const name of ["Your events", "Your services and market", "Your numbers", "How you develop DJs", "Your ideal DJ", "Your Blueprint"]) {
       await expect(row(page, name).getByText("Coming soon")).toBeVisible()
@@ -71,22 +71,28 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     }
 
     // Goals
-    await row(page, "Your goal").getByRole("link").click()
+    await row(page, "Your goals").getByRole("link").click()
     await expect(page).toHaveURL("/blueprint/goals")
     await expect(page.getByRole("link", { name: "Back to your Blueprint" })).toHaveAttribute("href", "/blueprint")
     await expect(page.getByText("Section 1 of 8")).toBeVisible()
-    await expect(page.getByRole("heading", { level: 1, name: "Your goal" })).toBeVisible()
+    await expect(page.getByRole("heading", { level: 1, name: "Your goals" })).toBeVisible()
     await expect(
       page.getByText("Let’s start with where you want to go. Everything Blueprint suggests ties back to this."),
     ).toBeVisible()
-    await expect(page.locator("form[data-saved-owner-goal]")).toHaveCount(1)
+    await expect(page.locator("form[data-saved-company-goals]")).toHaveCount(1)
     await expect(page.getByRole("link", { name: "Next: Your team today" })).toHaveAttribute("href", "/blueprint/team")
     await expect(page.locator(".bp-btn--primary")).toHaveCount(1)
-    await expect(page.getByRole("button", { name: "Save owner goal", exact: true })).toHaveClass(/\bbp-btn--primary\b/)
+    await expect(page.getByRole("button", { name: "Save goals", exact: true })).toHaveClass(/\bbp-btn--primary\b/)
 
-    await page.getByLabel("Owner goal").selectOption("scale")
-    await page.getByRole("button", { name: "Save owner goal", exact: true }).click()
-    await expect(page.locator("form[data-saved-owner-goal]").getByRole("status")).toHaveText("Saved")
+    await page.getByRole("checkbox", { name: /Scale/ }).check()
+    const primarySelect = page.getByLabel("Which one matters most right now?")
+    if (await primarySelect.count()) {
+      await primarySelect.selectOption("scale")
+    } else {
+      await expect(page.getByText("That’s your main goal. Blueprint will put it first in its recommendations.")).toBeVisible()
+    }
+    await page.getByRole("button", { name: "Save goals", exact: true }).click()
+    await expect(page.locator("form[data-saved-company-goals] .bp-save")).toHaveText("Saved")
     await expect(sectionStatus(page)).toHaveText("Done")
 
     // Team: current first, then desired
@@ -95,7 +101,7 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     await expect(page.getByText("Section 2 of 8")).toBeVisible()
     await expect(page.getByRole("heading", { level: 1, name: "Your team today" })).toBeVisible()
     await expect(page.getByText("Now your team: how many DJs you have, and how many you’d like.")).toBeVisible()
-    await expect(page.getByRole("link", { name: "Previous: Your goal" })).toHaveAttribute("href", "/blueprint/goals")
+    await expect(page.getByRole("link", { name: "Previous: Your goals" })).toHaveAttribute("href", "/blueprint/goals")
     await expect(page.getByRole("link", { name: "Back to your Blueprint" })).toHaveCount(2)
     await expect(page.getByText("The next sections are coming soon.")).toBeVisible()
     await expect(page.locator("form[data-saved-current-dj-count]")).toHaveCount(1)
@@ -117,7 +123,7 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     await page.getByRole("link", { name: "Back to your Blueprint" }).first().click()
     await expect(page).toHaveURL("/blueprint")
     await expect(doneText(page)).toHaveText("2 of 8 sections done")
-    await expect(row(page, "Your goal").getByText("Done")).toBeVisible()
+    await expect(row(page, "Your goals").getByText("Done")).toBeVisible()
     await expect(row(page, "Your team today").getByText("Done")).toBeVisible()
     await expect(page.getByText("You’ve finished the sections that are ready. More are coming soon.")).toBeVisible()
     await expect(page.locator(".bp-btn--primary")).toHaveCount(0)
@@ -130,7 +136,8 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     await expect(blueprint.getByRole("link", { name: "Review your Blueprint" })).toHaveAttribute("href", "/blueprint")
     await expect(page.locator(".bp-btn--primary")).toHaveCount(0)
     await expect(page.locator("form[data-saved-owner-goal], form[data-saved-current-dj-count], form[data-saved-desired-dj-count]")).toHaveCount(0)
-    await expect(page.locator(".bp-fact__value", { hasText: "Scale" })).toBeVisible()
+    await expect(page.getByRole("heading", { level: 2, name: "Your goals" })).toBeVisible()
+    await expect(page.locator(".bp-fact").filter({ hasText: "Main goal" }).getByText("Scale", { exact: true })).toBeVisible()
     await expect(page.locator(".bp-fact").filter({ hasText: "Current DJ count" }).getByText("6", { exact: true })).toBeVisible()
     await expect(page.locator(".bp-fact").filter({ hasText: "Desired DJ count" }).getByText("8", { exact: true })).toBeVisible()
   })

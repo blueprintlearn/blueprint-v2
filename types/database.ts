@@ -55,6 +55,25 @@ isOneToOne: true
       referencedColumns: ["id"]
     }
                   ]
+                },"company_goals": {
+                  Row: {
+                    "company_id": string,"created_at": string,"goal": Database["public"]['Enums']["owner_goal_code"],"id": string,"is_primary": boolean,"other_text": string | null,"updated_at": string
+                  }
+                  Insert: {
+                    "company_id": string,"created_at"?: string,"goal": Database["public"]['Enums']["owner_goal_code"],"id"?: string,"is_primary"?: boolean,"other_text"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "company_id"?: string,"created_at"?: string,"goal"?: Database["public"]['Enums']["owner_goal_code"],"id"?: string,"is_primary"?: boolean,"other_text"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_goals_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"company_memberships": {
                   Row: {
                     "company_id": string,"created_at": string,"id": string,"role": Database["public"]['Enums']["system_role"],"status": string,"user_id": string
@@ -111,7 +130,10 @@ isOneToOne: true
         to: "companies"
         isOneToOne: true
         isSetofReturn: false
-      } }
+      } },
+"save_company_goals":
+{ Args: { "p_company_id": string,"p_goals": (Database["public"]['Enums']["owner_goal_code"])[],"p_other_text": string,"p_primary": Database["public"]['Enums']["owner_goal_code"] }; Returns: undefined
+                           }
           }
           Enums: {
             "owner_goal_code": "dj_less"|"stop_djing"|"scale"|"expand"|"improve_quality"|"create_leadership"|"other","system_role": "owner_admin"|"manager"|"trainer_mentor"|"dj_trainee"

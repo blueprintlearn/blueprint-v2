@@ -1,11 +1,12 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
 
+import { companyGoalCodes, companyGoalsOtherText } from "@/lib/blueprint/company-goals"
 import { loadGuidedBlueprint, requireGuidedOwner } from "@/lib/blueprint/guard"
 import { blueprintSection } from "@/lib/blueprint/progress"
 
 import { DesiredDjCountForm } from "../../desired-dj-count-form"
-import { OwnerGoalForm } from "../../owner-goal-form"
+import { OwnerGoalsForm } from "../../owner-goals-form"
 import { TeamTodayForm } from "../../team-today-form"
 import {
   BlueprintSectionPage,
@@ -32,7 +33,7 @@ export default async function BlueprintSectionRoute({
     redirect("/blueprint")
   }
 
-  const { ownerGoal, teamToday, progress } = await loadGuidedBlueprint()
+  const { companyGoals, teamToday, progress } = await loadGuidedBlueprint()
   const status = progress.statuses[slug]
 
   if (slug === "goals") {
@@ -48,10 +49,12 @@ export default async function BlueprintSectionRoute({
             </Link>
           }
         >
-          <OwnerGoalForm
-            key={`owner-goal:${membership.companyId}`}
-            ownerGoal={ownerGoal?.ownerGoal ?? null}
-            ownerGoalOther={ownerGoal?.ownerGoalOther ?? null}
+          <OwnerGoalsForm
+            key={membership.companyId}
+            companyId={membership.companyId}
+            goals={companyGoalCodes(companyGoals)}
+            primary={companyGoals?.primary.goal ?? null}
+            otherText={companyGoalsOtherText(companyGoals)}
           />
         </BlueprintSectionPage>
       </BlueprintShell>
@@ -70,7 +73,7 @@ export default async function BlueprintSectionRoute({
         footer={
           <>
             <Link href="/blueprint/goals" className="bp-btn bp-btn--plain">
-              Previous: Your goal
+              Previous: Your goals
             </Link>
             <Link href="/blueprint" className="bp-btn bp-btn--soft">
               Back to your Blueprint

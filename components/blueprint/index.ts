@@ -1,4 +1,5 @@
 export { Avatar } from "./Avatar"
+export { CheckboxGroup, type CheckboxGroupOption, type CheckboxGroupProps } from "./CheckboxGroup"
 export { BottomTabBar, type TabItem } from "./BottomTabBar"
 export { Button, type ButtonProps, type ButtonVariant } from "./Button"
 export { Card, type CardTone } from "./Card"

@@ -43,8 +43,9 @@ test.describe("owner home in the browser", () => {
 
     const teamToday = card(page, "Team today")
     await expect(teamToday.locator(".bp-fact")).toHaveCount(2)
-    const ownerGoal = card(page, "Your goal")
+    const ownerGoal = card(page, "Your goals")
     await expect(ownerGoal.locator(".bp-fact")).toHaveCount(1)
+    await expect(ownerGoal.getByText("Main goal")).toBeVisible()
     for (const [section, href] of [
       [teamToday, "/blueprint/team"],
       [ownerGoal, "/blueprint/goals"],
@@ -75,23 +76,23 @@ test.describe("owner home in the browser", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Your team today" })).toBeVisible()
 
     await page.goto("/")
-    await card(page, "Your goal").getByRole("link", { name: /^Edit in your Blueprint/ }).click()
+    await card(page, "Your goals").getByRole("link", { name: /^Edit in your Blueprint/ }).click()
     await expect(page).toHaveURL("/blueprint/goals")
-    await expect(page.getByRole("heading", { level: 1, name: "Your goal" })).toBeVisible()
+    await expect(page.getByRole("heading", { level: 1, name: "Your goals" })).toBeVisible()
   })
 
   test("Other goal shows only while Other is selected (Company A, on the Blueprint goals page)", async ({ page }) => {
     await signIn(page, "owner-a@blueprint.test")
     await page.goto("/blueprint/goals")
-    const goalForm = page.locator("form[data-saved-owner-goal]")
-    const savedGoal = await goalForm.getAttribute("data-saved-owner-goal")
+    const goalForm = page.locator("form[data-saved-company-goals]")
+    const savedGoals = (await goalForm.getAttribute("data-saved-company-goals")) ?? ""
 
-    if (savedGoal !== "other") await expect(page.getByLabel("Other goal")).toHaveCount(0)
-    await page.getByLabel("Owner goal").selectOption("other")
+    if (!savedGoals.split(",").includes("other")) await expect(page.getByLabel("Other goal")).toHaveCount(0)
+    await page.getByRole("checkbox", { name: /^Other/ }).check()
     await expect(page.getByLabel("Other goal")).toBeVisible()
-    await page.getByLabel("Owner goal").selectOption("scale")
+    await page.getByRole("checkbox", { name: /^Other/ }).uncheck()
     await expect(page.getByLabel("Other goal")).toHaveCount(0)
-    await expect(goalForm).toHaveAttribute("data-saved-owner-goal", savedGoal ?? "")
+    await expect(goalForm).toHaveAttribute("data-saved-company-goals", savedGoals)
   })
 
   test("Company B owner (switch off) still sees the header and both cards with their forms", async ({ page }) => {

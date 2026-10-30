@@ -4,7 +4,7 @@ import { createElement as h } from "react"
 import { renderToStaticMarkup } from "react-dom/server"
 import { describe, expect, it } from "vitest"
 
-import { Card, Fact, NumberField, SaveStatus, Select, TextField, TopNav } from "@/components/blueprint"
+import { Card, CheckboxGroup, Fact, NumberField, SaveStatus, Select, TextField, TopNav } from "@/components/blueprint"
 import { contrastRatio } from "@/lib/brand/tenant-theme"
 
 const html = (el: Parameters<typeof renderToStaticMarkup>[0]) => renderToStaticMarkup(el)
@@ -79,6 +79,71 @@ describe("NumberField", () => {
     const out = html(h(NumberField, { id: "n", label: "Desired DJ count", error: "Enter a whole number from 0 to 999." }))
     expect(attr(out, "input", "aria-invalid")).toBe("true")
     expect(out).toContain('role="alert"')
+  })
+})
+
+describe("CheckboxGroup", () => {
+  const options = [
+    { value: "scale", label: "Scale", description: "Book and staff more events" },
+    { value: "expand", label: "Expand" },
+    { value: "other", label: "Other" },
+  ]
+
+  it("is a fieldset with a legend, help, a status note and an alert error", () => {
+    const out = html(
+      h(CheckboxGroup, {
+        id: "goals",
+        label: "What do you want Blueprint to help you do? Choose all that apply.",
+        name: "goals",
+        options,
+        help: "Pick everything that's true.",
+        note: "Stop DJing includes DJing less.",
+        error: "Choose at least one goal.",
+        defaultValue: ["scale"],
+      }),
+    )
+    expect(out).toMatch(/^<fieldset class="bp-check-group is-invalid"/)
+    expect(out).toContain('aria-describedby="goals-help goals-note goals-error"')
+    expect(out).toContain('<legend class="bp-field__label bp-check-group__legend">')
+    expect(out).toContain("What do you want Blueprint to help you do? Choose all that apply.")
+    expect(out).toContain('<p class="bp-field__help" id="goals-help">Pick everything that&#x27;s true.</p>')
+    expect(out).toContain('id="goals-note" role="status" aria-live="polite"')
+    expect(out).toContain("Stop DJing includes DJing less.")
+    expect(out).toMatch(/<p class="bp-field__error" id="goals-error" role="alert"><svg[^>]*>.*<\/svg>Choose at least one goal\.<\/p>/)
+    expect(out).not.toContain("<div class=\"bp-field\"")
+  })
+
+  it("uses a real checkbox in a label so the whole row and Space toggle the box", () => {
+    const out = html(h(CheckboxGroup, { id: "goals", label: "Goals", name: "goals", options, defaultValue: ["scale"] }))
+    expect(out).toContain('<label class="bp-check" for="goals-0">')
+    expect(out).toMatch(/<input[^>]*type="checkbox"[^>]*id="goals-0"[^>]*name="goals"[^>]*value="scale"/)
+    expect(out).toMatch(/<input[^>]*checked=""/)
+    expect(attr(out, "input", "aria-describedby")).toBe("goals-0-desc")
+    expect(out).toContain('<span class="bp-check__desc" id="goals-0-desc">Book and staff more events</span>')
+    expect(out).toContain('<label class="bp-check" for="goals-1">')
+    expect(out).not.toMatch(/<input[^>]*value="expand"[^>]*checked/)
+  })
+
+  it("marks every box aria-invalid when the group has an error", () => {
+    const out = html(h(CheckboxGroup, { id: "g", label: "Goals", name: "goals", options, error: "Choose at least one goal." }))
+    expect(out.match(/aria-invalid="true"/g)).toHaveLength(3)
+  })
+
+  it("shows the follow-up only under the checked option", () => {
+    const followUp = { other: h(TextField, { id: "other-text", label: "Other goal", name: "otherText" }) }
+    const hidden = html(h(CheckboxGroup, { id: "g", label: "Goals", name: "goals", options, defaultValue: ["scale"], followUp }))
+    expect(hidden).not.toContain("Other goal")
+    expect(hidden).not.toContain("bp-check-group__follow")
+
+    const shown = html(h(CheckboxGroup, { id: "g", label: "Goals", name: "goals", options, defaultValue: ["other"], followUp }))
+    expect(shown).toContain("bp-check-group__follow")
+    expect(shown).toContain('<label class="bp-field__label" for="other-text">Other goal</label>')
+  })
+
+  it("keeps the status region mounted when there is no note", () => {
+    const out = html(h(CheckboxGroup, { id: "g", label: "Goals", name: "goals", options }))
+    expect(out).toContain('id="g-note" role="status" aria-live="polite"')
+    expect(out).toContain('aria-describedby="g-note"')
   })
 })
 
@@ -196,5 +261,7 @@ describe("control-border token", () => {
     const css = readFileSync(path.resolve(__dirname, "../../styles/blueprint/components.css"), "utf8")
     expect(css).toMatch(/\.bp-input,\.bp-select\{[^}]*border:1\.5px solid var\(--control-border\)/)
     expect(css).not.toMatch(/\.bp-(input|select)[^{]*\{[^}]*var\(--line\)/)
+    expect(css).toMatch(/\.bp-check__box\{[^}]*border:1\.5px solid var\(--control-border\)/)
+    expect(css).toMatch(/\.bp-check__box:checked\{background:var\(--solid\);border-color:var\(--solid\)\}/)
   })
 })

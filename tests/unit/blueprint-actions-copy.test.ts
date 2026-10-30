@@ -2,20 +2,25 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 
 const mocks = vi.hoisted(() => ({
   membership: null as null | { companyId: string; companyName: string; role: string },
-  dbError: null as null | { message: string },
+  dbError: null as null | { message: string; code?: string },
   updatedRows: [{ company_id: "company-a" }] as unknown[],
   upsert: vi.fn(),
   update: vi.fn(),
+  rpc: vi.fn(),
   revalidatePath: vi.fn(),
   createClient: vi.fn(),
   getCurrentMembership: vi.fn(),
+  guided: true,
 }))
 
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }))
 vi.mock("@/lib/tenancy/queries", () => ({ getCurrentMembership: mocks.getCurrentMembership }))
 vi.mock("@/lib/supabase/server", () => ({ createClient: mocks.createClient }))
+vi.mock("@/lib/blueprint/guided-switch", () => ({
+  isGuidedBlueprintEnabled: () => mocks.guided,
+}))
 
-import { saveDesiredDjCount, saveOwnerGoal, saveTeamToday } from "@/lib/blueprint/actions"
+import { saveCompanyGoals, saveDesiredDjCount, saveOwnerGoal, saveTeamToday } from "@/lib/blueprint/actions"
 import { OWNER_GOAL_OTHER_REQUIRED_MESSAGE } from "@/lib/blueprint/goals"
 
 const initial = { error: null, savedAt: null }
@@ -35,10 +40,21 @@ beforeEach(() => {
   mocks.update.mockImplementation(() => ({
     eq: () => ({ select: async () => ({ data: mocks.dbError ? null : mocks.updatedRows, error: mocks.dbError }) }),
   }))
+  mocks.rpc.mockImplementation(async () => ({ error: mocks.dbError }))
+  mocks.guided = true
   mocks.createClient.mockImplementation(async () => ({
     from: () => ({ upsert: mocks.upsert, update: mocks.update }),
+    rpc: mocks.rpc,
   }))
 })
+
+const goalsForm = (goals: string[], primary?: string, otherText?: string) => {
+  const data = new FormData()
+  for (const goal of goals) data.append("goals", goal)
+  if (primary) data.set("primary", primary)
+  if (otherText !== undefined) data.set("otherText", otherText)
+  return data
+}
 
 describe("saveTeamToday", () => {
   it("confirms a save with savedAt and writes only the caller's company", async () => {
@@ -148,6 +164,57 @@ describe("saveOwnerGoal", () => {
     mocks.dbError = { message: "denied" }
     expect(await saveOwnerGoal(initial, form({ ownerGoal: "scale" }))).toEqual({
       error: "That didn’t save. Please try again.",
+      savedAt: null,
+    })
+  })
+})
+
+describe("saveCompanyGoals", () => {
+  it("saves for a switched-on owner and returns savedAt", async () => {
+    const before = Date.now()
+    const result = await saveCompanyGoals(initial, goalsForm(["scale", "expand"], "scale"))
+    expect(result.error).toBeNull()
+    expect(result.savedAt).toBeGreaterThanOrEqual(before)
+    expect(mocks.rpc).toHaveBeenCalledWith("save_company_goals", {
+      p_company_id: "company-a",
+      p_goals: ["scale", "expand"],
+      p_primary: "scale",
+      p_other_text: "",
+    })
+    expect(mocks.revalidatePath).toHaveBeenCalledWith("/", "layout")
+  })
+
+  it("refuses the switch-off path without writing (S2-7 option A)", async () => {
+    mocks.guided = false
+    expect(await saveCompanyGoals(initial, goalsForm(["scale"], "scale"))).toEqual({
+      error: "That didn’t save. Please try again.",
+      savedAt: null,
+    })
+    expect(mocks.rpc).not.toHaveBeenCalled()
+    expect(mocks.revalidatePath).not.toHaveBeenCalled()
+  })
+
+  it("refuses an empty set before touching the database", async () => {
+    expect(await saveCompanyGoals(initial, goalsForm([]))).toEqual({
+      error: "Choose at least one goal.",
+      savedAt: null,
+    })
+    expect(mocks.getCurrentMembership).not.toHaveBeenCalled()
+    expect(mocks.rpc).not.toHaveBeenCalled()
+  })
+
+  it("refuses a manager and maps function error codes", async () => {
+    mocks.membership = { companyId: "company-a", companyName: "Company A", role: "manager" }
+    expect(await saveCompanyGoals(initial, goalsForm(["scale"], "scale"))).toEqual({
+      error: "Only the company owner can change this.",
+      savedAt: null,
+    })
+    expect(mocks.rpc).not.toHaveBeenCalled()
+
+    mocks.membership = { companyId: "company-a", companyName: "Company A", role: "owner_admin" }
+    mocks.dbError = { message: "denied", code: "PBG06" }
+    expect(await saveCompanyGoals(initial, goalsForm(["scale"], "scale"))).toEqual({
+      error: "Choose DJ less or Stop DJing, not both.",
       savedAt: null,
     })
   })
