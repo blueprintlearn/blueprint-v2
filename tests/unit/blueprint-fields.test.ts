@@ -211,6 +211,25 @@ describe("NotSure, helpers and answer notes", () => {
     expect(out.indexOf("Why we ask")).toBeLessThan(out.indexOf("Examples"))
     expect(out.indexOf("Examples")).toBeLessThan(out.indexOf("Help me answer"))
     expect(out.indexOf("Help me answer")).toBeLessThan(out.indexOf("Skip for now. You can answer it later."))
+    expect(out).toContain("<ul class=\"bp-notsure__list\"")
+    expect(out).toContain("<li>")
+    expect(out).toContain("An owner picks DJ less.")
+  })
+
+  it("marks desktop-only examples so the phone panel can hide them", () => {
+    const out = html(
+      h(NotSure, {
+        question: "Goals",
+        defaultOpen: true,
+        examples: [
+          { text: "An owner picks DJ less." },
+          { text: "A company picks Scale." },
+          { text: "An owner picks Improve quality.", desktopOnly: true },
+        ],
+      }),
+    )
+    expect(out).toContain('<li class="is-desktop-only">An owner picks Improve quality.</li>')
+    expect(out).toContain("<ul class=\"bp-notsure__list\"")
   })
 
   it("hides Skip when the question is not unanswered", () => {

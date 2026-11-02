@@ -123,7 +123,7 @@ export function OwnerGoalsForm({
     }
     setJustSkipped(true)
     requestAnimationFrame(() => {
-      document.querySelector<HTMLElement>("#blueprint-section-footer a")?.focus()
+      document.getElementById("blueprint-next")?.focus()
     })
   }
 
@@ -167,6 +167,7 @@ export function OwnerGoalsForm({
               setNote(reconciled.note)
             }}
           />
+          {showSkipped ? <AnswerStateNote state="skipped" text={G1_SKIPPED_TEXT} /> : null}
           <NotSure
             question={g1.label}
             why={g1.guidance?.why}
@@ -174,7 +175,6 @@ export function OwnerGoalsForm({
             canSkip={canSkipG1}
             onSkip={handleSkipG1}
           />
-          {showSkipped ? <AnswerStateNote state="skipped" text={G1_SKIPPED_TEXT} /> : null}
           {skipError === ALREADY_ANSWERED_MESSAGE ? (
             <p className="bp-field__error" role="alert">
               {skipError}

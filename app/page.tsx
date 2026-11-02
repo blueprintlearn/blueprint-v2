@@ -47,7 +47,12 @@ export default async function HomePage() {
       <>
         <TopNav actions={<SignOutButton />} />
         <main className="mx-auto flex w-full max-w-[1240px] flex-1 flex-col gap-8 px-4 pb-11 md:gap-12 md:px-8 md:pb-16">
-          <OwnerHomeHero companyName={membership.companyName} role={membership.role} isOwner={isOwner} />
+          <OwnerHomeHero
+            companyName={membership.companyName}
+            role={membership.role}
+            isOwner={isOwner}
+            blueprintAction={progress?.action}
+          />
           {progress ? <BlueprintHomeCard progress={progress} /> : null}
           <div className="grid items-start gap-5 lg:grid-cols-2">
             <TeamTodayCard

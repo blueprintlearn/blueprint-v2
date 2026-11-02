@@ -58,8 +58,9 @@ describe("OwnerGoalsForm", () => {
         g1Skipped: true,
       }),
     )
-    expect(out).toContain("You skipped this for now. Your goals shape every recommendation")
+    expect(out).toContain("You skipped this for now. When you’re ready, choose your goals above and press Save goals.")
     expect(out).toContain('data-g1-skipped="true"')
+    expect(out.indexOf("You skipped this for now.")).toBeLessThan(out.indexOf("I’m not sure"))
   })
 
   it("does not render M1 insight copy", () => {

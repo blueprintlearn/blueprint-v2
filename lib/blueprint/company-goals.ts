@@ -34,7 +34,7 @@ export const DJ_PAIR_NOTE = "Stop DJing includes DJing less."
 export const SINGLE_PRIMARY_LINE =
   "That’s your main goal. Blueprint will put it first in its recommendations."
 export const PRIMARY_SELECT_HELP =
-  "Blueprint puts this goal first in its recommendations. You can change it any time."
+  "When your goals pull in different directions, Blueprint follows your main goal first."
 
 /**
  * Distinct SQLSTATE codes raised by `save_company_goals`.

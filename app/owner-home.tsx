@@ -5,24 +5,29 @@ import { Card, Fact, StatusTag } from "@/components/blueprint"
 import { OWNER_GOAL_LABELS, type OwnerGoalCode } from "@/lib/blueprint/goals"
 import { systemRoleLabel } from "@/lib/rules/system-role"
 
-const OWNER_LEAD = "Start your Company Blueprint. These answers shape what Blueprint recommends."
+export const OWNER_LEAD = "Start your Company Blueprint. These answers shape what Blueprint recommends."
+export const CONTINUE_LEAD = "Pick up where you left off. These answers shape what Blueprint recommends."
 const VIEWER_LEAD = "Here’s what your company has shared so far."
 
 export function OwnerHomeHero({
   companyName,
   role,
   isOwner,
+  blueprintAction,
 }: {
   companyName: string
   role: string
   isOwner: boolean
+  /** Guided owner only. Continue uses the pick-up lead. */
+  blueprintAction?: "start" | "continue" | "review"
 }) {
   const roleLabel = systemRoleLabel(role)
+  const ownerLead = blueprintAction === "continue" ? CONTINUE_LEAD : OWNER_LEAD
   return (
     <section className="flex flex-col gap-3 pt-7 md:pt-12">
       <p className="bp-type-small font-bold! text-muted">{companyName}</p>
       <h1 className="bp-type-display-xl max-[760px]:text-[46px]!">Welcome back.</h1>
-      <p className="bp-type-lead max-w-[620px] text-ink-2">{isOwner ? OWNER_LEAD : VIEWER_LEAD}</p>
+      <p className="bp-type-lead max-w-[620px] text-ink-2">{isOwner ? ownerLead : VIEWER_LEAD}</p>
       {roleLabel ? <p className="bp-type-small text-muted">Signed in as {roleLabel}</p> : null}
     </section>
   )

@@ -49,7 +49,7 @@ export default async function BlueprintSectionRoute({
           status={status}
           opening={GOALS_OPENING}
           footer={
-            <Link href="/blueprint/team" className="bp-btn bp-btn--soft">
+            <Link href="/blueprint/team" id="blueprint-next" className="bp-btn bp-btn--soft">
               Next: Your team today
             </Link>
           }

@@ -4,13 +4,19 @@ import { useId, useRef, useState, type ReactNode } from "react"
 
 import { cx } from "./cx"
 
+export type NotSureExample = {
+  text: ReactNode
+  /** Hidden below 760px. Use for a third desktop-only example. */
+  desktopOnly?: boolean
+}
+
 export type NotSureProps = {
   /** The question text; names the panel for screen readers ("Help with: …"). */
   question: string
   /** One sentence tying the question to a result. */
   why?: ReactNode
   /** 2–3 short examples, no names or real companies. */
-  examples?: ReactNode[]
+  examples?: readonly (string | NotSureExample)[]
   /** An EstimateHelper or StartingPoint, or nothing. */
   helper?: ReactNode
   /** Show "Skip for now" only when the question allows it AND is unanswered. */
@@ -21,9 +27,13 @@ export type NotSureProps = {
   className?: string
 }
 
+function exampleItems(examples: NotSureProps["examples"]): NotSureExample[] {
+  return (examples ?? []).map((item) => (typeof item === "string" ? { text: item } : item))
+}
+
 /**
  * "I'm not sure" link and its inline guidance panel.
- * Place immediately after the existing field component.
+ * Place immediately after the existing field component, or after a skipped note.
  */
 export function NotSure({
   question,
@@ -41,7 +51,7 @@ export function NotSure({
   const [open, setOpen] = useState(Boolean(defaultOpen))
   const [announce, setAnnounce] = useState("")
   const linkRef = useRef<HTMLButtonElement>(null)
-  const lines = examples ?? []
+  const lines = exampleItems(examples)
 
   function toggle() {
     const next = !open
@@ -76,10 +86,14 @@ export function NotSure({
           ) : null}
           {lines.length ? (
             <div className="bp-notsure__block">
-              <p className="bp-notsure__label">Examples</p>
-              <ul className="bp-notsure__list">
+              <p className="bp-notsure__label" id={`${panelId}-examples`}>
+                Examples
+              </p>
+              <ul className="bp-notsure__list" aria-labelledby={`${panelId}-examples`}>
                 {lines.map((line, index) => (
-                  <li key={index}>{line}</li>
+                  <li key={index} className={line.desktopOnly ? "is-desktop-only" : undefined}>
+                    {line.text}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -96,6 +110,7 @@ export function NotSure({
               className="bp-link bp-notsure__skip"
               onClick={() => {
                 setAnnounce("Skipped for now. You can answer it later.")
+                setOpen(false)
                 onSkip()
               }}
             >

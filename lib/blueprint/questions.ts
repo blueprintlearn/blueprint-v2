@@ -29,9 +29,15 @@ export type QuestionLevel = "core" | "go_deeper"
 export type QuestionStorage = "typed" | "answers"
 export type QuestionKey = "G1" | "G2" | "G3" | "TL1" | "TL6"
 
+export type GuidanceExample = {
+  text: string
+  /** Hidden below 760px so the phone panel keeps the DJ less and Scale examples. */
+  desktopOnly?: boolean
+}
+
 export type GuidanceContent = {
   why: string
-  examples: string[]
+  examples: readonly GuidanceExample[]
 }
 
 export type QuestionDefinition = {
@@ -61,9 +67,12 @@ export const QUESTIONS: readonly QuestionDefinition[] = [
     guidance: {
       why: "Everything Blueprint suggests ties back to your goals, so this shapes every recommendation.",
       examples: [
-        "An owner who plays most Saturdays and wants weekends back picks DJ less.",
-        "A company turning down bookings it can’t staff picks Scale.",
-        "An owner whose DJs all do things differently picks Improve quality.",
+        { text: "An owner who plays most Saturdays and wants weekends back picks DJ less." },
+        { text: "A company turning down bookings it can’t staff picks Scale." },
+        {
+          text: "An owner whose DJs all do things differently picks Improve quality.",
+          desktopOnly: true,
+        },
       ],
     },
   },
@@ -78,10 +87,10 @@ export const QUESTIONS: readonly QuestionDefinition[] = [
     label: "Which one matters most right now?",
     whyNeeded: "Blueprint puts your main goal first in its recommendations.",
     guidance: {
-      why: "Blueprint puts this goal first in its recommendations. You can change it any time.",
+      why: "When your goals pull in different directions, Blueprint follows your main goal first.",
       examples: [
-        "If weekends back matter most, pick DJ less.",
-        "If you can’t staff the bookings you have, pick Scale.",
+        { text: "If weekends back matter most, pick DJ less." },
+        { text: "If you can’t staff the bookings you have, pick Scale." },
       ],
     },
   },
@@ -136,7 +145,7 @@ export function questionsForSection(section: BlueprintSectionSlug): QuestionDefi
 }
 
 export const G1_SKIPPED_TEXT =
-  "You skipped this for now. Your goals shape every recommendation, so choose them when you’re ready."
+  "You skipped this for now. When you’re ready, choose your goals above and press Save goals."
 
 export const M1_COPY: Record<OwnerGoalCode, string> = {
   dj_less: "To DJ less, your team needs room to take on some of your events. We’ll measure how many in a minute.",

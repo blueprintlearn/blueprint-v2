@@ -31,8 +31,13 @@ test.describe("skip workflow on an empty local company", () => {
     await expect(page.getByRole("region", { name: "Help with: What do you want Blueprint to help you do?" })).toBeVisible()
     await page.screenshot({ path: `${SHOTS}/slice3_g1_not_sure_panel.png`, fullPage: true })
     await page.getByRole("button", { name: "Skip for now. You can answer it later." }).click()
-    await expect(page.getByText("You skipped this for now. Your goals shape every recommendation")).toBeVisible()
+    await expect(
+      page.getByText("You skipped this for now. When you’re ready, choose your goals above and press Save goals."),
+    ).toBeVisible()
+    await expect(page.getByRole("region", { name: /Help with:/ })).toHaveCount(0)
+    await expect(page.locator("#q-G1").getByRole("button", { name: "I’m not sure" })).toBeVisible()
     await expect(page.locator("div:has(> h1) > .bp-status")).toHaveText("Needs attention")
+    await expect(page.locator("#blueprint-next")).toBeFocused()
     await page.screenshot({ path: `${SHOTS}/slice3_g1_skipped.png`, fullPage: true })
 
     await page.getByRole("link", { name: "Next: Your team today" }).click()
@@ -50,6 +55,7 @@ test.describe("skip workflow on an empty local company", () => {
 
     await page.goto("/")
     const blueprint = page.locator("section").filter({ has: page.getByRole("heading", { level: 2, name: "Your Company Blueprint" }) })
+    await expect(page.getByText("Pick up where you left off. These answers shape what Blueprint recommends.")).toBeVisible()
     await expect(blueprint.getByRole("link", { name: "Continue your Blueprint" })).toHaveAttribute(
       "href",
       "/blueprint/team#q-TL6",
@@ -75,7 +81,17 @@ test.describe("skip workflow on an empty local company", () => {
     await expect(page.locator("div:has(> h1) > .bp-status")).toHaveText("Complete")
 
     await page.locator(".bp-more-detail > summary").click()
-    await page.getByRole("radio", { name: "No set date" }).check()
+    const timeframe = page.getByRole("radio", { name: "No set date" })
+    await timeframe.check()
+    await expect(timeframe).toBeChecked()
+    const radioLook = await timeframe.evaluate((el) => {
+      const style = getComputedStyle(el)
+      const dot = getComputedStyle(el, "::before")
+      return { fill: style.backgroundColor, dot: dot.backgroundColor, dotWidth: dot.width }
+    })
+    expect(radioLook.fill).not.toBe("rgba(0, 0, 0, 0)")
+    expect(radioLook.dot).not.toBe("rgba(0, 0, 0, 0)")
+    expect(parseFloat(radioLook.dotWidth)).toBeGreaterThan(0)
     await page.screenshot({ path: `${SHOTS}/slice3_g3_timeframe.png`, fullPage: true })
     await page.getByRole("button", { name: "Save", exact: true }).click()
     await expect(page.locator("form[data-saved-g3] .bp-save")).toHaveText("Saved")
@@ -97,6 +113,11 @@ test.describe("skip workflow on an empty local company", () => {
     await g2Help.focus()
     await page.keyboard.press("Enter")
     await expect(page.getByRole("region", { name: "Help with: Which one matters most right now?" })).toBeVisible()
+    await expect(
+      page.getByRole("region", { name: "Help with: Which one matters most right now?" }).getByText(
+        "When your goals pull in different directions, Blueprint follows your main goal first.",
+      ),
+    ).toBeVisible()
     await page.screenshot({ path: `${SHOTS}/slice3_g2_not_sure_panel.png`, fullPage: true })
     await expect(page.locator("#q-G2").getByRole("button", { name: /Skip for now/ })).toHaveCount(0)
     await page.locator("#q-G2").getByRole("button", { name: "Hide help" }).press("Enter")

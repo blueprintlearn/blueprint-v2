@@ -100,6 +100,10 @@ describe("question registry", () => {
     expect(QUESTION_BY_KEY.G3.level).toBe("go_deeper")
     expect(QUESTION_BY_KEY.G1.guidance).not.toBeNull()
     expect(QUESTION_BY_KEY.G2.guidance).not.toBeNull()
+    expect(QUESTION_BY_KEY.G2.guidance?.why).toBe(
+      "When your goals pull in different directions, Blueprint follows your main goal first.",
+    )
+    expect(QUESTION_BY_KEY.G1.guidance?.examples.filter((example) => !example.desktopOnly)).toHaveLength(2)
     expect(QUESTIONS.every((question) => question.whyNeeded.length > 0)).toBe(true)
   })
 })
