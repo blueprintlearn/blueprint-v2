@@ -5,6 +5,7 @@ import {
   CHOOSE_PRIMARY_GOAL_MESSAGE,
   DJ_PAIR_MESSAGE,
   DJ_PAIR_NOTE,
+  PRIMARY_SELECT_HELP,
   SAVE_COMPANY_GOALS_ERROR_CODES,
   alsoLine,
   mapSaveCompanyGoalsError,
@@ -112,5 +113,14 @@ describe("alsoLine", () => {
       ]),
     ).toBe("Also: Scale, Expand, Open a second market")
     expect(alsoLine([])).toBeNull()
+  })
+})
+
+describe("main-goal copy", () => {
+  it("keeps the Select help distinct from the help-panel why", () => {
+    expect(PRIMARY_SELECT_HELP).toBe(
+      "Blueprint puts this goal first in its recommendations. You can change it any time.",
+    )
+    expect(PRIMARY_SELECT_HELP).not.toContain("When your goals pull in different directions")
   })
 })

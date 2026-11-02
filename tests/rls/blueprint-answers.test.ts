@@ -154,6 +154,19 @@ describe("company_blueprint_answers and progress isolation", () => {
     expect(row).toContain("00000000-0000-4000-8000-0000000000a2")
     expect(row).not.toContain("00000000-0000-4000-8000-0000000000b2")
 
+    const spoofedUpdate = await ownerA
+      .from("company_blueprint_answers")
+      .update({ updated_by: "00000000-0000-4000-8000-0000000000b2" })
+      .eq("company_id", COMPANY_A_ID)
+      .eq("question_key", "G3")
+    expect(spoofedUpdate.error).toBeNull()
+    const afterUpdate = querySql(`
+      select updated_by::text from public.company_blueprint_answers
+      where company_id = '${COMPANY_A_ID}' and question_key = 'G3'
+    `)
+    expect(afterUpdate).toContain("00000000-0000-4000-8000-0000000000a2")
+    expect(afterUpdate).not.toContain("00000000-0000-4000-8000-0000000000b2")
+
     const deleted = await ownerA.from("company_blueprint_answers").delete().eq("question_key", "G1")
     expect(deleted.error).toBeNull()
 

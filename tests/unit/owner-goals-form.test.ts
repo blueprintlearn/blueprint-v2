@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server"
 import { describe, expect, it } from "vitest"
 
 import { OwnerGoalsForm } from "@/app/owner-goals-form"
-import { SINGLE_PRIMARY_LINE } from "@/lib/blueprint/company-goals"
+import { PRIMARY_SELECT_HELP, SINGLE_PRIMARY_LINE } from "@/lib/blueprint/company-goals"
 
 const html = (el: Parameters<typeof renderToStaticMarkup>[0]) => renderToStaticMarkup(el)
 const text = (markup: string) => markup.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()
@@ -32,6 +32,8 @@ describe("OwnerGoalsForm", () => {
     )
     expect(two).toContain("Which one matters most right now?")
     expect(two).toContain("Select your main goal")
+    expect(two).toContain(PRIMARY_SELECT_HELP)
+    expect(two).not.toContain("When your goals pull in different directions, Blueprint follows your main goal first.")
     expect(two).not.toContain(SINGLE_PRIMARY_LINE)
     expect(text(two)).toContain("Scale")
     expect(text(two)).toContain("Expand")
