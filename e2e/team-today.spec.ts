@@ -49,7 +49,7 @@ test.describe("team today in the browser", () => {
     await expect(page.getByLabel("Current DJ count", { exact: true })).toHaveValue(uniqueDjCount)
     await expect(page.getByText(/\bCompany B\b/)).toHaveCount(0)
     const savedDesired = await desiredForm.getAttribute("data-saved-desired-dj-count")
-    await expect(sectionStatus(page)).toHaveText(savedDesired === "" ? "In progress" : "Done")
+    await expect(sectionStatus(page)).toHaveText(savedDesired === "" ? "Needs attention" : "Complete")
 
     await page.reload()
     await expect(teamTodayForm).toHaveAttribute("data-saved-current-dj-count", uniqueDjCount)
@@ -135,7 +135,7 @@ test.describe("team today in the browser", () => {
     await expect(desiredForm).toHaveAttribute("data-saved-desired-dj-count", uniqueDesired)
     await expect(page.getByLabel("Desired DJ count")).toHaveValue(uniqueDesired)
     await expect(page.getByText(/\bCompany B\b/)).toHaveCount(0)
-    await expect(sectionStatus(page)).toHaveText("Done")
+    await expect(sectionStatus(page)).toHaveText("Complete")
 
     await page.getByLabel("Desired DJ count").fill(nextDesired)
     await expect(page.getByLabel("Desired DJ count")).toHaveValue(nextDesired)

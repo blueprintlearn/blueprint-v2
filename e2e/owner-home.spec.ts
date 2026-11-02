@@ -30,7 +30,7 @@ test.describe("owner home in the browser", () => {
 
     const blueprint = card(page, "Your Company Blueprint")
     await expect(blueprint.locator(".bp-status")).toHaveCount(1)
-    await expect(blueprint.getByText(/^\d of 8 sections done$/)).toBeVisible()
+    await expect(blueprint.getByText(/^\d of 8 sections complete$/)).toBeVisible()
     const review = blueprint.getByRole("link", { name: "Review your Blueprint" })
     if (await review.count()) {
       await expect(review).toHaveClass(/\bbp-btn--soft\b/)
@@ -106,7 +106,7 @@ test.describe("owner home in the browser", () => {
     await expect(page.getByRole("heading", { level: 3 })).toHaveCount(0)
     await expect(page.getByRole("link")).toHaveCount(0)
     await expect(page.getByText("Your Company Blueprint", { exact: true })).toHaveCount(0)
-    await expect(page.getByText(/sections done/)).toHaveCount(0)
+    await expect(page.getByText(/sections complete/)).toHaveCount(0)
     await expect(page.getByText("Edit in your Blueprint")).toHaveCount(0)
 
     await expect(page.locator("header.bp-nav.bp-nav--no-tabs")).toBeVisible()
@@ -163,7 +163,7 @@ test.describe("owner home in the browser", () => {
     await expect(page.getByText("Here’s what your company has shared so far.")).toBeVisible()
     await expect(page.getByRole("link")).toHaveCount(0)
     await expect(page.getByText("Your Company Blueprint", { exact: true })).toHaveCount(0)
-    await expect(page.getByText(/sections done/)).toHaveCount(0)
+    await expect(page.getByText(/sections complete/)).toHaveCount(0)
     await expect(page.getByText("Edit in your Blueprint")).toHaveCount(0)
 
     const teamToday = card(page, "Team today")

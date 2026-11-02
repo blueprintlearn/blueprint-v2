@@ -200,6 +200,32 @@
 .bp-check-group > .bp-field__error{margin-top:6px}
 @media (forced-colors: active){.bp-check__box:checked{background:Highlight;border-color:Highlight}.bp-check__box:checked::before{border-color:HighlightText}}
 
+/* ---------- v1.4: RadioGroup (CheckboxGroup anatomy, round control) ---------- */
+.bp-radio__dot{border-radius:50%}
+.bp-radio__dot:checked::before{left:5px;top:5px;width:9px;height:9px;border:0;border-radius:50%;background:var(--text-on-solid);transform:none}
+@media (forced-colors: active){.bp-radio__dot:checked::before{background:HighlightText}}
+
+/* ---------- v1.4: Guidance (I'm not sure, helpers, answer-state notes) ---------- */
+.bp-notsure{display:flex;flex-direction:column;align-items:flex-start;gap:8px;max-width:560px}
+.bp-notsure__link{font-size:15px;min-height:44px;display:inline-flex;align-items:center}
+.bp-notsure__panel{align-self:stretch;background:var(--surface-soft);border-radius:var(--bp-radius-lg);padding:16px;display:flex;flex-direction:column;gap:14px}
+.bp-notsure__block{display:flex;flex-direction:column;gap:4px}
+.bp-notsure__label{margin:0;font-size:14px;font-weight:700;color:var(--ink)}
+.bp-notsure__text{margin:0;font-size:15px;line-height:1.5;color:var(--ink-2)}
+.bp-notsure__list{margin:0;padding-left:20px;font-size:15px;line-height:1.5;color:var(--ink-2);display:flex;flex-direction:column;gap:2px}
+.bp-notsure__skip{align-self:flex-start;font-size:15px;min-height:44px;display:inline-flex;align-items:center;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
+.bp-helper{display:flex;flex-direction:column;gap:12px}
+.bp-helper__inputs{display:flex;flex-direction:column;gap:12px}
+.bp-helper__value{font-size:16px;font-weight:700;color:var(--ink)}
+.bp-helper__pending{font-size:15px;color:var(--muted)}
+.bp-start__text{font-size:15px;color:var(--ink-2)}
+.bp-answer-note{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:14px;line-height:1.45;color:var(--muted)}
+.bp-answer-note--estimated{color:var(--ink-2)}
+.bp-more-detail{margin:0;max-width:560px}
+.bp-more-detail > summary{cursor:pointer;font-size:15px;font-weight:700;color:var(--coral-text);min-height:44px;display:inline-flex;align-items:center}
+.bp-more-detail > summary:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:4px}
+
+
 /* ---------- v1.2: Fact (read-only value) and SaveStatus ---------- */
 .bp-fact{display:flex;flex-direction:column;gap:2px;min-width:0}
 .bp-fact__label{font-size:14px;font-weight:500;color:var(--muted)}

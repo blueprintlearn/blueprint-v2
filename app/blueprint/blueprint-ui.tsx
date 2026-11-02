@@ -2,12 +2,12 @@ import type { ReactNode } from "react"
 import Link from "next/link"
 
 import { Card, StatusTag, TopNav } from "@/components/blueprint"
+import { sectionHref } from "@/lib/blueprint/answers"
 import {
   BLUEPRINT_SECTIONS,
   TOTAL_SECTIONS,
   type BlueprintProgress,
   type BlueprintSection,
-  type BlueprintSectionSlug,
   type SectionStatus,
 } from "@/lib/blueprint/progress"
 
@@ -23,8 +23,8 @@ export const TEAM_FOOTER_NOTE = "The next sections are coming soon."
 
 const STATUS_TAGS: Record<SectionStatus, { status: "planned" | "progress" | "proven"; label: string }> = {
   not_started: { status: "planned", label: "Not started" },
-  in_progress: { status: "progress", label: "In progress" },
-  done: { status: "proven", label: "Done" },
+  needs_attention: { status: "progress", label: "Needs attention" },
+  complete: { status: "proven", label: "Complete" },
   coming_soon: { status: "planned", label: "Coming soon" },
 }
 
@@ -33,12 +33,8 @@ export function SectionStatusTag({ status }: { status: SectionStatus }) {
   return <StatusTag status={tag.status} label={tag.label} />
 }
 
-export function sectionHref(slug: BlueprintSectionSlug) {
-  return `/blueprint/${slug}`
-}
-
-export function sectionsDoneText(progress: BlueprintProgress) {
-  return `${progress.doneCount} of ${TOTAL_SECTIONS} sections done`
+export function sectionsCompleteText(progress: BlueprintProgress) {
+  return `${progress.completeCount} of ${TOTAL_SECTIONS} sections complete`
 }
 
 const PRIMARY_LABELS = { start: "Start your Blueprint", continue: "Continue your Blueprint" } as const
@@ -47,7 +43,7 @@ const PRIMARY_LABELS = { start: "Start your Blueprint", continue: "Continue your
 export function BlueprintPrimaryLink({ progress }: { progress: BlueprintProgress }) {
   if (progress.action === "review" || progress.next === null) return null
   return (
-    <Link href={sectionHref(progress.next)} className="bp-btn bp-btn--primary self-start">
+    <Link href={sectionHref(progress.next, progress.focusQuestionKey)} className="bp-btn bp-btn--primary self-start">
       {PRIMARY_LABELS[progress.action]}
     </Link>
   )
@@ -64,7 +60,15 @@ export function BlueprintShell({ children }: { children: ReactNode }) {
   )
 }
 
-function SectionRow({ section, status }: { section: BlueprintSection; status: SectionStatus }) {
+function SectionRow({
+  section,
+  status,
+  skipped,
+}: {
+  section: BlueprintSection
+  status: SectionStatus
+  skipped: number
+}) {
   return (
     <li className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-line py-4 first:border-t-0 first:pt-0 last:pb-0">
       <div className="flex min-w-0 flex-1 basis-[260px] items-baseline gap-3">
@@ -80,6 +84,9 @@ function SectionRow({ section, status }: { section: BlueprintSection; status: Se
             <span className="font-bold text-ink">{section.name}</span>
           )}
           <span className="text-[14px] text-muted">{section.description}</span>
+          {skipped > 0 ? (
+            <span className="text-[14px] text-muted">{skipped === 1 ? "1 skipped" : `${skipped} skipped`}</span>
+          ) : null}
         </div>
       </div>
       <SectionStatusTag status={status} />
@@ -95,7 +102,12 @@ export function BlueprintSectionList({ progress }: { progress: BlueprintProgress
       </h2>
       <ol className="m-0 flex list-none flex-col p-0">
         {BLUEPRINT_SECTIONS.map((section) => (
-          <SectionRow key={section.slug} section={section} status={progress.statuses[section.slug]} />
+          <SectionRow
+            key={section.slug}
+            section={section}
+            status={progress.statuses[section.slug]}
+            skipped={progress.skippedCounts[section.slug]}
+          />
         ))}
       </ol>
     </Card>
@@ -115,7 +127,7 @@ export function BlueprintOverview({
         <p className="bp-type-small font-bold! text-muted">{companyName}</p>
         <h1 className="bp-type-display-xl max-[760px]:text-[46px]!">Your Company Blueprint</h1>
         <p className="bp-type-lead max-w-[620px] text-ink-2">{OVERVIEW_LEAD}</p>
-        <p className="bp-type-small font-bold! text-ink-2">{sectionsDoneText(progress)}</p>
+        <p className="bp-type-small font-bold! text-ink-2">{sectionsCompleteText(progress)}</p>
         <BlueprintPrimaryLink progress={progress} />
         {progress.action === "review" ? <p className="m-0 text-ink-2">{ALL_READY_DONE_TEXT}</p> : null}
       </section>
@@ -126,7 +138,7 @@ export function BlueprintOverview({
 
 /** The Owner Home summary card shown when the guided Blueprint is on for the owner's company. */
 export function BlueprintHomeCard({ progress }: { progress: BlueprintProgress }) {
-  const touched = progress.doneCount > 0 || progress.next === null || progress.action === "continue"
+  const touched = progress.action !== "start"
   return (
     <Card as="section" aria-labelledby="company-blueprint-title" className="max-[760px]:p-[22px]!">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -138,7 +150,7 @@ export function BlueprintHomeCard({ progress }: { progress: BlueprintProgress })
           label={touched ? "In progress" : "Not started"}
         />
       </div>
-      <p className="bp-card__body">{sectionsDoneText(progress)}</p>
+      <p className="bp-card__body">{sectionsCompleteText(progress)}</p>
       {progress.action === "review" ? (
         <Link href="/blueprint" className="bp-btn bp-btn--soft self-start">
           Review your Blueprint
@@ -183,7 +195,10 @@ export function BlueprintSectionPage({
       <Card as="section" aria-labelledby="section-title" className="max-w-[900px] max-[760px]:p-[22px]!">
         {children}
       </Card>
-      <div className="flex flex-wrap items-center gap-3">{footer}</div>
+      <div id="blueprint-section-footer" className="flex flex-wrap items-center gap-3">
+        {footer}
+      </div>
     </>
   )
 }
+

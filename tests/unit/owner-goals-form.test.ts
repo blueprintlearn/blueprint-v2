@@ -44,5 +44,28 @@ describe("OwnerGoalsForm", () => {
     expect(out).toContain("Stop DJing")
     expect(out).toContain('value="dj_less"')
     expect(out).toContain('value="stop_djing"')
+    expect(out).toContain("I’m not sure")
+    expect(out).toContain("Add more detail (optional)")
+  })
+
+  it("shows the skipped line and hides Skip after G1 was skipped", () => {
+    const out = html(
+      h(OwnerGoalsForm, {
+        companyId: "company-a",
+        goals: [],
+        primary: null,
+        otherText: null,
+        g1Skipped: true,
+      }),
+    )
+    expect(out).toContain("You skipped this for now. Your goals shape every recommendation")
+    expect(out).toContain('data-g1-skipped="true"')
+  })
+
+  it("does not render M1 insight copy", () => {
+    const out = html(
+      h(OwnerGoalsForm, { companyId: "company-a", goals: ["scale"], primary: "scale", otherText: null }),
+    )
+    expect(out).not.toContain("To scale, you need enough ready DJs")
   })
 })

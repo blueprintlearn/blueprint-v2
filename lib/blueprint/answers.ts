@@ -1,0 +1,289 @@
+import {
+  BLUEPRINT_SECTIONS,
+  LIVE_SECTION_SLUGS,
+  TOTAL_SECTIONS,
+  type BlueprintProgress,
+  type BlueprintSectionSlug,
+  type SectionStatus,
+} from "@/lib/blueprint/progress"
+import {
+  QUESTION_BY_KEY,
+  QUESTIONS,
+  isQuestionKey,
+  questionsForSection,
+  type QuestionDefinition,
+  type QuestionKey,
+} from "@/lib/blueprint/questions"
+
+export type AnswerGoals = {
+  primary: { goal: string }
+  others: readonly unknown[]
+}
+
+export type AnswerTeamToday = {
+  currentDjCount: number
+  desiredDjCount: number | null
+}
+
+export type AnswerState = "unanswered" | "answered" | "estimated" | "skipped" | "not_applicable"
+
+export type StoredAnswer = {
+  questionKey: string
+  state: "answered" | "estimated" | "skipped"
+  value: unknown
+}
+
+export type AnswerContext = {
+  goals: AnswerGoals | null
+  teamToday: AnswerTeamToday | null
+  answers: readonly StoredAnswer[]
+}
+
+export type ResolvedAnswer = {
+  key: QuestionKey
+  state: AnswerState
+  value: unknown
+  isEstimate: boolean
+  question: QuestionDefinition
+}
+
+export type MissingInput = {
+  questionKey: QuestionKey
+  state: "skipped" | "unanswered"
+  section: BlueprintSectionSlug
+  href: string
+  whyNeeded: string
+  questionLabel: string
+}
+
+export type InputState = {
+  questionKey: QuestionKey
+  state: AnswerState
+  value: unknown
+  isEstimate: boolean
+}
+
+export type BlueprintResume = {
+  lastSection: BlueprintSectionSlug | null
+  lastQuestionKey: QuestionKey | null
+}
+
+export function resumeFromRow(
+  row: { lastSection: string; lastQuestionKey: string | null } | null,
+): BlueprintResume | null {
+  if (!row) return null
+  const key = row.lastQuestionKey
+  return {
+    lastSection: row.lastSection as BlueprintSectionSlug,
+    lastQuestionKey: key && isQuestionKey(key) ? key : null,
+  }
+}
+
+export function storedAnswerMap(answers: readonly StoredAnswer[]): Map<string, StoredAnswer> {
+  return new Map(answers.map((row) => [row.questionKey, row]))
+}
+
+export function isQuestionApplicable(question: QuestionDefinition, context: AnswerContext): boolean {
+  if (question.key === "G2") {
+    const count = context.goals ? 1 + context.goals.others.length : 0
+    return count >= 2
+  }
+  return true
+}
+
+export function typedValue(question: QuestionDefinition, context: AnswerContext): unknown {
+  switch (question.key) {
+    case "G1":
+      return context.goals ? context.goals.primary.goal : null
+    case "G2":
+      return context.goals && context.goals.others.length >= 1 ? context.goals.primary.goal : null
+    case "TL1":
+      return context.teamToday ? context.teamToday.currentDjCount : null
+    case "TL6":
+      return context.teamToday?.desiredDjCount ?? null
+    default:
+      return null
+  }
+}
+
+export function resolveQuestion(question: QuestionDefinition, context: AnswerContext): ResolvedAnswer {
+  if (!isQuestionApplicable(question, context)) {
+    return { key: question.key, state: "not_applicable", value: null, isEstimate: false, question }
+  }
+
+  if (question.storage === "typed") {
+    const value = typedValue(question, context)
+    if (value !== null && value !== undefined) {
+      return { key: question.key, state: "answered", value, isEstimate: false, question }
+    }
+  } else {
+    const stored = storedAnswerMap(context.answers).get(question.key)
+    if (stored && (stored.state === "answered" || stored.state === "estimated")) {
+      return {
+        key: question.key,
+        state: stored.state,
+        value: stored.value,
+        isEstimate: stored.state === "estimated",
+        question,
+      }
+    }
+    if (stored?.state === "skipped") {
+      return { key: question.key, state: "skipped", value: null, isEstimate: false, question }
+    }
+  }
+
+  const skip = storedAnswerMap(context.answers).get(question.key)
+  if (skip?.state === "skipped") {
+    return { key: question.key, state: "skipped", value: null, isEstimate: false, question }
+  }
+
+  return { key: question.key, state: "unanswered", value: null, isEstimate: false, question }
+}
+
+export function resolveAll(context: AnswerContext): ResolvedAnswer[] {
+  return QUESTIONS.map((question) => resolveQuestion(question, context))
+}
+
+export function resolvedValue(resolved: ResolvedAnswer): unknown {
+  if (resolved.state === "answered" || resolved.state === "estimated") return resolved.value
+  return null
+}
+
+export function sectionStatusFromStates(
+  section: BlueprintSectionSlug,
+  resolved: readonly ResolvedAnswer[],
+  live: boolean,
+): SectionStatus {
+  if (!live) return "coming_soon"
+
+  const inSection = resolved.filter((row) => row.question.section === section)
+  const cores = inSection.filter((row) => row.question.level === "core")
+  const complete = cores.every((row) =>
+    row.state === "answered" || row.state === "estimated" || row.state === "not_applicable",
+  )
+  if (complete && cores.length > 0) return "complete"
+
+  const touched = inSection.some(
+    (row) => row.state === "answered" || row.state === "estimated" || row.state === "skipped",
+  )
+  return touched ? "needs_attention" : "not_started"
+}
+
+export function skippedCount(section: BlueprintSectionSlug, resolved: readonly ResolvedAnswer[]): number {
+  return resolved.filter((row) => row.question.section === section && row.state === "skipped").length
+}
+
+export function anythingTouched(resolved: readonly ResolvedAnswer[]): boolean {
+  return resolved.some(
+    (row) => row.state === "answered" || row.state === "estimated" || row.state === "skipped",
+  )
+}
+
+function unansweredCores(section: BlueprintSectionSlug, resolved: readonly ResolvedAnswer[]): ResolvedAnswer[] {
+  return resolved.filter(
+    (row) =>
+      row.question.section === section &&
+      row.question.level === "core" &&
+      row.state === "unanswered",
+  )
+}
+
+export function continueTarget(
+  resolved: readonly ResolvedAnswer[],
+  resume: BlueprintResume | null,
+): { section: BlueprintSectionSlug; questionKey: QuestionKey } | null {
+  const live = LIVE_SECTION_SLUGS
+  const last = resume?.lastSection && live.includes(resume.lastSection) ? resume.lastSection : null
+
+  if (last) {
+    const inLast = unansweredCores(last, resolved)[0]
+    if (inLast) return { section: last, questionKey: inLast.key }
+  }
+
+  if (last) {
+    const after = live.slice(live.indexOf(last) + 1)
+    for (const section of after) {
+      const first = unansweredCores(section, resolved)[0]
+      if (first) return { section, questionKey: first.key }
+    }
+  }
+
+  for (const section of live) {
+    const first = unansweredCores(section, resolved)[0]
+    if (first) return { section, questionKey: first.key }
+  }
+
+  return null
+}
+
+export function getBlueprintProgressFromStates(
+  resolved: readonly ResolvedAnswer[],
+  resume: BlueprintResume | null,
+): BlueprintProgress {
+  const statuses = Object.fromEntries(
+    BLUEPRINT_SECTIONS.map((section) => [
+      section.slug,
+      sectionStatusFromStates(section.slug, resolved, section.live),
+    ]),
+  ) as Record<BlueprintSectionSlug, SectionStatus>
+
+  const skippedCounts = Object.fromEntries(
+    BLUEPRINT_SECTIONS.map((section) => [section.slug, skippedCount(section.slug, resolved)]),
+  ) as Record<BlueprintSectionSlug, number>
+
+  const completeCount = LIVE_SECTION_SLUGS.filter((slug) => statuses[slug] === "complete").length
+  const target = continueTarget(resolved, resume)
+  const action = !anythingTouched(resolved) ? "start" : target ? "continue" : "review"
+
+  return {
+    statuses,
+    skippedCounts,
+    completeCount,
+    next: target?.section ?? null,
+    focusQuestionKey: target?.questionKey ?? null,
+    action,
+  }
+}
+
+export function getMissingInputs(context: AnswerContext, questionKeys: readonly string[]): MissingInput[] {
+  const missing: MissingInput[] = []
+  for (const key of questionKeys) {
+    if (!isQuestionKey(key)) continue
+    const resolved = resolveQuestion(QUESTION_BY_KEY[key], context)
+    if (resolved.state !== "skipped" && resolved.state !== "unanswered") continue
+    missing.push({
+      questionKey: resolved.key,
+      state: resolved.state,
+      section: resolved.question.section,
+      href: `/blueprint/${resolved.question.section}#q-${resolved.key}`,
+      whyNeeded: resolved.question.whyNeeded,
+      questionLabel: resolved.question.label,
+    })
+  }
+  return missing
+}
+
+export function getInputStates(context: AnswerContext, questionKeys: readonly string[]): InputState[] {
+  return questionKeys.filter(isQuestionKey).map((key) => {
+    const resolved = resolveQuestion(QUESTION_BY_KEY[key], context)
+    return {
+      questionKey: resolved.key,
+      state: resolved.state,
+      value: resolvedValue(resolved),
+      isEstimate: resolved.isEstimate,
+    }
+  })
+}
+
+export function firstUnansweredCore(
+  section: BlueprintSectionSlug,
+  resolved: readonly ResolvedAnswer[],
+): QuestionKey | null {
+  return unansweredCores(section, resolved)[0]?.key ?? null
+}
+
+export function sectionHref(slug: BlueprintSectionSlug, questionKey?: string | null) {
+  return questionKey ? `/blueprint/${slug}#q-${questionKey}` : `/blueprint/${slug}`
+}
+
+export { questionsForSection, TOTAL_SECTIONS }

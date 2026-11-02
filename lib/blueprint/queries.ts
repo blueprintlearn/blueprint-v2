@@ -140,6 +140,55 @@ function asDesiredDjCount(value: number | null): number | null {
   return asDjCount(value, DESIRED_DJ_COUNT_MIN, DESIRED_DJ_COUNT_MAX)
 }
 
+export type StoredBlueprintAnswer = {
+  questionKey: string
+  state: "answered" | "estimated" | "skipped"
+  value: unknown
+}
+
+export type CurrentBlueprintProgress = {
+  lastSection: string
+  lastQuestionKey: string | null
+}
+
+export async function getCurrentBlueprintAnswers(): Promise<StoredBlueprintAnswer[]> {
+  const membership = await getCurrentMembership()
+  if (!membership) return []
+
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("company_blueprint_answers")
+    .select("question_key, state, value")
+    .eq("company_id", membership.companyId)
+
+  if (error || !data) return []
+
+  return data.map((row) => ({
+    questionKey: row.question_key,
+    state: row.state,
+    value: row.value,
+  }))
+}
+
+export async function getCurrentBlueprintProgress(): Promise<CurrentBlueprintProgress | null> {
+  const membership = await getCurrentMembership()
+  if (!membership) return null
+
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("company_blueprint_progress")
+    .select("last_section, last_question_key")
+    .eq("company_id", membership.companyId)
+    .maybeSingle()
+
+  if (error || !data) return null
+
+  return {
+    lastSection: data.last_section,
+    lastQuestionKey: data.last_question_key,
+  }
+}
+
 export async function getCurrentTeamToday(): Promise<CurrentTeamToday | null> {
   const membership = await getCurrentMembership()
   if (!membership) {

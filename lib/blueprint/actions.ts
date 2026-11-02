@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 
+import { resolveQuestion } from "@/lib/blueprint/answers"
 import {
   mapSaveCompanyGoalsError,
   parseCompanyGoals,
@@ -9,13 +10,25 @@ import {
 } from "@/lib/blueprint/company-goals"
 import { OWNER_GOAL_OTHER_REQUIRED_MESSAGE, parseOwnerGoal } from "@/lib/blueprint/goals"
 import { isGuidedBlueprintEnabled } from "@/lib/blueprint/guided-switch"
+import type { BlueprintSectionSlug } from "@/lib/blueprint/progress"
+import {
+  getCurrentBlueprintAnswers,
+  getCurrentCompanyGoals,
+  getCurrentTeamToday,
+} from "@/lib/blueprint/queries"
+import {
+  ALREADY_ANSWERED_MESSAGE,
+  G3_CHOOSE_MESSAGE,
+  G3_SCHEMA,
+  OWNER_ONLY_MESSAGE,
+  QUESTION_BY_KEY,
+  SAVE_FAILED_MESSAGE,
+  isQuestionKey,
+} from "@/lib/blueprint/questions"
 import { parseCurrentDjCount, parseDesiredDjCount } from "@/lib/blueprint/team-today"
 import { createClient } from "@/lib/supabase/server"
 import { OWNER_ADMIN_ROLE } from "@/lib/rules/system-role"
 import { getCurrentMembership } from "@/lib/tenancy/queries"
-
-const OWNER_ONLY_MESSAGE = "Only the company owner can change this."
-const SAVE_FAILED_MESSAGE = "That didn’t save. Please try again."
 
 export type SaveOwnerGoalState = {
   error: string | null
@@ -33,6 +46,58 @@ export type SaveDesiredDjCountState = {
   error: string | null
   /** Set only when the server confirmed the save. Lets the form tell "just saved" from "never submitted". */
   savedAt: number | null
+}
+
+export type SaveAnswerState = {
+  error: string | null
+  savedAt: number | null
+}
+
+type GuidedClient = Awaited<ReturnType<typeof createClient>>
+
+async function recordProgress(
+  supabase: GuidedClient,
+  companyId: string,
+  lastSection: BlueprintSectionSlug,
+  lastQuestionKey: string,
+) {
+  try {
+    const { error } = await supabase.from("company_blueprint_progress").upsert(
+      {
+        company_id: companyId,
+        last_section: lastSection,
+        last_question_key: lastQuestionKey,
+      },
+      { onConflict: "company_id" },
+    )
+    if (error) console.error("blueprint progress", error.message)
+  } catch (error) {
+    console.error("blueprint progress", error)
+  }
+}
+
+async function clearSkip(supabase: GuidedClient, companyId: string, questionKey: string) {
+  try {
+    const { error } = await supabase
+      .from("company_blueprint_answers")
+      .delete()
+      .eq("company_id", companyId)
+      .eq("question_key", questionKey)
+    if (error) console.error("blueprint skip cleanup", error.message)
+  } catch (error) {
+    console.error("blueprint skip cleanup", error)
+  }
+}
+
+async function requireGuidedOwnerMembership() {
+  const membership = await getCurrentMembership()
+  if (!membership || membership.role !== OWNER_ADMIN_ROLE) {
+    return { ok: false as const, error: OWNER_ONLY_MESSAGE }
+  }
+  if (!isGuidedBlueprintEnabled(membership.companyId)) {
+    return { ok: false as const, error: SAVE_FAILED_MESSAGE }
+  }
+  return { ok: true as const, membership }
 }
 
 export async function saveTeamToday(
@@ -61,6 +126,10 @@ export async function saveTeamToday(
 
   if (error) {
     return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+
+  if (isGuidedBlueprintEnabled(membership.companyId)) {
+    await recordProgress(supabase, membership.companyId, "team", "TL1")
   }
 
   revalidatePath("/", "layout")
@@ -95,6 +164,10 @@ export async function saveDesiredDjCount(
 
   if (!data || data.length === 0) {
     return { error: "Save your current DJ count first.", savedAt: null }
+  }
+
+  if (isGuidedBlueprintEnabled(membership.companyId)) {
+    await recordProgress(supabase, membership.companyId, "team", "TL6")
   }
 
   revalidatePath("/", "layout")
@@ -155,7 +228,8 @@ export type SaveCompanyGoalsState = {
  * The server action checks the env switch and the owner role before calling
  * save_company_goals. The RPC itself cannot see the switch: an authenticated
  * owner can call it directly. That direct-RPC bypass is a production-release
- * blocker and is not accepted as a permanent security design.
+ * blocker and is not accepted as a permanent security design. The same class
+ * of bypass applies to company_blueprint_answers and company_blueprint_progress.
  */
 export async function saveCompanyGoals(
   _prevState: SaveCompanyGoalsState,
@@ -192,6 +266,121 @@ export async function saveCompanyGoals(
     return { error: mapSaveCompanyGoalsError(error.code), savedAt: null }
   }
 
+  await clearSkip(supabase, membership.companyId, "G1")
+  await recordProgress(supabase, membership.companyId, "goals", "G1")
+
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
+function parseAnswerValue(questionKey: string, raw: unknown) {
+  if (questionKey === "G3") {
+    const parsed = G3_SCHEMA.safeParse(raw)
+    return parsed.success ? { ok: true as const, value: parsed.data } : { ok: false as const, error: G3_CHOOSE_MESSAGE }
+  }
+  return { ok: false as const, error: SAVE_FAILED_MESSAGE }
+}
+
+export async function saveAnswer(
+  _prevState: SaveAnswerState,
+  formData: FormData,
+): Promise<SaveAnswerState> {
+  const questionKey = String(formData.get("questionKey") ?? "")
+  if (!isQuestionKey(questionKey) || questionKey.startsWith("N")) {
+    return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+
+  const question = QUESTION_BY_KEY[questionKey]
+  if (question.storage !== "answers") {
+    return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+
+  const parsed = parseAnswerValue(questionKey, formData.get("value"))
+  if (!parsed.ok) {
+    return { error: parsed.error, savedAt: null }
+  }
+
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) {
+    return { error: gate.error, savedAt: null }
+  }
+
+  const [goals, teamToday, answers] = await Promise.all([
+    getCurrentCompanyGoals(),
+    getCurrentTeamToday(),
+    getCurrentBlueprintAnswers(),
+  ])
+  const resolved = resolveQuestion(question, { goals, teamToday, answers })
+  if (resolved.state === "not_applicable") {
+    return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+
+  const supabase = await createClient()
+  const { error } = await supabase.from("company_blueprint_answers").upsert(
+    {
+      company_id: gate.membership.companyId,
+      question_key: questionKey,
+      value: parsed.value,
+      state: "answered",
+      question_version: question.version,
+    },
+    { onConflict: "company_id,question_key" },
+  )
+
+  if (error) {
+    return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+
+  await recordProgress(supabase, gate.membership.companyId, question.section, questionKey)
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
+export async function skipQuestion(questionKey: string): Promise<SaveAnswerState> {
+  if (!isQuestionKey(questionKey) || questionKey.startsWith("N")) {
+    return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+
+  const question = QUESTION_BY_KEY[questionKey]
+  if (!question.skipAllowed) {
+    return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) {
+    return { error: gate.error, savedAt: null }
+  }
+
+  const [goals, teamToday, answers] = await Promise.all([
+    getCurrentCompanyGoals(),
+    getCurrentTeamToday(),
+    getCurrentBlueprintAnswers(),
+  ])
+  const resolved = resolveQuestion(question, { goals, teamToday, answers })
+  if (resolved.state === "not_applicable") {
+    return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  if (resolved.state !== "unanswered") {
+    return { error: ALREADY_ANSWERED_MESSAGE, savedAt: null }
+  }
+
+  const supabase = await createClient()
+  const { error } = await supabase.from("company_blueprint_answers").upsert(
+    {
+      company_id: gate.membership.companyId,
+      question_key: questionKey,
+      value: null,
+      state: "skipped",
+      question_version: question.version,
+    },
+    { onConflict: "company_id,question_key" },
+  )
+
+  if (error) {
+    return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+
+  await recordProgress(supabase, gate.membership.companyId, question.section, questionKey)
   revalidatePath("/", "layout")
   return { error: null, savedAt: Date.now() }
 }

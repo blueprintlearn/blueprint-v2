@@ -1,5 +1,3 @@
-import type { CurrentTeamToday } from "@/lib/blueprint/queries"
-
 export type BlueprintSectionSlug =
   | "goals"
   | "team"
@@ -89,42 +87,16 @@ export function blueprintSection(slug: string): BlueprintSection | undefined {
 
 export const TOTAL_SECTIONS = BLUEPRINT_SECTIONS.length
 
-export type SectionStatus = "not_started" | "in_progress" | "done" | "coming_soon"
+export type SectionStatus = "not_started" | "needs_attention" | "complete" | "coming_soon"
 
 export type BlueprintProgress = {
   statuses: Record<BlueprintSectionSlug, SectionStatus>
-  doneCount: number
-  /** First live section that isn't done, or null when nothing live is left. */
+  skippedCounts: Record<BlueprintSectionSlug, number>
+  completeCount: number
+  /** First live section with an unanswered core question, or null when none remain. */
   next: BlueprintSectionSlug | null
-  /** start: nothing saved yet. continue: something is saved and a live section remains. review: no live section left. */
+  /** Core question to focus inside `next`, when there is one. */
+  focusQuestionKey: string | null
+  /** start: nothing answered or skipped. continue: a live unanswered core remains. review: only skips or everything complete. */
   action: "start" | "continue" | "review"
-}
-
-/**
- * Derived only from saved data. A saved 0 counts as saved; only a missing value is unanswered.
- */
-export function getBlueprintProgress(
-  goals: { primary: unknown } | null,
-  teamToday: Pick<CurrentTeamToday, "currentDjCount" | "desiredDjCount"> | null,
-): BlueprintProgress {
-  const goalsStatus: SectionStatus = goals?.primary ? "done" : "not_started"
-  const team: SectionStatus =
-    teamToday === null ? "not_started" : teamToday.desiredDjCount === null ? "in_progress" : "done"
-
-  const statuses = Object.fromEntries(
-    BLUEPRINT_SECTIONS.map((section) => [section.slug, "coming_soon" satisfies SectionStatus]),
-  ) as Record<BlueprintSectionSlug, SectionStatus>
-  statuses.goals = goalsStatus
-  statuses.team = team
-
-  const liveStatuses = LIVE_SECTION_SLUGS.map((slug) => statuses[slug])
-  const next = LIVE_SECTION_SLUGS.find((slug) => statuses[slug] !== "done") ?? null
-  const doneCount = liveStatuses.filter((status) => status === "done").length
-
-  return {
-    statuses,
-    doneCount,
-    next,
-    action: next === null ? "review" : liveStatuses.every((status) => status === "not_started") ? "start" : "continue",
-  }
 }

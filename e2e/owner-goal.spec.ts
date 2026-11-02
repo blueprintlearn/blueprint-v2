@@ -30,7 +30,7 @@ test.describe("owner goals in the browser", () => {
     await expect(goalsForm(page).locator(".bp-save")).toHaveText("Saved")
     await expect(goalsForm(page)).toHaveAttribute("data-saved-primary", "scale")
     await expect(goalsForm(page)).toHaveAttribute("data-saved-other-text", uniqueOtherGoal)
-    await expect(sectionStatus(page)).toHaveText("Done")
+    await expect(sectionStatus(page)).toHaveText("Complete")
 
     await page.reload()
     await expect(page.getByRole("checkbox", { name: /Scale/ })).toBeChecked()
@@ -55,7 +55,7 @@ test.describe("owner goals in the browser", () => {
     await expect(page.getByText(uniqueOtherGoal)).toBeVisible()
 
     await page.goto("/blueprint")
-    await expect(page.locator("ol li").filter({ has: page.getByText("Your goals", { exact: true }) }).getByText("Done")).toBeVisible()
+    await expect(page.locator("ol li").filter({ has: page.getByText("Your goals", { exact: true }) }).getByText("Complete")).toBeVisible()
 
     await page.getByRole("button", { name: "Sign out" }).click()
     await expect(page).toHaveURL("/")
