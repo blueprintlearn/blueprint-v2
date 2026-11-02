@@ -2,7 +2,7 @@ import { createElement as h, Fragment } from "react"
 import { renderToStaticMarkup } from "react-dom/server"
 import { describe, expect, it } from "vitest"
 
-import { OwnerGoalCard, OwnerHomeHero, TeamTodayCard } from "@/app/owner-home"
+import { CONTINUE_LEAD, OwnerGoalCard, OwnerHomeHero, TeamTodayCard } from "@/app/owner-home"
 import { OWNER_GOAL_CODES } from "@/lib/blueprint/goals"
 import { SYSTEM_ROLES, systemRoleLabel } from "@/lib/rules/system-role"
 
@@ -34,6 +34,19 @@ describe("OwnerHomeHero", () => {
     expect(text(out)).not.toContain(":")
     expect(out.match(/<h1[\s>]/g)).toHaveLength(1)
     expect(out).toContain("Start your Company Blueprint. These answers shape what Blueprint recommends.")
+  })
+
+  it("uses the pick-up lead when the Blueprint action is Continue", () => {
+    const out = html(
+      h(OwnerHomeHero, {
+        companyName: "Company C",
+        role: "owner_admin",
+        isOwner: true,
+        blueprintAction: "continue",
+      }),
+    )
+    expect(out).toContain(CONTINUE_LEAD)
+    expect(out).not.toContain("Start your Company Blueprint.")
   })
 
   it("shows Signed in as Manager and the viewer lead for a manager", () => {

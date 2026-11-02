@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server"
 import { describe, expect, it } from "vitest"
 
 import { OwnerGoalsForm } from "@/app/owner-goals-form"
-import { SINGLE_PRIMARY_LINE } from "@/lib/blueprint/company-goals"
+import { PRIMARY_SELECT_HELP, SINGLE_PRIMARY_LINE } from "@/lib/blueprint/company-goals"
 
 const html = (el: Parameters<typeof renderToStaticMarkup>[0]) => renderToStaticMarkup(el)
 const text = (markup: string) => markup.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()
@@ -32,6 +32,8 @@ describe("OwnerGoalsForm", () => {
     )
     expect(two).toContain("Which one matters most right now?")
     expect(two).toContain("Select your main goal")
+    expect(two).toContain(PRIMARY_SELECT_HELP)
+    expect(two).not.toContain("When your goals pull in different directions, Blueprint follows your main goal first.")
     expect(two).not.toContain(SINGLE_PRIMARY_LINE)
     expect(text(two)).toContain("Scale")
     expect(text(two)).toContain("Expand")
@@ -44,5 +46,29 @@ describe("OwnerGoalsForm", () => {
     expect(out).toContain("Stop DJing")
     expect(out).toContain('value="dj_less"')
     expect(out).toContain('value="stop_djing"')
+    expect(out).toContain("I’m not sure")
+    expect(out).toContain("Add more detail (optional)")
+  })
+
+  it("shows the skipped line and hides Skip after G1 was skipped", () => {
+    const out = html(
+      h(OwnerGoalsForm, {
+        companyId: "company-a",
+        goals: [],
+        primary: null,
+        otherText: null,
+        g1Skipped: true,
+      }),
+    )
+    expect(out).toContain("You skipped this for now. When you’re ready, choose your goals above and press Save goals.")
+    expect(out).toContain('data-g1-skipped="true"')
+    expect(out.indexOf("You skipped this for now.")).toBeLessThan(out.indexOf("I’m not sure"))
+  })
+
+  it("does not render M1 insight copy", () => {
+    const out = html(
+      h(OwnerGoalsForm, { companyId: "company-a", goals: ["scale"], primary: "scale", otherText: null }),
+    )
+    expect(out).not.toContain("To scale, you need enough ready DJs")
   })
 })

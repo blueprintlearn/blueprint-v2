@@ -14,7 +14,8 @@ import {
   TEAM_FOOTER_NOTE,
   TEAM_OPENING,
 } from "@/app/blueprint/blueprint-ui"
-import { blueprintSection, getBlueprintProgress } from "@/lib/blueprint/progress"
+import { getBlueprintProgressFromStates, resolveAll } from "@/lib/blueprint/answers"
+import { blueprintSection } from "@/lib/blueprint/progress"
 
 const html = (el: Parameters<typeof renderToStaticMarkup>[0]) => renderToStaticMarkup(el)
 const text = (markup: string) => markup.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()
@@ -39,10 +40,24 @@ const APPROVED = [
   ["Your Blueprint", "Blueprint’s recommendations, for you to approve or change"],
 ] as const
 
-const none = getBlueprintProgress(null, null)
-const started = getBlueprintProgress({ primary: { goal: "scale" } }, null)
-const partlyTeam = getBlueprintProgress({ primary: { goal: "scale" } }, { currentDjCount: 3, desiredDjCount: null })
-const allReady = getBlueprintProgress({ primary: { goal: "scale" } }, { currentDjCount: 3, desiredDjCount: 5 })
+const progressOf = (
+  goals: { primary: { goal: string }; others?: unknown[] } | null,
+  teamToday: { currentDjCount: number; desiredDjCount: number | null } | null,
+  answers: { questionKey: string; state: "answered" | "estimated" | "skipped"; value: unknown }[] = [],
+) =>
+  getBlueprintProgressFromStates(
+    resolveAll({
+      goals: goals ? { primary: goals.primary, others: goals.others ?? [] } : null,
+      teamToday,
+      answers,
+    }),
+    null,
+  )
+
+const none = progressOf(null, null)
+const started = progressOf({ primary: { goal: "scale" } }, null)
+const partlyTeam = progressOf({ primary: { goal: "scale" } }, { currentDjCount: 3, desiredDjCount: null })
+const allReady = progressOf({ primary: { goal: "scale" } }, { currentDjCount: 3, desiredDjCount: 5 })
 
 describe("BlueprintSectionList", () => {
   const out = html(h(BlueprintSectionList, { progress: started }))
@@ -69,12 +84,14 @@ describe("BlueprintSectionList", () => {
   })
 
   it("uses customer words for statuses, never codes", () => {
-    expect(text(out)).toContain("Done")
+    expect(text(out)).toContain("Complete")
     expect(text(out)).toContain("Not started")
-    for (const code of ["not_started", "in_progress", "coming_soon", "planned", "proven"]) {
+    for (const code of ["not_started", "needs_attention", "coming_soon", "planned", "proven"]) {
       expect(text(out)).not.toContain(code)
     }
-    expect(text(html(h(BlueprintSectionList, { progress: partlyTeam })))).toContain("In progress")
+    expect(text(html(h(BlueprintSectionList, { progress: partlyTeam })))).toContain("Needs attention")
+    const skipped = progressOf(null, null, [{ questionKey: "G1", state: "skipped", value: null }])
+    expect(text(html(h(BlueprintSectionList, { progress: skipped })))).toContain("1 skipped")
   })
 })
 
@@ -87,21 +104,21 @@ describe("BlueprintOverview", () => {
     expect(out).toContain("Your Company Blueprint</h1>")
     expect(text(out)).toContain("Company A")
     expect(text(out)).toContain(OVERVIEW_LEAD)
-    expect(text(out)).toContain("0 of 8 sections done")
-    expect(text(render(allReady))).toContain("2 of 8 sections done")
+    expect(text(out)).toContain("0 of 8 sections complete")
+    expect(text(render(allReady))).toContain("2 of 8 sections complete")
   })
 
   it("offers Start when nothing is saved, linking to Goals", () => {
     const out = render(none)
-    expect(primaryLink(out)).toMatchObject({ href: "/blueprint/goals", label: "Start your Blueprint" })
+    expect(primaryLink(out)).toMatchObject({ href: "/blueprint/goals#q-G1", label: "Start your Blueprint" })
     expect(count(out, "bp-btn--primary")).toBe(1)
   })
 
   it("offers Continue at the first unfinished live section", () => {
-    expect(primaryLink(render(started))).toMatchObject({ href: "/blueprint/team", label: "Continue your Blueprint" })
-    expect(primaryLink(render(partlyTeam))).toMatchObject({ href: "/blueprint/team", label: "Continue your Blueprint" })
-    const teamOnly = getBlueprintProgress(null, { currentDjCount: 1, desiredDjCount: 2 })
-    expect(primaryLink(render(teamOnly))).toMatchObject({ href: "/blueprint/goals", label: "Continue your Blueprint" })
+    expect(primaryLink(render(started))).toMatchObject({ href: "/blueprint/team#q-TL1", label: "Continue your Blueprint" })
+    expect(primaryLink(render(partlyTeam))).toMatchObject({ href: "/blueprint/team#q-TL6", label: "Continue your Blueprint" })
+    const teamOnly = progressOf(null, { currentDjCount: 1, desiredDjCount: 2 })
+    expect(primaryLink(render(teamOnly))).toMatchObject({ href: "/blueprint/goals#q-G1", label: "Continue your Blueprint" })
   })
 
   it("has no primary button once every live section is done, and says more is coming", () => {
@@ -121,7 +138,7 @@ describe("BlueprintHomeCard", () => {
     expect(out).toMatch(/^<section class="bp-card[^"]*" aria-labelledby="company-blueprint-title">/)
     expect(out).toContain('<h2 id="company-blueprint-title" class="bp-card__title">Your Company Blueprint</h2>')
     expect(tag(out)).toBe("Not started")
-    expect(text(out)).toContain("0 of 8 sections done")
+    expect(text(out)).toContain("0 of 8 sections complete")
     expect(out).toContain("Start your Blueprint")
     expect(count(out, "bp-btn--primary")).toBe(1)
   })
@@ -134,7 +151,7 @@ describe("BlueprintHomeCard", () => {
       { href: "/blueprint", className: "bp-btn bp-btn--soft self-start", label: "Review your Blueprint" },
     ])
     expect(count(done, "bp-btn--primary")).toBe(0)
-    expect(text(done)).toContain("2 of 8 sections done")
+    expect(text(done)).toContain("2 of 8 sections complete")
   })
 })
 
@@ -172,7 +189,7 @@ describe("BlueprintSectionPage", () => {
       ["team", "Your team today", 2],
     ] as const) {
       const out = html(
-        h(BlueprintSectionPage, { section: blueprintSection(slug)!, status: "done", opening: "x", footer: null, children: null }),
+        h(BlueprintSectionPage, { section: blueprintSection(slug)!, status: "complete", opening: "x", footer: null, children: null }),
       )
       expect(out).toContain(`>${name}</h1>`)
       expect(text(out)).toContain(`Section ${n} of 8`)

@@ -183,11 +183,13 @@
 .bp-check-group > .bp-field__help{margin:0 0 6px}
 .bp-check-group__list{display:flex;flex-direction:column;gap:8px;max-width:560px;margin-top:4px}
 .bp-check{display:flex;align-items:flex-start;gap:12px;min-height:44px;padding:10px 12px;border-radius:var(--bp-radius-md);cursor:pointer;transition:background-color .15s ease}
-.bp-check:hover{background:var(--surface-soft)}
+@media (hover: hover){
+  .bp-check:hover{background:var(--surface-soft)}
+  .bp-check:hover .bp-check__box{border-color:var(--ink)}
+}
 .bp-check:has(.bp-check__box:focus-visible){outline:2px solid var(--focus);outline-offset:3px}
 .bp-check__box{appearance:none;-webkit-appearance:none;flex:none;position:relative;width:22px;height:22px;margin:1px 0 0;border:1.5px solid var(--control-border);border-radius:6px;background:var(--surface);cursor:pointer;transition:border-color .15s ease,background-color .15s ease}
 .bp-check__box:focus-visible{outline:none}
-.bp-check:hover .bp-check__box{border-color:var(--ink)}
 .bp-check__box:checked{background:var(--solid);border-color:var(--solid)}
 .bp-check__box:checked::before{content:"";position:absolute;left:6px;top:2px;width:6px;height:11px;border:solid var(--text-on-solid);border-width:0 2px 2px 0;transform:rotate(45deg)}
 .bp-check-group.is-invalid .bp-check__box:not(:checked){border-color:var(--danger-ink)}
@@ -199,6 +201,35 @@
 .bp-check-group__note:empty{margin:0}
 .bp-check-group > .bp-field__error{margin-top:6px}
 @media (forced-colors: active){.bp-check__box:checked{background:Highlight;border-color:Highlight}.bp-check__box:checked::before{border-color:HighlightText}}
+
+/* ---------- v1.4: RadioGroup (CheckboxGroup anatomy, round control) ---------- */
+.bp-radio__dot{border-radius:50%}
+.bp-radio__dot:checked{background:var(--solid);border-color:var(--solid)}
+.bp-radio__dot:checked::before{content:"";position:absolute;left:5px;top:5px;width:9px;height:9px;border:0;border-radius:50%;background:var(--text-on-solid);transform:none}
+@media (forced-colors: active){.bp-radio__dot:checked{background:Highlight;border-color:Highlight}.bp-radio__dot:checked::before{background:HighlightText}}
+
+/* ---------- v1.4: Guidance (I'm not sure, helpers, answer-state notes) ---------- */
+.bp-notsure{display:flex;flex-direction:column;align-items:flex-start;gap:8px;max-width:560px}
+.bp-notsure__link{font-size:15px;min-height:44px;display:inline-flex;align-items:center}
+.bp-notsure__panel{align-self:stretch;background:var(--surface-soft);border-radius:var(--bp-radius-lg);padding:16px;display:flex;flex-direction:column;gap:14px}
+.bp-notsure__block{display:flex;flex-direction:column;gap:4px}
+.bp-notsure__label{margin:0;font-size:14px;font-weight:700;color:var(--ink)}
+.bp-notsure__text{margin:0;font-size:15px;line-height:1.5;color:var(--ink-2)}
+.bp-notsure__list{margin:0;padding-left:1.25em;font-size:15px;line-height:1.5;color:var(--ink-2);list-style-type:disc;list-style-position:outside}
+.bp-notsure__list > li{display:list-item;margin:0 0 .15em;padding:0}
+@media (max-width:760px){.bp-notsure__list > li.is-desktop-only{display:none}}
+.bp-notsure__skip{align-self:flex-start;font-size:15px;min-height:44px;display:inline-flex;align-items:center;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
+.bp-helper{display:flex;flex-direction:column;gap:12px}
+.bp-helper__inputs{display:flex;flex-direction:column;gap:12px}
+.bp-helper__value{font-size:16px;font-weight:700;color:var(--ink)}
+.bp-helper__pending{font-size:15px;color:var(--muted)}
+.bp-start__text{font-size:15px;color:var(--ink-2)}
+.bp-answer-note{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:14px;line-height:1.45;color:var(--muted)}
+.bp-answer-note--estimated{color:var(--ink-2)}
+.bp-more-detail{margin:0;max-width:560px}
+.bp-more-detail > summary{cursor:pointer;font-size:15px;font-weight:700;color:var(--coral-text);min-height:44px;display:inline-flex;align-items:center}
+.bp-more-detail > summary:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:4px}
+
 
 /* ---------- v1.2: Fact (read-only value) and SaveStatus ---------- */
 .bp-fact{display:flex;flex-direction:column;gap:2px;min-width:0}

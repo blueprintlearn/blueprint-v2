@@ -22,7 +22,7 @@ const APPROVED_SECTIONS = [
 ] as const
 
 const sectionStatus = (page: Page) => page.locator("div:has(> h1) > .bp-status")
-const doneText = (page: Page) => page.getByText(/^\d of 8 sections done$/)
+const doneText = (page: Page) => page.getByText(/^\d of 8 sections complete$/)
 const row = (page: Page, name: string) =>
   page.locator("ol li").filter({ has: page.getByText(name, { exact: true }) })
 
@@ -93,7 +93,7 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     }
     await page.getByRole("button", { name: "Save goals", exact: true }).click()
     await expect(page.locator("form[data-saved-company-goals] .bp-save")).toHaveText("Saved")
-    await expect(sectionStatus(page)).toHaveText("Done")
+    await expect(sectionStatus(page)).toHaveText("Complete")
 
     // Team: current first, then desired
     await page.getByRole("link", { name: "Next: Your team today" }).click()
@@ -112,19 +112,19 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     await page.getByRole("button", { name: "Save DJ count", exact: true }).click()
     await expect(page.locator("form[data-saved-current-dj-count]").getByRole("status")).toHaveText("Saved")
     const desiredSaved = await page.locator("form[data-saved-desired-dj-count]").getAttribute("data-saved-desired-dj-count")
-    await expect(sectionStatus(page)).toHaveText(desiredSaved === "" ? "In progress" : "Done")
+    await expect(sectionStatus(page)).toHaveText(desiredSaved === "" ? "Needs attention" : "Complete")
 
     await page.getByLabel("Desired DJ count").fill("8")
     await page.getByRole("button", { name: "Save desired DJ count", exact: true }).click()
     await expect(page.locator("form[data-saved-desired-dj-count]").getByRole("status")).toHaveText("Saved")
-    await expect(sectionStatus(page)).toHaveText("Done")
+    await expect(sectionStatus(page)).toHaveText("Complete")
 
-    // Overview: both live sections done, so no primary action and a soft way back
+    // Overview: both live sections complete, so no primary action and a soft way back
     await page.getByRole("link", { name: "Back to your Blueprint" }).first().click()
     await expect(page).toHaveURL("/blueprint")
-    await expect(doneText(page)).toHaveText("2 of 8 sections done")
-    await expect(row(page, "Your goals").getByText("Done")).toBeVisible()
-    await expect(row(page, "Your team today").getByText("Done")).toBeVisible()
+    await expect(doneText(page)).toHaveText("2 of 8 sections complete")
+    await expect(row(page, "Your goals").getByText("Complete")).toBeVisible()
+    await expect(row(page, "Your team today").getByText("Complete")).toBeVisible()
     await expect(page.getByText("You’ve finished the sections that are ready. More are coming soon.")).toBeVisible()
     await expect(page.locator(".bp-btn--primary")).toHaveCount(0)
     await expect(page.getByRole("link", { name: /(Start|Continue) your Blueprint/ })).toHaveCount(0)
@@ -132,7 +132,7 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     // Owner home: the same saved facts, no forms, one soft way back in
     await page.goto("/")
     const blueprint = page.locator("section").filter({ has: page.getByRole("heading", { level: 2, name: "Your Company Blueprint" }) })
-    await expect(blueprint.getByText("2 of 8 sections done")).toBeVisible()
+    await expect(blueprint.getByText("2 of 8 sections complete")).toBeVisible()
     await expect(blueprint.getByRole("link", { name: "Review your Blueprint" })).toHaveAttribute("href", "/blueprint")
     await expect(page.locator(".bp-btn--primary")).toHaveCount(0)
     await expect(page.locator("form[data-saved-owner-goal], form[data-saved-current-dj-count], form[data-saved-desired-dj-count]")).toHaveCount(0)
@@ -157,7 +157,7 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     } else {
       await expect(start.or(cont)).toHaveCount(1)
       await expect(start.or(cont)).toHaveClass(/\bbp-btn--primary\b/)
-      await expect(start.or(cont)).toHaveAttribute("href", /^\/blueprint\/(goals|team)$/)
+      await expect(start.or(cont)).toHaveAttribute("href", /^\/blueprint\/(goals|team)(#q-[A-Z0-9]+)?$/)
     }
   })
 

@@ -37,6 +37,13 @@ export function clearCompanyGoalData(companyId: string) {
   `)
 }
 
+export function clearBlueprintAnswers(companyId: string) {
+  querySql(`
+    delete from public.company_blueprint_answers where company_id = '${companyId}';
+    delete from public.company_blueprint_progress where company_id = '${companyId}';
+  `)
+}
+
 export const ASSERT_NOT_ONE_PRIMARY = `
   select company_id
   from public.company_goals

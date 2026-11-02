@@ -1,7 +1,14 @@
 import { TopNav } from "@/components/blueprint"
+import { getBlueprintProgressFromStates, resolveAll, resumeFromRow } from "@/lib/blueprint/answers"
 import { isGuidedBlueprintEnabled } from "@/lib/blueprint/guided-switch"
-import { getBlueprintProgress } from "@/lib/blueprint/progress"
-import { companyGoalsAlsoLine, getCurrentCompanyGoals, getCurrentOwnerGoal, getCurrentTeamToday } from "@/lib/blueprint/queries"
+import {
+  companyGoalsAlsoLine,
+  getCurrentBlueprintAnswers,
+  getCurrentBlueprintProgress,
+  getCurrentCompanyGoals,
+  getCurrentOwnerGoal,
+  getCurrentTeamToday,
+} from "@/lib/blueprint/queries"
 import { OWNER_ADMIN_ROLE } from "@/lib/rules/system-role"
 import { createClient } from "@/lib/supabase/server"
 import { getCurrentMembership } from "@/lib/tenancy/queries"
@@ -25,6 +32,11 @@ export default async function HomePage() {
   const isOwner = membership?.role === OWNER_ADMIN_ROLE
   const guided = Boolean(membership && isOwner && isGuidedBlueprintEnabled(membership.companyId))
   const companyGoals = guided ? await getCurrentCompanyGoals() : null
+  const answers = guided ? await getCurrentBlueprintAnswers() : []
+  const resume = guided ? await getCurrentBlueprintProgress() : null
+  const progress = guided
+    ? getBlueprintProgressFromStates(resolveAll({ goals: companyGoals, teamToday, answers }), resumeFromRow(resume))
+    : null
 
   if (membership) {
     const canEdit = isOwner && !guided
@@ -35,8 +47,13 @@ export default async function HomePage() {
       <>
         <TopNav actions={<SignOutButton />} />
         <main className="mx-auto flex w-full max-w-[1240px] flex-1 flex-col gap-8 px-4 pb-11 md:gap-12 md:px-8 md:pb-16">
-          <OwnerHomeHero companyName={membership.companyName} role={membership.role} isOwner={isOwner} />
-          {guided ? <BlueprintHomeCard progress={getBlueprintProgress(companyGoals, teamToday)} /> : null}
+          <OwnerHomeHero
+            companyName={membership.companyName}
+            role={membership.role}
+            isOwner={isOwner}
+            blueprintAction={progress?.action}
+          />
+          {progress ? <BlueprintHomeCard progress={progress} /> : null}
           <div className="grid items-start gap-5 lg:grid-cols-2">
             <TeamTodayCard
               currentDjCount={currentDjCount}

@@ -11,6 +11,9 @@ const mocks = vi.hoisted(() => ({
   createClient: vi.fn(),
   getCurrentMembership: vi.fn(),
   guided: true,
+  goals: null as null | { primary: { goal: string }; others: unknown[] },
+  team: null as null | { currentDjCount: number; desiredDjCount: number | null },
+  answers: [] as { questionKey: string; state: "answered" | "estimated" | "skipped"; value: unknown }[],
 }))
 
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }))
@@ -19,8 +22,21 @@ vi.mock("@/lib/supabase/server", () => ({ createClient: mocks.createClient }))
 vi.mock("@/lib/blueprint/guided-switch", () => ({
   isGuidedBlueprintEnabled: () => mocks.guided,
 }))
+vi.mock("@/lib/blueprint/queries", () => ({
+  getCurrentCompanyGoals: async () => mocks.goals,
+  getCurrentTeamToday: async () => mocks.team,
+  getCurrentBlueprintAnswers: async () => mocks.answers,
+}))
 
-import { saveCompanyGoals, saveDesiredDjCount, saveOwnerGoal, saveTeamToday } from "@/lib/blueprint/actions"
+import {
+  saveAnswer,
+  saveCompanyGoals,
+  saveDesiredDjCount,
+  saveOwnerGoal,
+  saveTeamToday,
+  skipQuestion,
+} from "@/lib/blueprint/actions"
+import { ALREADY_ANSWERED_MESSAGE, G3_CHOOSE_MESSAGE } from "@/lib/blueprint/questions"
 import { OWNER_GOAL_OTHER_REQUIRED_MESSAGE } from "@/lib/blueprint/goals"
 
 const initial = { error: null, savedAt: null }
@@ -42,8 +58,19 @@ beforeEach(() => {
   }))
   mocks.rpc.mockImplementation(async () => ({ error: mocks.dbError }))
   mocks.guided = true
+  mocks.goals = null
+  mocks.team = null
+  mocks.answers = []
+  const deleteChain = {
+    eq: () => deleteChain,
+    then: (resolve: (value: { error: null }) => unknown) => resolve({ error: null }),
+  }
   mocks.createClient.mockImplementation(async () => ({
-    from: () => ({ upsert: mocks.upsert, update: mocks.update }),
+    from: () => ({
+      upsert: mocks.upsert,
+      update: mocks.update,
+      delete: () => deleteChain,
+    }),
     rpc: mocks.rpc,
   }))
 })
@@ -219,3 +246,59 @@ describe("saveCompanyGoals", () => {
     })
   })
 })
+
+describe("saveAnswer and skipQuestion", () => {
+  it("saves a G3 code and records progress", async () => {
+    const data = new FormData()
+    data.set("questionKey", "G3")
+    data.set("value", "within_6_months")
+    const result = await saveAnswer(initial, data)
+    expect(result.error).toBeNull()
+    expect(result.savedAt).toEqual(expect.any(Number))
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        company_id: "company-a",
+        question_key: "G3",
+        value: "within_6_months",
+        state: "answered",
+      }),
+      { onConflict: "company_id,question_key" },
+    )
+  })
+
+  it("rejects a bad G3 code before writing", async () => {
+    const data = new FormData()
+    data.set("questionKey", "G3")
+    data.set("value", "soon")
+    expect(await saveAnswer(initial, data)).toEqual({ error: G3_CHOOSE_MESSAGE, savedAt: null })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+
+  it("refuses unknown, financial and typed keys before touching the database", async () => {
+    for (const key of ["N1", "E1", "G1", "nope"]) {
+      const data = new FormData()
+      data.set("questionKey", key)
+      data.set("value", "within_6_months")
+      expect(await saveAnswer(initial, data)).toEqual({ error: "That didn’t save. Please try again.", savedAt: null })
+    }
+    expect(mocks.getCurrentMembership).not.toHaveBeenCalled()
+  })
+
+  it("skips G1 when there are no goals and refuses once goals exist", async () => {
+    const skipped = await skipQuestion("G1")
+    expect(skipped.error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "G1", state: "skipped", value: null }),
+      { onConflict: "company_id,question_key" },
+    )
+
+    mocks.goals = { primary: { goal: "scale" }, others: [] }
+    expect(await skipQuestion("G1")).toEqual({ error: ALREADY_ANSWERED_MESSAGE, savedAt: null })
+  })
+
+  it("never offers a skip path for G2", async () => {
+    expect(await skipQuestion("G2")).toEqual({ error: "That didn’t save. Please try again.", savedAt: null })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+})
+

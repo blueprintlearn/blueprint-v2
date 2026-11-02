@@ -36,6 +36,44 @@ export type Database = {
                   Relationships: [
                     
                   ]
+                },"company_blueprint_answers": {
+                  Row: {
+                    "company_id": string,"created_at": string,"question_key": string,"question_version": number,"state": Database["public"]['Enums']["answer_state"],"updated_at": string,"updated_by": string,"value": Json | null
+                  }
+                  Insert: {
+                    "company_id": string,"created_at"?: string,"question_key": string,"question_version": number,"state": Database["public"]['Enums']["answer_state"],"updated_at"?: string,"updated_by"?: string,"value"?: Json | null
+                  }
+                  Update: {
+                    "company_id"?: string,"created_at"?: string,"question_key"?: string,"question_version"?: number,"state"?: Database["public"]['Enums']["answer_state"],"updated_at"?: string,"updated_by"?: string,"value"?: Json | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_blueprint_answers_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"company_blueprint_progress": {
+                  Row: {
+                    "company_id": string,"last_question_key": string | null,"last_section": string,"updated_at": string
+                  }
+                  Insert: {
+                    "company_id": string,"last_question_key"?: string | null,"last_section": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "company_id"?: string,"last_question_key"?: string | null,"last_section"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_blueprint_progress_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: true
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"company_blueprints": {
                   Row: {
                     "company_id": string,"created_at": string,"owner_goal": Database["public"]['Enums']["owner_goal_code"],"owner_goal_other": string | null,"updated_at": string
@@ -136,7 +174,7 @@ isOneToOne: true
                            }
           }
           Enums: {
-            "owner_goal_code": "dj_less"|"stop_djing"|"scale"|"expand"|"improve_quality"|"create_leadership"|"other","system_role": "owner_admin"|"manager"|"trainer_mentor"|"dj_trainee"
+            "answer_state": "answered"|"estimated"|"skipped","owner_goal_code": "dj_less"|"stop_djing"|"scale"|"expand"|"improve_quality"|"create_leadership"|"other","system_role": "owner_admin"|"manager"|"trainer_mentor"|"dj_trainee"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -256,7 +294,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "owner_goal_code": ["dj_less", "stop_djing", "scale", "expand", "improve_quality", "create_leadership", "other"],"system_role": ["owner_admin", "manager", "trainer_mentor", "dj_trainee"]
+            "answer_state": ["answered", "estimated", "skipped"],"owner_goal_code": ["dj_less", "stop_djing", "scale", "expand", "improve_quality", "create_leadership", "other"],"system_role": ["owner_admin", "manager", "trainer_mentor", "dj_trainee"]
           }
         }
 } as const

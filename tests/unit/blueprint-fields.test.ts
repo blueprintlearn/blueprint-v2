@@ -4,7 +4,21 @@ import { createElement as h } from "react"
 import { renderToStaticMarkup } from "react-dom/server"
 import { describe, expect, it } from "vitest"
 
-import { Card, CheckboxGroup, Fact, NumberField, SaveStatus, Select, TextField, TopNav } from "@/components/blueprint"
+import {
+  AnswerStateNote,
+  Card,
+  CheckboxGroup,
+  EstimateHelper,
+  Fact,
+  NotSure,
+  NumberField,
+  RadioGroup,
+  SaveStatus,
+  Select,
+  StartingPoint,
+  TextField,
+  TopNav,
+} from "@/components/blueprint"
 import { contrastRatio } from "@/lib/brand/tenant-theme"
 
 const html = (el: Parameters<typeof renderToStaticMarkup>[0]) => renderToStaticMarkup(el)
@@ -144,6 +158,106 @@ describe("CheckboxGroup", () => {
     const out = html(h(CheckboxGroup, { id: "g", label: "Goals", name: "goals", options }))
     expect(out).toContain('id="g-note" role="status" aria-live="polite"')
     expect(out).toContain('aria-describedby="g-note"')
+  })
+})
+
+describe("RadioGroup", () => {
+  const options = [
+    { value: "within_6_months", label: "Within 6 months" },
+    { value: "no_set_date", label: "No set date" },
+  ]
+
+  it("is a fieldset of native radios with CheckboxGroup anatomy", () => {
+    const out = html(
+      h(RadioGroup, {
+        id: "g3",
+        label: "When would you like to get there?",
+        name: "value",
+        options,
+        help: "Applies to your main goal.",
+        error: "Choose one of the options.",
+        defaultValue: "no_set_date",
+        optional: true,
+      }),
+    )
+    expect(out).toMatch(/^<fieldset class="bp-check-group bp-radio-group is-invalid"/)
+    expect(out).toContain('aria-invalid="true"')
+    expect(out).toContain(" Optional")
+    expect(out).toMatch(/<input[^>]*type="radio"[^>]*class="bp-check__box bp-radio__dot"/)
+    expect(out).toMatch(/<input[^>]*value="no_set_date"[^>]*checked=""|<input[^>]*checked=""[^>]*value="no_set_date"/)
+    expect(out).toContain('aria-describedby="g3-help g3-note g3-error"')
+  })
+})
+
+describe("NotSure, helpers and answer notes", () => {
+  it("opens an inline panel in the approved order with ARIA", () => {
+    const out = html(
+      h(NotSure, {
+        id: "g1-help",
+        question: "What do you want Blueprint to help you do?",
+        why: "This shapes every recommendation.",
+        examples: ["An owner picks DJ less.", "A company picks Scale."],
+        helper: h(StartingPoint, { text: "Same as last year: 180", value: 180, onUse: () => {} }),
+        canSkip: true,
+        onSkip: () => {},
+        defaultOpen: true,
+      }),
+    )
+    expect(out).toContain('aria-expanded="true"')
+    expect(out).toContain('aria-controls="g1-help-panel"')
+    expect(out).toContain("Hide help")
+    expect(out).toContain('role="region"')
+    expect(out).toContain("Help with: What do you want Blueprint to help you do?")
+    expect(out.indexOf("Why we ask")).toBeLessThan(out.indexOf("Examples"))
+    expect(out.indexOf("Examples")).toBeLessThan(out.indexOf("Help me answer"))
+    expect(out.indexOf("Help me answer")).toBeLessThan(out.indexOf("Skip for now. You can answer it later."))
+    expect(out).toContain("<ul class=\"bp-notsure__list\"")
+    expect(out).toContain("<li>")
+    expect(out).toContain("An owner picks DJ less.")
+  })
+
+  it("marks desktop-only examples so the phone panel can hide them", () => {
+    const out = html(
+      h(NotSure, {
+        question: "Goals",
+        defaultOpen: true,
+        examples: [
+          { text: "An owner picks DJ less." },
+          { text: "A company picks Scale." },
+          { text: "An owner picks Improve quality.", desktopOnly: true },
+        ],
+      }),
+    )
+    expect(out).toContain('<li class="is-desktop-only">An owner picks Improve quality.</li>')
+    expect(out).toContain("<ul class=\"bp-notsure__list\"")
+  })
+
+  it("hides Skip when the question is not unanswered", () => {
+    const out = html(h(NotSure, { question: "Goals", why: "Why", defaultOpen: true }))
+    expect(out).not.toContain("Skip for now")
+  })
+
+  it("shows the helper pending line until every input is valid", () => {
+    const out = html(
+      h(EstimateHelper, {
+        inputs: [{ name: "busy", label: "Busy months", min: 0, max: 12 }],
+        compute: (values) => values.busy * 10,
+        unit: "events",
+        onUse: () => {},
+      }),
+    )
+    expect(out).toContain("Fill these in to see an estimate")
+    expect(out).not.toContain("Use ")
+  })
+
+  it("shows Estimate and skipped notes as text, not a section status", () => {
+    const estimated = html(h(AnswerStateNote, { state: "estimated" }))
+    expect(estimated).toContain("Estimate")
+    expect(estimated).toContain("Blueprint estimated this. Change it any time.")
+    const skipped = html(h(AnswerStateNote, { state: "skipped", why: "Your goals shape every recommendation Blueprint makes." }))
+    expect(skipped).toContain("You skipped this for now.")
+    expect(skipped).toContain("Your goals shape every recommendation Blueprint makes.")
+    expect(skipped).not.toContain("Complete")
   })
 })
 

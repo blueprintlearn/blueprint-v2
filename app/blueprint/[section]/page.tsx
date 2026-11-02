@@ -6,6 +6,7 @@ import { loadGuidedBlueprint, requireGuidedOwner } from "@/lib/blueprint/guard"
 import { blueprintSection } from "@/lib/blueprint/progress"
 
 import { DesiredDjCountForm } from "../../desired-dj-count-form"
+import { FocusQuestion } from "../../focus-question"
 import { OwnerGoalsForm } from "../../owner-goals-form"
 import { TeamTodayForm } from "../../team-today-form"
 import {
@@ -33,18 +34,22 @@ export default async function BlueprintSectionRoute({
     redirect("/blueprint")
   }
 
-  const { companyGoals, teamToday, progress } = await loadGuidedBlueprint()
+  const { companyGoals, teamToday, progress, resolved } = await loadGuidedBlueprint()
   const status = progress.statuses[slug]
+  const g1Skipped = resolved.some((row) => row.key === "G1" && row.state === "skipped")
+  const g3Value = resolved.find((row) => row.key === "G3" && (row.state === "answered" || row.state === "estimated"))
+  const focusId = progress.next === slug && progress.focusQuestionKey ? `q-${progress.focusQuestionKey}` : null
 
   if (slug === "goals") {
     return (
       <BlueprintShell>
+        <FocusQuestion questionId={focusId} />
         <BlueprintSectionPage
           section={section}
           status={status}
           opening={GOALS_OPENING}
           footer={
-            <Link href="/blueprint/team" className="bp-btn bp-btn--soft">
+            <Link href="/blueprint/team" id="blueprint-next" className="bp-btn bp-btn--soft">
               Next: Your team today
             </Link>
           }
@@ -55,6 +60,8 @@ export default async function BlueprintSectionRoute({
             goals={companyGoalCodes(companyGoals)}
             primary={companyGoals?.primary.goal ?? null}
             otherText={companyGoalsOtherText(companyGoals)}
+            g1Skipped={g1Skipped}
+            g3Value={typeof g3Value?.value === "string" ? g3Value.value : null}
           />
         </BlueprintSectionPage>
       </BlueprintShell>
@@ -66,6 +73,7 @@ export default async function BlueprintSectionRoute({
 
   return (
     <BlueprintShell>
+      <FocusQuestion questionId={focusId} />
       <BlueprintSectionPage
         section={section}
         status={status}
@@ -83,8 +91,12 @@ export default async function BlueprintSectionRoute({
         }
       >
         <div key={`team-today:${membership.companyId}`} className="grid gap-5 md:grid-cols-2">
-          <TeamTodayForm currentDjCount={currentDjCount} />
-          <DesiredDjCountForm currentDjCount={currentDjCount} desiredDjCount={desiredDjCount} />
+          <div id="q-TL1">
+            <TeamTodayForm currentDjCount={currentDjCount} />
+          </div>
+          <div id="q-TL6">
+            <DesiredDjCountForm currentDjCount={currentDjCount} desiredDjCount={desiredDjCount} />
+          </div>
         </div>
       </BlueprintSectionPage>
     </BlueprintShell>

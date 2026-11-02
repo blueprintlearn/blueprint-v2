@@ -31,7 +31,8 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     env: {
       // Company A is the seeded guided-Blueprint company; Company B stays off to cover the default.
-      BLUEPRINT_GUIDED_COMPANY_IDS: "00000000-0000-4000-8000-0000000000a1",
+      BLUEPRINT_GUIDED_COMPANY_IDS:
+        "00000000-0000-4000-8000-0000000000a1,00000000-0000-4000-8000-0000000000c1",
     },
   },
 })

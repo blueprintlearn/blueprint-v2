@@ -1,8 +1,19 @@
 import { notFound, redirect } from "next/navigation"
 
+import {
+  getBlueprintProgressFromStates,
+  resolveAll,
+  resumeFromRow,
+  type AnswerContext,
+} from "@/lib/blueprint/answers"
 import { isGuidedBlueprintEnabled } from "@/lib/blueprint/guided-switch"
-import { getCurrentCompanyGoals, getCurrentOwnerGoal, getCurrentTeamToday } from "@/lib/blueprint/queries"
-import { getBlueprintProgress } from "@/lib/blueprint/progress"
+import {
+  getCurrentBlueprintAnswers,
+  getCurrentBlueprintProgress,
+  getCurrentCompanyGoals,
+  getCurrentOwnerGoal,
+  getCurrentTeamToday,
+} from "@/lib/blueprint/queries"
 import { OWNER_ADMIN_ROLE } from "@/lib/rules/system-role"
 import { getCurrentMembership, type CurrentMembership } from "@/lib/tenancy/queries"
 
@@ -31,15 +42,22 @@ export async function requireGuidedOwner(): Promise<CurrentMembership> {
 }
 
 export async function loadGuidedBlueprint() {
-  const [ownerGoal, teamToday, companyGoals] = await Promise.all([
+  const [ownerGoal, teamToday, companyGoals, answers, resume] = await Promise.all([
     getCurrentOwnerGoal(),
     getCurrentTeamToday(),
     getCurrentCompanyGoals(),
+    getCurrentBlueprintAnswers(),
+    getCurrentBlueprintProgress(),
   ])
+  const context: AnswerContext = { goals: companyGoals, teamToday, answers }
+  const resolved = resolveAll(context)
   return {
     ownerGoal,
     teamToday,
     companyGoals,
-    progress: getBlueprintProgress(companyGoals, teamToday),
+    answers,
+    resolved,
+    context,
+    progress: getBlueprintProgressFromStates(resolved, resumeFromRow(resume)),
   }
 }
