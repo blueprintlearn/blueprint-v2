@@ -62,11 +62,14 @@ alter table public.company_team_today
     check (earlier_dj_count between 0 and 999),
   add constraint company_team_today_earlier_desired_dj_count_range
     check (earlier_desired_dj_count between 0 and 999),
+  -- T3 requires T1. A null current count with a lead count is not allowed.
   add constraint company_team_today_lead_not_above_current
     check (
       lead_capable_count is null
-      or current_dj_count is null
-      or lead_capable_count <= current_dj_count
+      or (
+        current_dj_count is not null
+        and lead_capable_count <= current_dj_count
+      )
     ),
   add constraint company_team_today_zero_current_zero_lead
     check (

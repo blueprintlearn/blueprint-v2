@@ -50,7 +50,7 @@ import {
   skipQuestion,
 } from "@/lib/blueprint/actions"
 import { emptyTeamToday } from "@/lib/blueprint/team-today"
-import { ALREADY_ANSWERED_MESSAGE, G3_CHOOSE_MESSAGE } from "@/lib/blueprint/questions"
+import { ALREADY_ANSWERED_MESSAGE, G3_CHOOSE_MESSAGE, SAVE_FAILED_MESSAGE } from "@/lib/blueprint/questions"
 import { OWNER_GOAL_OTHER_REQUIRED_MESSAGE } from "@/lib/blueprint/goals"
 
 const initial = { error: null, savedAt: null }
@@ -336,6 +336,14 @@ describe("guided team today v2 actions", () => {
         p_count_basis: "excludes_owner",
       }),
     )
+  })
+
+  it("refuses T3 when T1 is null", async () => {
+    mocks.team = emptyTeamToday()
+    const data = new FormData()
+    data.set("t3", "2")
+    expect(await saveTeamTodayCard(initial, data)).toEqual({ error: SAVE_FAILED_MESSAGE, savedAt: null })
+    expect(mocks.rpc).not.toHaveBeenCalled()
   })
 
   it("keeps T0 Yes from rewriting the stored count", async () => {

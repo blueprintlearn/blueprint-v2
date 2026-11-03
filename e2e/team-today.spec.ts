@@ -224,6 +224,17 @@ test.describe("team today in the browser", () => {
     await expect(page.getByText("You told us 6 included you. Enter how many DJs you have, not counting yourself.")).toBeVisible()
     await expect(page.getByRole("region", { name: "Your team at a glance" })).toHaveCount(0)
 
+    await page.goto("/")
+    const homeTeam = page.locator("section").filter({ has: teamTodayHeading(page) })
+    await expect(homeTeam.getByText("Earlier answer (included you)")).toBeVisible()
+    await expect(homeTeam.getByText("You told us 6 included you. Enter how many DJs you have, not counting yourself.")).toBeVisible()
+    await expect(homeTeam.getByRole("link", { name: "Add your team count" })).toHaveAttribute(
+      "href",
+      "/blueprint/team#q-T1",
+    )
+    await homeTeam.getByRole("link", { name: "Add your team count" }).click()
+    await expect(page).toHaveURL(/\/blueprint\/team#q-T1/)
+
     await page.getByLabel(/Not counting yourself, how many DJs work events/).fill("5")
     await page.getByRole("button", { name: "Save your team today" }).click()
     await expect(page.locator("form[data-card='today'] .bp-save")).toHaveText("Saved")

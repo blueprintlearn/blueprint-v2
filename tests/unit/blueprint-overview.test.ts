@@ -311,5 +311,21 @@ describe("Owner home read-only cards with the guided Blueprint on", () => {
     expect(text(confirmed)).toContain("DJs (not counting you)")
     expect(text(confirmed)).toContain("DJs you’d like (not counting you)")
     expect(text(confirmed)).not.toContain("Does this include you?")
+
+    const included = html(
+      h(TeamTodayCard, {
+        currentDjCount: 6,
+        desiredDjCount: 8,
+        countBasis: "includes_owner",
+        desiredCountBasis: "unknown",
+        guided: true,
+        editHref: "/blueprint/team",
+      }),
+    )
+    expect(text(included)).toContain("Earlier answer (included you)")
+    expect(text(included)).toContain("You told us 6 included you. Enter how many DJs you have, not counting yourself.")
+    expect(included).toContain('href="/blueprint/team#q-T1"')
+    expect(text(included)).toContain("Add your team count")
+    expect(text(included)).not.toContain("Does this include you?")
   })
 })

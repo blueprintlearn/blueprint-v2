@@ -6,6 +6,7 @@ import {
   asUser,
   COMPANY_A_ID,
   createAnonClient,
+  INACTIVE_A_EMAIL,
   MANAGER_A_EMAIL,
   MANAGER_A_ID,
   OWNER_A_ID,
@@ -13,6 +14,7 @@ import {
   OWNER_B_ID,
   SEED_PASSWORD,
 } from "./helpers"
+import { getPublicEnv } from "@/lib/env"
 import { asJwtSql, querySql, querySqlAllowError } from "./sql"
 
 async function newOwner() {
@@ -243,6 +245,41 @@ describe("team today v2 security", () => {
     })
     expect(result.error).not.toBeNull()
     expect(await readTeam(client, companyId)).toBeNull()
+  })
+
+  it("rejects T3 when T1 is null", async () => {
+    const { client, companyId } = await newOwner()
+    const withoutT1 = await client.rpc("save_team_today_v2", {
+      p_company_id: companyId,
+      p_lead_capable_count: 2,
+    })
+    expect(withoutT1.error).not.toBeNull()
+    expect(await readTeam(client, companyId)).toBeNull()
+
+    expect(
+      (
+        await client.rpc("save_team_today_v2", {
+          p_company_id: companyId,
+          p_assistant_only_count: 1,
+        })
+      ).error,
+    ).toBeNull()
+    expect(await readTeam(client, companyId)).toMatchObject({
+      current_dj_count: null,
+      lead_capable_count: null,
+      assistant_only_count: 1,
+    })
+
+    const ontoNullT1 = await client.rpc("save_team_today_v2", {
+      p_company_id: companyId,
+      p_lead_capable_count: 2,
+    })
+    expect(ontoNullT1.error).not.toBeNull()
+    expect(await readTeam(client, companyId)).toMatchObject({
+      current_dj_count: null,
+      lead_capable_count: null,
+      assistant_only_count: 1,
+    })
   })
 
   it("lets a Slice 3-style read and legacy save work on a null T1 row", async () => {
@@ -505,5 +542,151 @@ describe("team today v2 JWT impersonation", () => {
     expect(protectedCols).toMatch(/f/)
     expect(protectedCols).toMatch(/t/)
   })
+
+  it("refuses a session with no JWT identity", () => {
+    const companyId = randomUUID()
+    querySql(`
+      insert into public.companies (id, name) values ('${companyId}', 'Missing JWT');
+      insert into public.company_memberships (company_id, user_id, role, status)
+      values ('${companyId}', '${OWNER_A_ID}', 'owner_admin', 'active');
+    `)
+
+    const missing = querySqlAllowError(`
+      set role authenticated;
+      select public.save_team_today_v2(
+        p_company_id := '${companyId}',
+        p_count_basis := 'excludes_owner'
+      );
+    `)
+    expect(missing.ok).toBe(false)
+    expect(missing.output).toContain("Only the company owner can change this.")
+
+    cleanup(companyId)
+  })
+
+  it("refuses a malformed JWT subject", () => {
+    const companyId = randomUUID()
+    querySql(`
+      insert into public.companies (id, name) values ('${companyId}', 'Malformed JWT');
+      insert into public.company_memberships (company_id, user_id, role, status)
+      values ('${companyId}', '${OWNER_A_ID}', 'owner_admin', 'active');
+    `)
+
+    const malformed = querySqlAllowError(`
+      set role authenticated;
+      select set_config('request.jwt.claim.sub', 'not-a-uuid', false);
+      select set_config('request.jwt.claims', '{"sub":"not-a-uuid","role":"authenticated"}', false);
+      select public.save_team_today_v2(
+        p_company_id := '${companyId}',
+        p_count_basis := 'excludes_owner'
+      );
+    `)
+    expect(malformed.ok).toBe(false)
+    expect(malformed.output.toLowerCase()).toMatch(/invalid input syntax for type uuid|only the company owner/)
+
+    cleanup(companyId)
+  })
+
+  it("refuses an inactive owner", () => {
+    const companyId = randomUUID()
+    querySql(`
+      insert into public.companies (id, name) values ('${companyId}', 'Inactive owner');
+      insert into public.company_memberships (company_id, user_id, role, status)
+      values ('${companyId}', '${OWNER_A_ID}', 'owner_admin', 'inactive');
+    `)
+
+    const inactive = querySqlAllowError(
+      asJwtSql(
+        OWNER_A_ID,
+        `select public.save_team_today_v2(
+          p_company_id := '${companyId}',
+          p_count_basis := 'excludes_owner'
+        );`,
+      ),
+    )
+    expect(inactive.ok).toBe(false)
+    expect(inactive.output).toContain("Only the company owner can change this.")
+
+    cleanup(companyId)
+  })
 })
+
+describe("team today v2 API identity", () => {
+  function tamperJwtSub(token: string, sub: string) {
+    const [header, payload, signature] = token.split(".")
+    const claims = JSON.parse(Buffer.from(payload, "base64url").toString()) as { sub?: string }
+    claims.sub = sub
+    return `${header}.${Buffer.from(JSON.stringify(claims)).toString("base64url")}.${signature}`
+  }
+
+  async function postSave(companyId: string, authorization?: string) {
+    const { url, publishableKey } = getPublicEnv()
+    const headers: Record<string, string> = {
+      apikey: publishableKey,
+      "Content-Type": "application/json",
+    }
+    if (authorization !== undefined) headers.Authorization = authorization
+    return fetch(`${url}/rest/v1/rpc/save_team_today_v2`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        p_company_id: companyId,
+        p_count_basis: "excludes_owner",
+      }),
+    })
+  }
+
+  it("rejects a forged token that substitutes another owner's claims", async () => {
+    const { client, companyId } = await newOwner()
+    const session = await client.auth.getSession()
+    const token = session.data.session?.access_token
+    expect(token).toBeTruthy()
+
+    const allowed = await postSave(companyId, `Bearer ${token}`)
+    expect(allowed.ok).toBe(true)
+    expect(await readTeam(client, companyId)).toMatchObject({ count_basis: "excludes_owner" })
+
+    const forged = tamperJwtSub(token as string, OWNER_B_ID)
+    const asForged = await postSave(companyId, `Bearer ${forged}`)
+    expect(asForged.status).toBe(401)
+
+    const missing = await postSave(companyId)
+    expect([401, 403]).toContain(missing.status)
+
+    const malformed = await postSave(companyId, "Bearer not-a-jwt")
+    expect(malformed.status).toBe(401)
+
+    expect(await readTeam(client, companyId)).toMatchObject({
+      count_basis: "excludes_owner",
+      current_dj_count: null,
+    })
+  })
+
+  it("rejects a signed-in inactive owner through the API", async () => {
+    const { client, companyId } = await newOwner()
+    querySql(`
+      update public.company_memberships
+      set status = 'inactive'
+      where company_id = '${companyId}'
+    `)
+
+    const denied = await client.rpc("save_team_today_v2", {
+      p_company_id: companyId,
+      p_count_basis: "excludes_owner",
+    })
+    expect(denied.error).not.toBeNull()
+    expect(denied.error?.code).toBe("PBG07")
+    expect(await readTeam(client, companyId)).toBeNull()
+  })
+
+  it("rejects the seeded inactive member on save_team_today_v2", async () => {
+    const inactive = await asUser(INACTIVE_A_EMAIL)
+    const denied = await inactive.rpc("save_team_today_v2", {
+      p_company_id: COMPANY_A_ID,
+      p_count_basis: "excludes_owner",
+    })
+    expect(denied.error).not.toBeNull()
+  })
+})
+
 

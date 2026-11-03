@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server"
 import { describe, expect, it } from "vitest"
 
 import { CONTINUE_LEAD, OwnerGoalCard, OwnerHomeHero, TeamTodayCard } from "@/app/owner-home"
+import { includesOwnerT1Note } from "@/lib/blueprint/team-today"
 import { OWNER_GOAL_CODES } from "@/lib/blueprint/goals"
 import { SYSTEM_ROLES, systemRoleLabel } from "@/lib/rules/system-role"
 
@@ -91,6 +92,27 @@ describe("TeamTodayCard, read-only", () => {
     const out = html(h(TeamTodayCard, { currentDjCount: 3, desiredDjCount: null }))
     expect(out).not.toContain("<form")
     expect(count(out, 'class="bp-fact"')).toBe(2)
+  })
+
+  it("shows the T0 Yes earlier-answer state and a T1 link", () => {
+    const out = html(
+      h(TeamTodayCard, {
+        currentDjCount: 6,
+        desiredDjCount: 8,
+        countBasis: "includes_owner",
+        desiredCountBasis: "unknown",
+        guided: true,
+        editHref: "/blueprint/team",
+      }),
+    )
+    expect(text(out)).toContain("Earlier answer (included you)")
+    expect(out).toContain('<span class="bp-fact__value">6</span>')
+    expect(text(out)).toContain(includesOwnerT1Note(6))
+    expect(out).toContain('href="/blueprint/team#q-T1"')
+    expect(text(out)).toContain("Add your team count")
+    expect(text(out)).not.toContain("Does this include you?")
+    expect(text(out)).not.toContain("DJs (not counting you)")
+    expect(text(out)).toContain("Desired DJ count")
   })
 })
 

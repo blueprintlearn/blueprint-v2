@@ -4,7 +4,7 @@ import Link from "next/link"
 import { Card, Fact, StatusTag } from "@/components/blueprint"
 import { OWNER_GOAL_LABELS, type OwnerGoalCode } from "@/lib/blueprint/goals"
 import type { TeamCountBasis } from "@/lib/blueprint/team-today"
-import { isConfirmedCount } from "@/lib/blueprint/team-today"
+import { includesOwnerT1Note, isConfirmedCount } from "@/lib/blueprint/team-today"
 import { systemRoleLabel } from "@/lib/rules/system-role"
 
 export const OWNER_LEAD = "Start your Company Blueprint. These answers shape what Blueprint recommends."
@@ -90,8 +90,12 @@ export function TeamTodayCard({
     ) : (
       <StatusTag status="proven" label="Answered" />
     )
-  const currentLabel =
-    guided && isConfirmedCount(currentDjCount, countBasis) ? "DJs (not counting you)" : "Current DJ count"
+  const includedYou = guided && countBasis === "includes_owner" && currentDjCount !== null
+  const currentLabel = includedYou
+    ? "Earlier answer (included you)"
+    : guided && isConfirmedCount(currentDjCount, countBasis)
+      ? "DJs (not counting you)"
+      : "Current DJ count"
   const desiredLabel =
     guided && isConfirmedCount(desiredDjCount, desiredCountBasis)
       ? "DJs you’d like (not counting you)"
@@ -119,6 +123,14 @@ export function TeamTodayCard({
               Does this include you?{" "}
               <Link href="/blueprint/team#q-T0" className="bp-link">
                 Confirm in your Blueprint
+              </Link>
+            </p>
+          ) : null}
+          {includedYou && currentDjCount !== null ? (
+            <p className="m-0 text-[14px] text-ink-2">
+              {includesOwnerT1Note(currentDjCount)}{" "}
+              <Link href="/blueprint/team#q-T1" className="bp-link">
+                Add your team count
               </Link>
             </p>
           ) : null}
