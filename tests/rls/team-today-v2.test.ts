@@ -7,9 +7,13 @@ import {
   COMPANY_A_ID,
   createAnonClient,
   MANAGER_A_EMAIL,
+  MANAGER_A_ID,
+  OWNER_A_ID,
   OWNER_B_EMAIL,
+  OWNER_B_ID,
   SEED_PASSWORD,
 } from "./helpers"
+import { asJwtSql, querySql, querySqlAllowError } from "./sql"
 
 async function newOwner() {
   const email = `team-v2-${randomUUID()}@blueprint.test`
@@ -228,4 +232,278 @@ describe("team today v2 security", () => {
     })
     expect(write.error).not.toBeNull()
   })
+
+  it("rejects T1 = 0 with T3 > 0", async () => {
+    const { client, companyId } = await newOwner()
+    const result = await client.rpc("save_team_today_v2", {
+      p_company_id: companyId,
+      p_current_dj_count: 0,
+      p_lead_capable_count: 2,
+      p_count_basis: "excludes_owner",
+    })
+    expect(result.error).not.toBeNull()
+    expect(await readTeam(client, companyId)).toBeNull()
+  })
+
+  it("lets a Slice 3-style read and legacy save work on a null T1 row", async () => {
+    const { client, companyId } = await newOwner()
+    expect(
+      (
+        await client.rpc("save_team_today_v2", {
+          p_company_id: companyId,
+          p_assistant_only_count: 1,
+        })
+      ).error,
+    ).toBeNull()
+
+    const row = await readTeam(client, companyId)
+    expect(row).toMatchObject({
+      current_dj_count: null,
+      assistant_only_count: 1,
+      count_basis: "unknown",
+    })
+
+    const legacy = await client
+      .from("company_team_today")
+      .update({ desired_dj_count: 4 })
+      .eq("company_id", companyId)
+      .select("company_id, current_dj_count, desired_dj_count, count_basis, desired_count_basis")
+    expect(legacy.error).toBeNull()
+    expect(legacy.data).toEqual([
+      {
+        company_id: companyId,
+        current_dj_count: null,
+        desired_dj_count: 4,
+        count_basis: "unknown",
+        desired_count_basis: "unknown",
+      },
+    ])
+  })
 })
+
+describe("team today v2 JWT impersonation", () => {
+  function cleanup(companyId: string) {
+    querySql(`
+      delete from public.company_team_today where company_id = '${companyId}';
+      delete from public.company_memberships where company_id = '${companyId}';
+      delete from public.companies where id = '${companyId}';
+    `)
+  }
+
+  it("lets owner A confirm through an impersonated JWT session and keeps history", () => {
+    const companyId = randomUUID()
+    querySql(`
+      insert into public.companies (id, name) values ('${companyId}', 'JWT A');
+      insert into public.company_memberships (company_id, user_id, role, status)
+      values ('${companyId}', '${OWNER_A_ID}', 'owner_admin', 'active');
+      insert into public.company_team_today (company_id, current_dj_count, desired_dj_count)
+      values ('${companyId}', 6, 8);
+    `)
+
+    const before = querySql(`
+      select earlier_dj_count, count_basis::text
+      from public.company_team_today
+      where company_id = '${companyId}'
+    `)
+    expect(before).toMatch(/unknown/)
+
+    querySql(
+      asJwtSql(
+        OWNER_A_ID,
+        `select public.save_team_today_v2(
+          p_company_id := '${companyId}',
+          p_count_basis := 'includes_owner'
+        );`,
+      ),
+    )
+
+    const afterYes = querySql(`
+      select current_dj_count, count_basis::text, earlier_dj_count, count_confirmed_at is not null as stamped
+      from public.company_team_today
+      where company_id = '${companyId}'
+    `)
+    expect(afterYes).toMatch(/6/)
+    expect(afterYes).toMatch(/includes_owner/)
+    expect(afterYes).toMatch(/t/)
+
+    querySql(
+      asJwtSql(
+        OWNER_A_ID,
+        `select public.save_team_today_v2(
+          p_company_id := '${companyId}',
+          p_current_dj_count := 4,
+          p_count_basis := 'excludes_owner'
+        );`,
+      ),
+    )
+
+    const afterT1 = querySql(`
+      select current_dj_count, count_basis::text, earlier_dj_count is null as history_null
+      from public.company_team_today
+      where company_id = '${companyId}'
+    `)
+    expect(afterT1).toMatch(/4/)
+    expect(afterT1).toMatch(/excludes_owner/)
+    expect(afterT1).toMatch(/t/)
+
+    cleanup(companyId)
+  })
+
+  it("refuses owner B and manager JWTs on owner A's company", () => {
+    const companyId = randomUUID()
+    querySql(`
+      insert into public.companies (id, name) values ('${companyId}', 'JWT deny');
+      insert into public.company_memberships (company_id, user_id, role, status)
+      values ('${companyId}', '${OWNER_A_ID}', 'owner_admin', 'active');
+    `)
+
+    const asOwnerB = querySqlAllowError(
+      asJwtSql(
+        OWNER_B_ID,
+        `select public.save_team_today_v2(
+          p_company_id := '${companyId}',
+          p_count_basis := 'excludes_owner'
+        );`,
+      ),
+    )
+    expect(asOwnerB.ok).toBe(false)
+    expect(asOwnerB.output).toContain("Only the company owner can change this.")
+
+    const asManager = querySqlAllowError(
+      asJwtSql(
+        MANAGER_A_ID,
+        `select public.save_team_today_v2(
+          p_company_id := '${companyId}',
+          p_count_basis := 'excludes_owner'
+        );`,
+      ),
+    )
+    expect(asManager.ok).toBe(false)
+    expect(asManager.output).toContain("Only the company owner can change this.")
+
+    cleanup(companyId)
+  })
+
+  it("does not let set_config authorize a confirm write in an impersonated session", () => {
+    const companyId = randomUUID()
+    querySql(`
+      insert into public.companies (id, name) values ('${companyId}', 'JWT set_config');
+      insert into public.company_memberships (company_id, user_id, role, status)
+      values ('${companyId}', '${OWNER_A_ID}', 'owner_admin', 'active');
+      insert into public.company_team_today (company_id, current_dj_count)
+      values ('${companyId}', 3);
+    `)
+
+    const denied = querySqlAllowError(
+      asJwtSql(
+        OWNER_A_ID,
+        `
+        select set_config('blueprint.confirm_team_counts', '1', true);
+        update public.company_team_today
+        set count_basis = 'excludes_owner',
+            count_confirmed_at = now()
+        where company_id = '${companyId}';
+        `,
+      ),
+    )
+    expect(denied.ok).toBe(false)
+    expect(denied.output.toLowerCase()).toMatch(/permission|privilege/)
+
+    const still = querySql(`
+      select count_basis::text
+      from public.company_team_today
+      where company_id = '${companyId}'
+    `)
+    expect(still).toMatch(/unknown/)
+
+    cleanup(companyId)
+  })
+
+  it("keeps historical columns immutable for the table owner", () => {
+    const companyId = randomUUID()
+    querySql(`
+      insert into public.companies (id, name) values ('${companyId}', 'History freeze');
+      insert into public.company_memberships (company_id, user_id, role, status)
+      values ('${companyId}', '${OWNER_A_ID}', 'owner_admin', 'active');
+      insert into public.company_team_today (company_id, current_dj_count)
+      values ('${companyId}', 6);
+    `)
+
+    querySql(
+      asJwtSql(
+        OWNER_A_ID,
+        `select public.save_team_today_v2(
+          p_company_id := '${companyId}',
+          p_count_basis := 'includes_owner'
+        );`,
+      ),
+    )
+
+    const earlier = querySql(`
+      select earlier_dj_count
+      from public.company_team_today
+      where company_id = '${companyId}'
+    `)
+
+    querySql(`
+      update public.company_team_today
+      set earlier_dj_count = 999
+      where company_id = '${companyId}'
+    `)
+
+    expect(
+      querySql(`
+        select earlier_dj_count
+        from public.company_team_today
+        where company_id = '${companyId}'
+      `),
+    ).toBe(earlier)
+    expect(earlier).not.toMatch(/999/)
+
+    cleanup(companyId)
+  })
+
+  it("records writer, function, and column privileges", () => {
+    const writer = querySql(`
+      select rolcanlogin
+      from pg_roles
+      where rolname = 'blueprint_team_today_writer'
+    `)
+    expect(writer).toMatch(/f/)
+
+    const grantedToApi = querySql(`
+      select exists (
+        select 1
+        from pg_auth_members am
+        join pg_roles member on member.oid = am.member
+        join pg_roles role on role.oid = am.roleid
+        where role.rolname = 'blueprint_team_today_writer'
+          and member.rolname in ('authenticated', 'anon', 'authenticator')
+      )
+    `)
+    expect(grantedToApi).toMatch(/f/)
+
+    const fn = querySql(`
+      select r.rolname, p.prosecdef, p.proconfig
+      from pg_proc p
+      join pg_namespace n on n.oid = p.pronamespace
+      join pg_roles r on r.oid = p.proowner
+      where n.nspname = 'public' and p.proname = 'save_team_today_v2'
+    `)
+    expect(fn).toMatch(/blueprint_team_today_writer/)
+    expect(fn).toMatch(/t/)
+    expect(fn).toMatch(/search_path=pg_catalog, public/)
+
+    const protectedCols = querySql(`
+      select
+        has_column_privilege('authenticated', 'public.company_team_today', 'count_basis', 'UPDATE') as basis,
+        has_column_privilege('authenticated', 'public.company_team_today', 'assistant_only_count', 'UPDATE') as assistant,
+        has_column_privilege('authenticated', 'public.company_team_today', 'earlier_dj_count', 'UPDATE') as history,
+        has_column_privilege('authenticated', 'public.company_team_today', 'current_dj_count', 'UPDATE') as current,
+        has_column_privilege('authenticated', 'public.company_team_today', 'company_id', 'INSERT') as company_insert
+    `)
+    expect(protectedCols).toMatch(/f/)
+    expect(protectedCols).toMatch(/t/)
+  })
+})
+

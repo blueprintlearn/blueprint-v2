@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import {
   AnswerStateNote,
@@ -21,6 +21,7 @@ import {
   CURRENT_DJ_COUNT_MIN,
   OTHER_TEXT_MAX,
   T0_OPTIONS,
+  T1B_FIELD_HELP,
   T1_FIELD_HELP,
   T2_FIELD_HELP,
   T2_OPTIONS,
@@ -44,6 +45,7 @@ import {
   t0Label,
   t0Shown,
   t3Help,
+  reconcileT4,
   t4CodesFromAnswers,
   t6Unconfirmed,
   t6UnconfirmedLabel,
@@ -114,6 +116,9 @@ function TodayCard({
   const t1Default = confirmedT1
   const [t1, setT1] = useState(t1Default === null ? "" : String(t1Default))
   const [t2Value, setT2Value] = useState<string | null>(team?.ownerDjFrequency ?? null)
+  useEffect(() => {
+    setT1(t1Default === null ? "" : String(t1Default))
+  }, [t1Default])
   const t1Number = t1 === "" ? null : Number(t1)
   const showT3 = t1Number !== null && t1Number > 0
   const t0 = QUESTION_BY_KEY.T0
@@ -162,6 +167,7 @@ function TodayCard({
         <div className="grid gap-5 md:grid-cols-2">
           <div id="q-T1">
             <NumberField
+              key={`t1:${team?.countBasis ?? "none"}:${t1Default ?? "none"}`}
               label={t1q.label}
               name="t1"
               defaultValue={t1Default}
@@ -194,7 +200,7 @@ function TodayCard({
               min={CURRENT_DJ_COUNT_MIN}
               max={CURRENT_DJ_COUNT_MAX}
               optional
-              help={t1b.whyNeeded}
+              help={T1B_FIELD_HELP}
               error={error === TEAM_RANGE_MESSAGE && !t1Error ? rangeError : null}
             />
             <SkipBlock
@@ -271,6 +277,7 @@ function RunsCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
     savedT5 && typeof savedT5 === "object" && typeof (savedT5 as { other?: unknown }).other === "string"
       ? (savedT5 as { other: string }).other
       : ""
+  const [t4Value, setT4Value] = useState(t4Saved)
   const [t4Note, setT4Note] = useState<string | null>(null)
   const t4q = QUESTION_BY_KEY.T4
   const t5q = QUESTION_BY_KEY.T5
@@ -292,16 +299,14 @@ function RunsCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
             label={t4q.label}
             name="t4"
             options={[...T4_OPTIONS]}
-            defaultValue={t4Saved}
+            value={t4Value}
             help={T4_FIELD_HELP}
             note={t4Note}
             error={error && error.includes("Nobody") ? error : null}
             onChange={(next) => {
-              setT4Note(
-                next.includes("nobody") && next.length > 1 || (t4Saved.includes("nobody") && next.some((code) => code !== "nobody"))
-                  ? T4_EXCLUSIVE_NOTE
-                  : null,
-              )
+              const reconciled = reconcileT4(next)
+              setT4Value(reconciled)
+              setT4Note(next.includes("nobody") && next.length > 1 ? T4_EXCLUSIVE_NOTE : null)
             }}
           />
           <SkipBlock
@@ -380,6 +385,7 @@ function WantedCard({
         </h2>
         <div id="q-T6">
           <NumberField
+            key={`t6:${team?.desiredCountBasis ?? "none"}:${prefill ?? "none"}`}
             label={unconfirmed && team && team.desiredDjCount != null ? t6UnconfirmedLabel(team.desiredDjCount) : t6q.label}
             name="t6"
             defaultValue={prefill}
@@ -519,11 +525,11 @@ function FrequencyForm({ savedCode }: { savedCode: string | null }) {
 function TeamGlance({
   team,
   trainers,
-  primaryGoal,
+  goals,
 }: {
   team: AnswerTeamToday
   trainers: readonly string[] | null
-  primaryGoal: string | null
+  goals: readonly string[]
 }) {
   if (!isConfirmedCount(team.currentDjCount, team.countBasis)) return null
   const copy = m2Copy({
@@ -533,7 +539,7 @@ function TeamGlance({
     ownerDjFrequency: team.ownerDjFrequency,
     desiredDjCount: isConfirmedCount(team.desiredDjCount, team.desiredCountBasis) ? team.desiredDjCount : null,
     trainers,
-    primaryGoal,
+    goals,
   })
 
   return (
@@ -560,13 +566,13 @@ export function TeamTodayGuidedForm({
   team,
   resolved,
   answers,
-  primaryGoal,
+  goals,
   sectionComplete,
 }: {
   team: AnswerTeamToday | null
   resolved: readonly ResolvedAnswer[]
   answers: readonly { questionKey: string; state: string; value: unknown }[]
-  primaryGoal: string | null
+  goals: readonly string[]
   sectionComplete: boolean
 }) {
   const showEarlierNote = hasStoredTeamCount(team) && !sectionComplete
@@ -588,7 +594,7 @@ export function TeamTodayGuidedForm({
       <WantedCard team={team} resolved={resolved} />
       <DetailCard resolved={resolved} showT7={showT7} />
       {team ? (
-        <TeamGlance team={team} trainers={t4CodesFromAnswers(answers)} primaryGoal={primaryGoal} />
+        <TeamGlance team={team} trainers={t4CodesFromAnswers(answers)} goals={goals} />
       ) : null}
     </div>
   )

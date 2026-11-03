@@ -5,6 +5,7 @@ import {
   CURRENT_DJ_COUNT_MIN,
   DESIRED_DJ_COUNT_MAX,
   DESIRED_DJ_COUNT_MIN,
+  T1B_FIELD_HELP,
   T4_EXCLUSIVE_MESSAGE,
   T5_MAX_MESSAGE,
   T5_OTHER_MESSAGE,
@@ -127,7 +128,7 @@ describe("team today v2 parsers and M2", () => {
         ownerDjFrequency: "regularly",
         desiredDjCount: null,
         trainers: null,
-        primaryGoal: null,
+        goals: [],
       }).sentences,
     ).toEqual(["You, with no other DJs right now."])
 
@@ -139,7 +140,7 @@ describe("team today v2 parsers and M2", () => {
         ownerDjFrequency: "no",
         desiredDjCount: 1,
         trainers: ["i_do"],
-        primaryGoal: "dj_less",
+        goals: ["dj_less"],
       }),
     ).toEqual({
       sentences: ["Your team: 1 DJ, 1 of whom can lead on their own, plus 1 assistant.", "You’d like 1 DJ."],
@@ -155,12 +156,32 @@ describe("team today v2 parsers and M2", () => {
         ownerDjFrequency: "sometimes",
         desiredDjCount: null,
         trainers: ["i_do", "manager"],
-        primaryGoal: "stop_djing",
+        goals: ["stop_djing"],
       }),
     ).toEqual({
       sentences: ["You and 4 DJs."],
       headsUp: null,
     })
+  })
+
+  it("shows the C6 heads-up when any goal is DJ less or Stop DJing", () => {
+    const onlyTrainer = {
+      currentDjCount: 3,
+      leadCapableCount: null,
+      assistantOnlyCount: null,
+      ownerDjFrequency: "regularly" as const,
+      desiredDjCount: null,
+      trainers: ["i_do"],
+    }
+    expect(m2Copy({ ...onlyTrainer, goals: ["scale"] }).headsUp).toBeNull()
+    expect(m2Copy({ ...onlyTrainer, goals: ["scale", "dj_less"] }).headsUp).toMatch(/only trainer/)
+    expect(m2Copy({ ...onlyTrainer, goals: ["stop_djing", "expand"] }).headsUp).toMatch(/only trainer/)
+  })
+
+  it("uses the spec help for assistants", () => {
+    expect(T1B_FIELD_HELP).toBe(
+      "Helpers, lighting techs or trainees who support a DJ but don’t DJ or MC. They’re counted for event work, never as lead DJs.",
+    )
   })
 
   it("never treats an unconfirmed count as confirmed", () => {

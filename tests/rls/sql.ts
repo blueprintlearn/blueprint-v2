@@ -60,6 +60,34 @@ export const ASSERT_BLUEPRINT_WITHOUT_PRIMARY = `
   where goal.id is null
 `
 
+export function asJwtSql(userId: string, sql: string) {
+  return `
+    set role authenticated;
+    select set_config('request.jwt.claim.sub', '${userId}', false);
+    select set_config('request.jwt.claims', '{"sub":"${userId}","role":"authenticated"}', false);
+    ${sql}
+  `
+}
+
+export const TEAM_TODAY_BACKFILL = `
+  update public.company_team_today
+  set
+    earlier_dj_count = current_dj_count,
+    earlier_desired_dj_count = desired_dj_count,
+    count_basis = 'unknown',
+    desired_count_basis = 'unknown',
+    count_confirmed_at = null,
+    desired_confirmed_at = null
+`
+
+export const ASSERT_TEAM_TODAY_LIVE_COUNT_CHANGED = `
+  select live.company_id
+  from public.company_team_today as live
+  join team_today_assertion_snapshot as snap using (company_id)
+  where live.current_dj_count is distinct from snap.current_dj_count
+     or live.desired_dj_count is distinct from snap.desired_dj_count
+`
+
 export const ASSERT_PRIMARY_MISMATCH = `
   select blueprint.company_id
   from public.company_blueprints as blueprint

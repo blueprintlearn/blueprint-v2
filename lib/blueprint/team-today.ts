@@ -108,6 +108,9 @@ export const TEAM_OPENING_V2 =
 export const T1_FIELD_HELP =
   "Count DJs who are currently available to work events for you, employees and contractors alike, whether or not they lead yet. Don’t count someone who worked for you before but isn’t available now, or people who only assist. You’re counted next."
 
+export const T1B_FIELD_HELP =
+  "Helpers, lighting techs or trainees who support a DJ but don’t DJ or MC. They’re counted for event work, never as lead DJs."
+
 export const T2_FIELD_HELP = "Many owners do. Blueprint plans your workload separately from your team’s."
 
 export const T3_FIELD_HELP =
@@ -360,16 +363,17 @@ export function m2Copy(input: {
   ownerDjFrequency: OwnerDjFrequency | null
   desiredDjCount: number | null
   trainers: readonly string[] | null
-  primaryGoal: string | null
+  goals: readonly string[]
 }): { sentences: string[]; headsUp: string | null } {
   const sentences = [m2Sentence1(input)]
   if (input.desiredDjCount !== null) {
     sentences.push(`You’d like ${input.desiredDjCount} ${noun(input.desiredDjCount, "DJ", "DJs")}.`)
   }
+  const wantsFewerEvents = input.goals.some((goal) => goal === "dj_less" || goal === "stop_djing")
   const headsUp =
     input.trainers?.length === 1 &&
     input.trainers[0] === "i_do" &&
-    (input.primaryGoal === "dj_less" || input.primaryGoal === "stop_djing")
+    wantsFewerEvents
       ? "Heads up: you’re also the only trainer. Training new DJs will add to your week before it frees it up."
       : null
   return { sentences, headsUp }

@@ -278,7 +278,7 @@ export async function saveTeamTodayCard(
   }
 
   if (answered.length === 0) {
-    return { error: null, savedAt: Date.now() }
+    return { error: null, savedAt: null }
   }
 
   const supabase = await createClient()
@@ -354,7 +354,7 @@ export async function saveTeamWantedCard(
 
   const t6 = parseOptionalDjCount(formData.get("t6"))
   if (!t6.ok) return { error: TEAM_RANGE_MESSAGE, savedAt: null }
-  if (t6.value === null) return { error: null, savedAt: Date.now() }
+  if (t6.value === null) return { error: null, savedAt: null }
 
   const supabase = await createClient()
   const { error } = await saveTeamTodayV2(supabase, {

@@ -374,6 +374,12 @@ describe("guided team today v2 actions", () => {
     expect(mocks.upsert).not.toHaveBeenCalled()
   })
 
+  it("does not claim a today or wanted save when those cards are empty", async () => {
+    expect(await saveTeamTodayCard(initial, new FormData())).toEqual({ error: null, savedAt: null })
+    expect(await saveTeamWantedCard(initial, new FormData())).toEqual({ error: null, savedAt: null })
+    expect(mocks.rpc).not.toHaveBeenCalled()
+  })
+
   it("writes T4 and T5 from the runs card", async () => {
     const data = new FormData()
     data.append("t4", "manager")

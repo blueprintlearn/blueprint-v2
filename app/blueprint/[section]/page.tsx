@@ -92,7 +92,7 @@ export default async function BlueprintSectionRoute({
           team={teamToday}
           resolved={resolved}
           answers={answers}
-          primaryGoal={companyGoals?.primary.goal ?? null}
+          goals={companyGoalCodes(companyGoals)}
           sectionComplete={status === "complete"}
         />
       </BlueprintSectionPage>
