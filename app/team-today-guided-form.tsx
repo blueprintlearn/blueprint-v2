@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 import {
   AnswerStateNote,
@@ -114,11 +114,11 @@ function TodayCard({
   const showT0 = t0Shown(team)
   const confirmedT1 = team && isConfirmedCount(team.currentDjCount, team.countBasis) ? team.currentDjCount : null
   const t1Default = confirmedT1
-  const [t1, setT1] = useState(t1Default === null ? "" : String(t1Default))
+  const t1Source = `${team?.countBasis ?? "unknown"}:${t1Default ?? "none"}`
+  const savedT1 = t1Default === null ? "" : String(t1Default)
+  const [t1Draft, setT1Draft] = useState<{ source: string; value: string } | null>(null)
   const [t2Value, setT2Value] = useState<string | null>(team?.ownerDjFrequency ?? null)
-  useEffect(() => {
-    setT1(t1Default === null ? "" : String(t1Default))
-  }, [t1Default])
+  const t1 = t1Draft?.source === t1Source ? t1Draft.value : savedT1
   const t1Number = t1 === "" ? null : Number(t1)
   const showT3 = t1Number !== null && t1Number > 0
   const t0 = QUESTION_BY_KEY.T0
@@ -181,7 +181,7 @@ function TodayCard({
                   : T1_FIELD_HELP
               }
               error={t1Error}
-              onChange={(event) => setT1(event.currentTarget.value)}
+              onChange={(event) => setT1Draft({ source: t1Source, value: event.currentTarget.value })}
             />
             <SkipBlock
               questionKey="T1"
