@@ -5,8 +5,18 @@ import {
   CURRENT_DJ_COUNT_MIN,
   DESIRED_DJ_COUNT_MAX,
   DESIRED_DJ_COUNT_MIN,
+  T4_EXCLUSIVE_MESSAGE,
+  T5_MAX_MESSAGE,
+  T5_OTHER_MESSAGE,
+  T7_OTHER_MESSAGE,
+  isConfirmedCount,
+  m2Copy,
   parseCurrentDjCount,
   parseDesiredDjCount,
+  parseT4Value,
+  parseT5Value,
+  parseT7Value,
+  reconcileT4,
 } from "@/lib/blueprint/team-today"
 import { SYSTEM_ROLES } from "@/lib/rules/system-role"
 
@@ -72,5 +82,91 @@ describe("team today desired DJ count validation", () => {
     expect(parseDesiredDjCount("1000")).toBeNull()
     expect(parseDesiredDjCount("abc")).toBeNull()
     expect(parseDesiredDjCount(7)).toBeNull()
+  })
+})
+
+describe("team today v2 parsers and M2", () => {
+  it("refuses T4 nobody plus another trainer", () => {
+    expect(parseT4Value(["nobody", "i_do"])).toEqual({
+      ok: false,
+      error: T4_EXCLUSIVE_MESSAGE,
+    })
+    expect(parseT4Value(["i_do", "manager"])).toEqual({ ok: true, value: ["i_do", "manager"] })
+    expect(reconcileT4(["i_do", "nobody"])).toEqual(["nobody"])
+    expect(reconcileT4(["nobody", "manager"])).toEqual(["manager"])
+  })
+
+  it("limits T5 to three and requires Other text", () => {
+    expect(
+      parseT5Value({
+        codes: ["finding_candidates", "slow_to_ready", "quality_varies", "djs_leave"],
+        other: null,
+      }),
+    ).toEqual({ ok: false, error: T5_MAX_MESSAGE })
+    expect(parseT5Value({ codes: ["other"], other: null })).toEqual({ ok: false, error: T5_OTHER_MESSAGE })
+    expect(parseT5Value({ codes: ["scheduling"], other: null })).toEqual({
+      ok: true,
+      value: { codes: ["scheduling"], other: null },
+    })
+  })
+
+  it("requires T7 Other text", () => {
+    expect(parseT7Value({ code: "other", other: null })).toEqual({ ok: false, error: T7_OTHER_MESSAGE })
+    expect(parseT7Value({ code: "backups", other: null })).toEqual({
+      ok: true,
+      value: { code: "backups", other: null },
+    })
+  })
+
+  it("builds every M2 sentence branch without using missing values as zero", () => {
+    expect(
+      m2Copy({
+        currentDjCount: 0,
+        leadCapableCount: null,
+        assistantOnlyCount: null,
+        ownerDjFrequency: "regularly",
+        desiredDjCount: null,
+        trainers: null,
+        primaryGoal: null,
+      }).sentences,
+    ).toEqual(["You, with no other DJs right now."])
+
+    expect(
+      m2Copy({
+        currentDjCount: 1,
+        leadCapableCount: 1,
+        assistantOnlyCount: 1,
+        ownerDjFrequency: "no",
+        desiredDjCount: 1,
+        trainers: ["i_do"],
+        primaryGoal: "dj_less",
+      }),
+    ).toEqual({
+      sentences: ["Your team: 1 DJ, 1 of whom can lead on their own, plus 1 assistant.", "You’d like 1 DJ."],
+      headsUp:
+        "Heads up: you’re also the only trainer. Training new DJs will add to your week before it frees it up.",
+    })
+
+    expect(
+      m2Copy({
+        currentDjCount: 4,
+        leadCapableCount: null,
+        assistantOnlyCount: null,
+        ownerDjFrequency: "sometimes",
+        desiredDjCount: null,
+        trainers: ["i_do", "manager"],
+        primaryGoal: "stop_djing",
+      }),
+    ).toEqual({
+      sentences: ["You and 4 DJs."],
+      headsUp: null,
+    })
+  })
+
+  it("never treats an unconfirmed count as confirmed", () => {
+    expect(isConfirmedCount(6, "unknown")).toBe(false)
+    expect(isConfirmedCount(6, "includes_owner")).toBe(false)
+    expect(isConfirmedCount(6, "excludes_owner")).toBe(true)
+    expect(isConfirmedCount(null, "excludes_owner")).toBe(false)
   })
 })

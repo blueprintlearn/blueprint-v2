@@ -10,6 +10,7 @@ import {
   type StoredAnswer,
 } from "@/lib/blueprint/answers"
 import { QUESTION_BY_KEY, QUESTIONS } from "@/lib/blueprint/questions"
+import { teamTodayFixture } from "@/lib/blueprint/team-today"
 
 const context = (
   goals: AnswerContext["goals"],
@@ -64,9 +65,9 @@ describe("missing inputs and input states", () => {
       "G1",
       "G2",
       "G3",
-      "TL1",
+      "T1",
     ])
-    expect(missing.map((row) => row.questionKey)).toEqual(["G1", "G3", "TL1"])
+    expect(missing.map((row) => row.questionKey)).toEqual(["G1", "G3", "T1"])
     expect(missing[0]).toMatchObject({
       state: "skipped",
       section: "goals",
@@ -79,10 +80,15 @@ describe("missing inputs and input states", () => {
   it("never returns answered, estimated or not-applicable keys", () => {
     const ctx = context(
       { primary: { goal: "scale" }, others: [] },
-      { currentDjCount: 2, desiredDjCount: 4 },
+      teamTodayFixture({
+        currentDjCount: 2,
+        desiredDjCount: 4,
+        countBasis: "excludes_owner",
+        desiredCountBasis: "excludes_owner",
+      }),
       [{ questionKey: "G3", state: "estimated", value: "no_set_date" }],
     )
-    expect(getMissingInputs(ctx, ["G1", "G2", "G3", "TL1", "TL6"])).toEqual([])
+    expect(getMissingInputs(ctx, ["G1", "G2", "G3", "T1", "T6"])).toEqual([])
     const states = getInputStates(ctx, ["G1", "G2", "G3"])
     expect(states.find((row) => row.questionKey === "G3")).toMatchObject({ state: "estimated", isEstimate: true })
     expect(states.find((row) => row.questionKey === "G2")).toMatchObject({ state: "not_applicable", isEstimate: false })
@@ -91,7 +97,21 @@ describe("missing inputs and input states", () => {
 
 describe("question registry", () => {
   it("uses the approved keys, skip flags and why-it's-needed sentences", () => {
-    expect(QUESTIONS.map((question) => question.key)).toEqual(["G1", "G2", "G3", "TL1", "TL6"])
+    expect(QUESTIONS.map((question) => question.key)).toEqual([
+      "G1",
+      "G2",
+      "G3",
+      "T0",
+      "T1",
+      "T1b",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T6",
+      "T7",
+      "T8",
+    ])
     expect(QUESTIONS.every((question) => /^[A-Z]{1,2}[0-9]{1,2}[a-z]?$/.test(question.key))).toBe(true)
     expect(QUESTIONS.some((question) => question.key.startsWith("N"))).toBe(false)
     expect(QUESTION_BY_KEY.G1.skipAllowed).toBe(true)
@@ -105,5 +125,55 @@ describe("question registry", () => {
     )
     expect(QUESTION_BY_KEY.G1.guidance?.examples.filter((example) => !example.desktopOnly)).toHaveLength(2)
     expect(QUESTIONS.every((question) => question.whyNeeded.length > 0)).toBe(true)
+    expect(QUESTION_BY_KEY.T0.skipAllowed).toBe(false)
+    expect(QUESTION_BY_KEY.T1.skipAllowed).toBe(true)
+    expect(QUESTION_BY_KEY.T1.estimable).toBe(false)
+    expect(QUESTION_BY_KEY.T7.level).toBe("go_deeper")
+  })
+})
+
+describe("unconfirmed team counts", () => {
+  it("keeps unknown and includes_owner values out of input states and M2 inputs", () => {
+    const unknown = teamTodayFixture({ currentDjCount: 6, desiredDjCount: 8 })
+    const included = teamTodayFixture({
+      currentDjCount: 6,
+      desiredDjCount: 8,
+      countBasis: "includes_owner",
+    })
+    for (const team of [unknown, included]) {
+      const ctx = context(null, team)
+      expect(getInputStates(ctx, ["T1", "T6"]).map((row) => row.value)).toEqual([null, null])
+      const missing = getMissingInputs(ctx, ["T1", "T6"])
+      expect(missing.map((row) => row.questionKey)).toEqual(["T1", "T6"])
+      expect(missing[0].href).toBe("/blueprint/team#q-T1")
+      expect(team.currentDjCount).toBe(6)
+      expect(team.desiredDjCount).toBe(8)
+    }
+  })
+
+  it("treats T1 and T6 as answered only with excludes_owner", () => {
+    const confirmed = teamTodayFixture({
+      currentDjCount: 4,
+      desiredDjCount: 6,
+      countBasis: "excludes_owner",
+      desiredCountBasis: "excludes_owner",
+    })
+    const ctx = context(null, confirmed)
+    expect(resolveQuestion(QUESTION_BY_KEY.T1, ctx)).toMatchObject({ state: "answered", value: 4 })
+    expect(resolveQuestion(QUESTION_BY_KEY.T6, ctx)).toMatchObject({ state: "answered", value: 6 })
+    expect(resolveQuestion(QUESTION_BY_KEY.T0, ctx).state).toBe("not_applicable")
+  })
+
+  it("shows T0 only when the saved current count has an unknown basis", () => {
+    expect(resolveQuestion(QUESTION_BY_KEY.T0, context(null, teamTodayFixture({ currentDjCount: 6 }))).state).toBe(
+      "unanswered",
+    )
+    expect(
+      resolveQuestion(
+        QUESTION_BY_KEY.T0,
+        context(null, teamTodayFixture({ currentDjCount: 6, countBasis: "includes_owner" })),
+      ).state,
+    ).toBe("not_applicable")
+    expect(resolveQuestion(QUESTION_BY_KEY.T0, context(null, null)).state).toBe("not_applicable")
   })
 })

@@ -12,10 +12,11 @@ import {
   GOALS_OPENING,
   OVERVIEW_LEAD,
   TEAM_FOOTER_NOTE,
-  TEAM_OPENING,
+  TEAM_OPENING_V2,
 } from "@/app/blueprint/blueprint-ui"
 import { getBlueprintProgressFromStates, resolveAll } from "@/lib/blueprint/answers"
 import { blueprintSection } from "@/lib/blueprint/progress"
+import { teamTodayFixture, type AnswerTeamToday } from "@/lib/blueprint/team-today"
 
 const html = (el: Parameters<typeof renderToStaticMarkup>[0]) => renderToStaticMarkup(el)
 const text = (markup: string) => markup.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()
@@ -31,7 +32,7 @@ const primaryLink = (markup: string) =>
 
 const APPROVED = [
   ["Your goals", "What you want Blueprint to help you do"],
-  ["Your team today", "How many DJs you have, and how many you’d like"],
+  ["Your team today", "How many DJs you have, who can lead, and how many you’d like"],
   ["Your events", "How many events you book, who works them, and your busiest dates"],
   ["Your services and market", "What your DJs handle at events, and where your prices sit"],
   ["Your numbers", "What each event really earns, private to you"],
@@ -40,24 +41,40 @@ const APPROVED = [
   ["Your Blueprint", "Blueprint’s recommendations, for you to approve or change"],
 ] as const
 
+const completeTeam: AnswerTeamToday = teamTodayFixture({
+  currentDjCount: 3,
+  desiredDjCount: 5,
+  countBasis: "excludes_owner",
+  desiredCountBasis: "excludes_owner",
+  assistantOnlyCount: 1,
+  ownerDjFrequency: "sometimes",
+  leadCapableCount: 2,
+})
+const completeAnswers = [
+  { questionKey: "T4", state: "answered" as const, value: ["manager"] },
+  { questionKey: "T5", state: "answered" as const, value: { codes: ["scheduling"], other: null } },
+]
+
 const progressOf = (
   goals: { primary: { goal: string }; others?: unknown[] } | null,
-  teamToday: { currentDjCount: number; desiredDjCount: number | null } | null,
+  teamToday: AnswerTeamToday | null,
   answers: { questionKey: string; state: "answered" | "estimated" | "skipped"; value: unknown }[] = [],
-) =>
-  getBlueprintProgressFromStates(
-    resolveAll({
-      goals: goals ? { primary: goals.primary, others: goals.others ?? [] } : null,
-      teamToday,
-      answers,
-    }),
-    null,
-  )
+) => {
+  const context = {
+    goals: goals ? { primary: goals.primary, others: goals.others ?? [] } : null,
+    teamToday,
+    answers,
+  }
+  return getBlueprintProgressFromStates(resolveAll(context), null, context)
+}
 
 const none = progressOf(null, null)
 const started = progressOf({ primary: { goal: "scale" } }, null)
-const partlyTeam = progressOf({ primary: { goal: "scale" } }, { currentDjCount: 3, desiredDjCount: null })
-const allReady = progressOf({ primary: { goal: "scale" } }, { currentDjCount: 3, desiredDjCount: 5 })
+const partlyTeam = progressOf(
+  { primary: { goal: "scale" } },
+  teamTodayFixture({ currentDjCount: 3, countBasis: "excludes_owner" }),
+)
+const allReady = progressOf({ primary: { goal: "scale" } }, completeTeam, completeAnswers)
 
 describe("BlueprintSectionList", () => {
   const out = html(h(BlueprintSectionList, { progress: started }))
@@ -90,6 +107,7 @@ describe("BlueprintSectionList", () => {
       expect(text(out)).not.toContain(code)
     }
     expect(text(html(h(BlueprintSectionList, { progress: partlyTeam })))).toContain("Needs attention")
+    expect(text(html(h(BlueprintSectionList, { progress: partlyTeam })))).toMatch(/\d to answer/)
     const skipped = progressOf(null, null, [{ questionKey: "G1", state: "skipped", value: null }])
     expect(text(html(h(BlueprintSectionList, { progress: skipped })))).toContain("1 skipped")
   })
@@ -105,7 +123,10 @@ describe("BlueprintOverview", () => {
     expect(text(out)).toContain("Company A")
     expect(text(out)).toContain(OVERVIEW_LEAD)
     expect(text(out)).toContain("0 of 8 sections complete")
+    expect(text(out)).not.toContain("·")
+    expect(text(render(partlyTeam))).toContain("1 of 8 sections complete · 1 started")
     expect(text(render(allReady))).toContain("2 of 8 sections complete")
+    expect(text(render(allReady))).not.toContain("·")
   })
 
   it("offers Start when nothing is saved, linking to Goals", () => {
@@ -115,9 +136,9 @@ describe("BlueprintOverview", () => {
   })
 
   it("offers Continue at the first unfinished live section", () => {
-    expect(primaryLink(render(started))).toMatchObject({ href: "/blueprint/team#q-TL1", label: "Continue your Blueprint" })
-    expect(primaryLink(render(partlyTeam))).toMatchObject({ href: "/blueprint/team#q-TL6", label: "Continue your Blueprint" })
-    const teamOnly = progressOf(null, { currentDjCount: 1, desiredDjCount: 2 })
+    expect(primaryLink(render(started))).toMatchObject({ href: "/blueprint/team#q-T1", label: "Continue your Blueprint" })
+    expect(primaryLink(render(partlyTeam))).toMatchObject({ href: "/blueprint/team#q-T1b", label: "Continue your Blueprint" })
+    const teamOnly = progressOf(null, completeTeam, completeAnswers)
     expect(primaryLink(render(teamOnly))).toMatchObject({ href: "/blueprint/goals#q-G1", label: "Continue your Blueprint" })
   })
 
@@ -179,7 +200,9 @@ describe("BlueprintSectionPage", () => {
     expect(text(out)).toContain("Not started")
     expect(text(out)).toContain("Let’s start with where you want to go. Everything Blueprint suggests ties back to this.")
     expect(GOALS_OPENING).toBe("Let’s start with where you want to go. Everything Blueprint suggests ties back to this.")
-    expect(TEAM_OPENING).toBe("Now your team: how many DJs you have, and how many you’d like.")
+    expect(TEAM_OPENING_V2).toBe(
+      "Now your team. We’ll count you separately, because your own events matter here too.",
+    )
     expect(TEAM_FOOTER_NOTE).toBe("The next sections are coming soon.")
   })
 
@@ -256,5 +279,37 @@ describe("Owner home read-only cards with the guided Blueprint on", () => {
       ),
     )
     expect([...out.matchAll(/<h([1-6])[\s>]/g)].map(([, level]) => level)).toEqual(["1", "2", "2", "2"])
+  })
+
+  it("uses basis-aware labels and a confirm prompt when the guided card has an unknown count", () => {
+    const unknown = html(
+      h(TeamTodayCard, {
+        currentDjCount: 6,
+        desiredDjCount: 8,
+        countBasis: "unknown",
+        desiredCountBasis: "unknown",
+        guided: true,
+        editHref: "/blueprint/team",
+      }),
+    )
+    expect(text(unknown)).toContain("Current DJ count")
+    expect(text(unknown)).toContain("Desired DJ count")
+    expect(text(unknown)).toContain("Does this include you?")
+    expect(unknown).toContain('href="/blueprint/team#q-T0"')
+    expect(text(unknown)).toContain("Confirm in your Blueprint")
+
+    const confirmed = html(
+      h(TeamTodayCard, {
+        currentDjCount: 4,
+        desiredDjCount: 6,
+        countBasis: "excludes_owner",
+        desiredCountBasis: "excludes_owner",
+        guided: true,
+        editHref: "/blueprint/team",
+      }),
+    )
+    expect(text(confirmed)).toContain("DJs (not counting you)")
+    expect(text(confirmed)).toContain("DJs you’d like (not counting you)")
+    expect(text(confirmed)).not.toContain("Does this include you?")
   })
 })

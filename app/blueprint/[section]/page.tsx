@@ -5,16 +5,15 @@ import { companyGoalCodes, companyGoalsOtherText } from "@/lib/blueprint/company
 import { loadGuidedBlueprint, requireGuidedOwner } from "@/lib/blueprint/guard"
 import { blueprintSection } from "@/lib/blueprint/progress"
 
-import { DesiredDjCountForm } from "../../desired-dj-count-form"
 import { FocusQuestion } from "../../focus-question"
 import { OwnerGoalsForm } from "../../owner-goals-form"
-import { TeamTodayForm } from "../../team-today-form"
+import { TeamTodayGuidedForm } from "../../team-today-guided-form"
 import {
   BlueprintSectionPage,
   BlueprintShell,
   GOALS_OPENING,
   TEAM_FOOTER_NOTE,
-  TEAM_OPENING,
+  TEAM_OPENING_V2,
 } from "../blueprint-ui"
 
 export default async function BlueprintSectionRoute({
@@ -34,7 +33,7 @@ export default async function BlueprintSectionRoute({
     redirect("/blueprint")
   }
 
-  const { companyGoals, teamToday, progress, resolved } = await loadGuidedBlueprint()
+  const { companyGoals, teamToday, progress, resolved, answers } = await loadGuidedBlueprint()
   const status = progress.statuses[slug]
   const g1Skipped = resolved.some((row) => row.key === "G1" && row.state === "skipped")
   const g3Value = resolved.find((row) => row.key === "G3" && (row.state === "answered" || row.state === "estimated"))
@@ -68,16 +67,14 @@ export default async function BlueprintSectionRoute({
     )
   }
 
-  const currentDjCount = teamToday == null ? null : teamToday.currentDjCount
-  const desiredDjCount = teamToday?.desiredDjCount ?? null
-
   return (
     <BlueprintShell>
       <FocusQuestion questionId={focusId} />
       <BlueprintSectionPage
         section={section}
         status={status}
-        opening={TEAM_OPENING}
+        opening={TEAM_OPENING_V2}
+        framed={false}
         footer={
           <>
             <Link href="/blueprint/goals" className="bp-btn bp-btn--plain">
@@ -90,14 +87,14 @@ export default async function BlueprintSectionRoute({
           </>
         }
       >
-        <div key={`team-today:${membership.companyId}`} className="grid gap-5 md:grid-cols-2">
-          <div id="q-TL1">
-            <TeamTodayForm currentDjCount={currentDjCount} />
-          </div>
-          <div id="q-TL6">
-            <DesiredDjCountForm currentDjCount={currentDjCount} desiredDjCount={desiredDjCount} />
-          </div>
-        </div>
+        <TeamTodayGuidedForm
+          key={`team-today:${membership.companyId}`}
+          team={teamToday}
+          resolved={resolved}
+          answers={answers}
+          primaryGoal={companyGoals?.primary.goal ?? null}
+          sectionComplete={status === "complete"}
+        />
       </BlueprintSectionPage>
     </BlueprintShell>
   )

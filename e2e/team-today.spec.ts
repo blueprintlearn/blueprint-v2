@@ -2,6 +2,8 @@ import { randomUUID } from "node:crypto"
 
 import { expect, test, type Page } from "@playwright/test"
 
+import { COMPANY_A_ID, OWNER_C_EMAIL, resetGuidedCompanyData, seedLegacyTeamCount } from "./empty-guided-company"
+
 const password = "blueprint-local-password"
 const uniqueDjCount = "247"
 const nextDjCount = "19"
@@ -36,43 +38,43 @@ const teamTodayHeading = (page: Page) => page.getByRole("heading", { level: 2, n
 const teamTodayStatus = (page: Page) =>
   page.locator("section").filter({ has: teamTodayHeading(page) }).locator(".bp-status")
 
+const t1Label = /Not counting yourself, how many DJs work events for your company/
+
 test.describe("team today in the browser", () => {
   test("Company A owner can save a DJ count that Company B cannot see", async ({ page }) => {
+    resetGuidedCompanyData(COMPANY_A_ID)
     await signIn(page, "owner-a@blueprint.test")
     await openGuidedTeamPage(page)
-    const teamTodayForm = page.locator("form[data-saved-current-dj-count]")
-    const desiredForm = page.locator("form[data-saved-desired-dj-count]")
-    await page.getByLabel("Current DJ count", { exact: true }).fill(uniqueDjCount)
-    await page.getByRole("button", { name: "Save DJ count", exact: true }).click()
-    await expect(teamTodayForm.getByRole("status")).toHaveText("Saved")
-    await expect(teamTodayForm).toHaveAttribute("data-saved-current-dj-count", uniqueDjCount)
-    await expect(page.getByLabel("Current DJ count", { exact: true })).toHaveValue(uniqueDjCount)
+    const todayForm = page.locator("form[data-card='today']")
+    const wantedForm = page.locator("form[data-card='wanted']")
+    await page.getByLabel(t1Label).fill(uniqueDjCount)
+    await page.getByRole("button", { name: "Save your team today" }).click()
+    await expect(todayForm.locator(".bp-save")).toHaveText("Saved")
+    await expect(todayForm).toHaveAttribute("data-saved-t1", uniqueDjCount)
+    await expect(page.getByLabel(t1Label)).toHaveValue(uniqueDjCount)
     await expect(page.getByText(/\bCompany B\b/)).toHaveCount(0)
-    const savedDesired = await desiredForm.getAttribute("data-saved-desired-dj-count")
-    await expect(sectionStatus(page)).toHaveText(savedDesired === "" ? "Needs attention" : "Complete")
+    await expect(sectionStatus(page)).toHaveText("Needs attention")
 
     await page.reload()
-    await expect(teamTodayForm).toHaveAttribute("data-saved-current-dj-count", uniqueDjCount)
-    await expect(page.getByLabel("Current DJ count", { exact: true })).toHaveValue(uniqueDjCount)
-    await expect(teamTodayForm.getByRole("status")).not.toHaveText("Saved")
+    await expect(todayForm).toHaveAttribute("data-saved-t1", uniqueDjCount)
+    await expect(page.getByLabel(t1Label)).toHaveValue(uniqueDjCount)
+    await expect(todayForm.locator(".bp-save")).not.toHaveText("Saved")
 
-    await teamTodayForm.getByLabel("Current DJ count", { exact: true }).fill(nextDjCount)
-    await teamTodayForm.getByRole("button", { name: "Save DJ count", exact: true }).click()
-    await expect(teamTodayForm.getByRole("status")).toHaveText("Saved")
-    await expect(teamTodayForm).toHaveAttribute("data-saved-current-dj-count", nextDjCount)
-    await expect(page.getByLabel("Current DJ count", { exact: true })).toHaveValue(nextDjCount)
+    await page.getByLabel(t1Label).fill(nextDjCount)
+    await page.getByRole("button", { name: "Save your team today" }).click()
+    await expect(todayForm.locator(".bp-save")).toHaveText("Saved")
+    await expect(todayForm).toHaveAttribute("data-saved-t1", nextDjCount)
+    await expect(page.getByLabel(t1Label)).toHaveValue(nextDjCount)
     await expect(page.getByText(uniqueDjCount)).toHaveCount(0)
 
-    // Editing the other form leaves this Saved alone; editing this form clears it.
-    await desiredForm.getByLabel("Desired DJ count").fill("5")
-    await expect(teamTodayForm.getByRole("status")).toHaveText("Saved")
-    await teamTodayForm.getByLabel("Current DJ count", { exact: true }).fill("20")
-    await expect(teamTodayForm.getByRole("status")).not.toHaveText("Saved")
-    await expect(desiredForm.getByRole("status")).not.toHaveText("Saved")
+    await wantedForm.getByLabel(/DJs would you like|Earlier you said/).fill("5")
+    await expect(todayForm.locator(".bp-save")).toHaveText("Saved")
+    await page.getByLabel(t1Label).fill("20")
+    await expect(todayForm.locator(".bp-save")).not.toHaveText("Saved")
 
     await page.reload()
-    await expect(teamTodayForm).toHaveAttribute("data-saved-current-dj-count", nextDjCount)
-    await expect(page.getByLabel("Current DJ count", { exact: true })).toHaveValue(nextDjCount)
+    await expect(todayForm).toHaveAttribute("data-saved-t1", nextDjCount)
+    await expect(page.getByLabel(t1Label)).toHaveValue(nextDjCount)
 
     await page.getByRole("button", { name: "Sign out" }).click()
     await expect(page).toHaveURL("/")
@@ -121,42 +123,39 @@ test.describe("team today in the browser", () => {
     const uniqueDesired = "612"
     const nextDesired = "183"
 
+    resetGuidedCompanyData(COMPANY_A_ID)
     await signIn(page, "owner-a@blueprint.test")
     await openGuidedTeamPage(page)
-    await page.getByLabel("Current DJ count", { exact: true }).fill(uniqueDjCount)
-    await page.getByRole("button", { name: "Save DJ count", exact: true }).click()
-    const teamTodayForm = page.locator("form[data-saved-current-dj-count]")
-    await expect(teamTodayForm).toHaveAttribute("data-saved-current-dj-count", uniqueDjCount)
-
-    await page.getByLabel("Desired DJ count").fill(uniqueDesired)
-    await page.getByRole("button", { name: "Save desired DJ count" }).click()
-    const desiredForm = page.locator("form[data-saved-desired-dj-count]")
-    await expect(desiredForm.getByRole("status")).toHaveText("Saved")
-    await expect(desiredForm).toHaveAttribute("data-saved-desired-dj-count", uniqueDesired)
-    await expect(page.getByLabel("Desired DJ count")).toHaveValue(uniqueDesired)
+    const wantedForm = page.locator("form[data-card='wanted']")
+    const t6 = page.getByLabel(/DJs would you like|Earlier you said/)
+    await t6.fill(uniqueDesired)
+    await page.getByRole("button", { name: "Save the team you want" }).click()
+    await expect(wantedForm.locator(".bp-save")).toHaveText("Saved")
+    await expect(wantedForm).toHaveAttribute("data-saved-t6", uniqueDesired)
+    await expect(t6).toHaveValue(uniqueDesired)
     await expect(page.getByText(/\bCompany B\b/)).toHaveCount(0)
-    await expect(sectionStatus(page)).toHaveText("Complete")
+    await expect(sectionStatus(page)).toHaveText("Needs attention")
 
-    await page.getByLabel("Desired DJ count").fill(nextDesired)
-    await expect(page.getByLabel("Desired DJ count")).toHaveValue(nextDesired)
-    await expect(desiredForm.getByRole("status")).not.toHaveText("Saved")
-    await page.getByRole("button", { name: "Save desired DJ count" }).click()
-    await expect(desiredForm.getByRole("status")).toHaveText("Saved")
-    await expect(desiredForm).toHaveAttribute("data-saved-desired-dj-count", nextDesired)
-    await expect(page.getByLabel("Desired DJ count")).toHaveValue(nextDesired)
+    await t6.fill(nextDesired)
+    await expect(t6).toHaveValue(nextDesired)
+    await expect(wantedForm.locator(".bp-save")).not.toHaveText("Saved")
+    await page.getByRole("button", { name: "Save the team you want" }).click()
+    await expect(wantedForm.locator(".bp-save")).toHaveText("Saved")
+    await expect(wantedForm).toHaveAttribute("data-saved-t6", nextDesired)
+    await expect(t6).toHaveValue(nextDesired)
     await expect(page.getByText(uniqueDesired)).toHaveCount(0)
 
     await page.reload()
-    await expect(desiredForm).toHaveAttribute("data-saved-desired-dj-count", nextDesired)
-    await expect(page.getByLabel("Desired DJ count")).toHaveValue(nextDesired)
+    await expect(wantedForm).toHaveAttribute("data-saved-t6", nextDesired)
+    await expect(page.getByLabel(/DJs would you like|Earlier you said/)).toHaveValue(nextDesired)
 
-    await page.getByLabel("Desired DJ count").fill("1200")
-    await page.getByRole("button", { name: "Save desired DJ count" }).click()
-    await expect(desiredForm.getByRole("alert")).toHaveText("Enter a whole number from 0 to 999.")
-    await expect(page.getByLabel("Desired DJ count")).toHaveAttribute("aria-invalid", "true")
-    await expect(page.getByLabel("Desired DJ count")).toHaveValue("1200")
-    await expect(desiredForm.getByRole("status")).not.toHaveText("Saved")
-    await expect(desiredForm).toHaveAttribute("data-saved-desired-dj-count", nextDesired)
+    await page.getByLabel(/DJs would you like|Earlier you said/).fill("1200")
+    await page.getByRole("button", { name: "Save the team you want" }).click()
+    await expect(wantedForm.getByRole("alert")).toHaveText("Enter a whole number from 0 to 999.")
+    await expect(page.getByLabel(/DJs would you like|Earlier you said/)).toHaveAttribute("aria-invalid", "true")
+    await expect(page.getByLabel(/DJs would you like|Earlier you said/)).toHaveValue("1200")
+    await expect(wantedForm.locator(".bp-save")).not.toHaveText("Saved")
+    await expect(wantedForm).toHaveAttribute("data-saved-t6", nextDesired)
 
     await page.getByRole("button", { name: "Sign out" }).click()
     await expect(page).toHaveURL("/")
@@ -207,5 +206,28 @@ test.describe("team today in the browser", () => {
     await expect(desiredForm).toHaveAttribute("data-saved-desired-dj-count", "0")
     await expect(desired).toHaveValue("0")
     await expect(teamTodayStatus(page)).toHaveText("Answered")
+  })
+
+  test("T0 Yes keeps the stored count and asks for a team-only T1", async ({ page }) => {
+    seedLegacyTeamCount(6, 8)
+    await signIn(page, OWNER_C_EMAIL)
+    await expect(page.getByText("Does this include you?")).toBeVisible()
+    await page.getByRole("link", { name: "Confirm in your Blueprint" }).click()
+    await expect(page).toHaveURL(/\/blueprint\/team#q-T0/)
+    await expect(page.getByText("Earlier you told us you have 6 DJs. Did that number include you?")).toBeVisible()
+    await page.getByRole("radio", { name: "Yes, it included me" }).check()
+    await page.getByRole("button", { name: "Save your team today" }).click()
+    await expect(page.locator("form[data-card='today'] .bp-save")).toHaveText("Saved")
+    await expect(page.locator("form[data-card='today']")).toHaveAttribute("data-saved-basis", "includes_owner")
+    await expect(page.locator("form[data-card='today']")).toHaveAttribute("data-saved-t1", "")
+    await expect(page.getByLabel(/Not counting yourself, how many DJs work events/)).toHaveValue("")
+    await expect(page.getByText("You told us 6 included you. Enter how many DJs you have, not counting yourself.")).toBeVisible()
+    await expect(page.getByRole("region", { name: "Your team at a glance" })).toHaveCount(0)
+
+    await page.getByLabel(/Not counting yourself, how many DJs work events/).fill("5")
+    await page.getByRole("button", { name: "Save your team today" }).click()
+    await expect(page.locator("form[data-card='today'] .bp-save")).toHaveText("Saved")
+    await expect(page.locator("form[data-card='today']")).toHaveAttribute("data-saved-t1", "5")
+    await expect(page.locator("form[data-card='today']")).toHaveAttribute("data-saved-basis", "excludes_owner")
   })
 })

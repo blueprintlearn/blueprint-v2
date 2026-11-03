@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process"
 
+export const COMPANY_A_ID = "00000000-0000-4000-8000-0000000000a1"
 const COMPANY_C_ID = "00000000-0000-4000-8000-0000000000c1"
 const OWNER_C_ID = "00000000-0000-4000-8000-0000000000c2"
 export const OWNER_C_EMAIL = "owner-c@blueprint.test"
@@ -20,6 +21,25 @@ const PSQL = [
 
 function sql(statement: string) {
   execFileSync("docker", [...PSQL, statement], { encoding: "utf8" })
+}
+
+export function resetGuidedCompanyData(companyId: string) {
+  sql(`
+    delete from public.company_blueprint_answers where company_id = '${companyId}';
+    delete from public.company_blueprint_progress where company_id = '${companyId}';
+    delete from public.company_goals where company_id = '${companyId}';
+    delete from public.company_blueprints where company_id = '${companyId}';
+    delete from public.company_team_today where company_id = '${companyId}';
+  `)
+}
+
+export function seedLegacyTeamCount(currentDjCount: number, desiredDjCount: number | null = null) {
+  ensureEmptyGuidedCompany()
+  const desired = desiredDjCount === null ? "null" : String(desiredDjCount)
+  sql(`
+    insert into public.company_team_today (company_id, current_dj_count, desired_dj_count)
+    values ('${COMPANY_C_ID}', ${currentDjCount}, ${desired});
+  `)
 }
 
 /** Local-only empty guided company. Not seed data. Not used on staging. */

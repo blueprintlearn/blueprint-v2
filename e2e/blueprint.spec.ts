@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test"
 
+import { COMPANY_A_ID, resetGuidedCompanyData } from "./empty-guided-company"
+
 const password = "blueprint-local-password"
 
 async function signIn(page: Page, email: string) {
@@ -12,7 +14,7 @@ async function signIn(page: Page, email: string) {
 
 const APPROVED_SECTIONS = [
   ["Your goals", "What you want Blueprint to help you do"],
-  ["Your team today", "How many DJs you have, and how many you’d like"],
+  ["Your team today", "How many DJs you have, who can lead, and how many you’d like"],
   ["Your events", "How many events you book, who works them, and your busiest dates"],
   ["Your services and market", "What your DJs handle at events, and where your prices sit"],
   ["Your numbers", "What each event really earns, private to you"],
@@ -22,7 +24,7 @@ const APPROVED_SECTIONS = [
 ] as const
 
 const sectionStatus = (page: Page) => page.locator("div:has(> h1) > .bp-status")
-const doneText = (page: Page) => page.getByText(/^\d of 8 sections complete$/)
+const doneText = (page: Page) => page.getByText(/^\d of 8 sections complete( · \d started)?$/)
 const row = (page: Page, name: string) =>
   page.locator("ol li").filter({ has: page.getByText(name, { exact: true }) })
 
@@ -42,6 +44,7 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
   })
 
   test("Company A owner walks the guided Blueprint and every save shows up without a manual reload", async ({ page }) => {
+    resetGuidedCompanyData(COMPANY_A_ID)
     await signIn(page, "owner-a@blueprint.test")
     await page.goto("/blueprint")
 
@@ -100,24 +103,44 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     await expect(page).toHaveURL("/blueprint/team")
     await expect(page.getByText("Section 2 of 8")).toBeVisible()
     await expect(page.getByRole("heading", { level: 1, name: "Your team today" })).toBeVisible()
-    await expect(page.getByText("Now your team: how many DJs you have, and how many you’d like.")).toBeVisible()
+    await expect(
+      page.getByText("Now your team. We’ll count you separately, because your own events matter here too."),
+    ).toBeVisible()
     await expect(page.getByRole("link", { name: "Previous: Your goals" })).toHaveAttribute("href", "/blueprint/goals")
     await expect(page.getByRole("link", { name: "Back to your Blueprint" })).toHaveCount(2)
     await expect(page.getByText("The next sections are coming soon.")).toBeVisible()
-    await expect(page.locator("form[data-saved-current-dj-count]")).toHaveCount(1)
-    await expect(page.locator("form[data-saved-desired-dj-count]")).toHaveCount(1)
-    await expect(page.locator(".bp-btn--primary")).toHaveCount(0)
+    await expect(page.locator("form[data-card='today']")).toHaveCount(1)
+    await expect(page.locator("form[data-card='wanted']")).toHaveCount(1)
+    await expect(page.getByRole("button", { name: "Save your team today" })).toHaveClass(/\bbp-btn--primary\b/)
+    await expect(page.getByRole("button", { name: "Save how your team runs" })).toHaveClass(/\bbp-btn--primary\b/)
+    await expect(page.getByRole("button", { name: "Save the team you want" })).toHaveClass(/\bbp-btn--primary\b/)
 
-    await page.getByLabel("Current DJ count", { exact: true }).fill("6")
-    await page.getByRole("button", { name: "Save DJ count", exact: true }).click()
-    await expect(page.locator("form[data-saved-current-dj-count]").getByRole("status")).toHaveText("Saved")
-    const desiredSaved = await page.locator("form[data-saved-desired-dj-count]").getAttribute("data-saved-desired-dj-count")
-    await expect(sectionStatus(page)).toHaveText(desiredSaved === "" ? "Needs attention" : "Complete")
+    const t0No = page.getByRole("radio", { name: "No, just my team" })
+    if (await t0No.count()) {
+      await t0No.check()
+    }
+    await page.getByLabel(/Not counting yourself, how many DJs work events/).fill("6")
+    await page.getByLabel(/only as assistants/).fill("1")
+    await page.getByRole("radio", { name: "Yes, now and then" }).check()
+    await page.getByLabel(/can lead an event/).fill("2")
+    await page.getByRole("button", { name: "Save your team today" }).click()
+    await expect(page.locator("form[data-card='today'] .bp-save")).toHaveText("Saved")
+    await expect(sectionStatus(page)).toHaveText("Needs attention")
 
-    await page.getByLabel("Desired DJ count").fill("8")
-    await page.getByRole("button", { name: "Save desired DJ count", exact: true }).click()
-    await expect(page.locator("form[data-saved-desired-dj-count]").getByRole("status")).toHaveText("Saved")
+    await page.getByRole("checkbox", { name: "A manager" }).check()
+    await page.getByRole("checkbox", { name: "Finding good candidates" }).check()
+    await expect(page.getByRole("checkbox", { name: "A manager" })).toBeChecked()
+    await expect(page.getByRole("checkbox", { name: "Finding good candidates" })).toBeChecked()
+    await page.getByRole("button", { name: "Save how your team runs" }).click()
+    await expect(page.locator("form[data-card='runs'] .bp-save")).toHaveText("Saved")
+    await expect(page.locator("form[data-card='runs']")).toHaveAttribute("data-saved-t4", "manager")
+    await expect(page.locator("form[data-card='runs']")).toHaveAttribute("data-saved-t5", "finding_candidates")
+
+    await page.getByLabel(/DJs would you like|Earlier you said/).fill("8")
+    await page.getByRole("button", { name: "Save the team you want" }).click()
+    await expect(page.locator("form[data-card='wanted'] .bp-save")).toHaveText("Saved")
     await expect(sectionStatus(page)).toHaveText("Complete")
+    await expect(page.getByRole("region", { name: "Your team at a glance" })).toContainText("You and 6 DJs")
 
     // Overview: both live sections complete, so no primary action and a soft way back
     await page.getByRole("link", { name: "Back to your Blueprint" }).first().click()
@@ -138,8 +161,8 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     await expect(page.locator("form[data-saved-owner-goal], form[data-saved-current-dj-count], form[data-saved-desired-dj-count]")).toHaveCount(0)
     await expect(page.getByRole("heading", { level: 2, name: "Your goals" })).toBeVisible()
     await expect(page.locator(".bp-fact").filter({ hasText: "Main goal" }).getByText("Scale", { exact: true })).toBeVisible()
-    await expect(page.locator(".bp-fact").filter({ hasText: "Current DJ count" }).getByText("6", { exact: true })).toBeVisible()
-    await expect(page.locator(".bp-fact").filter({ hasText: "Desired DJ count" }).getByText("8", { exact: true })).toBeVisible()
+    await expect(page.locator(".bp-fact").filter({ hasText: "DJs (not counting you)" }).getByText("6", { exact: true })).toBeVisible()
+    await expect(page.locator(".bp-fact").filter({ hasText: "DJs you’d like (not counting you)" }).getByText("8", { exact: true })).toBeVisible()
   })
 
   test("the count and the resume link follow what is saved", async ({ page }) => {

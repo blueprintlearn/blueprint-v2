@@ -70,12 +70,12 @@ test.describe("owner home on a phone", () => {
     await page.goto("/blueprint/team")
     await expect(page.getByRole("heading", { level: 1, name: "Your team today" })).toBeVisible()
     await noOverflow()
-    const current = await page.getByLabel("Current DJ count", { exact: true }).boundingBox()
-    const desired = await page.getByLabel("Desired DJ count").boundingBox()
+    const current = await page.getByLabel(/Not counting yourself, how many DJs work events/).boundingBox()
+    const assistants = await page.getByLabel(/only as assistants/).boundingBox()
     expect(current!.height).toBeGreaterThanOrEqual(44)
-    expect(desired!.y).toBeGreaterThan(current!.y)
+    expect(assistants!.y).toBeGreaterThan(current!.y)
 
-    for (const name of ["Save DJ count", "Save desired DJ count"]) {
+    for (const name of ["Save your team today", "Save how your team runs", "Save the team you want"]) {
       const button = page.getByRole("button", { name, exact: true })
       await button.scrollIntoViewIfNeeded()
       const box = (await button.boundingBox())!

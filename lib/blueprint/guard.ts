@@ -58,6 +58,6 @@ export async function loadGuidedBlueprint() {
     answers,
     resolved,
     context,
-    progress: getBlueprintProgressFromStates(resolved, resumeFromRow(resume)),
+    progress: getBlueprintProgressFromStates(resolved, resumeFromRow(resume), context),
   }
 }

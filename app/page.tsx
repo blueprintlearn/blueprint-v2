@@ -34,8 +34,9 @@ export default async function HomePage() {
   const companyGoals = guided ? await getCurrentCompanyGoals() : null
   const answers = guided ? await getCurrentBlueprintAnswers() : []
   const resume = guided ? await getCurrentBlueprintProgress() : null
+  const context = { goals: companyGoals, teamToday, answers }
   const progress = guided
-    ? getBlueprintProgressFromStates(resolveAll({ goals: companyGoals, teamToday, answers }), resumeFromRow(resume))
+    ? getBlueprintProgressFromStates(resolveAll(context), resumeFromRow(resume), context)
     : null
 
   if (membership) {
@@ -58,6 +59,9 @@ export default async function HomePage() {
             <TeamTodayCard
               currentDjCount={currentDjCount}
               desiredDjCount={desiredDjCount}
+              countBasis={teamToday?.countBasis ?? "unknown"}
+              desiredCountBasis={teamToday?.desiredCountBasis ?? "unknown"}
+              guided={guided}
               editHref={guided ? "/blueprint/team" : undefined}
               editor={
                 canEdit ? (

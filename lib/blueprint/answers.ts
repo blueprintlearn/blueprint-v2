@@ -14,16 +14,19 @@ import {
   type QuestionDefinition,
   type QuestionKey,
 } from "@/lib/blueprint/questions"
+import {
+  hasStoredTeamCount,
+  isConfirmedCount,
+  t0Shown,
+  type AnswerTeamToday,
+} from "@/lib/blueprint/team-today"
 
 export type AnswerGoals = {
   primary: { goal: string }
   others: readonly unknown[]
 }
 
-export type AnswerTeamToday = {
-  currentDjCount: number
-  desiredDjCount: number | null
-}
+export type { AnswerTeamToday }
 
 export type AnswerState = "unanswered" | "answered" | "estimated" | "skipped" | "not_applicable"
 
@@ -88,19 +91,43 @@ export function isQuestionApplicable(question: QuestionDefinition, context: Answ
     const count = context.goals ? 1 + context.goals.others.length : 0
     return count >= 2
   }
+  if (question.key === "T0") return t0Shown(context.teamToday)
+  if (question.key === "T3") {
+    return isConfirmedCount(context.teamToday?.currentDjCount ?? null, context.teamToday?.countBasis ?? "unknown")
+      && (context.teamToday?.currentDjCount ?? 0) > 0
+  }
+  if (question.key === "T7") {
+    const current = context.teamToday
+    return (
+      isConfirmedCount(current?.currentDjCount ?? null, current?.countBasis ?? "unknown") &&
+      isConfirmedCount(current?.desiredDjCount ?? null, current?.desiredCountBasis ?? "unknown") &&
+      (current?.desiredDjCount ?? 0) > (current?.currentDjCount ?? 0)
+    )
+  }
   return true
 }
 
 export function typedValue(question: QuestionDefinition, context: AnswerContext): unknown {
+  const team = context.teamToday
   switch (question.key) {
     case "G1":
       return context.goals ? context.goals.primary.goal : null
     case "G2":
       return context.goals && context.goals.others.length >= 1 ? context.goals.primary.goal : null
-    case "TL1":
-      return context.teamToday ? context.teamToday.currentDjCount : null
-    case "TL6":
-      return context.teamToday?.desiredDjCount ?? null
+    case "T0":
+      return team && team.countBasis !== "unknown" ? team.countBasis : null
+    case "T1":
+      return team && isConfirmedCount(team.currentDjCount, team.countBasis) ? team.currentDjCount : null
+    case "T1b":
+      return team?.assistantOnlyCount ?? null
+    case "T2":
+      return team?.ownerDjFrequency ?? null
+    case "T3":
+      return team?.leadCapableCount ?? null
+    case "T6":
+      return team && isConfirmedCount(team.desiredDjCount, team.desiredCountBasis)
+        ? team.desiredDjCount
+        : null
     default:
       return null
   }
@@ -153,6 +180,7 @@ export function sectionStatusFromStates(
   section: BlueprintSectionSlug,
   resolved: readonly ResolvedAnswer[],
   live: boolean,
+  context?: AnswerContext,
 ): SectionStatus {
   if (!live) return "coming_soon"
 
@@ -166,7 +194,18 @@ export function sectionStatusFromStates(
   const touched = inSection.some(
     (row) => row.state === "answered" || row.state === "estimated" || row.state === "skipped",
   )
-  return touched ? "needs_attention" : "not_started"
+  if (touched) return "needs_attention"
+  if (section === "team" && hasStoredTeamCount(context?.teamToday ?? null)) return "needs_attention"
+  return "not_started"
+}
+
+export function toAnswerCount(section: BlueprintSectionSlug, resolved: readonly ResolvedAnswer[]): number {
+  return resolved.filter(
+    (row) =>
+      row.question.section === section &&
+      row.question.level === "core" &&
+      row.state === "unanswered",
+  ).length
 }
 
 export function skippedCount(section: BlueprintSectionSlug, resolved: readonly ResolvedAnswer[]): number {
@@ -219,11 +258,12 @@ export function continueTarget(
 export function getBlueprintProgressFromStates(
   resolved: readonly ResolvedAnswer[],
   resume: BlueprintResume | null,
+  context?: AnswerContext,
 ): BlueprintProgress {
   const statuses = Object.fromEntries(
     BLUEPRINT_SECTIONS.map((section) => [
       section.slug,
-      sectionStatusFromStates(section.slug, resolved, section.live),
+      sectionStatusFromStates(section.slug, resolved, section.live, context),
     ]),
   ) as Record<BlueprintSectionSlug, SectionStatus>
 
@@ -231,14 +271,25 @@ export function getBlueprintProgressFromStates(
     BLUEPRINT_SECTIONS.map((section) => [section.slug, skippedCount(section.slug, resolved)]),
   ) as Record<BlueprintSectionSlug, number>
 
+  const toAnswerCounts = Object.fromEntries(
+    BLUEPRINT_SECTIONS.map((section) => [section.slug, toAnswerCount(section.slug, resolved)]),
+  ) as Record<BlueprintSectionSlug, number>
+
   const completeCount = LIVE_SECTION_SLUGS.filter((slug) => statuses[slug] === "complete").length
+  const startedCount = LIVE_SECTION_SLUGS.filter((slug) => statuses[slug] === "needs_attention").length
   const target = continueTarget(resolved, resume)
-  const action = !anythingTouched(resolved) ? "start" : target ? "continue" : "review"
+  const teamStartedOnly =
+    Boolean(context && hasStoredTeamCount(context.teamToday)) &&
+    !anythingTouched(resolved) &&
+    statuses.team === "needs_attention"
+  const action = !anythingTouched(resolved) && !teamStartedOnly ? "start" : target ? "continue" : "review"
 
   return {
     statuses,
     skippedCounts,
+    toAnswerCounts,
     completeCount,
+    startedCount,
     next: target?.section ?? null,
     focusQuestionKey: target?.questionKey ?? null,
     action,

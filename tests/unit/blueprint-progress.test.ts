@@ -13,10 +13,28 @@ import {
   TOTAL_SECTIONS,
 } from "@/lib/blueprint/progress"
 import { M1_COPY, shouldShowM1 } from "@/lib/blueprint/questions"
+import { emptyTeamToday, teamTodayFixture, type AnswerTeamToday } from "@/lib/blueprint/team-today"
 
 const goal = { primary: { goal: "scale" }, others: [] }
 const twoGoals = { primary: { goal: "scale" }, others: [{ goal: "expand" }] }
-const team = (desired: number | null, current = 3) => ({ currentDjCount: current, desiredDjCount: desired })
+
+function completeTeam(partial: Partial<AnswerTeamToday> = {}): AnswerTeamToday {
+  return teamTodayFixture({
+    currentDjCount: 3,
+    desiredDjCount: 5,
+    countBasis: "excludes_owner",
+    desiredCountBasis: "excludes_owner",
+    assistantOnlyCount: 1,
+    ownerDjFrequency: "sometimes",
+    leadCapableCount: 2,
+    ...partial,
+  })
+}
+
+const teamAnswers: StoredAnswer[] = [
+  { questionKey: "T4", state: "answered", value: ["manager"] },
+  { questionKey: "T5", state: "answered", value: { codes: ["scheduling"], other: null } },
+]
 
 function progress(
   goals: AnswerContext["goals"],
@@ -24,7 +42,8 @@ function progress(
   answers: StoredAnswer[] = [],
   resume: { lastSection: string; lastQuestionKey: string | null } | null = null,
 ) {
-  return getBlueprintProgressFromStates(resolveAll({ goals, teamToday, answers }), resumeFromRow(resume))
+  const context = { goals, teamToday, answers }
+  return getBlueprintProgressFromStates(resolveAll(context), resumeFromRow(resume), context)
 }
 
 describe("getBlueprintProgress from answer states", () => {
@@ -38,6 +57,7 @@ describe("getBlueprintProgress from answer states", () => {
     expect(p.statuses.goals).toBe("not_started")
     expect(p.statuses.team).toBe("not_started")
     expect(p.completeCount).toBe(0)
+    expect(p.startedCount).toBe(0)
     expect(p.next).toBe("goals")
     expect(p.focusQuestionKey).toBe("G1")
     expect(p.action).toBe("start")
@@ -49,35 +69,59 @@ describe("getBlueprintProgress from answer states", () => {
     expect(p.statuses.team).toBe("not_started")
     expect(p.completeCount).toBe(1)
     expect(p.next).toBe("team")
-    expect(p.focusQuestionKey).toBe("TL1")
+    expect(p.focusQuestionKey).toBe("T1")
+    expect(p.action).toBe("continue")
+  })
+
+  it("legacy counts with unknown basis need attention and count as started", () => {
+    const legacy = teamTodayFixture({ currentDjCount: 3, desiredDjCount: 5 })
+    const p = progress(goal, legacy)
+    expect(p.statuses.team).toBe("needs_attention")
+    expect(p.toAnswerCounts.team).toBeGreaterThan(0)
+    expect(p.startedCount).toBe(1)
+    expect(p.focusQuestionKey).toBe("T0")
     expect(p.action).toBe("continue")
   })
 
   it("team only with no goal: Team needs attention, still resume at Goals", () => {
-    const p = progress(null, team(null))
+    const p = progress(null, teamTodayFixture({ currentDjCount: 3 }))
     expect(p.statuses.team).toBe("needs_attention")
     expect(p.completeCount).toBe(0)
     expect(p.next).toBe("goals")
     expect(p.action).toBe("continue")
   })
 
-  it("current DJ count saved but desired not: Team needs attention", () => {
-    const p = progress(goal, team(null))
+  it("confirmed current count without the rest: Team needs attention at T1b", () => {
+    const p = progress(
+      goal,
+      teamTodayFixture({ currentDjCount: 3, countBasis: "excludes_owner" }),
+    )
     expect(p.statuses.team).toBe("needs_attention")
     expect(p.completeCount).toBe(1)
     expect(p.next).toBe("team")
-    expect(p.focusQuestionKey).toBe("TL6")
+    expect(p.focusQuestionKey).toBe("T1b")
     expect(p.action).toBe("continue")
   })
 
-  it("a saved 0 counts as answered, only a missing value is unanswered", () => {
-    expect(progress(goal, team(0, 0)).statuses.team).toBe("complete")
-    expect(progress(goal, team(null, 0)).statuses.team).toBe("needs_attention")
+  it("a confirmed 0 counts as answered T1 and makes T3 not applicable", () => {
+    const zero = teamTodayFixture({
+      currentDjCount: 0,
+      countBasis: "excludes_owner",
+      assistantOnlyCount: 0,
+      ownerDjFrequency: "no",
+      desiredDjCount: 0,
+      desiredCountBasis: "excludes_owner",
+    })
+    expect(progress(goal, zero, teamAnswers).statuses.team).toBe("complete")
+    expect(resolveAll({ goals: goal, teamToday: zero, answers: teamAnswers }).find((row) => row.key === "T3")?.state).toBe(
+      "not_applicable",
+    )
   })
 
-  it("both live sections complete: nothing left, review", () => {
-    const p = progress(goal, team(5))
+  it("both live sections complete only when every applicable team core is answered", () => {
+    const p = progress(goal, completeTeam(), teamAnswers)
     expect(p.completeCount).toBe(2)
+    expect(p.startedCount).toBe(0)
     expect(p.next).toBeNull()
     expect(p.action).toBe("review")
   })
@@ -105,24 +149,47 @@ describe("getBlueprintProgress from answer states", () => {
   })
 
   it("resume prefers the last section when it still has an unanswered core", () => {
-    const p = progress(goal, team(null), [], { lastSection: "team", lastQuestionKey: "TL1" })
+    const p = progress(
+      goal,
+      teamTodayFixture({ currentDjCount: 3, countBasis: "excludes_owner" }),
+      [],
+      { lastSection: "team", lastQuestionKey: "T1" },
+    )
     expect(p.next).toBe("team")
-    expect(p.focusQuestionKey).toBe("TL6")
+    expect(p.focusQuestionKey).toBe("T1b")
+  })
+
+  it("skipped T1 with the other cores answered needs attention and reviews", () => {
+    const p = progress(goal, completeTeam({ currentDjCount: null, countBasis: "unknown", leadCapableCount: null }), [
+      ...teamAnswers,
+      { questionKey: "T1", state: "skipped", value: null },
+    ])
+    expect(p.statuses.team).toBe("needs_attention")
+    expect(p.completeCount).toBe(1)
+    expect(p.startedCount).toBe(1)
+    expect(p.skippedCounts.team).toBe(1)
+    expect(p.action).toBe("review")
+    expect(p.next).toBeNull()
   })
 
   it("resume never lands on a skipped question", () => {
     const p = progress(
       null,
-      team(5),
-      [{ questionKey: "G1", state: "skipped", value: null }],
+      completeTeam(),
+      [...teamAnswers, { questionKey: "G1", state: "skipped", value: null }],
       { lastSection: "goals", lastQuestionKey: "G1" },
     )
     expect(p.action).toBe("review")
     expect(p.next).toBeNull()
   })
 
+  it("hides the started count when none are in progress", () => {
+    expect(progress(null, null).startedCount).toBe(0)
+    expect(progress(goal, completeTeam(), teamAnswers).startedCount).toBe(0)
+  })
+
   it("marks sections 3 to 8 coming soon and never counts them as complete", () => {
-    const p = progress(goal, team(5))
+    const p = progress(goal, completeTeam(), teamAnswers)
     for (const section of BLUEPRINT_SECTIONS.filter((s) => !s.live)) {
       expect(p.statuses[section.slug]).toBe("coming_soon")
     }
@@ -152,5 +219,9 @@ describe("getBlueprintProgress from answer states", () => {
     expect(shouldShowM1()).toBe(false)
     expect(M1_COPY.scale).toContain("enough ready DJs")
     expect(M1_COPY.other).toContain("{text}")
+  })
+
+  it("does not treat an empty team object as started", () => {
+    expect(progress(null, emptyTeamToday()).statuses.team).toBe("not_started")
   })
 })
