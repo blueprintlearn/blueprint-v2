@@ -27,7 +27,20 @@ export const SAVE_FAILED_MESSAGE = "That didn’t save. Please try again."
 
 export type QuestionLevel = "core" | "go_deeper"
 export type QuestionStorage = "typed" | "answers"
-export type QuestionKey = "G1" | "G2" | "G3" | "TL1" | "TL6"
+export type QuestionKey =
+  | "G1"
+  | "G2"
+  | "G3"
+  | "T0"
+  | "T1"
+  | "T1b"
+  | "T2"
+  | "T3"
+  | "T4"
+  | "T5"
+  | "T6"
+  | "T7"
+  | "T8"
 
 export type GuidanceExample = {
   text: string
@@ -107,27 +120,166 @@ export const QUESTIONS: readonly QuestionDefinition[] = [
     guidance: null,
   },
   {
-    key: "TL1",
+    key: "T0",
     section: "team",
     level: "core",
     storage: "typed",
     skipAllowed: false,
     estimable: false,
     version: 1,
-    label: "Current DJ count",
-    whyNeeded: "Blueprint needs your DJ count to check whether your team fits your events.",
+    label: "Earlier you told us you have DJs. Did that number include you?",
+    whyNeeded: "We now count you separately from your team.",
     guidance: null,
   },
   {
-    key: "TL6",
+    key: "T1",
     section: "team",
     level: "core",
     storage: "typed",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Not counting yourself, how many DJs work events for your company?",
+    whyNeeded:
+      "Blueprint needs to know who can work events for you now, not counting you, to see what your team can cover.",
+    guidance: {
+      why: "Blueprint needs to know who can work events for you now, not counting you, to see what your team can cover.",
+      examples: [
+        { text: "Three regular DJs and one contractor who fills in on busy weekends: 4." },
+        { text: "A DJ who moved away last spring: don’t count them." },
+      ],
+    },
+  },
+  {
+    key: "T1b",
+    section: "team",
+    level: "core",
+    storage: "typed",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "How many people work your events only as assistants?",
+    whyNeeded: "Assistants share the work at events, but they never count as lead DJs.",
+    guidance: {
+      why: "Assistants share the work at events, but they never count as lead DJs.",
+      examples: [
+        { text: "Two lighting techs who never DJ: 2." },
+        { text: "A trainee who only helps set up: 1." },
+      ],
+    },
+  },
+  {
+    key: "T2",
+    section: "team",
+    level: "core",
+    storage: "typed",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Do you DJ events yourself?",
+    whyNeeded: "Your own events are work your team would take over if you DJ less.",
+    guidance: {
+      why: "Your own events are work your team would take over if you DJ less.",
+      examples: [
+        { text: "Plays most Saturdays: Yes, regularly." },
+        { text: "Covers when someone’s sick: Yes, now and then." },
+      ],
+    },
+  },
+  {
+    key: "T3",
+    section: "team",
+    level: "core",
+    storage: "typed",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "How many of those DJs can lead an event on their own today?",
+    whyNeeded: "Only DJs who can run an event alone count toward lead capacity.",
+    guidance: {
+      why: "Only DJs who can run an event alone count toward lead capacity.",
+      examples: [
+        { text: "Four DJs, two you’d send alone to a wedding: 2." },
+        { text: "Everyone’s still learning: 0." },
+      ],
+    },
+  },
+  {
+    key: "T4",
+    section: "team",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Who trains or mentors your DJs today? Choose all that apply.",
+    whyNeeded: "Training takes someone’s time. Blueprint wants to know whose.",
+    guidance: {
+      why: "Training takes someone’s time. Blueprint wants to know whose.",
+      examples: [
+        { text: "The owner and one senior DJ." },
+        { text: "An outside program, nobody in-house." },
+      ],
+    },
+  },
+  {
+    key: "T5",
+    section: "team",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What’s hardest about your team right now? Choose up to three.",
+    whyNeeded: "Blueprint focuses its suggestions on what costs you the most.",
+    guidance: {
+      why: "Blueprint focuses its suggestions on what costs you the most.",
+      examples: [
+        { text: "New DJs take months to be ready." },
+        { text: "Not enough DJs on busy dates." },
+      ],
+    },
+  },
+  {
+    key: "T6",
+    section: "team",
+    level: "core",
+    storage: "typed",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Not counting yourself, how many DJs would you like to have?",
+    whyNeeded: "Blueprint compares the team you want with what your work needs.",
+    guidance: {
+      why: "Your gut answer is fine.",
+      examples: [
+        { text: "Today 4, would like 6." },
+        { text: "Happy with today’s size: same as today." },
+      ],
+    },
+  },
+  {
+    key: "T7",
+    section: "team",
+    level: "go_deeper",
+    storage: "answers",
     skipAllowed: false,
     estimable: false,
     version: 1,
-    label: "Desired DJ count",
-    whyNeeded: "Blueprint compares the team you want with what your events need.",
+    label: "What’s the main reason you want more DJs?",
+    whyNeeded: "Blueprint uses your reason when it later checks the team you want.",
+    guidance: null,
+  },
+  {
+    key: "T8",
+    section: "team",
+    level: "go_deeper",
+    storage: "answers",
+    skipAllowed: false,
+    estimable: false,
+    version: 1,
+    label: "In the last 12 months, how often did a DJ problem affect an event?",
+    whyNeeded: "Problems at events tell Blueprint where your team is stretched.",
     guidance: null,
   },
 ]

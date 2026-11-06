@@ -19,6 +19,7 @@ export const ALL_READY_DONE_TEXT = "You’ve finished the sections that are read
 export const GOALS_OPENING =
   "Let’s start with where you want to go. Everything Blueprint suggests ties back to this."
 export const TEAM_OPENING = "Now your team: how many DJs you have, and how many you’d like."
+export { TEAM_OPENING_V2 } from "@/lib/blueprint/team-today"
 export const TEAM_FOOTER_NOTE = "The next sections are coming soon."
 
 const STATUS_TAGS: Record<SectionStatus, { status: "planned" | "progress" | "proven"; label: string }> = {
@@ -34,7 +35,9 @@ export function SectionStatusTag({ status }: { status: SectionStatus }) {
 }
 
 export function sectionsCompleteText(progress: BlueprintProgress) {
-  return `${progress.completeCount} of ${TOTAL_SECTIONS} sections complete`
+  const started =
+    progress.startedCount > 0 ? ` · ${progress.startedCount} started` : ""
+  return `${progress.completeCount} of ${TOTAL_SECTIONS} sections complete${started}`
 }
 
 const PRIMARY_LABELS = { start: "Start your Blueprint", continue: "Continue your Blueprint" } as const
@@ -64,10 +67,12 @@ function SectionRow({
   section,
   status,
   skipped,
+  toAnswer,
 }: {
   section: BlueprintSection
   status: SectionStatus
   skipped: number
+  toAnswer: number
 }) {
   return (
     <li className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-line py-4 first:border-t-0 first:pt-0 last:pb-0">
@@ -86,6 +91,9 @@ function SectionRow({
           <span className="text-[14px] text-muted">{section.description}</span>
           {skipped > 0 ? (
             <span className="text-[14px] text-muted">{skipped === 1 ? "1 skipped" : `${skipped} skipped`}</span>
+          ) : null}
+          {status === "needs_attention" && toAnswer > 0 ? (
+            <span className="text-[14px] text-muted">{toAnswer === 1 ? "1 to answer" : `${toAnswer} to answer`}</span>
           ) : null}
         </div>
       </div>
@@ -107,6 +115,7 @@ export function BlueprintSectionList({ progress }: { progress: BlueprintProgress
             section={section}
             status={progress.statuses[section.slug]}
             skipped={progress.skippedCounts[section.slug]}
+            toAnswer={progress.toAnswerCounts[section.slug]}
           />
         ))}
       </ol>
@@ -168,12 +177,14 @@ export function BlueprintSectionPage({
   opening,
   children,
   footer,
+  framed = true,
 }: {
   section: BlueprintSection
   status: SectionStatus
   opening: string
   children: ReactNode
   footer: ReactNode
+  framed?: boolean
 }) {
   return (
     <>
@@ -192,9 +203,13 @@ export function BlueprintSectionPage({
         </div>
         <p className="bp-type-lead max-w-[620px] text-ink-2">{opening}</p>
       </section>
-      <Card as="section" aria-labelledby="section-title" className="max-w-[900px] max-[760px]:p-[22px]!">
-        {children}
-      </Card>
+      {framed ? (
+        <Card as="section" aria-labelledby="section-title" className="max-w-[900px] max-[760px]:p-[22px]!">
+          {children}
+        </Card>
+      ) : (
+        children
+      )}
       <div id="blueprint-section-footer" className="flex flex-wrap items-center gap-3">
         {footer}
       </div>

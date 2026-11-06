@@ -30,7 +30,7 @@ export const BLUEPRINT_SECTIONS: readonly BlueprintSection[] = [
     number: 2,
     slug: "team",
     name: "Your team today",
-    description: "How many DJs you have, and how many you’d like",
+    description: "How many DJs you have, who can lead, and how many you’d like",
     live: true,
   },
   {
@@ -92,7 +92,10 @@ export type SectionStatus = "not_started" | "needs_attention" | "complete" | "co
 export type BlueprintProgress = {
   statuses: Record<BlueprintSectionSlug, SectionStatus>
   skippedCounts: Record<BlueprintSectionSlug, number>
+  toAnswerCounts: Record<BlueprintSectionSlug, number>
   completeCount: number
+  /** Live sections that Need attention. Hidden in the UI when 0. */
+  startedCount: number
   /** First live section with an unanswered core question, or null when none remain. */
   next: BlueprintSectionSlug | null
   /** Core question to focus inside `next`, when there is one. */

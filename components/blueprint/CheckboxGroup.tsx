@@ -109,7 +109,7 @@ export function CheckboxGroup({
                   name={name}
                   value={option.value}
                   checked={checked}
-                  onChange={(event) => toggle(option.value, event.target.checked)}
+                  onChange={() => toggle(option.value, !checked)}
                   aria-describedby={option.description ? `${optionId}-desc` : undefined}
                   aria-invalid={error ? true : undefined}
                 />

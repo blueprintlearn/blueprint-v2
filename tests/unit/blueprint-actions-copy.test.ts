@@ -12,7 +12,17 @@ const mocks = vi.hoisted(() => ({
   getCurrentMembership: vi.fn(),
   guided: true,
   goals: null as null | { primary: { goal: string }; others: unknown[] },
-  team: null as null | { currentDjCount: number; desiredDjCount: number | null },
+  team: null as null | {
+    currentDjCount: number | null
+    desiredDjCount: number | null
+    countBasis: "excludes_owner" | "includes_owner" | "unknown"
+    desiredCountBasis: "excludes_owner" | "includes_owner" | "unknown"
+    assistantOnlyCount: number | null
+    ownerDjFrequency: "regularly" | "sometimes" | "no" | null
+    leadCapableCount: number | null
+    earlierDjCount: number | null
+    earlierDesiredDjCount: number | null
+  },
   answers: [] as { questionKey: string; state: "answered" | "estimated" | "skipped"; value: unknown }[],
 }))
 
@@ -33,10 +43,14 @@ import {
   saveCompanyGoals,
   saveDesiredDjCount,
   saveOwnerGoal,
+  saveTeamRunsCard,
   saveTeamToday,
+  saveTeamTodayCard,
+  saveTeamWantedCard,
   skipQuestion,
 } from "@/lib/blueprint/actions"
-import { ALREADY_ANSWERED_MESSAGE, G3_CHOOSE_MESSAGE } from "@/lib/blueprint/questions"
+import { emptyTeamToday } from "@/lib/blueprint/team-today"
+import { ALREADY_ANSWERED_MESSAGE, G3_CHOOSE_MESSAGE, SAVE_FAILED_MESSAGE } from "@/lib/blueprint/questions"
 import { OWNER_GOAL_OTHER_REQUIRED_MESSAGE } from "@/lib/blueprint/goals"
 
 const initial = { error: null, savedAt: null }
@@ -59,7 +73,7 @@ beforeEach(() => {
   mocks.rpc.mockImplementation(async () => ({ error: mocks.dbError }))
   mocks.guided = true
   mocks.goals = null
-  mocks.team = null
+  mocks.team = emptyTeamToday()
   mocks.answers = []
   const deleteChain = {
     eq: () => deleteChain,
@@ -299,6 +313,144 @@ describe("saveAnswer and skipQuestion", () => {
   it("never offers a skip path for G2", async () => {
     expect(await skipQuestion("G2")).toEqual({ error: "That didn’t save. Please try again.", savedAt: null })
     expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+})
+
+describe("guided team today v2 actions", () => {
+  it("saves card 1 through save_team_today_v2 and confirms T1", async () => {
+    const data = new FormData()
+    data.set("t1", "4")
+    data.set("t1b", "1")
+    data.set("t2", "sometimes")
+    data.set("t3", "2")
+    const result = await saveTeamTodayCard(initial, data)
+    expect(result.error).toBeNull()
+    expect(mocks.rpc).toHaveBeenCalledWith(
+      "save_team_today_v2",
+      expect.objectContaining({
+        p_company_id: "company-a",
+        p_current_dj_count: 4,
+        p_assistant_only_count: 1,
+        p_owner_dj_frequency: "sometimes",
+        p_lead_capable_count: 2,
+        p_count_basis: "excludes_owner",
+      }),
+    )
+  })
+
+  it("refuses T3 when T1 is null", async () => {
+    mocks.team = emptyTeamToday()
+    const data = new FormData()
+    data.set("t3", "2")
+    expect(await saveTeamTodayCard(initial, data)).toEqual({ error: SAVE_FAILED_MESSAGE, savedAt: null })
+    expect(mocks.rpc).not.toHaveBeenCalled()
+  })
+
+  it("keeps T0 Yes from rewriting the stored count", async () => {
+    mocks.team = {
+      ...emptyTeamToday(),
+      currentDjCount: 6,
+      countBasis: "unknown",
+    }
+    const data = new FormData()
+    data.set("t0", "included")
+    const result = await saveTeamTodayCard(initial, data)
+    expect(result.error).toBeNull()
+    expect(mocks.rpc).toHaveBeenCalledWith(
+      "save_team_today_v2",
+      expect.objectContaining({
+        p_count_basis: "includes_owner",
+      }),
+    )
+    expect(mocks.rpc.mock.calls[0][1].p_current_dj_count).toBeUndefined()
+  })
+
+  it("saves T6 independently and confirms the desired basis", async () => {
+    const data = new FormData()
+    data.set("t6", "8")
+    const result = await saveTeamWantedCard(initial, data)
+    expect(result.error).toBeNull()
+    expect(mocks.rpc).toHaveBeenCalledWith("save_team_today_v2", {
+      p_company_id: "company-a",
+      p_desired_dj_count: 8,
+      p_desired_count_basis: "excludes_owner",
+    })
+  })
+
+  it("does not claim a runs-card save when T4 and T5 are empty", async () => {
+    expect(await saveTeamRunsCard(initial, new FormData())).toEqual({ error: null, savedAt: null })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+
+  it("does not claim a today or wanted save when those cards are empty", async () => {
+    expect(await saveTeamTodayCard(initial, new FormData())).toEqual({ error: null, savedAt: null })
+    expect(await saveTeamWantedCard(initial, new FormData())).toEqual({ error: null, savedAt: null })
+    expect(mocks.rpc).not.toHaveBeenCalled()
+  })
+
+  it("writes T4 and T5 from the runs card", async () => {
+    const data = new FormData()
+    data.append("t4", "manager")
+    data.append("t5", "finding_candidates")
+    const result = await saveTeamRunsCard(initial, data)
+    expect(result.error).toBeNull()
+    expect(result.savedAt).toEqual(expect.any(Number))
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "T4", state: "answered", value: ["manager"] }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        question_key: "T5",
+        state: "answered",
+        value: { codes: ["finding_candidates"], other: null },
+      }),
+      { onConflict: "company_id,question_key" },
+    )
+  })
+
+  it("refuses T4 nobody plus another trainer and T5's fourth choice", async () => {
+    const t4 = new FormData()
+    t4.append("t4", "nobody")
+    t4.append("t4", "i_do")
+    expect((await saveTeamRunsCard(initial, t4)).error).toBe("Nobody right now can’t be combined with the others.")
+    expect(mocks.upsert).not.toHaveBeenCalled()
+
+    const t5 = new FormData()
+    t5.append("t5", "finding_candidates")
+    t5.append("t5", "slow_to_ready")
+    t5.append("t5", "quality_varies")
+    t5.append("t5", "djs_leave")
+    expect((await saveTeamRunsCard(initial, t5)).error).toBe("Choose up to three.")
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+
+  it("refuses guided team writes when the switch is off", async () => {
+    mocks.guided = false
+    const today = new FormData()
+    today.set("t1", "2")
+    expect(await saveTeamTodayCard(initial, today)).toEqual({
+      error: "That didn’t save. Please try again.",
+      savedAt: null,
+    })
+    const wanted = new FormData()
+    wanted.set("t6", "4")
+    expect(await saveTeamWantedCard(initial, wanted)).toEqual({
+      error: "That didn’t save. Please try again.",
+      savedAt: null,
+    })
+    expect(mocks.rpc).not.toHaveBeenCalled()
+  })
+
+  it("refuses a manager on the guided team path", async () => {
+    mocks.membership = { companyId: "company-a", companyName: "Company A", role: "manager" }
+    const data = new FormData()
+    data.set("t1", "2")
+    expect(await saveTeamTodayCard(initial, data)).toEqual({
+      error: "Only the company owner can change this.",
+      savedAt: null,
+    })
+    expect(mocks.rpc).not.toHaveBeenCalled()
   })
 })
 

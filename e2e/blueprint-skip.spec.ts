@@ -42,12 +42,15 @@ test.describe("skip workflow on an empty local company", () => {
 
     await page.getByRole("link", { name: "Next: Your team today" }).click()
     await expect(page).toHaveURL(/\/blueprint\/team/)
-    await page.getByLabel("Current DJ count", { exact: true }).fill("3")
-    await page.getByRole("button", { name: "Save DJ count", exact: true }).click()
-    await expect(page.locator("form[data-saved-current-dj-count]").getByRole("status")).toHaveText("Saved")
+    await page.locator("#q-T1").getByRole("button", { name: "I’m not sure" }).click()
+    await page.locator("#q-T1").getByRole("button", { name: "Skip for now. You can answer it later." }).click()
+    await page.getByLabel(/only as assistants/).fill("2")
+    await page.getByRole("radio", { name: "No", exact: true }).check()
+    await page.getByRole("button", { name: "Save your team today" }).click()
+    await expect(page.locator("form[data-card='today'] .bp-save")).toHaveText("Saved")
 
     await page.goto("/blueprint")
-    await expect(page.getByText("0 of 8 sections complete")).toBeVisible()
+    await expect(page.getByText("0 of 8 sections complete · 2 started")).toBeVisible()
     await expect(row(page, "Your goals").getByText("Needs attention")).toBeVisible()
     await expect(row(page, "Your goals").getByText("1 skipped")).toBeVisible()
     await expect(row(page, "Your team today").getByText("Needs attention")).toBeVisible()
@@ -58,15 +61,23 @@ test.describe("skip workflow on an empty local company", () => {
     await expect(page.getByText("Pick up where you left off. These answers shape what Blueprint recommends.")).toBeVisible()
     await expect(blueprint.getByRole("link", { name: "Continue your Blueprint" })).toHaveAttribute(
       "href",
-      "/blueprint/team#q-TL6",
+      "/blueprint/team#q-T4",
     )
     await page.screenshot({ path: `${SHOTS}/slice3_owner_home_continue.png`, fullPage: true })
     await blueprint.getByRole("link", { name: "Continue your Blueprint" }).click()
     await expect(page).toHaveURL(/\/blueprint\/team/)
 
-    await page.getByLabel("Desired DJ count").fill("5")
-    await page.getByRole("button", { name: "Save desired DJ count", exact: true }).click()
-    await expect(page.locator("form[data-saved-desired-dj-count]").getByRole("status")).toHaveText("Saved")
+    await page.getByRole("checkbox", { name: "A manager" }).check()
+    await page.getByRole("checkbox", { name: "Finding good candidates" }).check()
+    await expect(page.getByRole("checkbox", { name: "A manager" })).toBeChecked()
+    await expect(page.getByRole("checkbox", { name: "Finding good candidates" })).toBeChecked()
+    await page.getByRole("button", { name: "Save how your team runs" }).click()
+    await expect(page.locator("form[data-card='runs'] .bp-save")).toHaveText("Saved")
+    await expect(page.locator("form[data-card='runs']")).toHaveAttribute("data-saved-t4", "manager")
+    await expect(page.locator("form[data-card='runs']")).toHaveAttribute("data-saved-t5", "finding_candidates")
+    await page.getByLabel(/DJs would you like|Earlier you said/).fill("5")
+    await page.getByRole("button", { name: "Save the team you want" }).click()
+    await expect(page.locator("form[data-card='wanted'] .bp-save")).toHaveText("Saved")
 
     await page.goto("/")
     await expect(blueprint.getByRole("link", { name: "Review your Blueprint" })).toHaveAttribute("href", "/blueprint")
@@ -98,9 +109,10 @@ test.describe("skip workflow on an empty local company", () => {
     await expect(page.locator("div:has(> h1) > .bp-status")).toHaveText("Complete")
 
     await page.goto("/blueprint")
-    await expect(page.getByText("2 of 8 sections complete")).toBeVisible()
+    await expect(page.getByText("1 of 8 sections complete · 1 started")).toBeVisible()
     await expect(row(page, "Your goals").getByText("Complete")).toBeVisible()
-    await expect(row(page, "Your team today").getByText("Complete")).toBeVisible()
+    await expect(row(page, "Your team today").getByText("Needs attention")).toBeVisible()
+    await expect(row(page, "Your team today").getByText("1 skipped")).toBeVisible()
   })
 
   test("G2 guidance has no Skip, and keyboard opens and closes the panel", async ({ page }) => {

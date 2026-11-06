@@ -30,7 +30,7 @@ test.describe("owner home in the browser", () => {
 
     const blueprint = card(page, "Your Company Blueprint")
     await expect(blueprint.locator(".bp-status")).toHaveCount(1)
-    await expect(blueprint.getByText(/^\d of 8 sections complete$/)).toBeVisible()
+    await expect(blueprint.getByText(/^\d of 8 sections complete( · \d started)?$/)).toBeVisible()
     const review = blueprint.getByRole("link", { name: "Review your Blueprint" })
     if (await review.count()) {
       await expect(review).toHaveClass(/\bbp-btn--soft\b/)

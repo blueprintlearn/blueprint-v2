@@ -69,9 +69,9 @@ test.describe("Slice 3 design-review screenshot matrix", () => {
     await captureMatrix(page, "g2_help")
 
     await page.getByRole("link", { name: "Next: Your team today" }).click()
-    await page.getByLabel("Current DJ count", { exact: true }).fill("3")
-    await page.getByRole("button", { name: "Save DJ count", exact: true }).click()
-    await expect(page.locator("form[data-saved-current-dj-count]").getByRole("status")).toHaveText("Saved")
+    await page.getByLabel(/Not counting yourself, how many DJs work events/).fill("3")
+    await page.getByRole("button", { name: "Save your team today" }).click()
+    await expect(page.locator("form[data-card='today'] .bp-save")).toHaveText("Saved")
 
     await page.goto("/blueprint")
     await expect(page.getByText("1 skipped")).toBeVisible()

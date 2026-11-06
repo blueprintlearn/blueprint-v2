@@ -133,13 +133,13 @@ isOneToOne: false
                   ]
                 },"company_team_today": {
                   Row: {
-                    "company_id": string,"created_at": string,"current_dj_count": number,"desired_dj_count": number | null,"updated_at": string
+                    "assistant_only_count": number | null,"company_id": string,"count_basis": Database["public"]['Enums']["team_count_basis"],"count_confirmed_at": string | null,"created_at": string,"current_dj_count": number | null,"desired_confirmed_at": string | null,"desired_count_basis": Database["public"]['Enums']["team_count_basis"],"desired_dj_count": number | null,"earlier_desired_dj_count": number | null,"earlier_dj_count": number | null,"lead_capable_count": number | null,"owner_dj_frequency": Database["public"]['Enums']["owner_dj_frequency"] | null,"updated_at": string
                   }
                   Insert: {
-                    "company_id": string,"created_at"?: string,"current_dj_count": number,"desired_dj_count"?: number | null,"updated_at"?: string
+                    "assistant_only_count"?: number | null,"company_id": string,"count_basis"?: Database["public"]['Enums']["team_count_basis"],"count_confirmed_at"?: string | null,"created_at"?: string,"current_dj_count"?: number | null,"desired_confirmed_at"?: string | null,"desired_count_basis"?: Database["public"]['Enums']["team_count_basis"],"desired_dj_count"?: number | null,"earlier_desired_dj_count"?: number | null,"earlier_dj_count"?: number | null,"lead_capable_count"?: number | null,"owner_dj_frequency"?: Database["public"]['Enums']["owner_dj_frequency"] | null,"updated_at"?: string
                   }
                   Update: {
-                    "company_id"?: string,"created_at"?: string,"current_dj_count"?: number,"desired_dj_count"?: number | null,"updated_at"?: string
+                    "assistant_only_count"?: number | null,"company_id"?: string,"count_basis"?: Database["public"]['Enums']["team_count_basis"],"count_confirmed_at"?: string | null,"created_at"?: string,"current_dj_count"?: number | null,"desired_confirmed_at"?: string | null,"desired_count_basis"?: Database["public"]['Enums']["team_count_basis"],"desired_dj_count"?: number | null,"earlier_desired_dj_count"?: number | null,"earlier_dj_count"?: number | null,"lead_capable_count"?: number | null,"owner_dj_frequency"?: Database["public"]['Enums']["owner_dj_frequency"] | null,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -171,10 +171,13 @@ isOneToOne: true
       } },
 "save_company_goals":
 { Args: { "p_company_id": string,"p_goals": (Database["public"]['Enums']["owner_goal_code"])[],"p_other_text": string,"p_primary": Database["public"]['Enums']["owner_goal_code"] }; Returns: undefined
+                           },
+"save_team_today_v2":
+{ Args: { "p_assistant_only_count"?: number,"p_company_id": string,"p_count_basis"?: Database["public"]['Enums']["team_count_basis"],"p_current_dj_count"?: number,"p_desired_count_basis"?: Database["public"]['Enums']["team_count_basis"],"p_desired_dj_count"?: number,"p_lead_capable_count"?: number,"p_owner_dj_frequency"?: Database["public"]['Enums']["owner_dj_frequency"] }; Returns: undefined
                            }
           }
           Enums: {
-            "answer_state": "answered"|"estimated"|"skipped","owner_goal_code": "dj_less"|"stop_djing"|"scale"|"expand"|"improve_quality"|"create_leadership"|"other","system_role": "owner_admin"|"manager"|"trainer_mentor"|"dj_trainee"
+            "answer_state": "answered"|"estimated"|"skipped","owner_dj_frequency": "regularly"|"sometimes"|"no","owner_goal_code": "dj_less"|"stop_djing"|"scale"|"expand"|"improve_quality"|"create_leadership"|"other","system_role": "owner_admin"|"manager"|"trainer_mentor"|"dj_trainee","team_count_basis": "excludes_owner"|"includes_owner"|"unknown"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -294,7 +297,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "answer_state": ["answered", "estimated", "skipped"],"owner_goal_code": ["dj_less", "stop_djing", "scale", "expand", "improve_quality", "create_leadership", "other"],"system_role": ["owner_admin", "manager", "trainer_mentor", "dj_trainee"]
+            "answer_state": ["answered", "estimated", "skipped"],"owner_dj_frequency": ["regularly", "sometimes", "no"],"owner_goal_code": ["dj_less", "stop_djing", "scale", "expand", "improve_quality", "create_leadership", "other"],"system_role": ["owner_admin", "manager", "trainer_mentor", "dj_trainee"],"team_count_basis": ["excludes_owner", "includes_owner", "unknown"]
           }
         }
 } as const

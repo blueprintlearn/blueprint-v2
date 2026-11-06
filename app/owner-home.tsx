@@ -3,6 +3,8 @@ import Link from "next/link"
 
 import { Card, Fact, StatusTag } from "@/components/blueprint"
 import { OWNER_GOAL_LABELS, type OwnerGoalCode } from "@/lib/blueprint/goals"
+import type { TeamCountBasis } from "@/lib/blueprint/team-today"
+import { includesOwnerT1Note, isConfirmedCount } from "@/lib/blueprint/team-today"
 import { systemRoleLabel } from "@/lib/rules/system-role"
 
 export const OWNER_LEAD = "Start your Company Blueprint. These answers shape what Blueprint recommends."
@@ -63,11 +65,18 @@ const cardClass = "max-[760px]:p-[22px]!"
 export function TeamTodayCard({
   currentDjCount,
   desiredDjCount,
+  countBasis = "unknown",
+  desiredCountBasis = "unknown",
+  guided = false,
   editor,
   editHref,
 }: {
   currentDjCount: number | null
   desiredDjCount: number | null
+  countBasis?: TeamCountBasis
+  desiredCountBasis?: TeamCountBasis
+  /** Switch-on owner home: basis-aware labels and the confirm prompt. */
+  guided?: boolean
   editor?: ReactNode
   /** Owner of a company with the guided Blueprint on: facts here, editing in the Blueprint. */
   editHref?: string
@@ -81,6 +90,17 @@ export function TeamTodayCard({
     ) : (
       <StatusTag status="proven" label="Answered" />
     )
+  const includedYou = guided && countBasis === "includes_owner" && currentDjCount !== null
+  const currentLabel = includedYou
+    ? "Earlier answer (included you)"
+    : guided && isConfirmedCount(currentDjCount, countBasis)
+      ? "DJs (not counting you)"
+      : "Current DJ count"
+  const desiredLabel =
+    guided && isConfirmedCount(desiredDjCount, desiredCountBasis)
+      ? "DJs you’d like (not counting you)"
+      : "Desired DJ count"
+  const showConfirm = guided && countBasis === "unknown" && currentDjCount !== null
 
   return (
     <Card as="section" aria-labelledby="team-today-title" className={cardClass}>
@@ -95,9 +115,25 @@ export function TeamTodayCard({
       ) : (
         <>
           <div className="grid grid-cols-2 gap-5">
-            <Fact label="Current DJ count" value={currentDjCount} />
-            <Fact label="Desired DJ count" value={desiredDjCount} />
+            <Fact label={currentLabel} value={currentDjCount} />
+            <Fact label={desiredLabel} value={desiredDjCount} />
           </div>
+          {showConfirm ? (
+            <p className="m-0 text-[14px] text-ink-2">
+              Does this include you?{" "}
+              <Link href="/blueprint/team#q-T0" className="bp-link">
+                Confirm in your Blueprint
+              </Link>
+            </p>
+          ) : null}
+          {includedYou && currentDjCount !== null ? (
+            <p className="m-0 text-[14px] text-ink-2">
+              {includesOwnerT1Note(currentDjCount)}{" "}
+              <Link href="/blueprint/team#q-T1" className="bp-link">
+                Add your team count
+              </Link>
+            </p>
+          ) : null}
           {editHref ? <EditInBlueprintLink href={editHref} about="Team today" /> : <OwnerOnlyNote />}
         </>
       )}

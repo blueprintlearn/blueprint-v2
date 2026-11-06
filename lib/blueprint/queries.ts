@@ -17,6 +17,12 @@ import {
   CURRENT_DJ_COUNT_MIN,
   DESIRED_DJ_COUNT_MAX,
   DESIRED_DJ_COUNT_MIN,
+  OWNER_DJ_FREQUENCIES,
+  TEAM_COUNT_BASES,
+  emptyTeamToday,
+  type AnswerTeamToday,
+  type OwnerDjFrequency,
+  type TeamCountBasis,
 } from "@/lib/blueprint/team-today"
 
 export type CurrentOwnerGoal = OwnerGoalInput & {
@@ -118,26 +124,32 @@ export function companyGoalsAlsoLine(goals: CurrentCompanyGoals | null): string 
   return goals.others.length === 0 ? null : `Also: ${goals.others.map(goalDisplayLabel).join(", ")}`
 }
 
-export type CurrentTeamToday = {
+export type CurrentTeamToday = AnswerTeamToday & {
   companyId: string
-  currentDjCount: number
-  desiredDjCount: number | null
 }
 
-function asDjCount(value: number, min: number, max: number): number | null {
-  return Number.isInteger(value) && value >= min && value <= max ? value : null
+function asDjCount(value: number | null, min: number, max: number): number | null {
+  return value !== null && Number.isInteger(value) && value >= min && value <= max ? value : null
 }
 
-function asCurrentDjCount(value: number): number | null {
+function asCurrentDjCount(value: number | null): number | null {
   return asDjCount(value, CURRENT_DJ_COUNT_MIN, CURRENT_DJ_COUNT_MAX)
 }
 
 function asDesiredDjCount(value: number | null): number | null {
-  if (value === null) {
-    return null
-  }
-
   return asDjCount(value, DESIRED_DJ_COUNT_MIN, DESIRED_DJ_COUNT_MAX)
+}
+
+function asBasis(value: string | null | undefined): TeamCountBasis {
+  return value && (TEAM_COUNT_BASES as readonly string[]).includes(value)
+    ? (value as TeamCountBasis)
+    : "unknown"
+}
+
+function asFrequency(value: string | null | undefined): OwnerDjFrequency | null {
+  return value && (OWNER_DJ_FREQUENCIES as readonly string[]).includes(value)
+    ? (value as OwnerDjFrequency)
+    : null
 }
 
 export type StoredBlueprintAnswer = {
@@ -198,7 +210,9 @@ export async function getCurrentTeamToday(): Promise<CurrentTeamToday | null> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from("company_team_today")
-    .select("company_id, current_dj_count, desired_dj_count")
+    .select(
+      "company_id, current_dj_count, desired_dj_count, count_basis, desired_count_basis, assistant_only_count, owner_dj_frequency, lead_capable_count, earlier_dj_count, earlier_desired_dj_count",
+    )
     .eq("company_id", membership.companyId)
     .maybeSingle()
 
@@ -206,14 +220,17 @@ export async function getCurrentTeamToday(): Promise<CurrentTeamToday | null> {
     return null
   }
 
-  const currentDjCount = asCurrentDjCount(data.current_dj_count)
-  if (currentDjCount === null) {
-    return null
-  }
-
   return {
     companyId: data.company_id,
-    currentDjCount,
+    ...emptyTeamToday(),
+    currentDjCount: asCurrentDjCount(data.current_dj_count),
     desiredDjCount: asDesiredDjCount(data.desired_dj_count),
+    countBasis: asBasis(data.count_basis),
+    desiredCountBasis: asBasis(data.desired_count_basis),
+    assistantOnlyCount: asDesiredDjCount(data.assistant_only_count),
+    ownerDjFrequency: asFrequency(data.owner_dj_frequency),
+    leadCapableCount: asDesiredDjCount(data.lead_capable_count),
+    earlierDjCount: asCurrentDjCount(data.earlier_dj_count),
+    earlierDesiredDjCount: asDesiredDjCount(data.earlier_desired_dj_count),
   }
 }
