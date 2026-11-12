@@ -2,9 +2,11 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import { companyGoalCodes, companyGoalsOtherText } from "@/lib/blueprint/company-goals"
+import { EVENTS_FOOTER_NOTE, EVENTS_OPENING } from "@/lib/blueprint/events"
 import { loadGuidedBlueprint, requireGuidedOwner } from "@/lib/blueprint/guard"
 import { blueprintSection } from "@/lib/blueprint/progress"
 
+import { EventsGuidedForm } from "../../events-guided-form"
 import { FocusQuestion } from "../../focus-question"
 import { OwnerGoalsForm } from "../../owner-goals-form"
 import { TeamTodayGuidedForm } from "../../team-today-guided-form"
@@ -12,7 +14,6 @@ import {
   BlueprintSectionPage,
   BlueprintShell,
   GOALS_OPENING,
-  TEAM_FOOTER_NOTE,
   TEAM_OPENING_V2,
 } from "../blueprint-ui"
 
@@ -24,7 +25,7 @@ export default async function BlueprintSectionRoute({
   const membership = await requireGuidedOwner()
   const { section: slug } = await params
 
-  if (slug !== "goals" && slug !== "team") {
+  if (slug !== "goals" && slug !== "team" && slug !== "events") {
     redirect("/blueprint")
   }
 
@@ -67,6 +68,33 @@ export default async function BlueprintSectionRoute({
     )
   }
 
+  if (slug === "events") {
+    return (
+      <BlueprintShell>
+        <FocusQuestion questionId={focusId} />
+        <BlueprintSectionPage
+          section={section}
+          status={status}
+          opening={EVENTS_OPENING}
+          framed={false}
+          footer={
+            <>
+              <Link href="/blueprint/team" className="bp-btn bp-btn--plain">
+                Previous: Your team today
+              </Link>
+              <Link href="/blueprint" className="bp-btn bp-btn--soft">
+                Back to your Blueprint
+              </Link>
+              <p className="m-0 text-ink-2">{EVENTS_FOOTER_NOTE}</p>
+            </>
+          }
+        >
+          <EventsGuidedForm resolved={resolved} />
+        </BlueprintSectionPage>
+      </BlueprintShell>
+    )
+  }
+
   return (
     <BlueprintShell>
       <FocusQuestion questionId={focusId} />
@@ -80,10 +108,9 @@ export default async function BlueprintSectionRoute({
             <Link href="/blueprint/goals" className="bp-btn bp-btn--plain">
               Previous: Your goals
             </Link>
-            <Link href="/blueprint" className="bp-btn bp-btn--soft">
-              Back to your Blueprint
+            <Link href="/blueprint/events" id="blueprint-next" className="bp-btn bp-btn--soft">
+              Next: Your events
             </Link>
-            <p className="m-0 text-ink-2">{TEAM_FOOTER_NOTE}</p>
           </>
         }
       >

@@ -42,6 +42,9 @@ import {
   saveAnswer,
   saveCompanyGoals,
   saveDesiredDjCount,
+  saveEventsFutureCard,
+  saveEventsStaffCard,
+  saveEventsTodayCard,
   saveOwnerGoal,
   saveTeamRunsCard,
   saveTeamToday,
@@ -289,7 +292,7 @@ describe("saveAnswer and skipQuestion", () => {
   })
 
   it("refuses unknown, financial and typed keys before touching the database", async () => {
-    for (const key of ["N1", "E1", "G1", "nope"]) {
+    for (const key of ["N1", "E0", "G1", "nope"]) {
       const data = new FormData()
       data.set("questionKey", key)
       data.set("value", "within_6_months")
@@ -451,6 +454,161 @@ describe("guided team today v2 actions", () => {
       savedAt: null,
     })
     expect(mocks.rpc).not.toHaveBeenCalled()
+  })
+})
+
+describe("save events cards", () => {
+  it("does not claim a save when the cards are empty", async () => {
+    expect(await saveEventsTodayCard(initial, new FormData())).toEqual({ error: null, savedAt: null })
+    expect(await saveEventsStaffCard(initial, new FormData())).toEqual({ error: null, savedAt: null })
+    expect(await saveEventsFutureCard(initial, new FormData())).toEqual({ error: null, savedAt: null })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+
+  it("writes a partial today card and keeps other event answers", async () => {
+    const data = new FormData()
+    data.append("e1", "wedding")
+    data.append("e1", "other")
+    data.set("e1Other", "Bar mitzvahs")
+    const result = await saveEventsTodayCard(initial, data)
+    expect(result.error).toBeNull()
+    expect(result.savedAt).toEqual(expect.any(Number))
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        question_key: "E1",
+        state: "answered",
+        value: { codes: ["wedding", "other"], other: "Bar mitzvahs" },
+      }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).not.toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "E2" }),
+      expect.anything(),
+    )
+  })
+
+  it("marks an annual volume from the helper as estimated", async () => {
+    const data = new FormData()
+    data.set("e2", "96")
+    data.set("e2Estimated", "1")
+    const result = await saveEventsTodayCard(initial, data)
+    expect(result.error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "E2", state: "estimated", value: 96 }),
+      { onConflict: "company_id,question_key" },
+    )
+  })
+
+  it("rejects an annual volume outside 0 to 9,999", async () => {
+    for (const value of ["-1", "10000", "12.5", "abc"]) {
+      const data = new FormData()
+      data.set("e2", value)
+      expect(await saveEventsTodayCard(initial, data)).toEqual({
+        error: "Enter a whole number from 0 to 9,999.",
+        savedAt: null,
+      })
+    }
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+
+  it("keeps a named custom type when later cards select Other", async () => {
+    mocks.answers = [
+      { questionKey: "E1", state: "answered", value: { codes: ["wedding", "other"], other: "Bar mitzvahs" } },
+    ]
+    const staff = new FormData()
+    staff.append("e4", "other")
+    expect((await saveEventsStaffCard(initial, staff)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        question_key: "E4",
+        value: { codes: ["other"], other: "Bar mitzvahs" },
+      }),
+      { onConflict: "company_id,question_key" },
+    )
+
+    const future = new FormData()
+    future.append("e7", "other")
+    expect((await saveEventsFutureCard(initial, future)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        question_key: "E7",
+        value: { codes: ["other"], other: "Bar mitzvahs" },
+      }),
+      { onConflict: "company_id,question_key" },
+    )
+  })
+
+  it("rejects most-common types that are not already offered", async () => {
+    mocks.answers = [
+      { questionKey: "E1", state: "answered", value: { codes: ["wedding"], other: null } },
+    ]
+    const data = new FormData()
+    data.append("e3", "corporate")
+    expect(await saveEventsTodayCard(initial, data)).toEqual({
+      error: "Choose from the event types you already offer.",
+      savedAt: null,
+    })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+
+  it("rejects new types that overlap current types", async () => {
+    mocks.answers = [
+      { questionKey: "E1", state: "answered", value: { codes: ["wedding", "corporate"], other: null } },
+    ]
+    const data = new FormData()
+    data.append("e8", "wedding")
+    expect(await saveEventsFutureCard(initial, data)).toEqual({
+      error: "Choose types you don’t already offer.",
+      savedAt: null,
+    })
+  })
+
+  it("writes staffing and future cards, including both as a future focus", async () => {
+    const staff = new FormData()
+    staff.append("e4", "corporate")
+    staff.append("e5", "wedding")
+    staff.set("e6", "assistant")
+    expect((await saveEventsStaffCard(initial, staff)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "E6", value: "assistant" }),
+      { onConflict: "company_id,question_key" },
+    )
+
+    const future = new FormData()
+    future.set("e9", "both")
+    expect((await saveEventsFutureCard(initial, future)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "E9", value: "both" }),
+      { onConflict: "company_id,question_key" },
+    )
+  })
+
+  it("lets skipQuestion skip an events core, and refuses it once answered", async () => {
+    const skipped = await skipQuestion("E2")
+    expect(skipped.error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "E2", state: "skipped", value: null }),
+      { onConflict: "company_id,question_key" },
+    )
+    mocks.answers = [{ questionKey: "E2", state: "skipped", value: null }]
+    expect(await skipQuestion("E2")).toEqual({ error: ALREADY_ANSWERED_MESSAGE, savedAt: null })
+  })
+
+  it("refuses events writes when the switch is off or the caller is a manager", async () => {
+    mocks.guided = false
+    const data = new FormData()
+    data.append("e1", "wedding")
+    expect(await saveEventsTodayCard(initial, data)).toEqual({
+      error: "That didn’t save. Please try again.",
+      savedAt: null,
+    })
+    mocks.guided = true
+    mocks.membership = { companyId: "company-a", companyName: "Company A", role: "manager" }
+    expect(await saveEventsTodayCard(initial, data)).toEqual({
+      error: "Only the company owner can change this.",
+      savedAt: null,
+    })
+    expect(mocks.upsert).not.toHaveBeenCalled()
   })
 })
 

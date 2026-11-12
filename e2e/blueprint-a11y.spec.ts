@@ -44,4 +44,20 @@ test.describe("guided Blueprint accessibility", () => {
     const results = await new AxeBuilder({ page }).analyze()
     expect(results.violations.filter((item) => item.impact === "serious" || item.impact === "critical")).toEqual([])
   })
+
+  test("Your events with the estimate helper open has no serious or critical axe issues", async ({ page }) => {
+    ensureEmptyGuidedCompany()
+    await signIn(page)
+    await page.goto("/blueprint/events")
+    await page.locator("#q-E2").getByRole("button", { name: "I’m not sure" }).click()
+    await expect(page.getByRole("region", { name: /Help with: About how many events/ })).toBeVisible()
+    await expect(page.getByLabel("Events in a typical month")).toBeVisible()
+    const open = await new AxeBuilder({ page }).analyze()
+    expect(open.violations.filter((item) => item.impact === "serious" || item.impact === "critical")).toEqual([])
+
+    await page.locator("#q-E2").getByRole("button", { name: "Skip for now. You can answer it later." }).click()
+    await expect(page.locator("#q-E2").getByText("You skipped this for now.")).toBeVisible()
+    const skipped = await new AxeBuilder({ page }).analyze()
+    expect(skipped.violations.filter((item) => item.impact === "serious" || item.impact === "critical")).toEqual([])
+  })
 })

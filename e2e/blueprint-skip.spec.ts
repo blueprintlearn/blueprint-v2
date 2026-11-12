@@ -52,7 +52,14 @@ test.describe("skip workflow on an empty local company", () => {
     await page.goto("/blueprint")
     await expect(page.getByText("0 of 8 sections complete · 2 started")).toBeVisible()
     await expect(row(page, "Your goals").getByText("Needs attention")).toBeVisible()
-    await expect(row(page, "Your goals").getByText("1 skipped")).toBeVisible()
+    await expect(row(page, "Your goals").getByRole("link", { name: "1 skipped" })).toHaveAttribute(
+      "href",
+      "/blueprint/goals#q-G1",
+    )
+    await row(page, "Your goals").getByRole("link", { name: "1 skipped" }).click()
+    await expect(page).toHaveURL(/\/blueprint\/goals#q-G1/)
+    await expect(page.locator("#q-G1").getByText("You skipped this for now.")).toBeVisible()
+    await page.goto("/blueprint")
     await expect(row(page, "Your team today").getByText("Needs attention")).toBeVisible()
     await page.screenshot({ path: `${SHOTS}/slice3_overview_needs_attention_skipped.png`, fullPage: true })
 
@@ -80,12 +87,14 @@ test.describe("skip workflow on an empty local company", () => {
     await expect(page.locator("form[data-card='wanted'] .bp-save")).toHaveText("Saved")
 
     await page.goto("/")
-    await expect(blueprint.getByRole("link", { name: "Review your Blueprint" })).toHaveAttribute("href", "/blueprint")
-    await blueprint.getByRole("link", { name: "Review your Blueprint" }).click()
-    await expect(page).toHaveURL("/blueprint")
+    await expect(blueprint.getByRole("link", { name: "Continue your Blueprint" })).toHaveAttribute(
+      "href",
+      "/blueprint/events#q-E1",
+    )
+    await page.goto("/blueprint")
     await expect(page.getByRole("heading", { level: 1, name: "Your Company Blueprint" })).toBeVisible()
 
-    await row(page, "Your goals").getByRole("link").click()
+    await row(page, "Your goals").getByRole("link", { name: "Your goals" }).click()
     await page.getByRole("checkbox", { name: /Scale/ }).check()
     await page.getByRole("button", { name: "Save goals", exact: true }).click()
     await expect(page.locator("form[data-saved-company-goals] .bp-save")).toHaveText("Saved")

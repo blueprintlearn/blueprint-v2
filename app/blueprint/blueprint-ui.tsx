@@ -21,6 +21,7 @@ export const GOALS_OPENING =
 export const TEAM_OPENING = "Now your team: how many DJs you have, and how many you’d like."
 export { TEAM_OPENING_V2 } from "@/lib/blueprint/team-today"
 export const TEAM_FOOTER_NOTE = "The next sections are coming soon."
+export { EVENTS_OPENING, EVENTS_FOOTER_NOTE } from "@/lib/blueprint/events"
 
 const STATUS_TAGS: Record<SectionStatus, { status: "planned" | "progress" | "proven"; label: string }> = {
   not_started: { status: "planned", label: "Not started" },
@@ -68,12 +69,19 @@ function SectionRow({
   status,
   skipped,
   toAnswer,
+  revisitKey,
+  skippedKey,
 }: {
   section: BlueprintSection
   status: SectionStatus
   skipped: number
   toAnswer: number
+  revisitKey: string | null
+  skippedKey: string | null
 }) {
+  const href = sectionHref(section.slug, status === "needs_attention" ? revisitKey : null)
+  const skippedHref = skippedKey ? sectionHref(section.slug, skippedKey) : null
+  const skippedLabel = skipped === 1 ? "1 skipped" : `${skipped} skipped`
   return (
     <li className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-line py-4 first:border-t-0 first:pt-0 last:pb-0">
       <div className="flex min-w-0 flex-1 basis-[260px] items-baseline gap-3">
@@ -82,15 +90,19 @@ function SectionRow({
         </span>
         <div className="flex min-w-0 flex-col gap-0.5">
           {section.live ? (
-            <Link href={sectionHref(section.slug)} className="bp-link font-bold">
+            <Link href={href} className="bp-link font-bold">
               {section.name}
             </Link>
           ) : (
             <span className="font-bold text-ink">{section.name}</span>
           )}
           <span className="text-[14px] text-muted">{section.description}</span>
-          {skipped > 0 ? (
-            <span className="text-[14px] text-muted">{skipped === 1 ? "1 skipped" : `${skipped} skipped`}</span>
+          {skipped > 0 && skippedHref ? (
+            <Link href={skippedHref} className="bp-link text-[14px]">
+              {skippedLabel}
+            </Link>
+          ) : skipped > 0 ? (
+            <span className="text-[14px] text-muted">{skippedLabel}</span>
           ) : null}
           {status === "needs_attention" && toAnswer > 0 ? (
             <span className="text-[14px] text-muted">{toAnswer === 1 ? "1 to answer" : `${toAnswer} to answer`}</span>
@@ -116,6 +128,8 @@ export function BlueprintSectionList({ progress }: { progress: BlueprintProgress
             status={progress.statuses[section.slug]}
             skipped={progress.skippedCounts[section.slug]}
             toAnswer={progress.toAnswerCounts[section.slug]}
+            revisitKey={progress.revisitKeys[section.slug]}
+            skippedKey={progress.skippedKeys[section.slug]}
           />
         ))}
       </ol>

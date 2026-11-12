@@ -227,32 +227,47 @@ function unansweredCores(section: BlueprintSectionSlug, resolved: readonly Resol
   )
 }
 
+function skippedCores(section: BlueprintSectionSlug, resolved: readonly ResolvedAnswer[]): ResolvedAnswer[] {
+  return resolved.filter(
+    (row) =>
+      row.question.section === section &&
+      row.question.level === "core" &&
+      row.state === "skipped",
+  )
+}
+
+function firstCoreInOrder(
+  sections: readonly BlueprintSectionSlug[],
+  resolved: readonly ResolvedAnswer[],
+  pick: (section: BlueprintSectionSlug) => ResolvedAnswer | undefined,
+): { section: BlueprintSectionSlug; questionKey: QuestionKey } | null {
+  for (const section of sections) {
+    const first = pick(section)
+    if (first) return { section, questionKey: first.key }
+  }
+  return null
+}
+
 export function continueTarget(
   resolved: readonly ResolvedAnswer[],
   resume: BlueprintResume | null,
 ): { section: BlueprintSectionSlug; questionKey: QuestionKey } | null {
   const live = LIVE_SECTION_SLUGS
   const last = resume?.lastSection && live.includes(resume.lastSection) ? resume.lastSection : null
+  const afterLast = last ? live.slice(live.indexOf(last) + 1) : []
+  const searchUnanswered = last ? [last, ...afterLast, ...live] : live
+  const unanswered = firstCoreInOrder(searchUnanswered, resolved, (section) => unansweredCores(section, resolved)[0])
+  if (unanswered) return unanswered
 
-  if (last) {
-    const inLast = unansweredCores(last, resolved)[0]
-    if (inLast) return { section: last, questionKey: inLast.key }
-  }
+  const searchSkipped = last ? [last, ...afterLast, ...live] : live
+  return firstCoreInOrder(searchSkipped, resolved, (section) => skippedCores(section, resolved)[0])
+}
 
-  if (last) {
-    const after = live.slice(live.indexOf(last) + 1)
-    for (const section of after) {
-      const first = unansweredCores(section, resolved)[0]
-      if (first) return { section, questionKey: first.key }
-    }
-  }
-
-  for (const section of live) {
-    const first = unansweredCores(section, resolved)[0]
-    if (first) return { section, questionKey: first.key }
-  }
-
-  return null
+export function revisitKey(
+  section: BlueprintSectionSlug,
+  resolved: readonly ResolvedAnswer[],
+): QuestionKey | null {
+  return unansweredCores(section, resolved)[0]?.key ?? skippedCores(section, resolved)[0]?.key ?? null
 }
 
 export function getBlueprintProgressFromStates(
@@ -278,6 +293,12 @@ export function getBlueprintProgressFromStates(
   const completeCount = LIVE_SECTION_SLUGS.filter((slug) => statuses[slug] === "complete").length
   const startedCount = LIVE_SECTION_SLUGS.filter((slug) => statuses[slug] === "needs_attention").length
   const target = continueTarget(resolved, resume)
+  const revisitKeys = Object.fromEntries(
+    BLUEPRINT_SECTIONS.map((section) => [section.slug, revisitKey(section.slug, resolved)]),
+  ) as Record<BlueprintSectionSlug, QuestionKey | null>
+  const skippedKeys = Object.fromEntries(
+    BLUEPRINT_SECTIONS.map((section) => [section.slug, skippedCores(section.slug, resolved)[0]?.key ?? null]),
+  ) as Record<BlueprintSectionSlug, QuestionKey | null>
   const teamStartedOnly =
     Boolean(context && hasStoredTeamCount(context.teamToday)) &&
     !anythingTouched(resolved) &&
@@ -292,6 +313,8 @@ export function getBlueprintProgressFromStates(
     startedCount,
     next: target?.section ?? null,
     focusQuestionKey: target?.questionKey ?? null,
+    revisitKeys,
+    skippedKeys,
     action,
   }
 }
