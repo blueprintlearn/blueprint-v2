@@ -37,7 +37,7 @@ export const BLUEPRINT_SECTIONS: readonly BlueprintSection[] = [
     number: 3,
     slug: "events",
     name: "Your events",
-    description: "How many events you book, who works them, and your busiest dates",
+    description: "How many events you book, who works them, and what you want next",
     live: true,
   },
   {
@@ -100,6 +100,10 @@ export type BlueprintProgress = {
   next: BlueprintSectionSlug | null
   /** Core question to focus inside `next`, when there is one. */
   focusQuestionKey: string | null
-  /** start: nothing answered or skipped. continue: a live unanswered core remains. review: only skips or everything complete. */
+  /** First unanswered or skipped core in a live section, for Needs attention row links. */
+  revisitKeys: Record<BlueprintSectionSlug, string | null>
+  /** First skipped core in a live section, for the skipped-count link. */
+  skippedKeys: Record<BlueprintSectionSlug, string | null>
+  /** start: nothing answered or skipped. continue: a live unanswered or skipped core remains. review: every live section complete. */
   action: "start" | "continue" | "review"
 }

@@ -34,7 +34,7 @@ const primaryLink = (markup: string) =>
 const APPROVED = [
   ["Your goals", "What you want Blueprint to help you do"],
   ["Your team today", "How many DJs you have, who can lead, and how many you’d like"],
-  ["Your events", "How many events you book, who works them, and your busiest dates"],
+  ["Your events", "How many events you book, who works them, and what you want next"],
   ["Your services and market", "What your DJs handle at events, and where your prices sit"],
   ["Your numbers", "What each event really earns, private to you"],
   ["How you develop DJs", "How you hire and train today, and what to keep"],
@@ -116,7 +116,9 @@ describe("BlueprintSectionList", () => {
     expect(text(html(h(BlueprintSectionList, { progress: partlyTeam })))).toContain("Needs attention")
     expect(text(html(h(BlueprintSectionList, { progress: partlyTeam })))).toMatch(/\d to answer/)
     const skipped = progressOf(null, null, [{ questionKey: "G1", state: "skipped", value: null }])
-    expect(text(html(h(BlueprintSectionList, { progress: skipped })))).toContain("1 skipped")
+    const skippedOut = html(h(BlueprintSectionList, { progress: skipped }))
+    expect(text(skippedOut)).toContain("1 skipped")
+    expect(skippedOut).toContain('href="/blueprint/goals#q-G1"')
   })
 })
 

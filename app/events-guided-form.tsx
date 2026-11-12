@@ -27,14 +27,16 @@ import {
   E2_ESTIMATE_UNIT,
   E2_FIELD_HELP,
   EVENT_OTHER_TEXT_MAX,
+  EVENT_TYPE_CODES,
   EVENT_TYPE_OPTIONS,
   FUTURE_FOCUS_OPTIONS,
   NEW_DJ_PATH_OPTIONS,
   estimateAnnualVolume,
   eventTypesFromUnknown,
+  labeledEventOptions,
+  namedOtherLabel,
   newTypeOptions,
   skippedEventsNote,
-  staffingOptions,
 } from "@/lib/blueprint/events"
 import { ALREADY_ANSWERED_MESSAGE, QUESTION_BY_KEY } from "@/lib/blueprint/questions"
 
@@ -124,6 +126,8 @@ function TodayCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
   const e3 = typesValue(resolved, "E3")
   const e2State = stateOf(resolved, "E2")
   const e2Saved = typeof valueOf(resolved, "E2") === "number" ? (valueOf(resolved, "E2") as number) : null
+  const [e1Codes, setE1Codes] = useState<string[]>([...(e1?.codes ?? [])])
+  const [e1Other, setE1Other] = useState(e1?.other ?? "")
   const [volume, setVolume] = useState(e2Saved)
   const [estimated, setEstimated] = useState(e2State === "estimated")
   const e1q = QUESTION_BY_KEY.E1
@@ -133,7 +137,8 @@ function TodayCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
   const typesError = error && error.includes("event type") ? error : null
   const commonError = error && error.includes("already offer") ? error : null
   const volumeError = error && error.includes("0 to 9,999") ? error : null
-  const commonOptions = staffingOptions(e1?.codes ?? null)
+  const namedOther = e1Codes.includes("other") && e1Other.trim() ? e1Other.trim() : null
+  const commonOptions = labeledEventOptions(e1Codes.length ? (e1Codes as (typeof EVENT_TYPE_CODES)[number][]) : null, namedOther)
 
   return (
     <Card as="section" aria-labelledby="events-today-card-title" className="max-w-[900px] max-[760px]:p-[22px]!">
@@ -142,9 +147,11 @@ function TodayCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
         className="flex flex-col gap-5"
         data-card="today"
         data-saved-e1={codesAttr(e1?.codes)}
+        data-saved-e1-other={e1?.other ?? ""}
         data-saved-e2={e2Saved === null ? "" : String(e2Saved)}
         data-saved-e2-state={e2State === "estimated" ? "estimated" : e2State === "answered" ? "answered" : ""}
         data-saved-e3={codesAttr(e3?.codes)}
+        data-saved-e3-other={e3?.other ?? ""}
       >
         <h2 id="events-today-card-title" className="bp-card__title">
           Your events today
@@ -154,11 +161,21 @@ function TodayCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
             label={e1q.label}
             name="e1"
             options={[...EVENT_TYPE_OPTIONS]}
-            defaultValue={e1?.codes}
+            value={e1Codes}
             help="Choose every type you currently offer. Add a custom type under Other if you need one."
             error={typesError && !commonError ? typesError : null}
+            onChange={setE1Codes}
             followUp={{
-              other: <OtherField name="e1Other" defaultValue={e1?.other ?? ""} error={otherError} />,
+              other: (
+                <TextField
+                  label="Other event type"
+                  name="e1Other"
+                  value={e1Other}
+                  maxLength={EVENT_OTHER_TEXT_MAX}
+                  error={otherError}
+                  onChange={(event) => setE1Other(event.currentTarget.value)}
+                />
+              ),
             }}
           />
           <SkipBlock
@@ -228,9 +245,9 @@ function TodayCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
             help="Choose from the types you already offer. A yearly breakdown by type isn’t needed."
             error={commonError}
             followUp={
-              commonOptions.some((option) => option.value === "other")
-                ? { other: <OtherField name="e3Other" defaultValue={e3?.other ?? ""} error={otherError} /> }
-                : undefined
+              namedOther || !commonOptions.some((option) => option.value === "other")
+                ? undefined
+                : { other: <OtherField name="e3Other" defaultValue={e3?.other ?? ""} error={otherError} /> }
             }
           />
           <SkipBlock
@@ -255,8 +272,9 @@ function TodayCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
 
 function StaffCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
   const { error, pending, saveState, formProps } = useSaveForm(saveEventsStaffCard)
-  const offered = typesValue(resolved, "E1")?.codes ?? null
-  const options = staffingOptions(offered)
+  const offered = typesValue(resolved, "E1")
+  const namedOther = namedOtherLabel(offered)
+  const options = labeledEventOptions(offered?.codes ?? null, namedOther)
   const e4 = typesValue(resolved, "E4")
   const e5 = typesValue(resolved, "E5")
   const e6Saved = typeof valueOf(resolved, "E6") === "string" ? String(valueOf(resolved, "E6")) : null
@@ -267,6 +285,9 @@ function StaffCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
   const otherError = error && error.includes("few words") ? error : null
   const typesError = error && error.includes("event type") ? error : null
   const pathError = error && error.includes("options") ? error : null
+  const namedFollowUp = namedOther
+    ? undefined
+    : options.some((option) => option.value === "other")
 
   return (
     <Card as="section" aria-labelledby="events-staff-card-title" className="max-w-[900px] max-[760px]:p-[22px]!">
@@ -275,7 +296,9 @@ function StaffCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
         className="flex flex-col gap-5"
         data-card="staff"
         data-saved-e4={codesAttr(e4?.codes)}
+        data-saved-e4-other={e4?.other ?? ""}
         data-saved-e5={codesAttr(e5?.codes)}
+        data-saved-e5-other={e5?.other ?? ""}
         data-saved-e6={e6Saved ?? ""}
       >
         <h2 id="events-staff-card-title" className="bp-card__title">
@@ -290,7 +313,7 @@ function StaffCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
             help="Choose every type an existing DJ can run alone."
             error={typesError}
             followUp={
-              options.some((option) => option.value === "other")
+              namedFollowUp
                 ? { other: <OtherField name="e4Other" defaultValue={e4?.other ?? ""} error={otherError} /> }
                 : undefined
             }
@@ -313,7 +336,7 @@ function StaffCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
             help="This can overlap with types your DJs can lead. It is about whether you still need to be there."
             error={typesError}
             followUp={
-              options.some((option) => option.value === "other")
+              namedFollowUp
                 ? { other: <OtherField name="e5Other" defaultValue={e5?.other ?? ""} error={otherError} /> }
                 : undefined
             }
@@ -359,7 +382,8 @@ function StaffCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
 
 function FutureCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
   const { error, pending, saveState, formProps } = useSaveForm(saveEventsFutureCard)
-  const offered = typesValue(resolved, "E1")?.codes ?? null
+  const offered = typesValue(resolved, "E1")
+  const namedOther = namedOtherLabel(offered)
   const e7 = typesValue(resolved, "E7")
   const e8 = typesValue(resolved, "E8")
   const e9Saved = typeof valueOf(resolved, "E9") === "string" ? String(valueOf(resolved, "E9")) : null
@@ -372,8 +396,12 @@ function FutureCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
   const overlapError = error && error.includes("don’t already offer") ? error : null
   const typesError = error && error.includes("event type") && !subsetError && !overlapError ? error : null
   const focusError = error && error.includes("options") ? error : null
-  const moreOptions = staffingOptions(offered)
-  const addOptions = newTypeOptions(offered)
+  const moreOptions = labeledEventOptions(offered?.codes ?? null, namedOther)
+  const addOptions = newTypeOptions(offered?.codes ?? null)
+  const e7FollowUp =
+    namedOther || !moreOptions.some((option) => option.value === "other")
+      ? undefined
+      : { other: <OtherField name="e7Other" defaultValue={e7?.other ?? ""} error={otherError} /> }
 
   return (
     <Card as="section" aria-labelledby="events-future-card-title" className="max-w-[900px] max-[760px]:p-[22px]!">
@@ -382,7 +410,9 @@ function FutureCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
         className="flex flex-col gap-5"
         data-card="future"
         data-saved-e7={codesAttr(e7?.codes)}
+        data-saved-e7-other={e7?.other ?? ""}
         data-saved-e8={codesAttr(e8?.codes)}
+        data-saved-e8-other={e8?.other ?? ""}
         data-saved-e9={e9Saved ?? ""}
       >
         <h2 id="events-future-card-title" className="bp-card__title">
@@ -396,11 +426,7 @@ function FutureCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
             defaultValue={e7?.codes}
             help="These are types you already offer and want more of. New types are the next question."
             error={subsetError ?? typesError}
-            followUp={
-              moreOptions.some((option) => option.value === "other")
-                ? { other: <OtherField name="e7Other" defaultValue={e7?.other ?? ""} error={otherError} /> }
-                : undefined
-            }
+            followUp={e7FollowUp}
           />
           <SkipBlock
             questionKey="E7"

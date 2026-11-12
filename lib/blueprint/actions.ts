@@ -30,6 +30,7 @@ import {
   EVENT_NEW_OVERLAP_MESSAGE,
   EVENTS_RANGE_MESSAGE,
   eventTypesFromUnknown,
+  inheritOfferedOther,
   overlapsOffered,
   parseAnnualEventCount,
   parseEventTypesValue,
@@ -37,7 +38,7 @@ import {
   parseNewDjPath,
   parseOptionalAnnualEventCount,
   isSubsetOfOffered,
-  type EventTypeCode,
+  type EventTypesValue,
 } from "@/lib/blueprint/events"
 import {
   TEAM_RANGE_MESSAGE,
@@ -391,10 +392,12 @@ function formEventTypes(formData: FormData, name: string, otherName: string) {
   return { codes, other, present: codes.length > 0 }
 }
 
-function offeredCodesFromAnswers(answers: Awaited<ReturnType<typeof getCurrentBlueprintAnswers>>): EventTypeCode[] | null {
+function offeredFromAnswers(
+  answers: Awaited<ReturnType<typeof getCurrentBlueprintAnswers>>,
+): EventTypesValue | null {
   const stored = answers.find((row) => row.questionKey === "E1")
   if (!stored || stored.state === "skipped") return null
-  return eventTypesFromUnknown(stored.value)?.codes ?? null
+  return eventTypesFromUnknown(stored.value)
 }
 
 async function upsertAnswer(
@@ -439,24 +442,25 @@ export async function saveEventsTodayCard(
   const estimated = String(formData.get("e2Estimated") ?? "") === "1"
 
   const writes: { key: "E1" | "E2" | "E3"; value: unknown; state: "answered" | "estimated" }[] = []
-  let offered: EventTypeCode[] | null = null
+  let offered: EventTypesValue | null = null
 
   if (e1.present) {
     const parsed = parseEventTypesValue({ codes: e1.codes, other: e1.other })
     if (!parsed.ok) return { error: parsed.error, savedAt: null }
     writes.push({ key: "E1", value: parsed.value, state: "answered" })
-    offered = parsed.value.codes
+    offered = parsed.value
   }
   if (e2.value !== null) {
     writes.push({ key: "E2", value: e2.value, state: estimated ? "estimated" : "answered" })
   }
   if (e3.present) {
-    const parsed = parseEventTypesValue({ codes: e3.codes, other: e3.other })
+    if (!offered) offered = offeredFromAnswers(await getCurrentBlueprintAnswers())
+    const parsed = parseEventTypesValue({
+      codes: e3.codes,
+      other: inheritOfferedOther(e3.codes, e3.other, offered),
+    })
     if (!parsed.ok) return { error: parsed.error, savedAt: null }
-    if (!offered) {
-      offered = offeredCodesFromAnswers(await getCurrentBlueprintAnswers())
-    }
-    if (offered && !isSubsetOfOffered(parsed.value.codes, offered)) {
+    if (offered && !isSubsetOfOffered(parsed.value.codes, offered.codes)) {
       return { error: EVENT_COMMON_SUBSET_MESSAGE, savedAt: null }
     }
     writes.push({ key: "E3", value: parsed.value, state: "answered" })
@@ -484,15 +488,22 @@ export async function saveEventsStaffCard(
   const e4 = formEventTypes(formData, "e4", "e4Other")
   const e5 = formEventTypes(formData, "e5", "e5Other")
   const e6Raw = formData.get("e6")
+  const offered = offeredFromAnswers(await getCurrentBlueprintAnswers())
 
   const writes: { key: "E4" | "E5" | "E6"; value: unknown }[] = []
   if (e4.present) {
-    const parsed = parseEventTypesValue({ codes: e4.codes, other: e4.other })
+    const parsed = parseEventTypesValue({
+      codes: e4.codes,
+      other: inheritOfferedOther(e4.codes, e4.other, offered),
+    })
     if (!parsed.ok) return { error: parsed.error, savedAt: null }
     writes.push({ key: "E4", value: parsed.value })
   }
   if (e5.present) {
-    const parsed = parseEventTypesValue({ codes: e5.codes, other: e5.other })
+    const parsed = parseEventTypesValue({
+      codes: e5.codes,
+      other: inheritOfferedOther(e5.codes, e5.other, offered),
+    })
     if (!parsed.ok) return { error: parsed.error, savedAt: null }
     writes.push({ key: "E5", value: parsed.value })
   }
@@ -524,13 +535,16 @@ export async function saveEventsFutureCard(
   const e7 = formEventTypes(formData, "e7", "e7Other")
   const e8 = formEventTypes(formData, "e8", "e8Other")
   const e9Raw = formData.get("e9")
-  const offered = offeredCodesFromAnswers(await getCurrentBlueprintAnswers())
+  const offered = offeredFromAnswers(await getCurrentBlueprintAnswers())
 
   const writes: { key: "E7" | "E8" | "E9"; value: unknown }[] = []
   if (e7.present) {
-    const parsed = parseEventTypesValue({ codes: e7.codes, other: e7.other })
+    const parsed = parseEventTypesValue({
+      codes: e7.codes,
+      other: inheritOfferedOther(e7.codes, e7.other, offered),
+    })
     if (!parsed.ok) return { error: parsed.error, savedAt: null }
-    if (offered && !isSubsetOfOffered(parsed.value.codes, offered)) {
+    if (offered && !isSubsetOfOffered(parsed.value.codes, offered.codes)) {
       return { error: EVENT_COMMON_SUBSET_MESSAGE, savedAt: null }
     }
     writes.push({ key: "E7", value: parsed.value })
@@ -538,7 +552,7 @@ export async function saveEventsFutureCard(
   if (e8.present) {
     const parsed = parseEventTypesValue({ codes: e8.codes, other: e8.other })
     if (!parsed.ok) return { error: parsed.error, savedAt: null }
-    if (offered && overlapsOffered(parsed.value.codes, offered)) {
+    if (offered && overlapsOffered(parsed.value.codes, offered.codes)) {
       return { error: EVENT_NEW_OVERLAP_MESSAGE, savedAt: null }
     }
     writes.push({ key: "E8", value: parsed.value })

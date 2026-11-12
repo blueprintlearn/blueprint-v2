@@ -511,6 +511,33 @@ describe("save events cards", () => {
     expect(mocks.upsert).not.toHaveBeenCalled()
   })
 
+  it("keeps a named custom type when later cards select Other", async () => {
+    mocks.answers = [
+      { questionKey: "E1", state: "answered", value: { codes: ["wedding", "other"], other: "Bar mitzvahs" } },
+    ]
+    const staff = new FormData()
+    staff.append("e4", "other")
+    expect((await saveEventsStaffCard(initial, staff)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        question_key: "E4",
+        value: { codes: ["other"], other: "Bar mitzvahs" },
+      }),
+      { onConflict: "company_id,question_key" },
+    )
+
+    const future = new FormData()
+    future.append("e7", "other")
+    expect((await saveEventsFutureCard(initial, future)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        question_key: "E7",
+        value: { codes: ["other"], other: "Bar mitzvahs" },
+      }),
+      { onConflict: "company_id,question_key" },
+    )
+  })
+
   it("rejects most-common types that are not already offered", async () => {
     mocks.answers = [
       { questionKey: "E1", state: "answered", value: { codes: ["wedding"], other: null } },

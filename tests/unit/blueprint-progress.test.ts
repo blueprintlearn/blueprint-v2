@@ -144,8 +144,11 @@ describe("getBlueprintProgress from answer states", () => {
     expect(skippedVolume.statuses.events).toBe("needs_attention")
     expect(skippedVolume.skippedCounts.events).toBe(1)
     expect(skippedVolume.completeCount).toBe(2)
-    expect(skippedVolume.action).toBe("review")
-    expect(skippedVolume.next).toBeNull()
+    expect(skippedVolume.action).toBe("continue")
+    expect(skippedVolume.next).toBe("events")
+    expect(skippedVolume.focusQuestionKey).toBe("E2")
+    expect(skippedVolume.revisitKeys.events).toBe("E2")
+    expect(skippedVolume.skippedKeys.events).toBe("E2")
   })
 
   it("counts an estimated annual volume as complete", () => {
@@ -206,7 +209,7 @@ describe("getBlueprintProgress from answer states", () => {
     expect(p.focusQuestionKey).toBe("E1")
   })
 
-  it("resume never lands on a skipped question", () => {
+  it("resume prefers unanswered cores over skipped ones", () => {
     const p = progress(
       null,
       completeTeam(),
@@ -217,6 +220,21 @@ describe("getBlueprintProgress from answer states", () => {
     expect(p.next).toBe("events")
     expect(p.focusQuestionKey).toBe("E1")
     expect(p.action).toBe("continue")
+    expect(p.revisitKeys.goals).toBe("G1")
+    expect(p.skippedKeys.goals).toBe("G1")
+  })
+
+  it("continues to a skipped question when that is what still needs attention", () => {
+    const p = progress(null, completeTeam(), [
+      ...teamAnswers,
+      ...completeEventsAnswers(),
+      { questionKey: "G1", state: "skipped", value: null },
+    ])
+    expect(p.statuses.goals).toBe("needs_attention")
+    expect(p.completeCount).toBe(2)
+    expect(p.action).toBe("continue")
+    expect(p.next).toBe("goals")
+    expect(p.focusQuestionKey).toBe("G1")
   })
 
   it("hides the started count when none are in progress", () => {

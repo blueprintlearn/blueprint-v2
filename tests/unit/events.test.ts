@@ -5,6 +5,9 @@ import {
   EVENT_TYPES_CHOOSE_MESSAGE,
   EVENTS_RANGE_MESSAGE,
   estimateAnnualVolume,
+  inheritOfferedOther,
+  labeledEventOptions,
+  namedOtherLabel,
   newTypeOptions,
   overlapsOffered,
   parseAnnualEventCount,
@@ -14,6 +17,7 @@ import {
   parseOptionalAnnualEventCount,
   isSubsetOfOffered,
   staffingOptions,
+  type EventTypeCode,
 } from "@/lib/blueprint/events"
 
 describe("event type answers", () => {
@@ -48,6 +52,17 @@ describe("event type answers", () => {
     expect(isSubsetOfOffered(["school_dance"], ["wedding"])).toBe(false)
     expect(overlapsOffered(["wedding"], ["wedding", "corporate"])).toBe(true)
     expect(overlapsOffered(["other"], ["wedding", "other"])).toBe(false)
+  })
+
+  it("shows a saved custom type name instead of Other on later questions", () => {
+    const offered = { codes: ["wedding", "other"] as EventTypeCode[], other: "Bar mitzvahs" }
+    expect(namedOtherLabel(offered)).toBe("Bar mitzvahs")
+    expect(labeledEventOptions(offered.codes, offered.other).find((option) => option.value === "other")).toEqual({
+      value: "other",
+      label: "Bar mitzvahs",
+    })
+    expect(inheritOfferedOther(["other"], null, offered)).toBe("Bar mitzvahs")
+    expect(inheritOfferedOther(["wedding"], null, offered)).toBeNull()
   })
 })
 

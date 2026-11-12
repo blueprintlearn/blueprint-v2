@@ -136,11 +136,11 @@ export function parseFutureFocus(raw: unknown): { ok: true; value: FutureFocusCo
     : { ok: false, error: "Choose one of the options." }
 }
 
-export function isSubsetOfOffered(selected: EventTypeCode[], offered: EventTypeCode[]): boolean {
+export function isSubsetOfOffered(selected: readonly EventTypeCode[], offered: readonly EventTypeCode[]): boolean {
   return selected.every((code) => offered.includes(code))
 }
 
-export function overlapsOffered(selected: EventTypeCode[], offered: EventTypeCode[]): boolean {
+export function overlapsOffered(selected: readonly EventTypeCode[], offered: readonly EventTypeCode[]): boolean {
   return selected.some((code) => code !== "other" && offered.includes(code))
 }
 
@@ -157,6 +157,28 @@ export function newTypeOptions(offered: readonly EventTypeCode[] | null) {
   if (!offered || offered.length === 0) return EVENT_TYPE_OPTIONS
   const remaining = EVENT_TYPE_CODES.filter((code) => code === "other" || !offered.includes(code))
   return optionsForCodes(remaining)
+}
+
+export function labeledEventOptions(
+  offered: readonly EventTypeCode[] | null,
+  otherLabel: string | null,
+) {
+  const options = staffingOptions(offered)
+  if (!otherLabel) return options
+  return options.map((option) => (option.value === "other" ? { ...option, label: otherLabel } : option))
+}
+
+export function namedOtherLabel(offered: EventTypesValue | null): string | null {
+  return offered?.codes.includes("other") && offered.other ? offered.other : null
+}
+
+export function inheritOfferedOther(
+  codes: readonly string[],
+  other: string | null,
+  offered: EventTypesValue | null,
+): string | null {
+  if (!codes.includes("other")) return other
+  return other ?? offered?.other ?? null
 }
 
 export function skippedEventsNote() {

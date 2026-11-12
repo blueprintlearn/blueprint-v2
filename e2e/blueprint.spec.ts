@@ -15,7 +15,7 @@ async function signIn(page: Page, email: string) {
 const APPROVED_SECTIONS = [
   ["Your goals", "What you want Blueprint to help you do"],
   ["Your team today", "How many DJs you have, who can lead, and how many you’d like"],
-  ["Your events", "How many events you book, who works them, and your busiest dates"],
+  ["Your events", "How many events you book, who works them, and what you want next"],
   ["Your services and market", "What your DJs handle at events, and where your prices sit"],
   ["Your numbers", "What each event really earns, private to you"],
   ["How you develop DJs", "How you hire and train today, and what to keep"],
