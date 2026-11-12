@@ -112,4 +112,52 @@ describe("skip and save answer flows", () => {
     expect(otherCompany.error).not.toBeNull()
     expect(COMPANY_B_ID).toBeTruthy()
   })
+
+  it("lets owner A save and skip events answers without fabricating volume", async () => {
+    clearBlueprintAnswers(COMPANY_A_ID)
+    const ownerA = await asUser(OWNER_A_EMAIL)
+    const saved = await ownerA.from("company_blueprint_answers").upsert({
+      company_id: COMPANY_A_ID,
+      question_key: "E1",
+      value: { codes: ["wedding", "other"], other: "Bar mitzvahs" },
+      state: "answered",
+      question_version: 1,
+    })
+    expect(saved.error).toBeNull()
+
+    const skipped = await ownerA.from("company_blueprint_answers").upsert({
+      company_id: COMPANY_A_ID,
+      question_key: "E2",
+      value: null,
+      state: "skipped",
+      question_version: 1,
+    })
+    expect(skipped.error).toBeNull()
+
+    const rows = await ownerA.from("company_blueprint_answers").select("question_key, state, value").in("question_key", ["E1", "E2"])
+    expect(rows.data).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          question_key: "E1",
+          state: "answered",
+          value: { codes: ["wedding", "other"], other: "Bar mitzvahs" },
+        }),
+        expect.objectContaining({ question_key: "E2", state: "skipped", value: null }),
+      ]),
+    )
+
+    const progress = getBlueprintProgressFromStates(
+      resolveAll({
+        goals: { primary: { goal: "scale" }, others: [] },
+        teamToday: null,
+        answers: [
+          { questionKey: "E1", state: "answered", value: { codes: ["wedding", "other"], other: "Bar mitzvahs" } },
+          { questionKey: "E2", state: "skipped", value: null },
+        ],
+      }),
+      null,
+    )
+    expect(progress.statuses.events).toBe("needs_attention")
+    expect(progress.completeCount).toBe(1)
+  })
 })

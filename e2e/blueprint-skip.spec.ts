@@ -80,9 +80,11 @@ test.describe("skip workflow on an empty local company", () => {
     await expect(page.locator("form[data-card='wanted'] .bp-save")).toHaveText("Saved")
 
     await page.goto("/")
-    await expect(blueprint.getByRole("link", { name: "Review your Blueprint" })).toHaveAttribute("href", "/blueprint")
-    await blueprint.getByRole("link", { name: "Review your Blueprint" }).click()
-    await expect(page).toHaveURL("/blueprint")
+    await expect(blueprint.getByRole("link", { name: "Continue your Blueprint" })).toHaveAttribute(
+      "href",
+      "/blueprint/events#q-E1",
+    )
+    await page.goto("/blueprint")
     await expect(page.getByRole("heading", { level: 1, name: "Your Company Blueprint" })).toBeVisible()
 
     await row(page, "Your goals").getByRole("link").click()

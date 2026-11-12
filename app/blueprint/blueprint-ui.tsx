@@ -21,6 +21,7 @@ export const GOALS_OPENING =
 export const TEAM_OPENING = "Now your team: how many DJs you have, and how many you’d like."
 export { TEAM_OPENING_V2 } from "@/lib/blueprint/team-today"
 export const TEAM_FOOTER_NOTE = "The next sections are coming soon."
+export { EVENTS_OPENING, EVENTS_FOOTER_NOTE } from "@/lib/blueprint/events"
 
 const STATUS_TAGS: Record<SectionStatus, { status: "planned" | "progress" | "proven"; label: string }> = {
   not_started: { status: "planned", label: "Not started" },

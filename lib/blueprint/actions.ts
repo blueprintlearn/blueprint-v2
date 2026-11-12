@@ -26,6 +26,20 @@ import {
   isQuestionKey,
 } from "@/lib/blueprint/questions"
 import {
+  EVENT_COMMON_SUBSET_MESSAGE,
+  EVENT_NEW_OVERLAP_MESSAGE,
+  EVENTS_RANGE_MESSAGE,
+  eventTypesFromUnknown,
+  overlapsOffered,
+  parseAnnualEventCount,
+  parseEventTypesValue,
+  parseFutureFocus,
+  parseNewDjPath,
+  parseOptionalAnnualEventCount,
+  isSubsetOfOffered,
+  type EventTypeCode,
+} from "@/lib/blueprint/events"
+import {
   TEAM_RANGE_MESSAGE,
   T0_INCLUDED,
   T0_TEAM_ONLY,
@@ -370,6 +384,183 @@ export async function saveTeamWantedCard(
   return { error: null, savedAt: Date.now() }
 }
 
+function formEventTypes(formData: FormData, name: string, otherName: string) {
+  const codes = formData.getAll(name).map(String)
+  const otherRaw = formData.get(otherName)
+  const other = typeof otherRaw === "string" && otherRaw.trim() ? otherRaw.trim() : null
+  return { codes, other, present: codes.length > 0 }
+}
+
+function offeredCodesFromAnswers(answers: Awaited<ReturnType<typeof getCurrentBlueprintAnswers>>): EventTypeCode[] | null {
+  const stored = answers.find((row) => row.questionKey === "E1")
+  if (!stored || stored.state === "skipped") return null
+  return eventTypesFromUnknown(stored.value)?.codes ?? null
+}
+
+async function upsertAnswer(
+  supabase: GuidedClient,
+  companyId: string,
+  questionKey: "E1" | "E2" | "E3" | "E4" | "E5" | "E6" | "E7" | "E8" | "E9",
+  value: unknown,
+  state: "answered" | "estimated" = "answered",
+) {
+  const question = QUESTION_BY_KEY[questionKey]
+  const { error } = await supabase.from("company_blueprint_answers").upsert(
+    {
+      company_id: companyId,
+      question_key: questionKey,
+      value: value as Json,
+      state,
+      question_version: question.version,
+    },
+    { onConflict: "company_id,question_key" },
+  )
+  if (error) return error
+  await clearSkip(supabase, companyId, questionKey)
+  return null
+}
+
+/**
+ * Guided Your events write path. Uses company_blueprint_answers (S2-7).
+ * No new RPC. The same owner-direct-write bypass already tracked for answers.
+ */
+export async function saveEventsTodayCard(
+  _prevState: SaveAnswerState,
+  formData: FormData,
+): Promise<SaveAnswerState> {
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) return { error: gate.error, savedAt: null }
+
+  const e1 = formEventTypes(formData, "e1", "e1Other")
+  const e2Raw = formData.get("e2")
+  const e2 = parseOptionalAnnualEventCount(e2Raw)
+  if (!e2.ok) return { error: EVENTS_RANGE_MESSAGE, savedAt: null }
+  const e3 = formEventTypes(formData, "e3", "e3Other")
+  const estimated = String(formData.get("e2Estimated") ?? "") === "1"
+
+  const writes: { key: "E1" | "E2" | "E3"; value: unknown; state: "answered" | "estimated" }[] = []
+  let offered: EventTypeCode[] | null = null
+
+  if (e1.present) {
+    const parsed = parseEventTypesValue({ codes: e1.codes, other: e1.other })
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "E1", value: parsed.value, state: "answered" })
+    offered = parsed.value.codes
+  }
+  if (e2.value !== null) {
+    writes.push({ key: "E2", value: e2.value, state: estimated ? "estimated" : "answered" })
+  }
+  if (e3.present) {
+    const parsed = parseEventTypesValue({ codes: e3.codes, other: e3.other })
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    if (!offered) {
+      offered = offeredCodesFromAnswers(await getCurrentBlueprintAnswers())
+    }
+    if (offered && !isSubsetOfOffered(parsed.value.codes, offered)) {
+      return { error: EVENT_COMMON_SUBSET_MESSAGE, savedAt: null }
+    }
+    writes.push({ key: "E3", value: parsed.value, state: "answered" })
+  }
+
+  if (writes.length === 0) return { error: null, savedAt: null }
+
+  const supabase = await createClient()
+  for (const write of writes) {
+    const error = await upsertAnswer(supabase, gate.membership.companyId, write.key, write.value, write.state)
+    if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  await recordProgress(supabase, gate.membership.companyId, "events", writes[writes.length - 1].key)
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
+export async function saveEventsStaffCard(
+  _prevState: SaveAnswerState,
+  formData: FormData,
+): Promise<SaveAnswerState> {
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) return { error: gate.error, savedAt: null }
+
+  const e4 = formEventTypes(formData, "e4", "e4Other")
+  const e5 = formEventTypes(formData, "e5", "e5Other")
+  const e6Raw = formData.get("e6")
+
+  const writes: { key: "E4" | "E5" | "E6"; value: unknown }[] = []
+  if (e4.present) {
+    const parsed = parseEventTypesValue({ codes: e4.codes, other: e4.other })
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "E4", value: parsed.value })
+  }
+  if (e5.present) {
+    const parsed = parseEventTypesValue({ codes: e5.codes, other: e5.other })
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "E5", value: parsed.value })
+  }
+  if (e6Raw) {
+    const parsed = parseNewDjPath(e6Raw)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "E6", value: parsed.value })
+  }
+
+  if (writes.length === 0) return { error: null, savedAt: null }
+
+  const supabase = await createClient()
+  for (const write of writes) {
+    const error = await upsertAnswer(supabase, gate.membership.companyId, write.key, write.value)
+    if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  await recordProgress(supabase, gate.membership.companyId, "events", writes[writes.length - 1].key)
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
+export async function saveEventsFutureCard(
+  _prevState: SaveAnswerState,
+  formData: FormData,
+): Promise<SaveAnswerState> {
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) return { error: gate.error, savedAt: null }
+
+  const e7 = formEventTypes(formData, "e7", "e7Other")
+  const e8 = formEventTypes(formData, "e8", "e8Other")
+  const e9Raw = formData.get("e9")
+  const offered = offeredCodesFromAnswers(await getCurrentBlueprintAnswers())
+
+  const writes: { key: "E7" | "E8" | "E9"; value: unknown }[] = []
+  if (e7.present) {
+    const parsed = parseEventTypesValue({ codes: e7.codes, other: e7.other })
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    if (offered && !isSubsetOfOffered(parsed.value.codes, offered)) {
+      return { error: EVENT_COMMON_SUBSET_MESSAGE, savedAt: null }
+    }
+    writes.push({ key: "E7", value: parsed.value })
+  }
+  if (e8.present) {
+    const parsed = parseEventTypesValue({ codes: e8.codes, other: e8.other })
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    if (offered && overlapsOffered(parsed.value.codes, offered)) {
+      return { error: EVENT_NEW_OVERLAP_MESSAGE, savedAt: null }
+    }
+    writes.push({ key: "E8", value: parsed.value })
+  }
+  if (e9Raw) {
+    const parsed = parseFutureFocus(e9Raw)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "E9", value: parsed.value })
+  }
+
+  if (writes.length === 0) return { error: null, savedAt: null }
+
+  const supabase = await createClient()
+  for (const write of writes) {
+    const error = await upsertAnswer(supabase, gate.membership.companyId, write.key, write.value)
+    if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  await recordProgress(supabase, gate.membership.companyId, "events", writes[writes.length - 1].key)
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
 export async function saveOwnerGoal(
   _prevState: SaveOwnerGoalState,
   formData: FormData,
@@ -491,6 +682,15 @@ function parseAnswerValue(questionKey: string, raw: unknown) {
   if (questionKey === "T5") return parseT5Value(value)
   if (questionKey === "T7") return parseT7Value(value)
   if (questionKey === "T8") return parseT8Value(value)
+  if (questionKey === "E1" || questionKey === "E3" || questionKey === "E4" || questionKey === "E5" || questionKey === "E7" || questionKey === "E8") {
+    return parseEventTypesValue(value)
+  }
+  if (questionKey === "E2") {
+    const parsed = parseAnnualEventCount(value)
+    return parsed === null ? { ok: false as const, error: EVENTS_RANGE_MESSAGE } : { ok: true as const, value: parsed }
+  }
+  if (questionKey === "E6") return parseNewDjPath(value)
+  if (questionKey === "E9") return parseFutureFocus(value)
   return { ok: false as const, error: SAVE_FAILED_MESSAGE }
 }
 

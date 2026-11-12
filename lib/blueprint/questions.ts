@@ -41,6 +41,15 @@ export type QuestionKey =
   | "T6"
   | "T7"
   | "T8"
+  | "E1"
+  | "E2"
+  | "E3"
+  | "E4"
+  | "E5"
+  | "E6"
+  | "E7"
+  | "E8"
+  | "E9"
 
 export type GuidanceExample = {
   text: string
@@ -281,6 +290,168 @@ export const QUESTIONS: readonly QuestionDefinition[] = [
     label: "In the last 12 months, how often did a DJ problem affect an event?",
     whyNeeded: "Problems at events tell Blueprint where your team is stretched.",
     guidance: null,
+  },
+  {
+    key: "E1",
+    section: "events",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What kinds of events do you book today? Choose all that apply.",
+    whyNeeded: "Blueprint needs to know the events you already run, so later suggestions stay grounded in your real work.",
+    guidance: {
+      why: "Blueprint needs to know the events you already run, so later suggestions stay grounded in your real work.",
+      examples: [
+        { text: "Mostly weddings, plus a few school dances." },
+        { text: "Corporate events and private parties, no weddings yet." },
+      ],
+    },
+  },
+  {
+    key: "E2",
+    section: "events",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: true,
+    version: 1,
+    label: "About how many events do you book in a year, across every type?",
+    whyNeeded: "A single yearly number is enough for Blueprint to understand your current volume.",
+    guidance: {
+      why: "A round number is enough. Count every event you staffed in the last 12 months.",
+      examples: [
+        { text: "A busy wedding company: about 80." },
+        { text: "A newer company: about 20." },
+      ],
+    },
+  },
+  {
+    key: "E3",
+    section: "events",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Which of those are most common? Choose all that apply.",
+    whyNeeded: "Your most common events are where staffing and training matter most.",
+    guidance: {
+      why: "Pick the types you book most often, from the ones you already offer.",
+      examples: [
+        { text: "Weddings most weeks, school dances a few times a year." },
+        { text: "Corporate and private parties about equally." },
+      ],
+    },
+  },
+  {
+    key: "E4",
+    section: "events",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Which event types can your DJs lead on their own today? Choose all that apply.",
+    whyNeeded: "Lead-ready event types tell Blueprint what your team can cover without you.",
+    guidance: {
+      why: "Lead means you’d send them alone to run the whole event.",
+      examples: [
+        { text: "They can lead school dances, but not weddings yet." },
+        { text: "They can lead every type you offer." },
+      ],
+    },
+  },
+  {
+    key: "E5",
+    section: "events",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Which event types still need you there? Choose all that apply.",
+    whyNeeded: "Owner-dependent events are separate from what your DJs can already lead.",
+    guidance: {
+      why: "This is about the events that still depend on you, even if a DJ is there too.",
+      examples: [
+        { text: "You still run every wedding yourself." },
+        { text: "You’re only needed for the largest corporate events." },
+      ],
+    },
+  },
+  {
+    key: "E6",
+    section: "events",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "How do new DJs usually start?",
+    whyNeeded: "How people start tells Blueprint whether new DJs typically assist, lead, or follow a mixed path.",
+    guidance: {
+      why: "There is no right path. Tell us what usually happens today.",
+      examples: [
+        { text: "They assist for a season, then lead." },
+        { text: "Experienced hires start leading right away." },
+      ],
+    },
+  },
+  {
+    key: "E7",
+    section: "events",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Which event types do you want to book more often? Choose all that apply.",
+    whyNeeded: "Growth from types you already offer is different from adding something new.",
+    guidance: {
+      why: "Choose from the work you already do. New types come next.",
+      examples: [
+        { text: "More corporate events, same wedding volume." },
+        { text: "More of everything you already book." },
+      ],
+    },
+  },
+  {
+    key: "E8",
+    section: "events",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Which new event types do you want to offer? Choose all that apply.",
+    whyNeeded: "New types are work you don’t offer today. They stay separate from what you already book.",
+    guidance: {
+      why: "Only pick types you don’t already offer. Skip this if you’re not adding anything new.",
+      examples: [
+        { text: "You do weddings today and want to add school dances." },
+        { text: "You’re not adding new types: skip this." },
+      ],
+    },
+  },
+  {
+    key: "E9",
+    section: "events",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What do you want more of?",
+    whyNeeded: "More bookings and less of your own time at events are different goals, and you can want both.",
+    guidance: {
+      why: "This is about the future, not what is true today.",
+      examples: [
+        { text: "More bookings, and you’re fine still DJing." },
+        { text: "Same volume, but you want to DJ less." },
+      ],
+    },
   },
 ]
 

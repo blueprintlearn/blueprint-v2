@@ -15,6 +15,7 @@ import {
   TEAM_OPENING_V2,
 } from "@/app/blueprint/blueprint-ui"
 import { getBlueprintProgressFromStates, resolveAll } from "@/lib/blueprint/answers"
+import { completeEventsAnswers } from "@/lib/blueprint/events"
 import { blueprintSection } from "@/lib/blueprint/progress"
 import { teamTodayFixture, type AnswerTeamToday } from "@/lib/blueprint/team-today"
 
@@ -75,6 +76,11 @@ const partlyTeam = progressOf(
   teamTodayFixture({ currentDjCount: 3, countBasis: "excludes_owner" }),
 )
 const allReady = progressOf({ primary: { goal: "scale" } }, completeTeam, completeAnswers)
+const allLiveReady = progressOf(
+  { primary: { goal: "scale" } },
+  completeTeam,
+  [...completeAnswers, ...completeEventsAnswers()],
+)
 
 describe("BlueprintSectionList", () => {
   const out = html(h(BlueprintSectionList, { progress: started }))
@@ -93,11 +99,12 @@ describe("BlueprintSectionList", () => {
     })
   })
 
-  it("links only the two live sections and leaves six as Coming soon", () => {
-    expect(count(out, "<a ")).toBe(2)
+  it("links only the three live sections and leaves five as Coming soon", () => {
+    expect(count(out, "<a ")).toBe(3)
     expect(out).toContain('href="/blueprint/goals"')
     expect(out).toContain('href="/blueprint/team"')
-    expect(count(out, "Coming soon")).toBe(6)
+    expect(out).toContain('href="/blueprint/events"')
+    expect(count(out, "Coming soon")).toBe(5)
   })
 
   it("uses customer words for statuses, never codes", () => {
@@ -127,6 +134,7 @@ describe("BlueprintOverview", () => {
     expect(text(render(partlyTeam))).toContain("1 of 8 sections complete · 1 started")
     expect(text(render(allReady))).toContain("2 of 8 sections complete")
     expect(text(render(allReady))).not.toContain("·")
+    expect(text(render(allLiveReady))).toContain("3 of 8 sections complete")
   })
 
   it("offers Start when nothing is saved, linking to Goals", () => {
@@ -142,8 +150,12 @@ describe("BlueprintOverview", () => {
     expect(primaryLink(render(teamOnly))).toMatchObject({ href: "/blueprint/goals#q-G1", label: "Continue your Blueprint" })
   })
 
-  it("has no primary button once every live section is done, and says more is coming", () => {
-    const out = render(allReady)
+  it("continues into Your events after goals and team, then reviews when events are done", () => {
+    expect(primaryLink(render(allReady))).toMatchObject({
+      href: "/blueprint/events#q-E1",
+      label: "Continue your Blueprint",
+    })
+    const out = render(allLiveReady)
     expect(count(out, "bp-btn--primary")).toBe(0)
     expect(text(out)).toContain(ALL_READY_DONE_TEXT)
     expect(ALL_READY_DONE_TEXT).toBe("You’ve finished the sections that are ready. More are coming soon.")
@@ -167,12 +179,13 @@ describe("BlueprintHomeCard", () => {
   it("continues, then offers a soft Review when nothing is left", () => {
     expect(tag(render(started))).toBe("In progress")
     expect(render(started)).toContain("Continue your Blueprint")
-    const done = render(allReady)
+    expect(render(allReady)).toContain("Continue your Blueprint")
+    const done = render(allLiveReady)
     expect(anchors(done)).toEqual([
       { href: "/blueprint", className: "bp-btn bp-btn--soft self-start", label: "Review your Blueprint" },
     ])
     expect(count(done, "bp-btn--primary")).toBe(0)
-    expect(text(done)).toContain("2 of 8 sections complete")
+    expect(text(done)).toContain("3 of 8 sections complete")
   })
 })
 
@@ -206,10 +219,11 @@ describe("BlueprintSectionPage", () => {
     expect(TEAM_FOOTER_NOTE).toBe("The next sections are coming soon.")
   })
 
-  it("headings use the approved names for both live sections", () => {
+  it("headings use the approved names for the live sections", () => {
     for (const [slug, name, n] of [
       ["goals", "Your goals", 1],
       ["team", "Your team today", 2],
+      ["events", "Your events", 3],
     ] as const) {
       const out = html(
         h(BlueprintSectionPage, { section: blueprintSection(slug)!, status: "complete", opening: "x", footer: null, children: null }),

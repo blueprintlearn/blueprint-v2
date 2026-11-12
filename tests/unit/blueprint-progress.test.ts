@@ -13,6 +13,7 @@ import {
   TOTAL_SECTIONS,
 } from "@/lib/blueprint/progress"
 import { M1_COPY, shouldShowM1 } from "@/lib/blueprint/questions"
+import { completeEventsAnswers } from "@/lib/blueprint/events"
 import { emptyTeamToday, teamTodayFixture, type AnswerTeamToday } from "@/lib/blueprint/team-today"
 
 const goal = { primary: { goal: "scale" }, others: [] }
@@ -118,12 +119,44 @@ describe("getBlueprintProgress from answer states", () => {
     )
   })
 
-  it("both live sections complete only when every applicable team core is answered", () => {
+  it("goals and team complete still continue into Your events", () => {
     const p = progress(goal, completeTeam(), teamAnswers)
     expect(p.completeCount).toBe(2)
     expect(p.startedCount).toBe(0)
-    expect(p.next).toBeNull()
-    expect(p.action).toBe("review")
+    expect(p.statuses.events).toBe("not_started")
+    expect(p.next).toBe("events")
+    expect(p.focusQuestionKey).toBe("E1")
+    expect(p.action).toBe("continue")
+  })
+
+  it("marks Your events complete only when every events core is answered, not skipped", () => {
+    const complete = progress(goal, completeTeam(), [...teamAnswers, ...completeEventsAnswers()])
+    expect(complete.statuses.events).toBe("complete")
+    expect(complete.completeCount).toBe(3)
+    expect(complete.next).toBeNull()
+    expect(complete.action).toBe("review")
+
+    const skippedVolume = progress(goal, completeTeam(), [
+      ...teamAnswers,
+      ...completeEventsAnswers().filter((row) => row.questionKey !== "E2"),
+      { questionKey: "E2", state: "skipped", value: null },
+    ])
+    expect(skippedVolume.statuses.events).toBe("needs_attention")
+    expect(skippedVolume.skippedCounts.events).toBe(1)
+    expect(skippedVolume.completeCount).toBe(2)
+    expect(skippedVolume.action).toBe("review")
+    expect(skippedVolume.next).toBeNull()
+  })
+
+  it("counts an estimated annual volume as complete", () => {
+    const p = progress(goal, completeTeam(), [
+      ...teamAnswers,
+      ...completeEventsAnswers().map((row) =>
+        row.questionKey === "E2" ? { ...row, state: "estimated" as const } : row,
+      ),
+    ])
+    expect(p.statuses.events).toBe("complete")
+    expect(p.completeCount).toBe(3)
   })
 
   it("skipped G1 is needs attention and never complete", () => {
@@ -168,8 +201,9 @@ describe("getBlueprintProgress from answer states", () => {
     expect(p.completeCount).toBe(1)
     expect(p.startedCount).toBe(1)
     expect(p.skippedCounts.team).toBe(1)
-    expect(p.action).toBe("review")
-    expect(p.next).toBeNull()
+    expect(p.action).toBe("continue")
+    expect(p.next).toBe("events")
+    expect(p.focusQuestionKey).toBe("E1")
   })
 
   it("resume never lands on a skipped question", () => {
@@ -179,8 +213,10 @@ describe("getBlueprintProgress from answer states", () => {
       [...teamAnswers, { questionKey: "G1", state: "skipped", value: null }],
       { lastSection: "goals", lastQuestionKey: "G1" },
     )
-    expect(p.action).toBe("review")
-    expect(p.next).toBeNull()
+    expect(p.focusQuestionKey).not.toBe("G1")
+    expect(p.next).toBe("events")
+    expect(p.focusQuestionKey).toBe("E1")
+    expect(p.action).toBe("continue")
   })
 
   it("hides the started count when none are in progress", () => {
@@ -188,11 +224,12 @@ describe("getBlueprintProgress from answer states", () => {
     expect(progress(goal, completeTeam(), teamAnswers).startedCount).toBe(0)
   })
 
-  it("marks sections 3 to 8 coming soon and never counts them as complete", () => {
+  it("marks sections 4 to 8 coming soon and never counts them as complete", () => {
     const p = progress(goal, completeTeam(), teamAnswers)
     for (const section of BLUEPRINT_SECTIONS.filter((s) => !s.live)) {
       expect(p.statuses[section.slug]).toBe("coming_soon")
     }
+    expect(p.statuses.events).not.toBe("coming_soon")
     expect(p.completeCount).toBeLessThan(TOTAL_SECTIONS)
   })
 
@@ -209,10 +246,10 @@ describe("getBlueprintProgress from answer states", () => {
     ])
   })
 
-  it("has eight sections, two of them live: goals then team", () => {
+  it("has eight sections, three of them live: goals, team, then events", () => {
     expect(TOTAL_SECTIONS).toBe(8)
     expect(BLUEPRINT_SECTIONS.map((s) => s.number)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
-    expect(LIVE_SECTION_SLUGS).toEqual(["goals", "team"])
+    expect(LIVE_SECTION_SLUGS).toEqual(["goals", "team", "events"])
   })
 
   it("builds M1 copy now but does not show it (D-4b)", () => {

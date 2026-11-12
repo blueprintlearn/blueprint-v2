@@ -59,10 +59,11 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     await expect(page.getByRole("navigation")).toHaveCount(0)
 
     await expect(page.locator("ol li")).toHaveCount(8)
-    await expect(page.locator("ol li a")).toHaveCount(2)
+    await expect(page.locator("ol li a")).toHaveCount(3)
     await expect(row(page, "Your goals").getByRole("link")).toHaveAttribute("href", "/blueprint/goals")
     await expect(row(page, "Your team today").getByRole("link")).toHaveAttribute("href", "/blueprint/team")
-    for (const name of ["Your events", "Your services and market", "Your numbers", "How you develop DJs", "Your ideal DJ", "Your Blueprint"]) {
+    await expect(row(page, "Your events").getByRole("link")).toHaveAttribute("href", "/blueprint/events")
+    for (const name of ["Your services and market", "Your numbers", "How you develop DJs", "Your ideal DJ", "Your Blueprint"]) {
       await expect(row(page, name).getByText("Coming soon")).toBeVisible()
       await expect(row(page, name).getByRole("link")).toHaveCount(0)
     }
@@ -107,8 +108,8 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
       page.getByText("Now your team. We’ll count you separately, because your own events matter here too."),
     ).toBeVisible()
     await expect(page.getByRole("link", { name: "Previous: Your goals" })).toHaveAttribute("href", "/blueprint/goals")
-    await expect(page.getByRole("link", { name: "Back to your Blueprint" })).toHaveCount(2)
-    await expect(page.getByText("The next sections are coming soon.")).toBeVisible()
+    await expect(page.getByRole("link", { name: "Next: Your events" })).toHaveAttribute("href", "/blueprint/events")
+    await expect(page.getByRole("link", { name: "Back to your Blueprint" })).toHaveCount(1)
     await expect(page.locator("form[data-card='today']")).toHaveCount(1)
     await expect(page.locator("form[data-card='wanted']")).toHaveCount(1)
     await expect(page.getByRole("button", { name: "Save your team today" })).toHaveClass(/\bbp-btn--primary\b/)
@@ -142,20 +143,55 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     await expect(sectionStatus(page)).toHaveText("Complete")
     await expect(page.getByRole("region", { name: "Your team at a glance" })).toContainText("You and 6 DJs")
 
-    // Overview: both live sections complete, so no primary action and a soft way back
+    await page.getByRole("link", { name: "Next: Your events" }).click()
+    await expect(page).toHaveURL("/blueprint/events")
+    await expect(page.getByText("Section 3 of 8")).toBeVisible()
+    await expect(page.getByRole("heading", { level: 1, name: "Your events" })).toBeVisible()
+    await expect(
+      page.getByText("Now your events: what you book today, who can run them, and what you want next."),
+    ).toBeVisible()
+    await expect(page.getByRole("link", { name: "Previous: Your team today" })).toHaveAttribute("href", "/blueprint/team")
+    await expect(page.getByText("The next sections are coming soon.")).toBeVisible()
+    await expect(page.locator("form[data-card='today']")).toHaveCount(1)
+    await expect(page.locator("form[data-card='staff']")).toHaveCount(1)
+    await expect(page.locator("form[data-card='future']")).toHaveCount(1)
+
+    await page.getByRole("checkbox", { name: "Weddings" }).first().check()
+    await page.getByRole("checkbox", { name: "Corporate events" }).first().check()
+    await page.getByLabel(/About how many events do you book in a year/).fill("80")
+    await page.locator("#q-E3").getByRole("checkbox", { name: "Weddings" }).check()
+    await page.getByRole("button", { name: "Save your events today" }).click()
+    await expect(page.locator("form[data-card='today'] .bp-save")).toHaveText("Saved")
+    await expect(page.locator("form[data-card='today']")).toHaveAttribute("data-saved-e1", "wedding,corporate")
+    await expect(page.locator("form[data-card='today']")).toHaveAttribute("data-saved-e2", "80")
+    await expect(sectionStatus(page)).toHaveText("Needs attention")
+
+    await page.locator("#q-E4").getByRole("checkbox", { name: "Corporate events" }).check()
+    await page.locator("#q-E5").getByRole("checkbox", { name: "Weddings" }).check()
+    await page.getByRole("radio", { name: "They start as assistants" }).check()
+    await page.getByRole("button", { name: "Save how you staff events" }).click()
+    await expect(page.locator("form[data-card='staff'] .bp-save")).toHaveText("Saved")
+
+    await page.locator("#q-E7").getByRole("checkbox", { name: "Weddings" }).check()
+    await page.locator("#q-E8").getByRole("checkbox", { name: "School dances" }).check()
+    await page.getByRole("radio", { name: "Both" }).check()
+    await page.getByRole("button", { name: "Save your future events" }).click()
+    await expect(page.locator("form[data-card='future'] .bp-save")).toHaveText("Saved")
+    await expect(sectionStatus(page)).toHaveText("Complete")
+
     await page.getByRole("link", { name: "Back to your Blueprint" }).first().click()
     await expect(page).toHaveURL("/blueprint")
-    await expect(doneText(page)).toHaveText("2 of 8 sections complete")
+    await expect(doneText(page)).toHaveText("3 of 8 sections complete")
     await expect(row(page, "Your goals").getByText("Complete")).toBeVisible()
     await expect(row(page, "Your team today").getByText("Complete")).toBeVisible()
+    await expect(row(page, "Your events").getByText("Complete")).toBeVisible()
     await expect(page.getByText("You’ve finished the sections that are ready. More are coming soon.")).toBeVisible()
     await expect(page.locator(".bp-btn--primary")).toHaveCount(0)
     await expect(page.getByRole("link", { name: /(Start|Continue) your Blueprint/ })).toHaveCount(0)
 
-    // Owner home: the same saved facts, no forms, one soft way back in
     await page.goto("/")
     const blueprint = page.locator("section").filter({ has: page.getByRole("heading", { level: 2, name: "Your Company Blueprint" }) })
-    await expect(blueprint.getByText("2 of 8 sections complete")).toBeVisible()
+    await expect(blueprint.getByText("3 of 8 sections complete")).toBeVisible()
     await expect(blueprint.getByRole("link", { name: "Review your Blueprint" })).toHaveAttribute("href", "/blueprint")
     await expect(page.locator(".bp-btn--primary")).toHaveCount(0)
     await expect(page.locator("form[data-saved-owner-goal], form[data-saved-current-dj-count], form[data-saved-desired-dj-count]")).toHaveCount(0)
@@ -170,23 +206,23 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     await page.goto("/blueprint")
     const done = await doneCount(page)
     expect(done).toBeGreaterThanOrEqual(0)
-    expect(done).toBeLessThanOrEqual(2)
+    expect(done).toBeLessThanOrEqual(3)
 
     const start = page.getByRole("link", { name: "Start your Blueprint" })
     const cont = page.getByRole("link", { name: "Continue your Blueprint" })
-    if (done === 2) {
+    if (done === 3) {
       await expect(start).toHaveCount(0)
       await expect(cont).toHaveCount(0)
     } else {
       await expect(start.or(cont)).toHaveCount(1)
       await expect(start.or(cont)).toHaveClass(/\bbp-btn--primary\b/)
-      await expect(start.or(cont)).toHaveAttribute("href", /^\/blueprint\/(goals|team)(#q-[A-Z0-9]+)?$/)
+      await expect(start.or(cont)).toHaveAttribute("href", /^\/blueprint\/(goals|team|events)(#q-[A-Z0-9]+)?$/)
     }
   })
 
   test("other and coming-soon paths go back to the overview", async ({ page }) => {
     await signIn(page, "owner-a@blueprint.test")
-    for (const slug of ["events", "services", "numbers", "development", "ideal-dj", "review", "not-a-section", "Goals"]) {
+    for (const slug of ["services", "numbers", "development", "ideal-dj", "review", "not-a-section", "Goals"]) {
       await page.goto(`/blueprint/${slug}`)
       await expect(page).toHaveURL("/blueprint")
       await expect(page.getByRole("heading", { level: 1, name: "Your Company Blueprint" })).toBeVisible()

@@ -38,7 +38,7 @@ export const BLUEPRINT_SECTIONS: readonly BlueprintSection[] = [
     slug: "events",
     name: "Your events",
     description: "How many events you book, who works them, and your busiest dates",
-    live: false,
+    live: true,
   },
   {
     number: 4,

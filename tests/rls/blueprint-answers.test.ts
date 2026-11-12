@@ -119,6 +119,26 @@ describe("company_blueprint_answers and progress isolation", () => {
       `).ok,
     ).toBe(false)
 
+    expect(
+      querySqlAllowError(`
+        insert into public.company_blueprint_answers
+          (company_id, question_key, value, state, question_version, updated_by)
+        values ('${COMPANY_A_ID}', 'N2', '80', 'answered', 1, '${UPDATED_BY}');
+      `).ok,
+    ).toBe(false)
+
+    querySql(`
+      insert into public.company_blueprint_progress (company_id, last_section, last_question_key)
+      values ('${COMPANY_A_ID}', 'events', 'E1')
+      on conflict (company_id) do update set last_section = excluded.last_section, last_question_key = excluded.last_question_key;
+    `)
+    const eventsProgress = querySql(`
+      select last_section, last_question_key from public.company_blueprint_progress
+      where company_id = '${COMPANY_A_ID}'
+    `)
+    expect(eventsProgress).toContain("events")
+    expect(eventsProgress).toContain("E1")
+
     querySql(`
       insert into public.company_blueprint_answers
         (company_id, question_key, value, state, question_version, updated_by)
