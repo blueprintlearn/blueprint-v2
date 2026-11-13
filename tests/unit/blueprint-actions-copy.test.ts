@@ -24,6 +24,7 @@ const mocks = vi.hoisted(() => ({
     earlierDesiredDjCount: number | null
   },
   answers: [] as { questionKey: string; state: "answered" | "estimated" | "skipped"; value: unknown }[],
+  deletedKeys: [] as string[],
 }))
 
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }))
@@ -84,9 +85,18 @@ beforeEach(() => {
   mocks.goals = null
   mocks.team = emptyTeamToday()
   mocks.answers = []
+  mocks.deletedKeys = []
+  let pendingDeleteKey: string | null = null
   const deleteChain = {
-    eq: () => deleteChain,
-    then: (resolve: (value: { error: null }) => unknown) => resolve({ error: null }),
+    eq: (column: string, value: unknown) => {
+      if (column === "question_key") pendingDeleteKey = String(value)
+      return deleteChain
+    },
+    then: (resolve: (value: { error: null }) => unknown) => {
+      if (pendingDeleteKey) mocks.deletedKeys.push(pendingDeleteKey)
+      pendingDeleteKey = null
+      resolve({ error: null })
+    },
   }
   mocks.createClient.mockImplementation(async () => ({
     from: () => ({
@@ -859,6 +869,52 @@ describe("save numbers cards", () => {
       expect.objectContaining({ question_key: "N7" }),
       expect.anything(),
     )
+    expect(mocks.deletedKeys).toContain("N7")
+  })
+
+  it("keeps an incompatible saved N5 row but does not overwrite it when only N4 changes", async () => {
+    mocks.answers = [
+      { questionKey: "N4", state: "answered", value: "flat" },
+      { questionKey: "N5", state: "answered", value: { amount: 400, unit: "usd" } },
+    ]
+    const data = new FormData()
+    data.set("n4", "percentage")
+    expect((await saveNumbersCostsCard(initial, data)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "N4", value: "percentage" }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).not.toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "N5" }),
+      expect.anything(),
+    )
+    expect(mocks.deletedKeys).not.toContain("N5")
+  })
+
+  it("clears a previous N7 amount when other costs change to None, and does not restore it if costs return without a new amount", async () => {
+    mocks.answers = [
+      { questionKey: "N6", state: "answered", value: { codes: ["travel"] } },
+      { questionKey: "N7", state: "answered", value: { amount: 150 } },
+    ]
+    const none = new FormData()
+    none.append("n6", "none")
+    expect((await saveNumbersCostsCard(initial, none)).error).toBeNull()
+    expect(mocks.deletedKeys).toContain("N7")
+
+    mocks.deletedKeys = []
+    mocks.answers = [{ questionKey: "N6", state: "answered", value: { codes: ["none"] } }]
+    const travel = new FormData()
+    travel.append("n6", "travel")
+    expect((await saveNumbersCostsCard(initial, travel)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "N6", value: { codes: ["travel"] } }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).not.toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "N7" }),
+      expect.anything(),
+    )
+    expect(mocks.deletedKeys).toContain("N7")
   })
 
   it("writes a financial priority and an optional revenue target", async () => {

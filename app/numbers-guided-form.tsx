@@ -474,7 +474,14 @@ function CostsCard({ resolved }: { resolved: readonly ResolvedAnswer[] }) {
             value={n6Codes}
             help="Direct event costs only. None and Not sure replace the other choices."
             error={costsError}
-            onChange={(next) => setN6Codes(exclusiveDirectCosts(next))}
+            onChange={(next) => {
+              const codes = exclusiveDirectCosts(next)
+              setN6Codes(codes)
+              if (noneDirectCosts({ codes: codes as DirectCostCode[] })) {
+                setN7Amount(null)
+                setN7Estimated(false)
+              }
+            }}
           />
           <SkipBlock
             questionKey="N6"

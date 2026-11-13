@@ -7,6 +7,7 @@ import {
   NUMBERS_PERCENT_MESSAGE,
   NUMBERS_PERIOD_MESSAGE,
   compensationUnitForMethod,
+  djCostMatchesMethod,
   estimateAnnualRevenue,
   estimateTypicalBooking,
   exclusiveDirectCosts,
@@ -60,6 +61,11 @@ describe("percent and compensation units", () => {
     expect(compensationUnitForMethod("flat")).toBe("usd")
     expect(compensationUnitForMethod("varies")).toBe("usd")
     expect(compensationUnitForMethod("not_sure")).toBeNull()
+    expect(djCostMatchesMethod({ amount: 400, unit: "usd" }, "flat")).toBe(true)
+    expect(djCostMatchesMethod({ amount: 400, unit: "usd" }, "hourly")).toBe(true)
+    expect(djCostMatchesMethod({ amount: 400, unit: "usd" }, "percentage")).toBe(false)
+    expect(djCostMatchesMethod({ amount: 30, unit: "percent" }, "percentage")).toBe(true)
+    expect(djCostMatchesMethod({ amount: 400, unit: "usd" }, "not_sure")).toBe(true)
     expect(parseDjCostValue({ amount: 30, unit: "percent" }, "percentage")).toEqual({
       ok: true,
       value: { amount: 30, unit: "percent" },

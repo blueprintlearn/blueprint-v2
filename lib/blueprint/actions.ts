@@ -60,6 +60,8 @@ import {
   NUMBERS_PERCENT_MESSAGE,
   NUMBERS_PERIOD_MESSAGE,
   compensationUnitForMethod,
+  directCostsFromUnknown,
+  noneDirectCosts,
   parseDirectCostTypes,
   parseDjCostValue,
   parseFinancialPriority,
@@ -139,6 +141,15 @@ async function recordProgress(
   } catch (error) {
     console.error("blueprint progress", error)
   }
+}
+
+async function clearAnswer(supabase: GuidedClient, companyId: string, questionKey: string) {
+  const { error } = await supabase
+    .from("company_blueprint_answers")
+    .delete()
+    .eq("company_id", companyId)
+    .eq("question_key", questionKey)
+  return error
 }
 
 /** Removes a skip row only. Answered T4/T5/G3 rows live in this table and must stay. */
@@ -872,12 +883,14 @@ export async function saveNumbersCostsCard(
     })
   }
 
+  const previousCosts = directCostsFromUnknown(answers.find((row) => row.questionKey === "N6" && row.state !== "skipped")?.value ?? null)
+  let clearN7 = false
   if (n6Codes.length > 0) {
     const parsed = parseDirectCostTypes({ codes: n6Codes })
     if (!parsed.ok) return { error: parsed.error, savedAt: null }
     writes.push({ key: "N6", value: parsed.value, state: "answered" })
-    if (parsed.value.codes[0] === "none") {
-      // N7 is not applicable when there are no other direct costs.
+    if (noneDirectCosts(parsed.value)) {
+      clearN7 = true
     } else {
       const n7Amount = parseOptionalMoneyAmount(formData.get("n7"))
       if (!n7Amount.ok) return { error: NUMBERS_AMOUNT_MESSAGE, savedAt: null }
@@ -887,6 +900,8 @@ export async function saveNumbersCostsCard(
           value: { amount: n7Amount.value },
           state: estimatedFlag(formData, "n7Estimated") ? "estimated" : "answered",
         })
+      } else if (noneDirectCosts(previousCosts)) {
+        clearN7 = true
       }
     }
   } else {
@@ -901,11 +916,15 @@ export async function saveNumbersCostsCard(
     }
   }
 
-  if (writes.length === 0) return { error: null, savedAt: null }
+  if (writes.length === 0 && !clearN7) return { error: null, savedAt: null }
 
   const supabase = await createClient()
   for (const write of writes) {
     const error = await upsertAnswer(supabase, gate.membership.companyId, write.key, write.value, write.state)
+    if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  if (clearN7) {
+    const error = await clearAnswer(supabase, gate.membership.companyId, "N7")
     if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
   }
   await recordProgress(supabase, gate.membership.companyId, "numbers", writes[writes.length - 1].key)

@@ -14,7 +14,13 @@ import {
   type QuestionDefinition,
   type QuestionKey,
 } from "@/lib/blueprint/questions"
-import { directCostsFromUnknown, noneDirectCosts } from "@/lib/blueprint/numbers"
+import {
+  directCostsFromUnknown,
+  djCostFromUnknown,
+  djCostMatchesMethod,
+  noneDirectCosts,
+  payMethodFromUnknown,
+} from "@/lib/blueprint/numbers"
 import {
   hasStoredTeamCount,
   isConfirmedCount,
@@ -24,6 +30,15 @@ import {
 
 export function persistedAnswerKey(questionKey: QuestionKey): QuestionKey {
   return questionKey === "N2" ? "E2" : questionKey
+}
+
+function n5UnitMatchesPayMethod(value: unknown, context: AnswerContext): boolean {
+  const methodRow = storedAnswerMap(context.answers).get("N4")
+  const method =
+    methodRow && (methodRow.state === "answered" || methodRow.state === "estimated")
+      ? payMethodFromUnknown(methodRow.value)
+      : null
+  return djCostMatchesMethod(djCostFromUnknown(value), method)
 }
 
 export type AnswerGoals = {
@@ -156,6 +171,9 @@ export function resolveQuestion(question: QuestionDefinition, context: AnswerCon
   } else {
     const stored = storedAnswerMap(context.answers).get(persistedAnswerKey(question.key))
     if (stored && (stored.state === "answered" || stored.state === "estimated")) {
+      if (question.key === "N5" && !n5UnitMatchesPayMethod(stored.value, context)) {
+        return { key: question.key, state: "unanswered", value: null, isEstimate: false, question }
+      }
       return {
         key: question.key,
         state: stored.state,

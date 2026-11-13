@@ -339,6 +339,17 @@ describe("getBlueprintProgress from answer states", () => {
       ...completeNumbersAnswers().filter((row) => row.questionKey !== "N9"),
     ])
     expect(withoutTarget.statuses.numbers).toBe("complete")
+
+    const incompatiblePay = progress(goal, completeTeam(), [
+      ...teamAnswers,
+      ...completeEventsAnswers(),
+      ...completeServicesAnswers(),
+      ...completeNumbersAnswers().map((row) =>
+        row.questionKey === "N4" ? { ...row, value: "percentage" } : row,
+      ),
+    ])
+    expect(incompatiblePay.statuses.numbers).toBe("needs_attention")
+    expect(incompatiblePay.revisitKeys.numbers).toBe("N5")
   })
 
   it("treats N2 as answered when E2 is answered, and skipped when E2 is skipped", () => {

@@ -224,9 +224,50 @@ describe("N2 shares E2 volume", () => {
     expect(
       resolveQuestion(
         QUESTION_BY_KEY.N7,
+        context(null, null, [
+          { questionKey: "N6", state: "answered", value: { codes: ["none"] } },
+          { questionKey: "N7", state: "answered", value: { amount: 150 } },
+        ]),
+      ),
+    ).toMatchObject({ state: "not_applicable", value: null })
+    expect(
+      resolveQuestion(
+        QUESTION_BY_KEY.N7,
         context(null, null, [{ questionKey: "N6", state: "answered", value: { codes: ["travel"] } }]),
       ).state,
     ).toBe("unanswered")
+  })
+})
+
+describe("edited numbers answers stay consistent", () => {
+  it("ignores a saved N5 amount when the pay method unit no longer matches, then restores it if the method matches again", () => {
+    const usd = { questionKey: "N5", state: "answered" as const, value: { amount: 400, unit: "usd" } }
+    const incompatible = resolveQuestion(
+      QUESTION_BY_KEY.N5,
+      context(null, null, [
+        { questionKey: "N4", state: "answered", value: "percentage" },
+        usd,
+      ]),
+    )
+    expect(incompatible).toMatchObject({ key: "N5", state: "unanswered", value: null, isEstimate: false })
+
+    const restored = resolveQuestion(
+      QUESTION_BY_KEY.N5,
+      context(null, null, [
+        { questionKey: "N4", state: "answered", value: "flat" },
+        usd,
+      ]),
+    )
+    expect(restored).toMatchObject({ state: "answered", value: { amount: 400, unit: "usd" } })
+
+    const sameFamily = resolveQuestion(
+      QUESTION_BY_KEY.N5,
+      context(null, null, [
+        { questionKey: "N4", state: "answered", value: "hourly" },
+        usd,
+      ]),
+    )
+    expect(sameFamily.state).toBe("answered")
   })
 })
 

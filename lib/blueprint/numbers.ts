@@ -229,6 +229,13 @@ export function compensationUnitForMethod(method: PayMethodCode | null): MoneyUn
   return null
 }
 
+export function djCostMatchesMethod(cost: DjCostValue | null, method: PayMethodCode | null): boolean {
+  if (!cost) return false
+  const expected = compensationUnitForMethod(method)
+  if (expected === null) return true
+  return cost.unit === expected
+}
+
 export function exclusiveDirectCosts(next: string[]): string[] {
   const last = next[next.length - 1]
   if (last === "none" || last === "not_sure") return [last]
