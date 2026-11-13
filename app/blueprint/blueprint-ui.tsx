@@ -23,6 +23,7 @@ export { TEAM_OPENING_V2 } from "@/lib/blueprint/team-today"
 export const TEAM_FOOTER_NOTE = "The next sections are coming soon."
 export { EVENTS_OPENING, EVENTS_FOOTER_NOTE } from "@/lib/blueprint/events"
 export { SERVICES_OPENING, SERVICES_FOOTER_NOTE } from "@/lib/blueprint/services"
+export { NUMBERS_OPENING, NUMBERS_FOOTER_NOTE } from "@/lib/blueprint/numbers"
 
 const STATUS_TAGS: Record<SectionStatus, { status: "planned" | "progress" | "proven"; label: string }> = {
   not_started: { status: "planned", label: "Not started" },

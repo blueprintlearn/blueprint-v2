@@ -46,6 +46,9 @@ import {
   saveEventsStaffCard,
   saveEventsTodayCard,
   saveOwnerGoal,
+  saveNumbersCostsCard,
+  saveNumbersGoalsCard,
+  saveNumbersTodayCard,
   saveServicesGrowCard,
   saveServicesMarketCard,
   saveServicesTodayCard,
@@ -294,8 +297,8 @@ describe("saveAnswer and skipQuestion", () => {
     expect(mocks.upsert).not.toHaveBeenCalled()
   })
 
-  it("refuses unknown, financial and typed keys before touching the database", async () => {
-    for (const key of ["N1", "E0", "G1", "nope"]) {
+  it("refuses unknown and typed keys before touching the database", async () => {
+    for (const key of ["E0", "G1", "nope"]) {
       const data = new FormData()
       data.set("questionKey", key)
       data.set("value", "within_6_months")
@@ -743,4 +746,173 @@ describe("services cards", () => {
     expect(mocks.upsert).not.toHaveBeenCalled()
   })
 })
+
+describe("save numbers cards", () => {
+  it("does not claim a save when the cards are empty", async () => {
+    expect(await saveNumbersTodayCard(initial, new FormData())).toEqual({ error: null, savedAt: null })
+    expect(await saveNumbersCostsCard(initial, new FormData())).toEqual({ error: null, savedAt: null })
+    expect(await saveNumbersGoalsCard(initial, new FormData())).toEqual({ error: null, savedAt: null })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+
+  it("writes revenue with a period and does not invent a booking price from it", async () => {
+    const data = new FormData()
+    data.set("n1", "250000")
+    data.set("n1Period", "last_year")
+    const result = await saveNumbersTodayCard(initial, data)
+    expect(result.error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        question_key: "N1",
+        state: "answered",
+        value: { amount: 250000, period: "last_year" },
+      }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).not.toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "N3" }),
+      expect.anything(),
+    )
+  })
+
+  it("persists N2 as E2, including an estimated volume", async () => {
+    const data = new FormData()
+    data.set("n2", "96")
+    data.set("n2Estimated", "1")
+    const result = await saveNumbersTodayCard(initial, data)
+    expect(result.error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "E2", state: "estimated", value: 96 }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).not.toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "N2" }),
+      expect.anything(),
+    )
+  })
+
+  it("refuses N1 without a period and N3 outside the dollar range", async () => {
+    const missingPeriod = new FormData()
+    missingPeriod.set("n1", "250000")
+    expect(await saveNumbersTodayCard(initial, missingPeriod)).toEqual({
+      error: "Choose last year or this year.",
+      savedAt: null,
+    })
+    const badPrice = new FormData()
+    badPrice.set("n3", "12.5")
+    expect(await saveNumbersTodayCard(initial, badPrice)).toEqual({
+      error: "Enter a whole-dollar amount from $0 to $99,999,999.",
+      savedAt: null,
+    })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+
+  it("stores percent compensation for percentage pay and dollars otherwise", async () => {
+    const percent = new FormData()
+    percent.set("n4", "percentage")
+    percent.set("n5Percent", "30")
+    expect((await saveNumbersCostsCard(initial, percent)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "N4", value: "percentage" }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        question_key: "N5",
+        value: { amount: 30, unit: "percent" },
+      }),
+      { onConflict: "company_id,question_key" },
+    )
+
+    mocks.upsert.mockClear()
+    const dollars = new FormData()
+    dollars.set("n4", "flat")
+    dollars.set("n5", "400")
+    expect((await saveNumbersCostsCard(initial, dollars)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        question_key: "N5",
+        value: { amount: 400, unit: "usd" },
+      }),
+      { onConflict: "company_id,question_key" },
+    )
+  })
+
+  it("rejects mixing None with other direct costs and skips N7 when costs are none", async () => {
+    const mixed = new FormData()
+    mixed.append("n6", "travel")
+    mixed.append("n6", "none")
+    expect(await saveNumbersCostsCard(initial, mixed)).toEqual({
+      error: "None and Not sure can’t be combined with other costs.",
+      savedAt: null,
+    })
+
+    const none = new FormData()
+    none.append("n6", "none")
+    none.set("n7", "150")
+    expect((await saveNumbersCostsCard(initial, none)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "N6", value: { codes: ["none"] } }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).not.toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "N7" }),
+      expect.anything(),
+    )
+  })
+
+  it("writes a financial priority and an optional revenue target", async () => {
+    const data = new FormData()
+    data.set("n8", "increase_revenue")
+    data.set("n9", "400000")
+    data.set("n9Estimated", "1")
+    expect((await saveNumbersGoalsCard(initial, data)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "N8", value: "increase_revenue" }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        question_key: "N9",
+        state: "estimated",
+        value: { amount: 400000 },
+      }),
+      { onConflict: "company_id,question_key" },
+    )
+  })
+
+  it("lets skipQuestion skip N2 by writing E2, and refuses once E2 is answered", async () => {
+    const skipped = await skipQuestion("N2")
+    expect(skipped.error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "E2", state: "skipped", value: null }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).not.toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "N2" }),
+      expect.anything(),
+    )
+    mocks.answers = [{ questionKey: "E2", state: "answered", value: 80 }]
+    expect(await skipQuestion("N2")).toEqual({ error: ALREADY_ANSWERED_MESSAGE, savedAt: null })
+  })
+
+  it("refuses numbers writes when the switch is off or the caller is a manager", async () => {
+    mocks.guided = false
+    const data = new FormData()
+    data.set("n1", "250000")
+    data.set("n1Period", "last_year")
+    expect(await saveNumbersTodayCard(initial, data)).toEqual({
+      error: "That didn’t save. Please try again.",
+      savedAt: null,
+    })
+    mocks.guided = true
+    mocks.membership = { companyId: "company-a", companyName: "Company A", role: "manager" }
+    expect(await saveNumbersTodayCard(initial, data)).toEqual({
+      error: "Only the company owner can change this.",
+      savedAt: null,
+    })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+})
+
 

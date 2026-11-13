@@ -14,6 +14,7 @@ import {
 } from "@/lib/blueprint/progress"
 import { M1_COPY, shouldShowM1 } from "@/lib/blueprint/questions"
 import { completeEventsAnswers } from "@/lib/blueprint/events"
+import { completeNumbersAnswers } from "@/lib/blueprint/numbers"
 import { completeServicesAnswers } from "@/lib/blueprint/services"
 import { emptyTeamToday, teamTodayFixture, type AnswerTeamToday } from "@/lib/blueprint/team-today"
 
@@ -231,10 +232,11 @@ describe("getBlueprintProgress from answer states", () => {
       ...teamAnswers,
       ...completeEventsAnswers(),
       ...completeServicesAnswers(),
+      ...completeNumbersAnswers(),
       { questionKey: "G1", state: "skipped", value: null },
     ])
     expect(p.statuses.goals).toBe("needs_attention")
-    expect(p.completeCount).toBe(3)
+    expect(p.completeCount).toBe(4)
     expect(p.action).toBe("continue")
     expect(p.next).toBe("goals")
     expect(p.focusQuestionKey).toBe("G1")
@@ -248,8 +250,9 @@ describe("getBlueprintProgress from answer states", () => {
     ])
     expect(complete.statuses.services).toBe("complete")
     expect(complete.completeCount).toBe(4)
-    expect(complete.next).toBeNull()
-    expect(complete.action).toBe("review")
+    expect(complete.next).toBe("numbers")
+    expect(complete.focusQuestionKey).toBe("N1")
+    expect(complete.action).toBe("continue")
 
     const skippedTraining = progress(goal, completeTeam(), [
       ...teamAnswers,
@@ -261,8 +264,18 @@ describe("getBlueprintProgress from answer states", () => {
     expect(skippedTraining.skippedCounts.services).toBe(1)
     expect(skippedTraining.completeCount).toBe(3)
     expect(skippedTraining.action).toBe("continue")
-    expect(skippedTraining.next).toBe("services")
-    expect(skippedTraining.focusQuestionKey).toBe("S2")
+    expect(skippedTraining.next).toBe("numbers")
+    expect(skippedTraining.focusQuestionKey).toBe("N1")
+
+    const skippedWhenLaterDone = progress(goal, completeTeam(), [
+      ...teamAnswers,
+      ...completeEventsAnswers(),
+      ...completeServicesAnswers().filter((row) => row.questionKey !== "S2"),
+      { questionKey: "S2", state: "skipped", value: null },
+      ...completeNumbersAnswers(),
+    ])
+    expect(skippedWhenLaterDone.next).toBe("services")
+    expect(skippedWhenLaterDone.focusQuestionKey).toBe("S2")
   })
 
   it("hides the started count when none are in progress", () => {
@@ -277,6 +290,7 @@ describe("getBlueprintProgress from answer states", () => {
     }
     expect(p.statuses.events).not.toBe("coming_soon")
     expect(p.statuses.services).not.toBe("coming_soon")
+    expect(p.statuses.numbers).not.toBe("coming_soon")
     expect(p.completeCount).toBeLessThan(TOTAL_SECTIONS)
   })
 
@@ -293,10 +307,67 @@ describe("getBlueprintProgress from answer states", () => {
     ])
   })
 
-  it("has eight sections, four of them live: goals, team, events, then services", () => {
+  it("marks Your numbers complete only when every numbers core is answered, not skipped", () => {
+    const complete = progress(goal, completeTeam(), [
+      ...teamAnswers,
+      ...completeEventsAnswers(),
+      ...completeServicesAnswers(),
+      ...completeNumbersAnswers(),
+    ])
+    expect(complete.statuses.numbers).toBe("complete")
+    expect(complete.completeCount).toBe(5)
+    expect(complete.next).toBeNull()
+    expect(complete.action).toBe("review")
+
+    const skippedRevenue = progress(goal, completeTeam(), [
+      ...teamAnswers,
+      ...completeEventsAnswers(),
+      ...completeServicesAnswers(),
+      ...completeNumbersAnswers().filter((row) => row.questionKey !== "N1"),
+      { questionKey: "N1", state: "skipped", value: null },
+    ])
+    expect(skippedRevenue.statuses.numbers).toBe("needs_attention")
+    expect(skippedRevenue.skippedCounts.numbers).toBe(1)
+    expect(skippedRevenue.completeCount).toBe(4)
+    expect(skippedRevenue.next).toBe("numbers")
+    expect(skippedRevenue.focusQuestionKey).toBe("N1")
+
+    const withoutTarget = progress(goal, completeTeam(), [
+      ...teamAnswers,
+      ...completeEventsAnswers(),
+      ...completeServicesAnswers(),
+      ...completeNumbersAnswers().filter((row) => row.questionKey !== "N9"),
+    ])
+    expect(withoutTarget.statuses.numbers).toBe("complete")
+  })
+
+  it("treats N2 as answered when E2 is answered, and skipped when E2 is skipped", () => {
+    const shared = progress(goal, completeTeam(), [
+      ...teamAnswers,
+      ...completeEventsAnswers(),
+      ...completeServicesAnswers(),
+      ...completeNumbersAnswers(),
+    ])
+    expect(shared.statuses.events).toBe("complete")
+    expect(shared.statuses.numbers).toBe("complete")
+
+    const skippedVolume = progress(goal, completeTeam(), [
+      ...teamAnswers,
+      ...completeEventsAnswers().filter((row) => row.questionKey !== "E2"),
+      { questionKey: "E2", state: "skipped", value: null },
+      ...completeServicesAnswers(),
+      ...completeNumbersAnswers(),
+    ])
+    expect(skippedVolume.statuses.events).toBe("needs_attention")
+    expect(skippedVolume.statuses.numbers).toBe("needs_attention")
+    expect(skippedVolume.skippedKeys.numbers).toBe("N2")
+    expect(skippedVolume.revisitKeys.numbers).toBe("N2")
+  })
+
+  it("has eight sections, five of them live: goals, team, events, services, then numbers", () => {
     expect(TOTAL_SECTIONS).toBe(8)
     expect(BLUEPRINT_SECTIONS.map((s) => s.number)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
-    expect(LIVE_SECTION_SLUGS).toEqual(["goals", "team", "events", "services"])
+    expect(LIVE_SECTION_SLUGS).toEqual(["goals", "team", "events", "services", "numbers"])
   })
 
   it("builds M1 copy now but does not show it (D-4b)", () => {

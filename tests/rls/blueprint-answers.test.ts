@@ -84,7 +84,7 @@ describe("company_blueprint_answers and progress isolation", () => {
       querySqlAllowError(`
         insert into public.company_blueprint_answers
           (company_id, question_key, value, state, question_version, updated_by)
-        values ('${COMPANY_A_ID}', 'N1', null, 'skipped', 1, '${UPDATED_BY}');
+        values ('${COMPANY_A_ID}', 'N2', null, 'skipped', 1, '${UPDATED_BY}');
       `).ok,
     ).toBe(false)
 
@@ -242,6 +242,50 @@ describe("company_blueprint_answers and progress isolation", () => {
     expect(row.data).toMatchObject({
       question_key: "S1",
       value: { codes: ["dj_mc", "other"], other: "Laser shows" },
+    })
+  })
+
+  it("lets owner A store a numbers answer, resume on numbers, and still reject N2", async () => {
+    clearBlueprintAnswers(COMPANY_A_ID)
+    const ownerA = await asUser(OWNER_A_EMAIL)
+    const saved = await ownerA.from("company_blueprint_answers").upsert({
+      company_id: COMPANY_A_ID,
+      question_key: "N1",
+      value: { amount: 250000, period: "last_year" },
+      state: "answered",
+      question_version: 1,
+    })
+    expect(saved.error).toBeNull()
+    const volume = await ownerA.from("company_blueprint_answers").upsert({
+      company_id: COMPANY_A_ID,
+      question_key: "E2",
+      value: 80,
+      state: "answered",
+      question_version: 1,
+    })
+    expect(volume.error).toBeNull()
+    const n2 = await ownerA.from("company_blueprint_answers").upsert({
+      company_id: COMPANY_A_ID,
+      question_key: "N2",
+      value: 80,
+      state: "answered",
+      question_version: 1,
+    })
+    expect(n2.error).not.toBeNull()
+    const progress = await ownerA.from("company_blueprint_progress").upsert({
+      company_id: COMPANY_A_ID,
+      last_section: "numbers",
+      last_question_key: "N1",
+    })
+    expect(progress.error).toBeNull()
+    const row = await ownerA
+      .from("company_blueprint_answers")
+      .select("question_key, value")
+      .eq("question_key", "N1")
+      .maybeSingle()
+    expect(row.data).toMatchObject({
+      question_key: "N1",
+      value: { amount: 250000, period: "last_year" },
     })
   })
 })

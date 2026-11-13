@@ -14,12 +14,17 @@ import {
   type QuestionDefinition,
   type QuestionKey,
 } from "@/lib/blueprint/questions"
+import { directCostsFromUnknown, noneDirectCosts } from "@/lib/blueprint/numbers"
 import {
   hasStoredTeamCount,
   isConfirmedCount,
   t0Shown,
   type AnswerTeamToday,
 } from "@/lib/blueprint/team-today"
+
+export function persistedAnswerKey(questionKey: QuestionKey): QuestionKey {
+  return questionKey === "N2" ? "E2" : questionKey
+}
 
 export type AnswerGoals = {
   primary: { goal: string }
@@ -104,6 +109,11 @@ export function isQuestionApplicable(question: QuestionDefinition, context: Answ
       (current?.desiredDjCount ?? 0) > (current?.currentDjCount ?? 0)
     )
   }
+  if (question.key === "N7") {
+    const stored = storedAnswerMap(context.answers).get("N6")
+    if (!stored || stored.state === "skipped") return true
+    return !noneDirectCosts(directCostsFromUnknown(stored.value))
+  }
   return true
 }
 
@@ -144,7 +154,7 @@ export function resolveQuestion(question: QuestionDefinition, context: AnswerCon
       return { key: question.key, state: "answered", value, isEstimate: false, question }
     }
   } else {
-    const stored = storedAnswerMap(context.answers).get(question.key)
+    const stored = storedAnswerMap(context.answers).get(persistedAnswerKey(question.key))
     if (stored && (stored.state === "answered" || stored.state === "estimated")) {
       return {
         key: question.key,
@@ -159,7 +169,7 @@ export function resolveQuestion(question: QuestionDefinition, context: AnswerCon
     }
   }
 
-  const skip = storedAnswerMap(context.answers).get(question.key)
+  const skip = storedAnswerMap(context.answers).get(persistedAnswerKey(question.key))
   if (skip?.state === "skipped") {
     return { key: question.key, state: "skipped", value: null, isEstimate: false, question }
   }

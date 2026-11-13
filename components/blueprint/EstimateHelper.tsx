@@ -23,6 +23,8 @@ export type EstimateHelperProps = {
   max?: number
   /** Shown after the result, e.g. "events". */
   unit?: string
+  /** Optional display formatter, e.g. currency. */
+  format?: (result: number) => string
   /** Writes the result into the question's field and marks it Estimated. Nothing saves here. */
   onUse: (result: number) => void
   className?: string
@@ -31,7 +33,7 @@ export type EstimateHelperProps = {
 /**
  * A short calculator. The component holds no business logic: formulas live in the registry.
  */
-export function EstimateHelper({ inputs, compute, max, unit, onUse, className }: EstimateHelperProps) {
+export function EstimateHelper({ inputs, compute, max, unit, format, onUse, className }: EstimateHelperProps) {
   const [vals, setVals] = useState<Record<string, string>>({})
 
   const parsed = inputs.map((input) => {
@@ -58,6 +60,7 @@ export function EstimateHelper({ inputs, compute, max, unit, onUse, className }:
   }
 
   const unitText = unit ? ` ${unit}` : ""
+  const shown = (value: number) => (format ? format(value) : `${value.toLocaleString("en-US")}${unitText}`)
 
   return (
     <div className={cx("bp-helper", className)}>
@@ -85,14 +88,14 @@ export function EstimateHelper({ inputs, compute, max, unit, onUse, className }:
           <span className="bp-helper__pending">Fill these in to see an estimate</span>
         ) : (
           <>
-            <span className="bp-helper__value">{`Estimate: ${result.toLocaleString("en-US")}${unitText}`}</span>
+            <span className="bp-helper__value">{`Estimate: ${shown(result)}`}</span>
             <Button
               variant="soft"
               size="sm"
               type="button"
               onClick={() => onUse(result)}
             >
-              {`Use ${result.toLocaleString("en-US")}`}
+              {`Use ${shown(result)}`}
             </Button>
           </>
         )}
