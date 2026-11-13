@@ -50,6 +50,15 @@ export type QuestionKey =
   | "E7"
   | "E8"
   | "E9"
+  | "S1"
+  | "S2"
+  | "S3"
+  | "S4"
+  | "S5"
+  | "S6"
+  | "S7"
+  | "S8"
+  | "S9"
 
 export type GuidanceExample = {
   text: string
@@ -450,6 +459,168 @@ export const QUESTIONS: readonly QuestionDefinition[] = [
       examples: [
         { text: "More bookings, and you’re fine still DJing." },
         { text: "Same volume, but you want to DJ less." },
+      ],
+    },
+  },
+  {
+    key: "S1",
+    section: "services",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What services do you currently offer? Choose all that apply.",
+    whyNeeded: "Blueprint needs the services you already sell, so later suggestions stay grounded in what you do today.",
+    guidance: {
+      why: "Choose every service you currently offer, not the ones you hope to add later.",
+      examples: [
+        { text: "DJ and MC plus uplighting at most weddings." },
+        { text: "DJ and MC only. Photo booths come from someone else." },
+      ],
+    },
+  },
+  {
+    key: "S2",
+    section: "services",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Which services require additional training beyond basic DJ skills? Choose all that apply.",
+    whyNeeded: "Extra training needs are separate from the services you already offer.",
+    guidance: {
+      why: "Pick services that need more than basic DJ skills, from the ones you already offer.",
+      examples: [
+        { text: "Uplighting and photo booths need extra training. DJ and MC does not." },
+        { text: "Every service you offer needs extra training except DJ and MC." },
+      ],
+    },
+  },
+  {
+    key: "S3",
+    section: "services",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Which services can your current DJs deliver independently? Choose all that apply.",
+    whyNeeded: "Independent delivery is separate from what the company offers, and from what still needs you.",
+    guidance: {
+      why: "Do not assume every DJ can deliver every service. Pick what they can already do without you.",
+      examples: [
+        { text: "They can DJ and MC alone, but not run lighting." },
+        { text: "They can deliver every service you offer." },
+      ],
+    },
+  },
+  {
+    key: "S4",
+    section: "services",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "How would you describe your company’s positioning?",
+    whyNeeded: "Your own view of where you sit in the market is enough. Blueprint will not rank competitors.",
+    guidance: {
+      why: "This is how you see the company, not a price list or a ranking against others.",
+      examples: [
+        { text: "Most clients treat you as mid-market." },
+        { text: "You’re not sure yet: pick I’m not sure, or skip." },
+      ],
+    },
+  },
+  {
+    key: "S5",
+    section: "services",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Why do clients choose your company? Choose up to three.",
+    whyNeeded: "The reasons clients pick you are owner-reported, not a market study.",
+    guidance: {
+      why: "Pick up to three reasons clients give you. This is your view, not a survey.",
+      examples: [
+        { text: "DJ talent and professionalism, more than price." },
+        { text: "Reputation and referrals, plus the customer experience." },
+      ],
+    },
+  },
+  {
+    key: "S6",
+    section: "services",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What makes it difficult to compete in your market? Choose up to three.",
+    whyNeeded: "The hard parts of competing are your perceptions, not verified competitor data.",
+    guidance: {
+      why: "Pick up to three. Blueprint will not turn this into competitor rankings or price comparisons.",
+      examples: [
+        { text: "Finding qualified DJs, and larger companies nearby." },
+        { text: "Seasonality more than price." },
+      ],
+    },
+  },
+  {
+    key: "S7",
+    section: "services",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Which services would you like to offer in the future? Choose all that apply.",
+    whyNeeded: "New services are work you don’t offer today. They stay separate from what you already sell.",
+    guidance: {
+      why: "Only pick services you don’t already offer. Skip this if you’re not adding anything new.",
+      examples: [
+        { text: "You DJ today and want to add photo booths." },
+        { text: "You’re not adding new services: skip this." },
+      ],
+    },
+  },
+  {
+    key: "S8",
+    section: "services",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Which existing services would you like to sell more often? Choose all that apply.",
+    whyNeeded: "Selling more of what you already offer is different from adding something new.",
+    guidance: {
+      why: "Choose from the services you already offer. New services were the previous question.",
+      examples: [
+        { text: "More uplighting, same DJ and MC volume." },
+        { text: "More of everything you already sell." },
+      ],
+    },
+  },
+  {
+    key: "S9",
+    section: "services",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What is your biggest service-related goal?",
+    whyNeeded: "One service goal is enough for now. Blueprint will not recommend training from this yet.",
+    guidance: {
+      why: "Pick the service goal that matters most. Training recommendations come later.",
+      examples: [
+        { text: "Train more DJs to deliver what you already sell." },
+        { text: "You’re still deciding: pick Not sure yet, or skip." },
       ],
     },
   },

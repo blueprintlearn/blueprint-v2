@@ -44,8 +44,8 @@ export const BLUEPRINT_SECTIONS: readonly BlueprintSection[] = [
     number: 4,
     slug: "services",
     name: "Your services and market",
-    description: "What your DJs handle at events, and where your prices sit",
-    live: false,
+    description: "What you offer today, how you sit in the market, and what you want to grow",
+    live: true,
   },
   {
     number: 5,

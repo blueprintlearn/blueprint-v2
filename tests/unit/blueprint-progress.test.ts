@@ -14,6 +14,7 @@ import {
 } from "@/lib/blueprint/progress"
 import { M1_COPY, shouldShowM1 } from "@/lib/blueprint/questions"
 import { completeEventsAnswers } from "@/lib/blueprint/events"
+import { completeServicesAnswers } from "@/lib/blueprint/services"
 import { emptyTeamToday, teamTodayFixture, type AnswerTeamToday } from "@/lib/blueprint/team-today"
 
 const goal = { primary: { goal: "scale" }, others: [] }
@@ -133,8 +134,9 @@ describe("getBlueprintProgress from answer states", () => {
     const complete = progress(goal, completeTeam(), [...teamAnswers, ...completeEventsAnswers()])
     expect(complete.statuses.events).toBe("complete")
     expect(complete.completeCount).toBe(3)
-    expect(complete.next).toBeNull()
-    expect(complete.action).toBe("review")
+    expect(complete.next).toBe("services")
+    expect(complete.focusQuestionKey).toBe("S1")
+    expect(complete.action).toBe("continue")
 
     const skippedVolume = progress(goal, completeTeam(), [
       ...teamAnswers,
@@ -145,8 +147,8 @@ describe("getBlueprintProgress from answer states", () => {
     expect(skippedVolume.skippedCounts.events).toBe(1)
     expect(skippedVolume.completeCount).toBe(2)
     expect(skippedVolume.action).toBe("continue")
-    expect(skippedVolume.next).toBe("events")
-    expect(skippedVolume.focusQuestionKey).toBe("E2")
+    expect(skippedVolume.next).toBe("services")
+    expect(skippedVolume.focusQuestionKey).toBe("S1")
     expect(skippedVolume.revisitKeys.events).toBe("E2")
     expect(skippedVolume.skippedKeys.events).toBe("E2")
   })
@@ -228,13 +230,39 @@ describe("getBlueprintProgress from answer states", () => {
     const p = progress(null, completeTeam(), [
       ...teamAnswers,
       ...completeEventsAnswers(),
+      ...completeServicesAnswers(),
       { questionKey: "G1", state: "skipped", value: null },
     ])
     expect(p.statuses.goals).toBe("needs_attention")
-    expect(p.completeCount).toBe(2)
+    expect(p.completeCount).toBe(3)
     expect(p.action).toBe("continue")
     expect(p.next).toBe("goals")
     expect(p.focusQuestionKey).toBe("G1")
+  })
+
+  it("marks Your services complete only when every services core is answered, not skipped", () => {
+    const complete = progress(goal, completeTeam(), [
+      ...teamAnswers,
+      ...completeEventsAnswers(),
+      ...completeServicesAnswers(),
+    ])
+    expect(complete.statuses.services).toBe("complete")
+    expect(complete.completeCount).toBe(4)
+    expect(complete.next).toBeNull()
+    expect(complete.action).toBe("review")
+
+    const skippedTraining = progress(goal, completeTeam(), [
+      ...teamAnswers,
+      ...completeEventsAnswers(),
+      ...completeServicesAnswers().filter((row) => row.questionKey !== "S2"),
+      { questionKey: "S2", state: "skipped", value: null },
+    ])
+    expect(skippedTraining.statuses.services).toBe("needs_attention")
+    expect(skippedTraining.skippedCounts.services).toBe(1)
+    expect(skippedTraining.completeCount).toBe(3)
+    expect(skippedTraining.action).toBe("continue")
+    expect(skippedTraining.next).toBe("services")
+    expect(skippedTraining.focusQuestionKey).toBe("S2")
   })
 
   it("hides the started count when none are in progress", () => {
@@ -248,6 +276,7 @@ describe("getBlueprintProgress from answer states", () => {
       expect(p.statuses[section.slug]).toBe("coming_soon")
     }
     expect(p.statuses.events).not.toBe("coming_soon")
+    expect(p.statuses.services).not.toBe("coming_soon")
     expect(p.completeCount).toBeLessThan(TOTAL_SECTIONS)
   })
 
@@ -264,10 +293,10 @@ describe("getBlueprintProgress from answer states", () => {
     ])
   })
 
-  it("has eight sections, three of them live: goals, team, then events", () => {
+  it("has eight sections, four of them live: goals, team, events, then services", () => {
     expect(TOTAL_SECTIONS).toBe(8)
     expect(BLUEPRINT_SECTIONS.map((s) => s.number)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
-    expect(LIVE_SECTION_SLUGS).toEqual(["goals", "team", "events"])
+    expect(LIVE_SECTION_SLUGS).toEqual(["goals", "team", "events", "services"])
   })
 
   it("builds M1 copy now but does not show it (D-4b)", () => {

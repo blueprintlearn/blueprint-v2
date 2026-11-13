@@ -2,13 +2,15 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import { companyGoalCodes, companyGoalsOtherText } from "@/lib/blueprint/company-goals"
-import { EVENTS_FOOTER_NOTE, EVENTS_OPENING } from "@/lib/blueprint/events"
+import { EVENTS_OPENING } from "@/lib/blueprint/events"
 import { loadGuidedBlueprint, requireGuidedOwner } from "@/lib/blueprint/guard"
 import { blueprintSection } from "@/lib/blueprint/progress"
+import { SERVICES_FOOTER_NOTE, SERVICES_OPENING } from "@/lib/blueprint/services"
 
 import { EventsGuidedForm } from "../../events-guided-form"
 import { FocusQuestion } from "../../focus-question"
 import { OwnerGoalsForm } from "../../owner-goals-form"
+import { ServicesGuidedForm } from "../../services-guided-form"
 import { TeamTodayGuidedForm } from "../../team-today-guided-form"
 import {
   BlueprintSectionPage,
@@ -25,7 +27,7 @@ export default async function BlueprintSectionRoute({
   const membership = await requireGuidedOwner()
   const { section: slug } = await params
 
-  if (slug !== "goals" && slug !== "team" && slug !== "events") {
+  if (slug !== "goals" && slug !== "team" && slug !== "events" && slug !== "services") {
     redirect("/blueprint")
   }
 
@@ -82,14 +84,40 @@ export default async function BlueprintSectionRoute({
               <Link href="/blueprint/team" className="bp-btn bp-btn--plain">
                 Previous: Your team today
               </Link>
-              <Link href="/blueprint" className="bp-btn bp-btn--soft">
-                Back to your Blueprint
+              <Link href="/blueprint/services" id="blueprint-next" className="bp-btn bp-btn--soft">
+                Next: Your services and market
               </Link>
-              <p className="m-0 text-ink-2">{EVENTS_FOOTER_NOTE}</p>
             </>
           }
         >
           <EventsGuidedForm resolved={resolved} />
+        </BlueprintSectionPage>
+      </BlueprintShell>
+    )
+  }
+
+  if (slug === "services") {
+    return (
+      <BlueprintShell>
+        <FocusQuestion questionId={focusId} />
+        <BlueprintSectionPage
+          section={section}
+          status={status}
+          opening={SERVICES_OPENING}
+          framed={false}
+          footer={
+            <>
+              <Link href="/blueprint/events" className="bp-btn bp-btn--plain">
+                Previous: Your events
+              </Link>
+              <Link href="/blueprint" className="bp-btn bp-btn--soft">
+                Back to your Blueprint
+              </Link>
+              <p className="m-0 text-ink-2">{SERVICES_FOOTER_NOTE}</p>
+            </>
+          }
+        >
+          <ServicesGuidedForm resolved={resolved} />
         </BlueprintSectionPage>
       </BlueprintShell>
     )

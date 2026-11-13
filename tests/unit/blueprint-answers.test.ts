@@ -120,6 +120,15 @@ describe("question registry", () => {
       "E7",
       "E8",
       "E9",
+      "S1",
+      "S2",
+      "S3",
+      "S4",
+      "S5",
+      "S6",
+      "S7",
+      "S8",
+      "S9",
     ])
     expect(QUESTIONS.every((question) => /^[A-Z]{1,2}[0-9]{1,2}[a-z]?$/.test(question.key))).toBe(true)
     expect(QUESTIONS.some((question) => question.key.startsWith("N"))).toBe(false)
@@ -142,6 +151,10 @@ describe("question registry", () => {
     expect(QUESTION_BY_KEY.E2.estimable).toBe(true)
     expect(QUESTION_BY_KEY.E2.skipAllowed).toBe(true)
     expect(QUESTIONS.filter((question) => question.section === "events").every((question) => question.skipAllowed)).toBe(
+      true,
+    )
+    expect(QUESTION_BY_KEY.S1.section).toBe("services")
+    expect(QUESTIONS.filter((question) => question.section === "services").every((question) => question.skipAllowed)).toBe(
       true,
     )
   })

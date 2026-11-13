@@ -46,6 +46,9 @@ import {
   saveEventsStaffCard,
   saveEventsTodayCard,
   saveOwnerGoal,
+  saveServicesGrowCard,
+  saveServicesMarketCard,
+  saveServicesTodayCard,
   saveTeamRunsCard,
   saveTeamToday,
   saveTeamTodayCard,
@@ -605,6 +608,135 @@ describe("save events cards", () => {
     mocks.guided = true
     mocks.membership = { companyId: "company-a", companyName: "Company A", role: "manager" }
     expect(await saveEventsTodayCard(initial, data)).toEqual({
+      error: "Only the company owner can change this.",
+      savedAt: null,
+    })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+})
+
+describe("services cards", () => {
+  it("saves current services and inherits a named custom service on later questions", async () => {
+    const today = new FormData()
+    today.append("s1", "dj_mc")
+    today.append("s1", "other")
+    today.set("s1Other", "Laser shows")
+    today.append("s2", "other")
+    expect((await saveServicesTodayCard(initial, today)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        question_key: "S1",
+        value: { codes: ["dj_mc", "other"], other: "Laser shows" },
+      }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        question_key: "S2",
+        value: { codes: ["other"], other: "Laser shows" },
+      }),
+      { onConflict: "company_id,question_key" },
+    )
+
+    mocks.answers = [
+      { questionKey: "S1", state: "answered", value: { codes: ["dj_mc", "other"], other: "Laser shows" } },
+    ]
+    const grow = new FormData()
+    grow.append("s8", "other")
+    expect((await saveServicesGrowCard(initial, grow)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        question_key: "S8",
+        value: { codes: ["other"], other: "Laser shows" },
+      }),
+      { onConflict: "company_id,question_key" },
+    )
+  })
+
+  it("rejects unknown why-chosen and compete codes mixed with valid selections", async () => {
+    const why = new FormData()
+    why.append("s5", "dj_talent")
+    why.append("s5", "not_a_reason")
+    expect(await saveServicesMarketCard(initial, why)).toEqual({
+      error: "Choose one of the options.",
+      savedAt: null,
+    })
+
+    const compete = new FormData()
+    compete.append("s6", "finding_djs")
+    compete.append("s6", "nope")
+    expect(await saveServicesMarketCard(initial, compete)).toEqual({
+      error: "Choose one of the options.",
+      savedAt: null,
+    })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+
+  it("rejects more than three why-chosen reasons and overlapping new services", async () => {
+    const tooMany = new FormData()
+    tooMany.append("s5", "dj_talent")
+    tooMany.append("s5", "professionalism")
+    tooMany.append("s5", "music_expertise")
+    tooMany.append("s5", "reputation")
+    expect(await saveServicesMarketCard(initial, tooMany)).toEqual({
+      error: "Choose up to three.",
+      savedAt: null,
+    })
+
+    mocks.answers = [
+      { questionKey: "S1", state: "answered", value: { codes: ["dj_mc", "uplighting"], other: null } },
+    ]
+    const overlap = new FormData()
+    overlap.append("s7", "dj_mc")
+    expect(await saveServicesGrowCard(initial, overlap)).toEqual({
+      error: "Choose services you don’t already offer.",
+      savedAt: null,
+    })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+
+  it("writes market perceptions and a service goal, including I’m not sure", async () => {
+    const market = new FormData()
+    market.set("s4", "not_sure")
+    market.append("s5", "dj_talent")
+    market.append("s6", "finding_djs")
+    expect((await saveServicesMarketCard(initial, market)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "S4", value: "not_sure" }),
+      { onConflict: "company_id,question_key" },
+    )
+
+    const grow = new FormData()
+    grow.set("s9", "train_djs")
+    expect((await saveServicesGrowCard(initial, grow)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "S9", value: "train_djs" }),
+      { onConflict: "company_id,question_key" },
+    )
+  })
+
+  it("lets skipQuestion skip a services core, and refuses it once answered", async () => {
+    const skipped = await skipQuestion("S2")
+    expect(skipped.error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "S2", state: "skipped", value: null }),
+      { onConflict: "company_id,question_key" },
+    )
+    mocks.answers = [{ questionKey: "S2", state: "skipped", value: null }]
+    expect(await skipQuestion("S2")).toEqual({ error: ALREADY_ANSWERED_MESSAGE, savedAt: null })
+  })
+
+  it("refuses services writes when the switch is off or the caller is a manager", async () => {
+    mocks.guided = false
+    const data = new FormData()
+    data.append("s1", "dj_mc")
+    expect(await saveServicesTodayCard(initial, data)).toEqual({
+      error: "That didn’t save. Please try again.",
+      savedAt: null,
+    })
+    mocks.guided = true
+    mocks.membership = { companyId: "company-a", companyName: "Company A", role: "manager" }
+    expect(await saveServicesTodayCard(initial, data)).toEqual({
       error: "Only the company owner can change this.",
       savedAt: null,
     })
