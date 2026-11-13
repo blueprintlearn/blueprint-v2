@@ -91,6 +91,25 @@ describe("market perceptions", () => {
     expect(parseCompete([])).toEqual({ ok: false, error: "Choose at least one option." })
   })
 
+  it("rejects unknown why-chosen and compete codes even when mixed with valid ones", () => {
+    expect(parseWhyChosen(["dj_talent", "not_a_reason"])).toEqual({
+      ok: false,
+      error: "Choose one of the options.",
+    })
+    expect(parseWhyChosen(["bogus"])).toEqual({
+      ok: false,
+      error: "Choose one of the options.",
+    })
+    expect(parseCompete(["finding_djs", "nope"])).toEqual({
+      ok: false,
+      error: "Choose one of the options.",
+    })
+    expect(parseCompete(["price_war"])).toEqual({
+      ok: false,
+      error: "Choose one of the options.",
+    })
+  })
+
   it("accepts a service goal, including Not sure yet", () => {
     expect(parseServiceGoal("train_djs")).toEqual({ ok: true, value: "train_djs" })
     expect(parseServiceGoal("not_sure")).toEqual({ ok: true, value: "not_sure" })

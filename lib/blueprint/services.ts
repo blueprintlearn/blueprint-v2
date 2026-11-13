@@ -171,9 +171,15 @@ function parseCodedList<T extends string>(
   raw: unknown,
   allowed: readonly T[],
 ): { ok: true; value: T[] } | { ok: false; error: string } {
-  const codes = Array.isArray(raw)
-    ? raw.filter((code): code is T => (allowed as readonly string[]).includes(String(code)))
-    : []
+  if (!Array.isArray(raw)) return { ok: false, error: MARKET_CHOICE_MESSAGE }
+  const codes: T[] = []
+  for (const item of raw) {
+    const code = String(item)
+    if (!(allowed as readonly string[]).includes(code)) {
+      return { ok: false, error: "Choose one of the options." }
+    }
+    codes.push(code as T)
+  }
   if (codes.length === 0) return { ok: false, error: MARKET_CHOICE_MESSAGE }
   if (codes.length > MARKET_CHOICE_MAX) return { ok: false, error: MARKET_CHOICE_MAX_MESSAGE }
   return { ok: true, value: codes }

@@ -653,6 +653,25 @@ describe("services cards", () => {
     )
   })
 
+  it("rejects unknown why-chosen and compete codes mixed with valid selections", async () => {
+    const why = new FormData()
+    why.append("s5", "dj_talent")
+    why.append("s5", "not_a_reason")
+    expect(await saveServicesMarketCard(initial, why)).toEqual({
+      error: "Choose one of the options.",
+      savedAt: null,
+    })
+
+    const compete = new FormData()
+    compete.append("s6", "finding_djs")
+    compete.append("s6", "nope")
+    expect(await saveServicesMarketCard(initial, compete)).toEqual({
+      error: "Choose one of the options.",
+      savedAt: null,
+    })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+
   it("rejects more than three why-chosen reasons and overlapping new services", async () => {
     const tooMany = new FormData()
     tooMany.append("s5", "dj_talent")
