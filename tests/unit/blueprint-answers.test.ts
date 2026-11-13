@@ -129,9 +129,28 @@ describe("question registry", () => {
       "S7",
       "S8",
       "S9",
+      "N1",
+      "N2",
+      "N3",
+      "N4",
+      "N5",
+      "N6",
+      "N7",
+      "N8",
+      "N9",
     ])
     expect(QUESTIONS.every((question) => /^[A-Z]{1,2}[0-9]{1,2}[a-z]?$/.test(question.key))).toBe(true)
-    expect(QUESTIONS.some((question) => question.key.startsWith("N"))).toBe(false)
+    expect(QUESTIONS.filter((question) => question.key.startsWith("N")).map((question) => question.key)).toEqual([
+      "N1",
+      "N2",
+      "N3",
+      "N4",
+      "N5",
+      "N6",
+      "N7",
+      "N8",
+      "N9",
+    ])
     expect(QUESTION_BY_KEY.G1.skipAllowed).toBe(true)
     expect(QUESTION_BY_KEY.G2.skipAllowed).toBe(false)
     expect(QUESTION_BY_KEY.G3.skipAllowed).toBe(false)
@@ -157,6 +176,98 @@ describe("question registry", () => {
     expect(QUESTIONS.filter((question) => question.section === "services").every((question) => question.skipAllowed)).toBe(
       true,
     )
+    expect(QUESTION_BY_KEY.N1.section).toBe("numbers")
+    expect(QUESTION_BY_KEY.N2.estimable).toBe(true)
+    expect(QUESTION_BY_KEY.N9.level).toBe("go_deeper")
+    expect(QUESTIONS.filter((question) => question.section === "numbers").every((question) => question.skipAllowed)).toBe(
+      true,
+    )
+  })
+})
+
+describe("N2 shares E2 volume", () => {
+  it("resolves N2 from the E2 row and ignores a stray N2 copy", () => {
+    const fromEvents = resolveQuestion(
+      QUESTION_BY_KEY.N2,
+      context(null, null, [{ questionKey: "E2", state: "answered", value: 80 }]),
+    )
+    expect(fromEvents).toMatchObject({ key: "N2", state: "answered", value: 80, isEstimate: false })
+
+    const estimated = resolveQuestion(
+      QUESTION_BY_KEY.N2,
+      context(null, null, [{ questionKey: "E2", state: "estimated", value: 96 }]),
+    )
+    expect(estimated).toMatchObject({ state: "estimated", value: 96, isEstimate: true })
+
+    const skipped = resolveQuestion(
+      QUESTION_BY_KEY.N2,
+      context(null, null, [{ questionKey: "E2", state: "skipped", value: null }]),
+    )
+    expect(skipped.state).toBe("skipped")
+
+    const stray = resolveQuestion(
+      QUESTION_BY_KEY.N2,
+      context(null, null, [{ questionKey: "N2", state: "answered", value: 12 }]),
+    )
+    expect(stray.state).toBe("unanswered")
+    expect(stray.value).toBeNull()
+  })
+
+  it("marks N7 not applicable when other direct costs are none", () => {
+    expect(resolveQuestion(QUESTION_BY_KEY.N7, context(null, null)).state).toBe("unanswered")
+    expect(
+      resolveQuestion(
+        QUESTION_BY_KEY.N7,
+        context(null, null, [{ questionKey: "N6", state: "answered", value: { codes: ["none"] } }]),
+      ).state,
+    ).toBe("not_applicable")
+    expect(
+      resolveQuestion(
+        QUESTION_BY_KEY.N7,
+        context(null, null, [
+          { questionKey: "N6", state: "answered", value: { codes: ["none"] } },
+          { questionKey: "N7", state: "answered", value: { amount: 150 } },
+        ]),
+      ),
+    ).toMatchObject({ state: "not_applicable", value: null })
+    expect(
+      resolveQuestion(
+        QUESTION_BY_KEY.N7,
+        context(null, null, [{ questionKey: "N6", state: "answered", value: { codes: ["travel"] } }]),
+      ).state,
+    ).toBe("unanswered")
+  })
+})
+
+describe("edited numbers answers stay consistent", () => {
+  it("ignores a saved N5 amount when the pay method unit no longer matches, then restores it if the method matches again", () => {
+    const usd = { questionKey: "N5", state: "answered" as const, value: { amount: 400, unit: "usd" } }
+    const incompatible = resolveQuestion(
+      QUESTION_BY_KEY.N5,
+      context(null, null, [
+        { questionKey: "N4", state: "answered", value: "percentage" },
+        usd,
+      ]),
+    )
+    expect(incompatible).toMatchObject({ key: "N5", state: "unanswered", value: null, isEstimate: false })
+
+    const restored = resolveQuestion(
+      QUESTION_BY_KEY.N5,
+      context(null, null, [
+        { questionKey: "N4", state: "answered", value: "flat" },
+        usd,
+      ]),
+    )
+    expect(restored).toMatchObject({ state: "answered", value: { amount: 400, unit: "usd" } })
+
+    const sameFamily = resolveQuestion(
+      QUESTION_BY_KEY.N5,
+      context(null, null, [
+        { questionKey: "N4", state: "answered", value: "hourly" },
+        usd,
+      ]),
+    )
+    expect(sameFamily.state).toBe("answered")
   })
 })
 

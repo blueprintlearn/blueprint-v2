@@ -51,8 +51,8 @@ export const BLUEPRINT_SECTIONS: readonly BlueprintSection[] = [
     number: 5,
     slug: "numbers",
     name: "Your numbers",
-    description: "What each event really earns, private to you",
-    live: false,
+    description: "Approximate revenue, typical event costs, and a financial priority, private to you",
+    live: true,
   },
   {
     number: 6,

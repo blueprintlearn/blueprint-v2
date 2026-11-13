@@ -59,6 +59,15 @@ export type QuestionKey =
   | "S7"
   | "S8"
   | "S9"
+  | "N1"
+  | "N2"
+  | "N3"
+  | "N4"
+  | "N5"
+  | "N6"
+  | "N7"
+  | "N8"
+  | "N9"
 
 export type GuidanceExample = {
   text: string
@@ -621,6 +630,168 @@ export const QUESTIONS: readonly QuestionDefinition[] = [
       examples: [
         { text: "Train more DJs to deliver what you already sell." },
         { text: "You’re still deciding: pick Not sure yet, or skip." },
+      ],
+    },
+  },
+  {
+    key: "N1",
+    section: "numbers",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: true,
+    version: 1,
+    label: "About how much revenue does your company generate annually?",
+    whyNeeded: "A yearly revenue number, even approximate, is the starting point for later financial work.",
+    guidance: {
+      why: "Use last year’s total, or estimate this year from typical monthly sales. Approximate is enough.",
+      examples: [
+        { text: "Last year you invoiced about $250,000." },
+        { text: "Typical months are about $20,000, so this year is around $240,000." },
+      ],
+    },
+  },
+  {
+    key: "N2",
+    section: "numbers",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: true,
+    version: 1,
+    label: "Approximately how many events do you book per year?",
+    whyNeeded: "Yearly volume is the same number as in Your events, so Blueprint keeps one consistent count.",
+    guidance: {
+      why: "This is the same yearly volume as Your events. Confirm it or update it here.",
+      examples: [
+        { text: "A busy wedding company: about 80." },
+        { text: "A newer company: about 20." },
+      ],
+    },
+  },
+  {
+    key: "N3",
+    section: "numbers",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: true,
+    version: 1,
+    label: "What is your typical booking price?",
+    whyNeeded: "Typical booking price is owner-reported. Blueprint will not divide company revenue by bookings.",
+    guidance: {
+      why: "If you know yearly DJ-event revenue and bookings, you can estimate a typical price. Don’t use company-wide revenue if it includes rentals or production.",
+      examples: [
+        { text: "Most bookings are about $1,800." },
+        { text: "DJ-event revenue of $144,000 across 80 bookings is about $1,800." },
+      ],
+    },
+  },
+  {
+    key: "N4",
+    section: "numbers",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "How do you typically pay your lead DJs?",
+    whyNeeded: "How you pay lead DJs decides whether the next amount is dollars or a percentage.",
+    guidance: {
+      why: "Pick the usual method. If it varies, say so and you can still give a representative amount next.",
+      examples: [
+        { text: "A flat amount per event." },
+        { text: "A percentage of the booking." },
+      ],
+    },
+  },
+  {
+    key: "N5",
+    section: "numbers",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: true,
+    version: 1,
+    label: "Approximately how much does a typical lead DJ cost you per event?",
+    whyNeeded: "Lead DJ cost per event stays separate from other direct costs and from company revenue.",
+    guidance: {
+      why: "Match the amount to how you pay: dollars per event, or a percent of the booking. Skip if you don’t know.",
+      examples: [
+        { text: "About $400 per event." },
+        { text: "About 30 percent of the booking." },
+      ],
+    },
+  },
+  {
+    key: "N6",
+    section: "numbers",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What other direct costs do you typically have per event?",
+    whyNeeded: "Other direct event costs stay separate from lead DJ pay and from general overhead.",
+    guidance: {
+      why: "Direct event costs are things you spend to run that event. Rent, insurance, and office costs are overhead, not this list.",
+      examples: [
+        { text: "Travel and an assistant, most events." },
+        { text: "None beyond the lead DJ." },
+      ],
+    },
+  },
+  {
+    key: "N7",
+    section: "numbers",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: true,
+    version: 1,
+    label: "Approximately how much are those other direct costs per event?",
+    whyNeeded: "A typical other-cost amount, without lead DJ pay, keeps event costs from being double-counted.",
+    guidance: {
+      why: "Add the usual assistants, rentals, travel, and supplies for one event. Don’t include lead DJ compensation.",
+      examples: [
+        { text: "About $150 for travel and supplies." },
+        { text: "You’re not sure: skip, or enter an estimate." },
+      ],
+    },
+  },
+  {
+    key: "N8",
+    section: "numbers",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What is your biggest financial priority?",
+    whyNeeded: "One financial priority is enough. Blueprint will not score your margins or health from this.",
+    guidance: {
+      why: "Pick the financial outcome that matters most. This is not a diagnosis of how healthy the company is.",
+      examples: [
+        { text: "Increase revenue." },
+        { text: "You’re still deciding: pick Not sure yet, or skip." },
+      ],
+    },
+  },
+  {
+    key: "N9",
+    section: "numbers",
+    level: "go_deeper",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: true,
+    version: 1,
+    label: "What annual revenue would you eventually like your company to reach?",
+    whyNeeded: "An optional revenue target has no deadline. Blueprint will not assume when you want to get there.",
+    guidance: {
+      why: "A number is enough. There is no date attached. Skip this if you don’t have a target yet.",
+      examples: [
+        { text: "Eventually about $400,000 a year." },
+        { text: "No target yet: skip." },
       ],
     },
   },

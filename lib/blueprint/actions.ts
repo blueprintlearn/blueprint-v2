@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 
-import { resolveQuestion } from "@/lib/blueprint/answers"
+import { persistedAnswerKey, resolveQuestion } from "@/lib/blueprint/answers"
 import {
   mapSaveCompanyGoalsError,
   parseCompanyGoals,
@@ -55,6 +55,23 @@ import {
   serviceTypesFromUnknown,
   type ServiceTypesValue,
 } from "@/lib/blueprint/services"
+import {
+  NUMBERS_AMOUNT_MESSAGE,
+  NUMBERS_PERCENT_MESSAGE,
+  NUMBERS_PERIOD_MESSAGE,
+  compensationUnitForMethod,
+  directCostsFromUnknown,
+  noneDirectCosts,
+  parseDirectCostTypes,
+  parseDjCostValue,
+  parseFinancialPriority,
+  parseMoneyAmountValue,
+  parseOptionalMoneyAmount,
+  parseOptionalPercent,
+  parsePayMethod,
+  parseRevenueValue,
+  type PayMethodCode,
+} from "@/lib/blueprint/numbers"
 import {
   TEAM_RANGE_MESSAGE,
   T0_INCLUDED,
@@ -124,6 +141,15 @@ async function recordProgress(
   } catch (error) {
     console.error("blueprint progress", error)
   }
+}
+
+async function clearAnswer(supabase: GuidedClient, companyId: string, questionKey: string) {
+  const { error } = await supabase
+    .from("company_blueprint_answers")
+    .delete()
+    .eq("company_id", companyId)
+    .eq("question_key", questionKey)
+  return error
 }
 
 /** Removes a skip row only. Answered T4/T5/G3 rows live in this table and must stay. */
@@ -422,11 +448,12 @@ async function upsertAnswer(
   value: unknown,
   state: "answered" | "estimated" = "answered",
 ) {
-  const question = QUESTION_BY_KEY[questionKey]
+  const storedKey = persistedAnswerKey(questionKey)
+  const question = QUESTION_BY_KEY[storedKey]
   const { error } = await supabase.from("company_blueprint_answers").upsert(
     {
       company_id: companyId,
-      question_key: questionKey,
+      question_key: storedKey,
       value: value as Json,
       state,
       question_version: question.version,
@@ -434,7 +461,7 @@ async function upsertAnswer(
     { onConflict: "company_id,question_key" },
   )
   if (error) return error
-  await clearSkip(supabase, companyId, questionKey)
+  await clearSkip(supabase, companyId, storedKey)
   return null
 }
 
@@ -753,6 +780,204 @@ export async function saveServicesGrowCard(
   return { error: null, savedAt: Date.now() }
 }
 
+function estimatedFlag(formData: FormData, name: string) {
+  return String(formData.get(name) ?? "") === "1" || String(formData.get(name) ?? "") === "estimated"
+}
+
+/**
+ * Guided Your numbers write path. Uses company_blueprint_answers (S2-7).
+ * N2 persists as E2 so yearly volume has one underlying value.
+ * No new RPC. Do not calculate profit, margins, or booking price from company revenue.
+ */
+export async function saveNumbersTodayCard(
+  _prevState: SaveAnswerState,
+  formData: FormData,
+): Promise<SaveAnswerState> {
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) return { error: gate.error, savedAt: null }
+
+  const n1Amount = parseOptionalMoneyAmount(formData.get("n1"))
+  if (!n1Amount.ok) return { error: NUMBERS_AMOUNT_MESSAGE, savedAt: null }
+  const n1Period = formData.get("n1Period")
+  const n2Raw = formData.get("n2")
+  const n2 = parseOptionalAnnualEventCount(n2Raw)
+  if (!n2.ok) return { error: EVENTS_RANGE_MESSAGE, savedAt: null }
+  const n3Amount = parseOptionalMoneyAmount(formData.get("n3"))
+  if (!n3Amount.ok) return { error: NUMBERS_AMOUNT_MESSAGE, savedAt: null }
+
+  const writes: { key: "N1" | "N2" | "N3"; value: unknown; state: "answered" | "estimated" }[] = []
+  if (n1Amount.value !== null) {
+    const parsed = parseRevenueValue({ amount: n1Amount.value, period: n1Period })
+    if (!parsed.ok) {
+      return { error: n1Period ? parsed.error : NUMBERS_PERIOD_MESSAGE, savedAt: null }
+    }
+    writes.push({
+      key: "N1",
+      value: parsed.value,
+      state: estimatedFlag(formData, "n1Estimated") ? "estimated" : "answered",
+    })
+  }
+  if (n2.value !== null) {
+    writes.push({
+      key: "N2",
+      value: n2.value,
+      state: estimatedFlag(formData, "n2Estimated") ? "estimated" : "answered",
+    })
+  }
+  if (n3Amount.value !== null) {
+    writes.push({
+      key: "N3",
+      value: { amount: n3Amount.value },
+      state: estimatedFlag(formData, "n3Estimated") ? "estimated" : "answered",
+    })
+  }
+
+  if (writes.length === 0) return { error: null, savedAt: null }
+
+  const supabase = await createClient()
+  for (const write of writes) {
+    const error = await upsertAnswer(supabase, gate.membership.companyId, write.key, write.value, write.state)
+    if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  await recordProgress(supabase, gate.membership.companyId, "numbers", writes[writes.length - 1].key)
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
+export async function saveNumbersCostsCard(
+  _prevState: SaveAnswerState,
+  formData: FormData,
+): Promise<SaveAnswerState> {
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) return { error: gate.error, savedAt: null }
+
+  const n4Raw = formData.get("n4")
+  const n6Codes = formData.getAll("n6").map(String)
+  const answers = await getCurrentBlueprintAnswers()
+  const storedMethod = payMethodFromAnswers(answers)
+  const method = n4Raw ? parsePayMethod(n4Raw) : storedMethod ? { ok: true as const, value: storedMethod } : null
+  if (n4Raw && method && !method.ok) return { error: method.error, savedAt: null }
+
+  const writes: { key: "N4" | "N5" | "N6" | "N7"; value: unknown; state: "answered" | "estimated" }[] = []
+  if (method?.ok) {
+    writes.push({ key: "N4", value: method.value, state: "answered" })
+  }
+
+  const unit = compensationUnitForMethod(method?.ok ? method.value : storedMethod)
+  const n5Raw = unit === "percent" ? formData.get("n5Percent") : formData.get("n5")
+  const n5Amount =
+    unit === "percent" ? parseOptionalPercent(n5Raw) : parseOptionalMoneyAmount(n5Raw)
+  if (!n5Amount.ok) {
+    return { error: unit === "percent" ? NUMBERS_PERCENT_MESSAGE : NUMBERS_AMOUNT_MESSAGE, savedAt: null }
+  }
+  if (n5Amount.value !== null) {
+    const parsed = parseDjCostValue(
+      { amount: n5Amount.value, unit: unit ?? (formData.get("n5Unit") === "percent" ? "percent" : "usd") },
+      method?.ok ? method.value : storedMethod,
+    )
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({
+      key: "N5",
+      value: parsed.value,
+      state: estimatedFlag(formData, "n5Estimated") ? "estimated" : "answered",
+    })
+  }
+
+  const previousCosts = directCostsFromUnknown(answers.find((row) => row.questionKey === "N6" && row.state !== "skipped")?.value ?? null)
+  let clearN7 = false
+  if (n6Codes.length > 0) {
+    const parsed = parseDirectCostTypes({ codes: n6Codes })
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "N6", value: parsed.value, state: "answered" })
+    if (noneDirectCosts(parsed.value)) {
+      clearN7 = true
+    } else {
+      const n7Amount = parseOptionalMoneyAmount(formData.get("n7"))
+      if (!n7Amount.ok) return { error: NUMBERS_AMOUNT_MESSAGE, savedAt: null }
+      if (n7Amount.value !== null) {
+        writes.push({
+          key: "N7",
+          value: { amount: n7Amount.value },
+          state: estimatedFlag(formData, "n7Estimated") ? "estimated" : "answered",
+        })
+      } else if (noneDirectCosts(previousCosts)) {
+        clearN7 = true
+      }
+    }
+  } else {
+    const n7Amount = parseOptionalMoneyAmount(formData.get("n7"))
+    if (!n7Amount.ok) return { error: NUMBERS_AMOUNT_MESSAGE, savedAt: null }
+    if (n7Amount.value !== null) {
+      writes.push({
+        key: "N7",
+        value: { amount: n7Amount.value },
+        state: estimatedFlag(formData, "n7Estimated") ? "estimated" : "answered",
+      })
+    }
+  }
+
+  if (writes.length === 0 && !clearN7) return { error: null, savedAt: null }
+
+  const supabase = await createClient()
+  for (const write of writes) {
+    const error = await upsertAnswer(supabase, gate.membership.companyId, write.key, write.value, write.state)
+    if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  if (clearN7) {
+    const error = await clearAnswer(supabase, gate.membership.companyId, "N7")
+    if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  await recordProgress(supabase, gate.membership.companyId, "numbers", writes[writes.length - 1].key)
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
+export async function saveNumbersGoalsCard(
+  _prevState: SaveAnswerState,
+  formData: FormData,
+): Promise<SaveAnswerState> {
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) return { error: gate.error, savedAt: null }
+
+  const n8Raw = formData.get("n8")
+  const n9Amount = parseOptionalMoneyAmount(formData.get("n9"))
+  if (!n9Amount.ok) return { error: NUMBERS_AMOUNT_MESSAGE, savedAt: null }
+
+  const writes: { key: "N8" | "N9"; value: unknown; state: "answered" | "estimated" }[] = []
+  if (n8Raw) {
+    const parsed = parseFinancialPriority(n8Raw)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "N8", value: parsed.value, state: "answered" })
+  }
+  if (n9Amount.value !== null) {
+    writes.push({
+      key: "N9",
+      value: { amount: n9Amount.value },
+      state: estimatedFlag(formData, "n9Estimated") ? "estimated" : "answered",
+    })
+  }
+
+  if (writes.length === 0) return { error: null, savedAt: null }
+
+  const supabase = await createClient()
+  for (const write of writes) {
+    const error = await upsertAnswer(supabase, gate.membership.companyId, write.key, write.value, write.state)
+    if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  await recordProgress(supabase, gate.membership.companyId, "numbers", writes[writes.length - 1].key)
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
+function payMethodFromAnswers(
+  answers: Awaited<ReturnType<typeof getCurrentBlueprintAnswers>>,
+): PayMethodCode | null {
+  const stored = answers.find((row) => row.questionKey === "N4")
+  if (!stored || stored.state === "skipped") return null
+  const parsed = parsePayMethod(stored.value)
+  return parsed.ok ? parsed.value : null
+}
+
 export async function saveOwnerGoal(
   _prevState: SaveOwnerGoalState,
   formData: FormData,
@@ -890,6 +1115,16 @@ function parseAnswerValue(questionKey: string, raw: unknown) {
   if (questionKey === "S5") return parseWhyChosen(value)
   if (questionKey === "S6") return parseCompete(value)
   if (questionKey === "S9") return parseServiceGoal(value)
+  if (questionKey === "N1") return parseRevenueValue(value)
+  if (questionKey === "N2") {
+    const parsed = parseAnnualEventCount(value)
+    return parsed === null ? { ok: false as const, error: EVENTS_RANGE_MESSAGE } : { ok: true as const, value: parsed }
+  }
+  if (questionKey === "N3" || questionKey === "N7" || questionKey === "N9") return parseMoneyAmountValue(value)
+  if (questionKey === "N4") return parsePayMethod(value)
+  if (questionKey === "N5") return parseDjCostValue(value, null)
+  if (questionKey === "N6") return parseDirectCostTypes(value)
+  if (questionKey === "N8") return parseFinancialPriority(value)
   return { ok: false as const, error: SAVE_FAILED_MESSAGE }
 }
 
@@ -917,7 +1152,7 @@ export async function saveAnswer(
   formData: FormData,
 ): Promise<SaveAnswerState> {
   const questionKey = String(formData.get("questionKey") ?? "")
-  if (!isQuestionKey(questionKey) || questionKey.startsWith("N")) {
+  if (!isQuestionKey(questionKey)) {
     return { error: SAVE_FAILED_MESSAGE, savedAt: null }
   }
 
@@ -946,14 +1181,16 @@ export async function saveAnswer(
     return { error: SAVE_FAILED_MESSAGE, savedAt: null }
   }
 
+  const storedKey = persistedAnswerKey(questionKey)
+  const storedQuestion = QUESTION_BY_KEY[storedKey]
   const supabase = await createClient()
   const { error } = await supabase.from("company_blueprint_answers").upsert(
     {
       company_id: gate.membership.companyId,
-      question_key: questionKey,
+      question_key: storedKey,
       value: parsed.value,
       state: "answered",
-      question_version: question.version,
+      question_version: storedQuestion.version,
     },
     { onConflict: "company_id,question_key" },
   )
@@ -968,7 +1205,7 @@ export async function saveAnswer(
 }
 
 export async function skipQuestion(questionKey: string): Promise<SaveAnswerState> {
-  if (!isQuestionKey(questionKey) || questionKey.startsWith("N")) {
+  if (!isQuestionKey(questionKey)) {
     return { error: SAVE_FAILED_MESSAGE, savedAt: null }
   }
 
@@ -995,14 +1232,16 @@ export async function skipQuestion(questionKey: string): Promise<SaveAnswerState
     return { error: ALREADY_ANSWERED_MESSAGE, savedAt: null }
   }
 
+  const storedKey = persistedAnswerKey(questionKey)
+  const storedQuestion = QUESTION_BY_KEY[storedKey]
   const supabase = await createClient()
   const { error } = await supabase.from("company_blueprint_answers").upsert(
     {
       company_id: gate.membership.companyId,
-      question_key: questionKey,
+      question_key: storedKey,
       value: null,
       state: "skipped",
-      question_version: question.version,
+      question_version: storedQuestion.version,
     },
     { onConflict: "company_id,question_key" },
   )

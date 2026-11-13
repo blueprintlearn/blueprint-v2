@@ -17,7 +17,7 @@ const APPROVED_SECTIONS = [
   ["Your team today", "How many DJs you have, who can lead, and how many you’d like"],
   ["Your events", "How many events you book, who works them, and what you want next"],
   ["Your services and market", "What you offer today, how you sit in the market, and what you want to grow"],
-  ["Your numbers", "What each event really earns, private to you"],
+  ["Your numbers", "Approximate revenue, typical event costs, and a financial priority, private to you"],
   ["How you develop DJs", "How you hire and train today, and what to keep"],
   ["Your ideal DJ", "Your core values and the skills you hire for"],
   ["Your Blueprint", "Blueprint’s recommendations, for you to approve or change"],
@@ -35,7 +35,7 @@ async function doneCount(page: Page) {
 
 test.describe("guided Blueprint (switch on for Company A, off for Company B)", () => {
   test("signed-out visitors go home, whatever the path", async ({ page }) => {
-    for (const path of ["/blueprint", "/blueprint/goals", "/blueprint/team", "/blueprint/events", "/blueprint/services", "/blueprint/nope"]) {
+    for (const path of ["/blueprint", "/blueprint/goals", "/blueprint/team", "/blueprint/events", "/blueprint/services", "/blueprint/numbers", "/blueprint/nope"]) {
       await page.goto(path)
       await expect(page).toHaveURL("/")
       await expect(page.getByRole("heading", { name: "Blueprint" })).toBeVisible()
@@ -59,12 +59,13 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     await expect(page.getByRole("navigation")).toHaveCount(0)
 
     await expect(page.locator("ol li")).toHaveCount(8)
-    await expect(page.locator("ol li a")).toHaveCount(4)
+    await expect(page.locator("ol li a")).toHaveCount(5)
     await expect(row(page, "Your goals").getByRole("link")).toHaveAttribute("href", "/blueprint/goals")
     await expect(row(page, "Your team today").getByRole("link")).toHaveAttribute("href", "/blueprint/team")
     await expect(row(page, "Your events").getByRole("link")).toHaveAttribute("href", "/blueprint/events")
     await expect(row(page, "Your services and market").getByRole("link")).toHaveAttribute("href", "/blueprint/services")
-    for (const name of ["Your numbers", "How you develop DJs", "Your ideal DJ", "Your Blueprint"]) {
+    await expect(row(page, "Your numbers").getByRole("link")).toHaveAttribute("href", "/blueprint/numbers")
+    for (const name of ["How you develop DJs", "Your ideal DJ", "Your Blueprint"]) {
       await expect(row(page, name).getByText("Coming soon")).toBeVisible()
       await expect(row(page, name).getByRole("link")).toHaveCount(0)
     }
@@ -189,7 +190,8 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
       page.getByText("Now your services: what you offer today, how you sit in the market, and what you want to grow."),
     ).toBeVisible()
     await expect(page.getByRole("link", { name: "Previous: Your events" })).toHaveAttribute("href", "/blueprint/events")
-    await expect(page.getByText("The next sections are coming soon.")).toBeVisible()
+    await expect(page.getByRole("link", { name: "Next: Your numbers" })).toHaveAttribute("href", "/blueprint/numbers")
+    await expect(page.getByText("The next sections are coming soon.")).toHaveCount(0)
 
     await page.locator("#q-S1").getByRole("checkbox", { name: "DJ and MC" }).check()
     await page.locator("#q-S2").getByRole("checkbox", { name: "DJ and MC" }).check()
@@ -210,20 +212,52 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     await expect(page.locator("form[data-card='grow'] .bp-save")).toHaveText("Saved")
     await expect(sectionStatus(page)).toHaveText("Complete")
 
+    await page.getByRole("link", { name: "Next: Your numbers" }).click()
+    await expect(page).toHaveURL("/blueprint/numbers")
+    await expect(page.getByText("Section 5 of 8")).toBeVisible()
+    await expect(page.getByRole("heading", { level: 1, name: "Your numbers" })).toBeVisible()
+    await expect(
+      page.getByText("Now your numbers: approximate is fine. These stay private to you, and Blueprint will not turn them into scores or recommendations yet."),
+    ).toBeVisible()
+    await expect(page.getByRole("link", { name: "Previous: Your services and market" })).toHaveAttribute(
+      "href",
+      "/blueprint/services",
+    )
+    await expect(page.getByText("The next sections are coming soon.")).toBeVisible()
+    await expect(page.locator('#q-N2 input[name="n2"]')).toHaveValue("80")
+
+    await page.locator('#q-N1 input[name="n1"]').fill("250000")
+    await page.getByRole("radio", { name: "Last year’s total" }).check()
+    await page.locator('#q-N3 input[name="n3"]').fill("1800")
+    await page.getByRole("button", { name: "Save your business today" }).click()
+    await expect(page.locator("form[data-card='today'] .bp-save")).toHaveText("Saved")
+
+    await page.getByRole("radio", { name: "Flat amount per event" }).check()
+    await page.locator('#q-N5 input[name="n5"]').fill("400")
+    await page.locator("#q-N6").getByRole("checkbox", { name: "None" }).check()
+    await page.getByRole("button", { name: "Save what events cost you" }).click()
+    await expect(page.locator("form[data-card='costs'] .bp-save")).toHaveText("Saved")
+
+    await page.getByRole("radio", { name: "Increase revenue" }).check()
+    await page.getByRole("button", { name: "Save your financial goals" }).click()
+    await expect(page.locator("form[data-card='goals'] .bp-save")).toHaveText("Saved")
+    await expect(sectionStatus(page)).toHaveText("Complete")
+
     await page.getByRole("link", { name: "Back to your Blueprint" }).first().click()
     await expect(page).toHaveURL("/blueprint")
-    await expect(doneText(page)).toHaveText("4 of 8 sections complete")
+    await expect(doneText(page)).toHaveText("5 of 8 sections complete")
     await expect(row(page, "Your goals").getByText("Complete")).toBeVisible()
     await expect(row(page, "Your team today").getByText("Complete")).toBeVisible()
     await expect(row(page, "Your events").getByText("Complete")).toBeVisible()
     await expect(row(page, "Your services and market").getByText("Complete")).toBeVisible()
+    await expect(row(page, "Your numbers").getByText("Complete")).toBeVisible()
     await expect(page.getByText("You’ve finished the sections that are ready. More are coming soon.")).toBeVisible()
     await expect(page.locator(".bp-btn--primary")).toHaveCount(0)
     await expect(page.getByRole("link", { name: /(Start|Continue) your Blueprint/ })).toHaveCount(0)
 
     await page.goto("/")
     const blueprint = page.locator("section").filter({ has: page.getByRole("heading", { level: 2, name: "Your Company Blueprint" }) })
-    await expect(blueprint.getByText("4 of 8 sections complete")).toBeVisible()
+    await expect(blueprint.getByText("5 of 8 sections complete")).toBeVisible()
     await expect(blueprint.getByRole("link", { name: "Review your Blueprint" })).toHaveAttribute("href", "/blueprint")
     await expect(page.locator(".bp-btn--primary")).toHaveCount(0)
     await expect(page.locator("form[data-saved-owner-goal], form[data-saved-current-dj-count], form[data-saved-desired-dj-count]")).toHaveCount(0)
@@ -238,23 +272,23 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     await page.goto("/blueprint")
     const done = await doneCount(page)
     expect(done).toBeGreaterThanOrEqual(0)
-    expect(done).toBeLessThanOrEqual(4)
+    expect(done).toBeLessThanOrEqual(5)
 
     const start = page.getByRole("link", { name: "Start your Blueprint" })
     const cont = page.getByRole("link", { name: "Continue your Blueprint" })
-    if (done === 4) {
+    if (done === 5) {
       await expect(start).toHaveCount(0)
       await expect(cont).toHaveCount(0)
     } else {
       await expect(start.or(cont)).toHaveCount(1)
       await expect(start.or(cont)).toHaveClass(/\bbp-btn--primary\b/)
-      await expect(start.or(cont)).toHaveAttribute("href", /^\/blueprint\/(goals|team|events|services)(#q-[A-Z0-9]+)?$/)
+      await expect(start.or(cont)).toHaveAttribute("href", /^\/blueprint\/(goals|team|events|services|numbers)(#q-[A-Z0-9]+)?$/)
     }
   })
 
   test("other and coming-soon paths go back to the overview", async ({ page }) => {
     await signIn(page, "owner-a@blueprint.test")
-    for (const slug of ["numbers", "development", "ideal-dj", "review", "not-a-section", "Goals"]) {
+    for (const slug of ["development", "ideal-dj", "review", "not-a-section", "Goals"]) {
       await page.goto(`/blueprint/${slug}`)
       await expect(page).toHaveURL("/blueprint")
       await expect(page.getByRole("heading", { level: 1, name: "Your Company Blueprint" })).toBeVisible()
@@ -284,7 +318,7 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
 
   test("Company B owner (switch off) gets not found for every Blueprint path and keeps today's home", async ({ page }) => {
     await signIn(page, "owner-b@blueprint.test")
-    for (const path of ["/blueprint", "/blueprint/goals", "/blueprint/team", "/blueprint/events", "/blueprint/services", "/blueprint/nope"]) {
+    for (const path of ["/blueprint", "/blueprint/goals", "/blueprint/team", "/blueprint/events", "/blueprint/services", "/blueprint/numbers", "/blueprint/nope"]) {
       const response = await page.goto(path)
       expect(response?.status()).toBe(404)
       await expect(page).toHaveURL(path)
@@ -298,7 +332,7 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
 
   test("Company A manager is sent home from every Blueprint path and sees today's read-only home", async ({ page }) => {
     await signIn(page, "manager-a@blueprint.test")
-    for (const path of ["/blueprint", "/blueprint/goals", "/blueprint/team", "/blueprint/events", "/blueprint/services", "/blueprint/nope"]) {
+    for (const path of ["/blueprint", "/blueprint/goals", "/blueprint/team", "/blueprint/events", "/blueprint/services", "/blueprint/numbers", "/blueprint/nope"]) {
       await page.goto(path)
       await expect(page).toHaveURL("/")
       await expect(page.getByRole("heading", { level: 1, name: "Welcome back." })).toBeVisible()

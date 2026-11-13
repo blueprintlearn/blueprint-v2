@@ -4,11 +4,13 @@ import { redirect } from "next/navigation"
 import { companyGoalCodes, companyGoalsOtherText } from "@/lib/blueprint/company-goals"
 import { EVENTS_OPENING } from "@/lib/blueprint/events"
 import { loadGuidedBlueprint, requireGuidedOwner } from "@/lib/blueprint/guard"
+import { NUMBERS_FOOTER_NOTE, NUMBERS_OPENING } from "@/lib/blueprint/numbers"
 import { blueprintSection } from "@/lib/blueprint/progress"
-import { SERVICES_FOOTER_NOTE, SERVICES_OPENING } from "@/lib/blueprint/services"
+import { SERVICES_OPENING } from "@/lib/blueprint/services"
 
 import { EventsGuidedForm } from "../../events-guided-form"
 import { FocusQuestion } from "../../focus-question"
+import { NumbersGuidedForm } from "../../numbers-guided-form"
 import { OwnerGoalsForm } from "../../owner-goals-form"
 import { ServicesGuidedForm } from "../../services-guided-form"
 import { TeamTodayGuidedForm } from "../../team-today-guided-form"
@@ -27,7 +29,7 @@ export default async function BlueprintSectionRoute({
   const membership = await requireGuidedOwner()
   const { section: slug } = await params
 
-  if (slug !== "goals" && slug !== "team" && slug !== "events" && slug !== "services") {
+  if (slug !== "goals" && slug !== "team" && slug !== "events" && slug !== "services" && slug !== "numbers") {
     redirect("/blueprint")
   }
 
@@ -110,14 +112,40 @@ export default async function BlueprintSectionRoute({
               <Link href="/blueprint/events" className="bp-btn bp-btn--plain">
                 Previous: Your events
               </Link>
-              <Link href="/blueprint" className="bp-btn bp-btn--soft">
-                Back to your Blueprint
+              <Link href="/blueprint/numbers" id="blueprint-next" className="bp-btn bp-btn--soft">
+                Next: Your numbers
               </Link>
-              <p className="m-0 text-ink-2">{SERVICES_FOOTER_NOTE}</p>
             </>
           }
         >
           <ServicesGuidedForm resolved={resolved} />
+        </BlueprintSectionPage>
+      </BlueprintShell>
+    )
+  }
+
+  if (slug === "numbers") {
+    return (
+      <BlueprintShell>
+        <FocusQuestion questionId={focusId} />
+        <BlueprintSectionPage
+          section={section}
+          status={status}
+          opening={NUMBERS_OPENING}
+          framed={false}
+          footer={
+            <>
+              <Link href="/blueprint/services" className="bp-btn bp-btn--plain">
+                Previous: Your services and market
+              </Link>
+              <Link href="/blueprint" className="bp-btn bp-btn--soft">
+                Back to your Blueprint
+              </Link>
+              <p className="m-0 text-ink-2">{NUMBERS_FOOTER_NOTE}</p>
+            </>
+          }
+        >
+          <NumbersGuidedForm resolved={resolved} />
         </BlueprintSectionPage>
       </BlueprintShell>
     )
