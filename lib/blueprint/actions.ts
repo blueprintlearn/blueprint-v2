@@ -24,6 +24,7 @@ import {
   QUESTION_BY_KEY,
   SAVE_FAILED_MESSAGE,
   isQuestionKey,
+  type QuestionKey,
 } from "@/lib/blueprint/questions"
 import {
   EVENT_COMMON_SUBSET_MESSAGE,
@@ -40,6 +41,20 @@ import {
   isSubsetOfOffered,
   type EventTypesValue,
 } from "@/lib/blueprint/events"
+import {
+  SERVICE_NEW_OVERLAP_MESSAGE,
+  SERVICE_SUBSET_MESSAGE,
+  inheritOfferedOther as inheritOfferedServiceOther,
+  isSubsetOfOffered as isSubsetOfOfferedServices,
+  overlapsOffered as overlapsOfferedServices,
+  parseCompete,
+  parsePositioning,
+  parseServiceGoal,
+  parseServiceTypesValue,
+  parseWhyChosen,
+  serviceTypesFromUnknown,
+  type ServiceTypesValue,
+} from "@/lib/blueprint/services"
 import {
   TEAM_RANGE_MESSAGE,
   T0_INCLUDED,
@@ -403,7 +418,7 @@ function offeredFromAnswers(
 async function upsertAnswer(
   supabase: GuidedClient,
   companyId: string,
-  questionKey: "E1" | "E2" | "E3" | "E4" | "E5" | "E6" | "E7" | "E8" | "E9",
+  questionKey: QuestionKey,
   value: unknown,
   state: "answered" | "estimated" = "answered",
 ) {
@@ -575,6 +590,169 @@ export async function saveEventsFutureCard(
   return { error: null, savedAt: Date.now() }
 }
 
+function offeredServicesFromAnswers(
+  answers: Awaited<ReturnType<typeof getCurrentBlueprintAnswers>>,
+): ServiceTypesValue | null {
+  const stored = answers.find((row) => row.questionKey === "S1")
+  if (!stored || stored.state === "skipped") return null
+  return serviceTypesFromUnknown(stored.value)
+}
+
+function formCodes(formData: FormData, name: string) {
+  const codes = formData.getAll(name).map(String)
+  return { codes, present: codes.length > 0 }
+}
+
+/**
+ * Guided Your services and market write path. Uses company_blueprint_answers (S2-7).
+ * No new RPC. The same owner-direct-write bypass already tracked for answers.
+ */
+export async function saveServicesTodayCard(
+  _prevState: SaveAnswerState,
+  formData: FormData,
+): Promise<SaveAnswerState> {
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) return { error: gate.error, savedAt: null }
+
+  const s1 = formEventTypes(formData, "s1", "s1Other")
+  const s2 = formEventTypes(formData, "s2", "s2Other")
+  const s3 = formEventTypes(formData, "s3", "s3Other")
+  const writes: { key: "S1" | "S2" | "S3"; value: unknown }[] = []
+  let offered: ServiceTypesValue | null = null
+
+  if (s1.present) {
+    const parsed = parseServiceTypesValue({ codes: s1.codes, other: s1.other })
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "S1", value: parsed.value })
+    offered = parsed.value
+  }
+  if (s2.present) {
+    if (!offered) offered = offeredServicesFromAnswers(await getCurrentBlueprintAnswers())
+    const parsed = parseServiceTypesValue({
+      codes: s2.codes,
+      other: inheritOfferedServiceOther(s2.codes, s2.other, offered),
+    })
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    if (offered && !isSubsetOfOfferedServices(parsed.value.codes, offered.codes)) {
+      return { error: SERVICE_SUBSET_MESSAGE, savedAt: null }
+    }
+    writes.push({ key: "S2", value: parsed.value })
+  }
+  if (s3.present) {
+    if (!offered) offered = offeredServicesFromAnswers(await getCurrentBlueprintAnswers())
+    const parsed = parseServiceTypesValue({
+      codes: s3.codes,
+      other: inheritOfferedServiceOther(s3.codes, s3.other, offered),
+    })
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    if (offered && !isSubsetOfOfferedServices(parsed.value.codes, offered.codes)) {
+      return { error: SERVICE_SUBSET_MESSAGE, savedAt: null }
+    }
+    writes.push({ key: "S3", value: parsed.value })
+  }
+
+  if (writes.length === 0) return { error: null, savedAt: null }
+
+  const supabase = await createClient()
+  for (const write of writes) {
+    const error = await upsertAnswer(supabase, gate.membership.companyId, write.key, write.value)
+    if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  await recordProgress(supabase, gate.membership.companyId, "services", writes[writes.length - 1].key)
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
+export async function saveServicesMarketCard(
+  _prevState: SaveAnswerState,
+  formData: FormData,
+): Promise<SaveAnswerState> {
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) return { error: gate.error, savedAt: null }
+
+  const s4Raw = formData.get("s4")
+  const s5 = formCodes(formData, "s5")
+  const s6 = formCodes(formData, "s6")
+  const writes: { key: "S4" | "S5" | "S6"; value: unknown }[] = []
+
+  if (s4Raw) {
+    const parsed = parsePositioning(s4Raw)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "S4", value: parsed.value })
+  }
+  if (s5.present) {
+    const parsed = parseWhyChosen(s5.codes)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "S5", value: parsed.value })
+  }
+  if (s6.present) {
+    const parsed = parseCompete(s6.codes)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "S6", value: parsed.value })
+  }
+
+  if (writes.length === 0) return { error: null, savedAt: null }
+
+  const supabase = await createClient()
+  for (const write of writes) {
+    const error = await upsertAnswer(supabase, gate.membership.companyId, write.key, write.value)
+    if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  await recordProgress(supabase, gate.membership.companyId, "services", writes[writes.length - 1].key)
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
+export async function saveServicesGrowCard(
+  _prevState: SaveAnswerState,
+  formData: FormData,
+): Promise<SaveAnswerState> {
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) return { error: gate.error, savedAt: null }
+
+  const s7 = formEventTypes(formData, "s7", "s7Other")
+  const s8 = formEventTypes(formData, "s8", "s8Other")
+  const s9Raw = formData.get("s9")
+  const offered = offeredServicesFromAnswers(await getCurrentBlueprintAnswers())
+  const writes: { key: "S7" | "S8" | "S9"; value: unknown }[] = []
+
+  if (s7.present) {
+    const parsed = parseServiceTypesValue({ codes: s7.codes, other: s7.other })
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    if (offered && overlapsOfferedServices(parsed.value.codes, offered.codes)) {
+      return { error: SERVICE_NEW_OVERLAP_MESSAGE, savedAt: null }
+    }
+    writes.push({ key: "S7", value: parsed.value })
+  }
+  if (s8.present) {
+    const parsed = parseServiceTypesValue({
+      codes: s8.codes,
+      other: inheritOfferedServiceOther(s8.codes, s8.other, offered),
+    })
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    if (offered && !isSubsetOfOfferedServices(parsed.value.codes, offered.codes)) {
+      return { error: SERVICE_SUBSET_MESSAGE, savedAt: null }
+    }
+    writes.push({ key: "S8", value: parsed.value })
+  }
+  if (s9Raw) {
+    const parsed = parseServiceGoal(s9Raw)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "S9", value: parsed.value })
+  }
+
+  if (writes.length === 0) return { error: null, savedAt: null }
+
+  const supabase = await createClient()
+  for (const write of writes) {
+    const error = await upsertAnswer(supabase, gate.membership.companyId, write.key, write.value)
+    if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  await recordProgress(supabase, gate.membership.companyId, "services", writes[writes.length - 1].key)
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
 export async function saveOwnerGoal(
   _prevState: SaveOwnerGoalState,
   formData: FormData,
@@ -705,6 +883,13 @@ function parseAnswerValue(questionKey: string, raw: unknown) {
   }
   if (questionKey === "E6") return parseNewDjPath(value)
   if (questionKey === "E9") return parseFutureFocus(value)
+  if (questionKey === "S1" || questionKey === "S2" || questionKey === "S3" || questionKey === "S7" || questionKey === "S8") {
+    return parseServiceTypesValue(value)
+  }
+  if (questionKey === "S4") return parsePositioning(value)
+  if (questionKey === "S5") return parseWhyChosen(value)
+  if (questionKey === "S6") return parseCompete(value)
+  if (questionKey === "S9") return parseServiceGoal(value)
   return { ok: false as const, error: SAVE_FAILED_MESSAGE }
 }
 
