@@ -99,6 +99,7 @@ import {
   qualitiesFromUnknown,
   SKILL_CODES,
 } from "@/lib/blueprint/ideal-dj"
+import { parseApproval, snapshotFingerprint } from "@/lib/blueprint/review"
 import {
   TEAM_RANGE_MESSAGE,
   T0_INCLUDED,
@@ -1274,6 +1275,44 @@ export async function saveIdealDjHiringCard(
     if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
   }
   await recordProgress(supabase, gate.membership.companyId, "ideal-dj", writes[writes.length - 1].key)
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
+/**
+ * Guided Your Blueprint write path. Uses company_blueprint_answers (S2-7).
+ * Summary and approval only — do not score the business or generate a plan.
+ */
+export async function saveReviewApprovalCard(
+  _prevState: SaveAnswerState,
+  formData: FormData,
+): Promise<SaveAnswerState> {
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) return { error: gate.error, savedAt: null }
+
+  const raw = formData.get("r1")
+  if (!raw) return { error: null, savedAt: null }
+  const parsed = parseApproval(raw)
+  if (!parsed.ok) return { error: parsed.error, savedAt: null }
+
+  const [goals, teamToday, answers] = await Promise.all([
+    getCurrentCompanyGoals(),
+    getCurrentTeamToday(),
+    getCurrentBlueprintAnswers(),
+  ])
+  const fingerprint = snapshotFingerprint({
+    goals,
+    teamToday,
+    answers: answers.filter((row) => row.questionKey !== "R1"),
+  })
+
+  const supabase = await createClient()
+  const error = await upsertAnswer(supabase, gate.membership.companyId, "R1", {
+    code: parsed.value.code,
+    fingerprint,
+  })
+  if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  await recordProgress(supabase, gate.membership.companyId, "review", "R1")
   revalidatePath("/", "layout")
   return { error: null, savedAt: Date.now() }
 }

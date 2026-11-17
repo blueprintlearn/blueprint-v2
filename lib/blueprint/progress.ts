@@ -72,8 +72,8 @@ export const BLUEPRINT_SECTIONS: readonly BlueprintSection[] = [
     number: 8,
     slug: "review",
     name: "Your Blueprint",
-    description: "Blueprint’s recommendations, for you to approve or change",
-    live: false,
+    description: "A summary of your answers, for you to review and approve",
+    live: true,
   },
 ]
 

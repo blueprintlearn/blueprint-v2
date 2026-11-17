@@ -18,6 +18,7 @@ import { getBlueprintProgressFromStates, resolveAll } from "@/lib/blueprint/answ
 import { completeEventsAnswers } from "@/lib/blueprint/events"
 import { completeDevelopmentAnswers } from "@/lib/blueprint/development"
 import { completeIdealDjAnswers } from "@/lib/blueprint/ideal-dj"
+import { completeReviewAnswers } from "@/lib/blueprint/review"
 import { completeNumbersAnswers } from "@/lib/blueprint/numbers"
 import { completeServicesAnswers } from "@/lib/blueprint/services"
 import { blueprintSection } from "@/lib/blueprint/progress"
@@ -43,7 +44,7 @@ const APPROVED = [
   ["Your numbers", "Approximate revenue, typical event costs, and a financial priority, private to you"],
   ["How you develop DJs", "How you recruit and train today, and what you want to improve"],
   ["Your ideal DJ", "Who fits your company, what experience matters, and how you prefer to hire"],
-  ["Your Blueprint", "Blueprint’s recommendations, for you to approve or change"],
+  ["Your Blueprint", "A summary of your answers, for you to review and approve"],
 ] as const
 
 const completeTeam: AnswerTeamToday = teamTodayFixture({
@@ -92,6 +93,19 @@ const allLiveReady = progressOf(
     ...completeIdealDjAnswers(),
   ],
 )
+const allComplete = progressOf(
+  { primary: { goal: "scale" } },
+  completeTeam,
+  [
+    ...completeAnswers,
+    ...completeEventsAnswers(),
+    ...completeServicesAnswers(),
+    ...completeNumbersAnswers(),
+    ...completeDevelopmentAnswers(),
+    ...completeIdealDjAnswers(),
+    ...completeReviewAnswers(),
+  ],
+)
 
 describe("BlueprintSectionList", () => {
   const out = html(h(BlueprintSectionList, { progress: started }))
@@ -110,8 +124,8 @@ describe("BlueprintSectionList", () => {
     })
   })
 
-  it("links only the seven live sections and leaves one as Coming soon", () => {
-    expect(count(out, "<a ")).toBe(7)
+  it("links all eight live sections and leaves none as Coming soon", () => {
+    expect(count(out, "<a ")).toBe(8)
     expect(out).toContain('href="/blueprint/goals"')
     expect(out).toContain('href="/blueprint/team"')
     expect(out).toContain('href="/blueprint/events"')
@@ -119,7 +133,8 @@ describe("BlueprintSectionList", () => {
     expect(out).toContain('href="/blueprint/numbers"')
     expect(out).toContain('href="/blueprint/development"')
     expect(out).toContain('href="/blueprint/ideal-dj"')
-    expect(count(out, "Coming soon")).toBe(1)
+    expect(out).toContain('href="/blueprint/review"')
+    expect(count(out, "Coming soon")).toBe(0)
   })
 
   it("uses customer words for statuses, never codes", () => {
@@ -152,6 +167,7 @@ describe("BlueprintOverview", () => {
     expect(text(render(allReady))).toContain("2 of 8 sections complete")
     expect(text(render(allReady))).not.toContain("·")
     expect(text(render(allLiveReady))).toContain("7 of 8 sections complete")
+    expect(text(render(allComplete))).toContain("8 of 8 sections complete")
   })
 
   it("offers Start when nothing is saved, linking to Goals", () => {
@@ -167,7 +183,7 @@ describe("BlueprintOverview", () => {
     expect(primaryLink(render(teamOnly))).toMatchObject({ href: "/blueprint/goals#q-G1", label: "Continue your Blueprint" })
   })
 
-  it("continues into Your events after goals and team, then services, numbers, development, ideal DJ, then reviews when live sections are done", () => {
+  it("continues into Your events after goals and team, then services, numbers, development, ideal DJ, review, then finishes when all eight are done", () => {
     expect(primaryLink(render(allReady))).toMatchObject({
       href: "/blueprint/events#q-E1",
       label: "Continue your Blueprint",
@@ -214,10 +230,16 @@ describe("BlueprintOverview", () => {
       href: "/blueprint/ideal-dj#q-I1",
       label: "Continue your Blueprint",
     })
-    const out = render(allLiveReady)
+    expect(primaryLink(render(allLiveReady))).toMatchObject({
+      href: "/blueprint/review#q-R1",
+      label: "Continue your Blueprint",
+    })
+    const out = render(allComplete)
     expect(count(out, "bp-btn--primary")).toBe(0)
     expect(text(out)).toContain(ALL_READY_DONE_TEXT)
-    expect(ALL_READY_DONE_TEXT).toBe("You’ve finished the sections that are ready. More are coming soon.")
+    expect(ALL_READY_DONE_TEXT).toBe(
+      "You’ve finished your Company Blueprint. You can come back and change answers any time.",
+    )
   })
 })
 
@@ -239,12 +261,13 @@ describe("BlueprintHomeCard", () => {
     expect(tag(render(started))).toBe("In progress")
     expect(render(started)).toContain("Continue your Blueprint")
     expect(render(allReady)).toContain("Continue your Blueprint")
-    const done = render(allLiveReady)
+    expect(render(allLiveReady)).toContain("Continue your Blueprint")
+    const done = render(allComplete)
     expect(anchors(done)).toEqual([
-      { href: "/blueprint", className: "bp-btn bp-btn--soft self-start", label: "Review your Blueprint" },
+      { href: "/blueprint/review", className: "bp-btn bp-btn--soft self-start", label: "Review your Blueprint" },
     ])
     expect(count(done, "bp-btn--primary")).toBe(0)
-    expect(text(done)).toContain("7 of 8 sections complete")
+    expect(text(done)).toContain("8 of 8 sections complete")
   })
 })
 
@@ -287,6 +310,7 @@ describe("BlueprintSectionPage", () => {
       ["numbers", "Your numbers", 5],
       ["development", "How you develop DJs", 6],
       ["ideal-dj", "Your ideal DJ", 7],
+      ["review", "Your Blueprint", 8],
     ] as const) {
       const out = html(
         h(BlueprintSectionPage, { section: blueprintSection(slug)!, status: "complete", opening: "x", footer: null, children: null }),

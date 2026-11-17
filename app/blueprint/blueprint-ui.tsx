@@ -15,7 +15,7 @@ import { SignOutButton } from "../sign-out-button"
 
 export const OVERVIEW_LEAD =
   "Eight short sections. Blueprint saves each answer when you press Save, so you can stop and pick up any time."
-export const ALL_READY_DONE_TEXT = "You’ve finished the sections that are ready. More are coming soon."
+export const ALL_READY_DONE_TEXT = "You’ve finished your Company Blueprint. You can come back and change answers any time."
 export const GOALS_OPENING =
   "Let’s start with where you want to go. Everything Blueprint suggests ties back to this."
 export const TEAM_OPENING = "Now your team: how many DJs you have, and how many you’d like."
@@ -26,6 +26,7 @@ export { SERVICES_OPENING, SERVICES_FOOTER_NOTE } from "@/lib/blueprint/services
 export { NUMBERS_OPENING, NUMBERS_FOOTER_NOTE } from "@/lib/blueprint/numbers"
 export { DEVELOPMENT_OPENING, DEVELOPMENT_FOOTER_NOTE } from "@/lib/blueprint/development"
 export { IDEAL_DJ_OPENING, IDEAL_DJ_FOOTER_NOTE } from "@/lib/blueprint/ideal-dj"
+export { REVIEW_OPENING } from "@/lib/blueprint/review"
 
 const STATUS_TAGS: Record<SectionStatus, { status: "planned" | "progress" | "proven"; label: string }> = {
   not_started: { status: "planned", label: "Not started" },
@@ -179,7 +180,7 @@ export function BlueprintHomeCard({ progress }: { progress: BlueprintProgress })
       </div>
       <p className="bp-card__body">{sectionsCompleteText(progress)}</p>
       {progress.action === "review" ? (
-        <Link href="/blueprint" className="bp-btn bp-btn--soft self-start">
+        <Link href="/blueprint/review" className="bp-btn bp-btn--soft self-start">
           Review your Blueprint
         </Link>
       ) : (

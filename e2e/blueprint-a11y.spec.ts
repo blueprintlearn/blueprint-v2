@@ -105,4 +105,19 @@ test.describe("guided Blueprint accessibility", () => {
     const skipped = await new AxeBuilder({ page }).analyze()
     expect(skipped.violations.filter((item) => item.impact === "serious" || item.impact === "critical")).toEqual([])
   })
+
+  test("Your Blueprint with a skip panel open has no serious or critical axe issues", async ({ page }) => {
+    ensureEmptyGuidedCompany()
+    await signIn(page)
+    await page.goto("/blueprint/review")
+    await page.locator("#q-R1").getByRole("button", { name: "I’m not sure" }).click()
+    await expect(page.getByRole("region", { name: /Help with: Approve this snapshot/ })).toBeVisible()
+    const open = await new AxeBuilder({ page }).analyze()
+    expect(open.violations.filter((item) => item.impact === "serious" || item.impact === "critical")).toEqual([])
+
+    await page.locator("#q-R1").getByRole("button", { name: "Skip for now. You can answer it later." }).click()
+    await expect(page.locator("#q-R1").getByText("You skipped this for now.")).toBeVisible()
+    const skipped = await new AxeBuilder({ page }).analyze()
+    expect(skipped.violations.filter((item) => item.impact === "serious" || item.impact === "critical")).toEqual([])
+  })
 })

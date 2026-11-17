@@ -344,4 +344,32 @@ describe("company_blueprint_answers and progress isolation", () => {
       value: "none",
     })
   })
+
+  it("lets owner A store a review approval and resume on the review section", async () => {
+    clearBlueprintAnswers(COMPANY_A_ID)
+    const ownerA = await asUser(OWNER_A_EMAIL)
+    const saved = await ownerA.from("company_blueprint_answers").upsert({
+      company_id: COMPANY_A_ID,
+      question_key: "R1",
+      value: { code: "approved", fingerprint: "fixture" },
+      state: "answered",
+      question_version: 1,
+    })
+    expect(saved.error).toBeNull()
+    const progress = await ownerA.from("company_blueprint_progress").upsert({
+      company_id: COMPANY_A_ID,
+      last_section: "review",
+      last_question_key: "R1",
+    })
+    expect(progress.error).toBeNull()
+    const row = await ownerA
+      .from("company_blueprint_answers")
+      .select("question_key, value")
+      .eq("question_key", "R1")
+      .maybeSingle()
+    expect(row.data).toMatchObject({
+      question_key: "R1",
+      value: { code: "approved", fingerprint: "fixture" },
+    })
+  })
 })

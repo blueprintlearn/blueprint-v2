@@ -15,6 +15,7 @@ import {
   type QuestionKey,
 } from "@/lib/blueprint/questions"
 import { prioritiesMatchQualities } from "@/lib/blueprint/ideal-dj"
+import { approvalStillHolds, snapshotFingerprint } from "@/lib/blueprint/review"
 import {
   directCostsFromUnknown,
   djCostFromUnknown,
@@ -184,6 +185,9 @@ export function resolveQuestion(question: QuestionDefinition, context: AnswerCon
       if (question.key === "I3" && !i3MatchesI2(stored.value, context)) {
         return { key: question.key, state: "unanswered", value: null, isEstimate: false, question }
       }
+      if (question.key === "R1" && !approvalStillHolds(stored.value, snapshotFingerprint(context))) {
+        return { key: question.key, state: "unanswered", value: null, isEstimate: false, question }
+      }
       return {
         key: question.key,
         state: stored.state,
@@ -234,6 +238,11 @@ export function sectionStatusFromStates(
   )
   if (touched) return "needs_attention"
   if (section === "team" && hasStoredTeamCount(context?.teamToday ?? null)) return "needs_attention"
+  // Leftover R1 after a fingerprint mismatch resolves unanswered, same as N5/I3.
+  // Review has only one core, so that leftover still means the section was started.
+  if (section === "review" && context?.answers.some((row) => row.questionKey === "R1")) {
+    return "needs_attention"
+  }
   return "not_started"
 }
 
