@@ -117,6 +117,13 @@ test.describe("owner home on a phone", () => {
     const saveDevelopment = page.getByRole("button", { name: "Save your training today" })
     await saveDevelopment.scrollIntoViewIfNeeded()
     expect(await hitTargetHeight(saveDevelopment)).toBeGreaterThanOrEqual(44)
+
+    await page.goto("/blueprint/ideal-dj")
+    await expect(page.getByRole("heading", { level: 1, name: "Your ideal DJ" })).toBeVisible()
+    await noOverflow()
+    const saveIdealDj = page.getByRole("button", { name: "Save who fits" })
+    await saveIdealDj.scrollIntoViewIfNeeded()
+    expect(await hitTargetHeight(saveIdealDj)).toBeGreaterThanOrEqual(44)
   })
 
   test("Company B owner home (switch off) keeps the forms stacked and usable", async ({ page }) => {

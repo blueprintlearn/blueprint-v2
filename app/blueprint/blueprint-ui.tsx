@@ -25,6 +25,7 @@ export { EVENTS_OPENING, EVENTS_FOOTER_NOTE } from "@/lib/blueprint/events"
 export { SERVICES_OPENING, SERVICES_FOOTER_NOTE } from "@/lib/blueprint/services"
 export { NUMBERS_OPENING, NUMBERS_FOOTER_NOTE } from "@/lib/blueprint/numbers"
 export { DEVELOPMENT_OPENING, DEVELOPMENT_FOOTER_NOTE } from "@/lib/blueprint/development"
+export { IDEAL_DJ_OPENING, IDEAL_DJ_FOOTER_NOTE } from "@/lib/blueprint/ideal-dj"
 
 const STATUS_TAGS: Record<SectionStatus, { status: "planned" | "progress" | "proven"; label: string }> = {
   not_started: { status: "planned", label: "Not started" },

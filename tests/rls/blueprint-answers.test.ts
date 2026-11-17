@@ -316,4 +316,32 @@ describe("company_blueprint_answers and progress isolation", () => {
       value: "not_yet",
     })
   })
+
+  it("lets owner A store an ideal DJ answer and resume on the ideal DJ section", async () => {
+    clearBlueprintAnswers(COMPANY_A_ID)
+    const ownerA = await asUser(OWNER_A_EMAIL)
+    const saved = await ownerA.from("company_blueprint_answers").upsert({
+      company_id: COMPANY_A_ID,
+      question_key: "I1",
+      value: "none",
+      state: "answered",
+      question_version: 1,
+    })
+    expect(saved.error).toBeNull()
+    const progress = await ownerA.from("company_blueprint_progress").upsert({
+      company_id: COMPANY_A_ID,
+      last_section: "ideal-dj",
+      last_question_key: "I1",
+    })
+    expect(progress.error).toBeNull()
+    const row = await ownerA
+      .from("company_blueprint_answers")
+      .select("question_key, value")
+      .eq("question_key", "I1")
+      .maybeSingle()
+    expect(row.data).toMatchObject({
+      question_key: "I1",
+      value: "none",
+    })
+  })
 })

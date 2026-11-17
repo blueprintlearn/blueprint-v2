@@ -14,6 +14,7 @@ import {
   type QuestionDefinition,
   type QuestionKey,
 } from "@/lib/blueprint/questions"
+import { prioritiesMatchQualities } from "@/lib/blueprint/ideal-dj"
 import {
   directCostsFromUnknown,
   djCostFromUnknown,
@@ -39,6 +40,12 @@ function n5UnitMatchesPayMethod(value: unknown, context: AnswerContext): boolean
       ? payMethodFromUnknown(methodRow.value)
       : null
   return djCostMatchesMethod(djCostFromUnknown(value), method)
+}
+
+function i3MatchesI2(value: unknown, context: AnswerContext): boolean {
+  const qualities = storedAnswerMap(context.answers).get("I2")
+  if (!qualities || qualities.state === "skipped") return false
+  return prioritiesMatchQualities(value, qualities.value)
 }
 
 export type AnswerGoals = {
@@ -172,6 +179,9 @@ export function resolveQuestion(question: QuestionDefinition, context: AnswerCon
     const stored = storedAnswerMap(context.answers).get(persistedAnswerKey(question.key))
     if (stored && (stored.state === "answered" || stored.state === "estimated")) {
       if (question.key === "N5" && !n5UnitMatchesPayMethod(stored.value, context)) {
+        return { key: question.key, state: "unanswered", value: null, isEstimate: false, question }
+      }
+      if (question.key === "I3" && !i3MatchesI2(stored.value, context)) {
         return { key: question.key, state: "unanswered", value: null, isEstimate: false, question }
       }
       return {

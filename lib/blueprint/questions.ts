@@ -78,6 +78,17 @@ export type QuestionKey =
   | "D8"
   | "D9"
   | "D10"
+  | "I1"
+  | "I2"
+  | "I3"
+  | "I4"
+  | "I5"
+  | "I6"
+  | "I7"
+  | "I8"
+  | "I9"
+  | "I10"
+  | "I11"
 
 export type GuidanceExample = {
   text: string
@@ -982,6 +993,204 @@ export const QUESTIONS: readonly QuestionDefinition[] = [
       examples: [
         { text: "About 1–2 hours a week." },
         { text: "It varies, or you’re not sure." },
+      ],
+    },
+  },
+  {
+    key: "I1",
+    section: "ideal-dj",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Think about someone who would be great on your team. Who comes to mind?",
+    whyNeeded: "A real person, or no one yet, both work. You do not need to name anyone.",
+    guidance: {
+      why: "This is a starting point. Solo operators who have never hired anyone belong here too.",
+      examples: [
+        { text: "A DJ who already works with you." },
+        { text: "You don’t have anyone in mind yet." },
+      ],
+    },
+  },
+  {
+    key: "I2",
+    section: "ideal-dj",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What makes that person a great fit? Choose up to five.",
+    whyNeeded: "These qualities are intake only. Blueprint will not score applicants from this yet.",
+    guidance: {
+      why: "If you have someone in mind, describe them. If not, pick what you would want in a future DJ.",
+      examples: [
+        { text: "Dependable, friendly, and coachable." },
+        { text: "Calm under pressure and professional." },
+      ],
+    },
+  },
+  {
+    key: "I3",
+    section: "ideal-dj",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Which three qualities matter most? Choose up to three from the ones you picked.",
+    whyNeeded: "Your top qualities become hiring priorities later. They must come from the list you just chose.",
+    guidance: {
+      why: "Pick up to three from the qualities above. Changing those qualities can reopen this question.",
+      examples: [
+        { text: "Dependable and coachable matter most." },
+        { text: "Friendly, professional, and organized." },
+      ],
+    },
+  },
+  {
+    key: "I4",
+    section: "ideal-dj",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What are your company’s three core values?",
+    whyNeeded: "Values are owner-written. You can enter up to three, or say you have not defined them yet.",
+    guidance: {
+      why: "A few short words each is enough. You do not need a mission statement, and Blueprint will not invent values for you.",
+      examples: [
+        { text: "Show up ready. Treat people well. Own the night." },
+        { text: "You haven’t defined these yet." },
+      ],
+    },
+  },
+  {
+    key: "I5",
+    section: "ideal-dj",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What experience should applicants already have?",
+    whyNeeded: "Must-have versus can-be-taught is intake only. Blueprint will not score applicants from this yet.",
+    guidance: {
+      why: "For each skill, say whether they must already have it, it can be taught, or it is not important.",
+      examples: [
+        { text: "Customer service must already be there. Mixing can be taught." },
+        { text: "Lighting is not important for this role." },
+      ],
+    },
+  },
+  {
+    key: "I6",
+    section: "ideal-dj",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Would you consider someone with no DJ experience?",
+    whyNeeded: "Beginners and experienced DJs are not assumed to need the same path.",
+    guidance: {
+      why: "There is no right answer. Assistant-only is a complete choice.",
+      examples: [
+        { text: "Yes, if they have the right personality." },
+        { text: "Only as an assistant at first." },
+      ],
+    },
+  },
+  {
+    key: "I7",
+    section: "ideal-dj",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What’s more important when hiring?",
+    whyNeeded: "Character versus skills is a preference, not a hiring decision.",
+    guidance: {
+      why: "This can depend on the role. Not sure is a complete answer.",
+      examples: [
+        { text: "Strong character and a willingness to learn." },
+        { text: "It depends on the role." },
+      ],
+    },
+  },
+  {
+    key: "I8",
+    section: "ideal-dj",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "When do you typically need DJs available? Choose all that apply.",
+    whyNeeded: "Typical event times help later planning. Availability varies is a complete answer on its own.",
+    guidance: {
+      why: "Pick the times that matter most, or say it varies.",
+      examples: [
+        { text: "Friday evenings and Saturdays." },
+        { text: "Availability varies." },
+      ],
+    },
+  },
+  {
+    key: "I9",
+    section: "ideal-dj",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "How far should applicants reasonably be willing to travel?",
+    whyNeeded: "Travel range is a preference for this role, not a scored requirement yet.",
+    guidance: {
+      why: "A typical range is enough. It can depend on the event.",
+      examples: [
+        { text: "Within 30 miles." },
+        { text: "It depends on the event." },
+      ],
+    },
+  },
+  {
+    key: "I10",
+    section: "ideal-dj",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What working arrangement are you considering?",
+    whyNeeded: "This is a preference only. It does not classify anyone as an employee or contractor.",
+    guidance: {
+      why: "Say what you are considering. This is not legal advice, and Not sure is a complete answer.",
+      examples: [
+        { text: "Independent contractors." },
+        { text: "You’re not sure yet." },
+      ],
+    },
+  },
+  {
+    key: "I11",
+    section: "ideal-dj",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What would make someone a poor fit? Choose up to three.",
+    whyNeeded: "Poor-fit signals stay focused on job-related behavior. Blueprint will not turn this into a hiring decision yet.",
+    guidance: {
+      why: "Pick up to three work behaviors. Do not include personal characteristics.",
+      examples: [
+        { text: "Unreliable, and poor communication." },
+        { text: "Unwilling to accept feedback." },
       ],
     },
   },

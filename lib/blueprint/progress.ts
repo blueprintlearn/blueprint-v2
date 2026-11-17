@@ -65,8 +65,8 @@ export const BLUEPRINT_SECTIONS: readonly BlueprintSection[] = [
     number: 7,
     slug: "ideal-dj",
     name: "Your ideal DJ",
-    description: "Your core values and the skills you hire for",
-    live: false,
+    description: "Who fits your company, what experience matters, and how you prefer to hire",
+    live: true,
   },
   {
     number: 8,
