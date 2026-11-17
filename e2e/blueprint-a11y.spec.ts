@@ -90,4 +90,19 @@ test.describe("guided Blueprint accessibility", () => {
     const skipped = await new AxeBuilder({ page }).analyze()
     expect(skipped.violations.filter((item) => item.impact === "serious" || item.impact === "critical")).toEqual([])
   })
+
+  test("Your ideal DJ with a skip panel open has no serious or critical axe issues", async ({ page }) => {
+    ensureEmptyGuidedCompany()
+    await signIn(page)
+    await page.goto("/blueprint/ideal-dj")
+    await page.locator("#q-I5").getByRole("button", { name: "I’m not sure" }).click()
+    await expect(page.getByRole("region", { name: /Help with: What experience should applicants/ })).toBeVisible()
+    const open = await new AxeBuilder({ page }).analyze()
+    expect(open.violations.filter((item) => item.impact === "serious" || item.impact === "critical")).toEqual([])
+
+    await page.locator("#q-I5").getByRole("button", { name: "Skip for now. You can answer it later." }).click()
+    await expect(page.locator("#q-I5").getByText("You skipped this for now.")).toBeVisible()
+    const skipped = await new AxeBuilder({ page }).analyze()
+    expect(skipped.violations.filter((item) => item.impact === "serious" || item.impact === "critical")).toEqual([])
+  })
 })

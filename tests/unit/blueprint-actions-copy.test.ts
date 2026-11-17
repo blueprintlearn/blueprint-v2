@@ -50,6 +50,9 @@ import {
   saveDevelopmentGoalsCard,
   saveDevelopmentResourcesCard,
   saveDevelopmentTodayCard,
+  saveIdealDjExperienceCard,
+  saveIdealDjFitCard,
+  saveIdealDjHiringCard,
   saveNumbersCostsCard,
   saveNumbersGoalsCard,
   saveNumbersTodayCard,
@@ -1070,6 +1073,181 @@ describe("development cards", () => {
     mocks.guided = true
     mocks.membership = { companyId: "company-a", companyName: "Company A", role: "manager" }
     expect(await saveDevelopmentTodayCard(initial, data)).toEqual({
+      error: "Only the company owner can change this.",
+      savedAt: null,
+    })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+})
+
+describe("ideal DJ cards", () => {
+  it("saves who fits, including no one in mind and values not defined yet", async () => {
+    const fit = new FormData()
+    fit.set("i1", "none")
+    fit.append("i2", "dependable")
+    fit.append("i2", "friendly")
+    fit.append("i2", "coachable")
+    fit.append("i3", "dependable")
+    fit.append("i3", "friendly")
+    fit.set("i4None", "none")
+    expect((await saveIdealDjFitCard(initial, fit)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "I1", value: "none" }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "I2", value: ["dependable", "friendly", "coachable"] }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "I3", value: ["dependable", "friendly"] }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "I4", value: { defined: false } }),
+      { onConflict: "company_id,question_key" },
+    )
+  })
+
+  it("rejects I2 over five, I3 over three, I3 outside I2, and unknown codes", async () => {
+    const tooMany = new FormData()
+    tooMany.append("i2", "dependable")
+    tooMany.append("i2", "friendly")
+    tooMany.append("i2", "confident")
+    tooMany.append("i2", "professional")
+    tooMany.append("i2", "organized")
+    tooMany.append("i2", "coachable")
+    expect(await saveIdealDjFitCard(initial, tooMany)).toEqual({
+      error: "Choose up to five.",
+      savedAt: null,
+    })
+
+    const tooManyPriorities = new FormData()
+    tooManyPriorities.append("i2", "dependable")
+    tooManyPriorities.append("i2", "friendly")
+    tooManyPriorities.append("i2", "coachable")
+    tooManyPriorities.append("i2", "organized")
+    tooManyPriorities.append("i3", "dependable")
+    tooManyPriorities.append("i3", "friendly")
+    tooManyPriorities.append("i3", "coachable")
+    tooManyPriorities.append("i3", "organized")
+    expect(await saveIdealDjFitCard(initial, tooManyPriorities)).toEqual({
+      error: "Choose up to three.",
+      savedAt: null,
+    })
+
+    const outside = new FormData()
+    outside.append("i2", "dependable")
+    outside.append("i3", "professional")
+    expect(await saveIdealDjFitCard(initial, outside)).toEqual({
+      error: "Choose from the qualities you picked.",
+      savedAt: null,
+    })
+
+    const unknown = new FormData()
+    unknown.append("i2", "dependable")
+    unknown.append("i2", "not_a_quality")
+    expect(await saveIdealDjFitCard(initial, unknown)).toEqual({
+      error: "Choose one of the options.",
+      savedAt: null,
+    })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+
+  it("keeps an incompatible saved I3 row but does not overwrite it when only I2 changes", async () => {
+    mocks.answers = [
+      { questionKey: "I2", state: "answered", value: ["dependable", "friendly", "professional"] },
+      { questionKey: "I3", state: "answered", value: ["dependable", "professional"] },
+    ]
+    const data = new FormData()
+    data.append("i2", "dependable")
+    data.append("i2", "friendly")
+    expect((await saveIdealDjFitCard(initial, data)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "I2", value: ["dependable", "friendly"] }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).not.toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "I3" }),
+      expect.anything(),
+    )
+    expect(mocks.deletedKeys).not.toContain("I3")
+  })
+
+  it("writes experience ratings, beginner preference, and hiring weight", async () => {
+    const experience = new FormData()
+    experience.set("i5_djing", "can_teach")
+    experience.set("i5_music", "can_teach")
+    experience.set("i5_speaking", "must_have")
+    experience.set("i5_customer_service", "must_have")
+    experience.set("i5_events", "can_teach")
+    experience.set("i5_audio", "not_important")
+    experience.set("i5_lighting", "not_sure")
+    experience.set("i5_sales", "can_teach")
+    experience.set("i6", "yes_personality")
+    experience.set("i7", "character")
+    expect((await saveIdealDjExperienceCard(initial, experience)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        question_key: "I5",
+        value: expect.objectContaining({ djing: "can_teach", lighting: "not_sure" }),
+      }),
+      { onConflict: "company_id,question_key" },
+    )
+
+    const missing = new FormData()
+    missing.set("i5_djing", "can_teach")
+    expect(await saveIdealDjExperienceCard(initial, missing)).toEqual({
+      error: "Choose one option for each skill.",
+      savedAt: null,
+    })
+  })
+
+  it("rejects mixed availability varies and more than three poor-fit choices", async () => {
+    const mixed = new FormData()
+    mixed.append("i8", "saturday")
+    mixed.append("i8", "varies")
+    expect(await saveIdealDjHiringCard(initial, mixed)).toEqual({
+      error: "Choose that option on its own.",
+      savedAt: null,
+    })
+
+    const tooMany = new FormData()
+    tooMany.append("i11", "unreliable")
+    tooMany.append("i11", "poor_communication")
+    tooMany.append("i11", "no_feedback")
+    tooMany.append("i11", "unprofessional")
+    expect(await saveIdealDjHiringCard(initial, tooMany)).toEqual({
+      error: "Choose up to three.",
+      savedAt: null,
+    })
+  })
+
+  it("saves hiring preferences as a classification-neutral preference", async () => {
+    const hiring = new FormData()
+    hiring.append("i8", "saturday")
+    hiring.set("i9", "miles_30")
+    hiring.set("i10", "not_sure")
+    hiring.append("i11", "unreliable")
+    hiring.append("i11", "poor_communication")
+    expect((await saveIdealDjHiringCard(initial, hiring)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "I10", value: "not_sure" }),
+      { onConflict: "company_id,question_key" },
+    )
+  })
+
+  it("refuses ideal DJ writes when the switch is off or the caller is a manager", async () => {
+    mocks.guided = false
+    const data = new FormData()
+    data.set("i1", "none")
+    expect(await saveIdealDjFitCard(initial, data)).toEqual({
+      error: "That didn’t save. Please try again.",
+      savedAt: null,
+    })
+    mocks.guided = true
+    mocks.membership = { companyId: "company-a", companyName: "Company A", role: "manager" }
+    expect(await saveIdealDjFitCard(initial, data)).toEqual({
       error: "Only the company owner can change this.",
       savedAt: null,
     })

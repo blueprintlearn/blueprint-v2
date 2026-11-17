@@ -15,6 +15,7 @@ import {
 import { M1_COPY, shouldShowM1 } from "@/lib/blueprint/questions"
 import { completeEventsAnswers } from "@/lib/blueprint/events"
 import { completeDevelopmentAnswers } from "@/lib/blueprint/development"
+import { completeIdealDjAnswers } from "@/lib/blueprint/ideal-dj"
 import { completeNumbersAnswers } from "@/lib/blueprint/numbers"
 import { completeServicesAnswers } from "@/lib/blueprint/services"
 import { emptyTeamToday, teamTodayFixture, type AnswerTeamToday } from "@/lib/blueprint/team-today"
@@ -235,10 +236,11 @@ describe("getBlueprintProgress from answer states", () => {
       ...completeServicesAnswers(),
       ...completeNumbersAnswers(),
       ...completeDevelopmentAnswers(),
+      ...completeIdealDjAnswers(),
       { questionKey: "G1", state: "skipped", value: null },
     ])
     expect(p.statuses.goals).toBe("needs_attention")
-    expect(p.completeCount).toBe(5)
+    expect(p.completeCount).toBe(6)
     expect(p.action).toBe("continue")
     expect(p.next).toBe("goals")
     expect(p.focusQuestionKey).toBe("G1")
@@ -276,6 +278,7 @@ describe("getBlueprintProgress from answer states", () => {
       { questionKey: "S2", state: "skipped", value: null },
       ...completeNumbersAnswers(),
       ...completeDevelopmentAnswers(),
+      ...completeIdealDjAnswers(),
     ])
     expect(skippedWhenLaterDone.next).toBe("services")
     expect(skippedWhenLaterDone.focusQuestionKey).toBe("S2")
@@ -295,6 +298,7 @@ describe("getBlueprintProgress from answer states", () => {
     expect(p.statuses.services).not.toBe("coming_soon")
     expect(p.statuses.numbers).not.toBe("coming_soon")
     expect(p.statuses.development).not.toBe("coming_soon")
+    expect(p.statuses["ideal-dj"]).not.toBe("coming_soon")
     expect(p.completeCount).toBeLessThan(TOTAL_SECTIONS)
   })
 
@@ -331,10 +335,11 @@ describe("getBlueprintProgress from answer states", () => {
       ...completeNumbersAnswers().filter((row) => row.questionKey !== "N1"),
       { questionKey: "N1", state: "skipped", value: null },
       ...completeDevelopmentAnswers(),
+      ...completeIdealDjAnswers(),
     ])
     expect(skippedRevenue.statuses.numbers).toBe("needs_attention")
     expect(skippedRevenue.skippedCounts.numbers).toBe(1)
-    expect(skippedRevenue.completeCount).toBe(5)
+    expect(skippedRevenue.completeCount).toBe(6)
     expect(skippedRevenue.next).toBe("numbers")
     expect(skippedRevenue.focusQuestionKey).toBe("N1")
 
@@ -391,8 +396,9 @@ describe("getBlueprintProgress from answer states", () => {
     ])
     expect(complete.statuses.development).toBe("complete")
     expect(complete.completeCount).toBe(6)
-    expect(complete.next).toBeNull()
-    expect(complete.action).toBe("review")
+    expect(complete.next).toBe("ideal-dj")
+    expect(complete.focusQuestionKey).toBe("I1")
+    expect(complete.action).toBe("continue")
 
     const skippedLearn = progress(goal, completeTeam(), [
       ...teamAnswers,
@@ -401,18 +407,61 @@ describe("getBlueprintProgress from answer states", () => {
       ...completeNumbersAnswers(),
       ...completeDevelopmentAnswers().filter((row) => row.questionKey !== "D2"),
       { questionKey: "D2", state: "skipped", value: null },
+      ...completeIdealDjAnswers(),
     ])
     expect(skippedLearn.statuses.development).toBe("needs_attention")
     expect(skippedLearn.skippedCounts.development).toBe(1)
-    expect(skippedLearn.completeCount).toBe(5)
+    expect(skippedLearn.completeCount).toBe(6)
     expect(skippedLearn.next).toBe("development")
     expect(skippedLearn.focusQuestionKey).toBe("D2")
   })
 
-  it("has eight sections, six of them live: goals, team, events, services, numbers, then development", () => {
+  it("marks Your ideal DJ complete only when every core is answered, not skipped, and I3 matches I2", () => {
+    const complete = progress(goal, completeTeam(), [
+      ...teamAnswers,
+      ...completeEventsAnswers(),
+      ...completeServicesAnswers(),
+      ...completeNumbersAnswers(),
+      ...completeDevelopmentAnswers(),
+      ...completeIdealDjAnswers(),
+    ])
+    expect(complete.statuses["ideal-dj"]).toBe("complete")
+    expect(complete.completeCount).toBe(7)
+    expect(complete.next).toBeNull()
+    expect(complete.action).toBe("review")
+
+    const skippedPerson = progress(goal, completeTeam(), [
+      ...teamAnswers,
+      ...completeEventsAnswers(),
+      ...completeServicesAnswers(),
+      ...completeNumbersAnswers(),
+      ...completeDevelopmentAnswers(),
+      ...completeIdealDjAnswers().filter((row) => row.questionKey !== "I1"),
+      { questionKey: "I1", state: "skipped", value: null },
+    ])
+    expect(skippedPerson.statuses["ideal-dj"]).toBe("needs_attention")
+    expect(skippedPerson.skippedCounts["ideal-dj"]).toBe(1)
+    expect(skippedPerson.next).toBe("ideal-dj")
+    expect(skippedPerson.focusQuestionKey).toBe("I1")
+
+    const incompatiblePriorities = progress(goal, completeTeam(), [
+      ...teamAnswers,
+      ...completeEventsAnswers(),
+      ...completeServicesAnswers(),
+      ...completeNumbersAnswers(),
+      ...completeDevelopmentAnswers(),
+      ...completeIdealDjAnswers().map((row) =>
+        row.questionKey === "I2" ? { ...row, value: ["dependable"] } : row,
+      ),
+    ])
+    expect(incompatiblePriorities.statuses["ideal-dj"]).toBe("needs_attention")
+    expect(incompatiblePriorities.revisitKeys["ideal-dj"]).toBe("I3")
+  })
+
+  it("has eight sections, seven of them live: goals, team, events, services, numbers, development, then ideal DJ", () => {
     expect(TOTAL_SECTIONS).toBe(8)
     expect(BLUEPRINT_SECTIONS.map((s) => s.number)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
-    expect(LIVE_SECTION_SLUGS).toEqual(["goals", "team", "events", "services", "numbers", "development"])
+    expect(LIVE_SECTION_SLUGS).toEqual(["goals", "team", "events", "services", "numbers", "development", "ideal-dj"])
   })
 
   it("builds M1 copy now but does not show it (D-4b)", () => {

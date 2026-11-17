@@ -85,6 +85,21 @@ import {
   parseTrainingTime,
 } from "@/lib/blueprint/development"
 import {
+  parseArrangement,
+  parseAvailability,
+  parseBeginner,
+  parseCoreValues,
+  parseHiringWeight,
+  parsePerson,
+  parsePoorFit,
+  parsePriorities,
+  parseQualities,
+  parseSkillRatings,
+  parseTravel,
+  qualitiesFromUnknown,
+  SKILL_CODES,
+} from "@/lib/blueprint/ideal-dj"
+import {
   TEAM_RANGE_MESSAGE,
   T0_INCLUDED,
   T0_TEAM_ONLY,
@@ -1107,6 +1122,158 @@ export async function saveDevelopmentGoalsCard(
     if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
   }
   await recordProgress(supabase, gate.membership.companyId, "development", writes[writes.length - 1].key)
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
+/**
+ * Guided Your ideal DJ write path. Uses company_blueprint_answers (S2-7).
+ * Intake and reflection only — do not score applicants or classify workers.
+ */
+export async function saveIdealDjFitCard(
+  _prevState: SaveAnswerState,
+  formData: FormData,
+): Promise<SaveAnswerState> {
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) return { error: gate.error, savedAt: null }
+
+  const i1Raw = formData.get("i1")
+  const i2 = formCodes(formData, "i2")
+  const i3 = formCodes(formData, "i3")
+  const i4None = formData.get("i4None")
+  const i4Values = ["i4v1", "i4v2", "i4v3"].map((name) => formData.get(name)).filter((value) => typeof value === "string")
+  const writes: { key: "I1" | "I2" | "I3" | "I4"; value: unknown }[] = []
+
+  if (i1Raw) {
+    const parsed = parsePerson(i1Raw)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "I1", value: parsed.value })
+  }
+
+  let qualities: string[] | null = null
+  if (i2.present) {
+    const parsed = parseQualities(i2.codes)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "I2", value: parsed.value })
+    qualities = parsed.value
+  } else {
+    const answers = await getCurrentBlueprintAnswers()
+    const stored = answers.find((row) => row.questionKey === "I2" && row.state !== "skipped")
+    qualities = stored ? qualitiesFromUnknown(stored.value) : null
+  }
+
+  if (i3.present) {
+    const parsed = parsePriorities(i3.codes, qualities)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "I3", value: parsed.value })
+  }
+
+  if (i4None === "none" || i4Values.some((value) => String(value).trim().length > 0)) {
+    const parsed = parseCoreValues(i4None === "none" ? "none" : i4Values)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "I4", value: parsed.value })
+  }
+
+  if (writes.length === 0) return { error: null, savedAt: null }
+
+  const supabase = await createClient()
+  for (const write of writes) {
+    const error = await upsertAnswer(supabase, gate.membership.companyId, write.key, write.value)
+    if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  await recordProgress(supabase, gate.membership.companyId, "ideal-dj", writes[writes.length - 1].key)
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
+export async function saveIdealDjExperienceCard(
+  _prevState: SaveAnswerState,
+  formData: FormData,
+): Promise<SaveAnswerState> {
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) return { error: gate.error, savedAt: null }
+
+  const i6Raw = formData.get("i6")
+  const i7Raw = formData.get("i7")
+  const writes: { key: "I5" | "I6" | "I7"; value: unknown }[] = []
+
+  const ratings: Record<string, FormDataEntryValue | null> = {}
+  let anyRating = false
+  for (const skill of SKILL_CODES) {
+    const rating = formData.get(`i5_${skill}`)
+    ratings[skill] = rating
+    if (rating) anyRating = true
+  }
+  if (anyRating) {
+    const parsed = parseSkillRatings(ratings)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "I5", value: parsed.value })
+  }
+  if (i6Raw) {
+    const parsed = parseBeginner(i6Raw)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "I6", value: parsed.value })
+  }
+  if (i7Raw) {
+    const parsed = parseHiringWeight(i7Raw)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "I7", value: parsed.value })
+  }
+
+  if (writes.length === 0) return { error: null, savedAt: null }
+
+  const supabase = await createClient()
+  for (const write of writes) {
+    const error = await upsertAnswer(supabase, gate.membership.companyId, write.key, write.value)
+    if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  await recordProgress(supabase, gate.membership.companyId, "ideal-dj", writes[writes.length - 1].key)
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
+export async function saveIdealDjHiringCard(
+  _prevState: SaveAnswerState,
+  formData: FormData,
+): Promise<SaveAnswerState> {
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) return { error: gate.error, savedAt: null }
+
+  const i8 = formCodes(formData, "i8")
+  const i9Raw = formData.get("i9")
+  const i10Raw = formData.get("i10")
+  const i11 = formCodes(formData, "i11")
+  const writes: { key: "I8" | "I9" | "I10" | "I11"; value: unknown }[] = []
+
+  if (i8.present) {
+    const parsed = parseAvailability(i8.codes)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "I8", value: parsed.value })
+  }
+  if (i9Raw) {
+    const parsed = parseTravel(i9Raw)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "I9", value: parsed.value })
+  }
+  if (i10Raw) {
+    const parsed = parseArrangement(i10Raw)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "I10", value: parsed.value })
+  }
+  if (i11.present) {
+    const parsed = parsePoorFit(i11.codes)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "I11", value: parsed.value })
+  }
+
+  if (writes.length === 0) return { error: null, savedAt: null }
+
+  const supabase = await createClient()
+  for (const write of writes) {
+    const error = await upsertAnswer(supabase, gate.membership.companyId, write.key, write.value)
+    if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  await recordProgress(supabase, gate.membership.companyId, "ideal-dj", writes[writes.length - 1].key)
   revalidatePath("/", "layout")
   return { error: null, savedAt: Date.now() }
 }

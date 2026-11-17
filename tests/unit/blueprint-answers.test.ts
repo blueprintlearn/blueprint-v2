@@ -148,6 +148,17 @@ describe("question registry", () => {
       "D8",
       "D9",
       "D10",
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7",
+      "I8",
+      "I9",
+      "I10",
+      "I11",
     ])
     expect(QUESTIONS.every((question) => /^[A-Z]{1,2}[0-9]{1,2}[a-z]?$/.test(question.key))).toBe(true)
     expect(QUESTIONS.filter((question) => question.key.startsWith("N")).map((question) => question.key)).toEqual([
@@ -172,6 +183,19 @@ describe("question registry", () => {
       "D8",
       "D9",
       "D10",
+    ])
+    expect(QUESTIONS.filter((question) => question.key.startsWith("I")).map((question) => question.key)).toEqual([
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7",
+      "I8",
+      "I9",
+      "I10",
+      "I11",
     ])
     expect(QUESTION_BY_KEY.G1.skipAllowed).toBe(true)
     expect(QUESTION_BY_KEY.G2.skipAllowed).toBe(false)
@@ -210,6 +234,14 @@ describe("question registry", () => {
       true,
     )
     expect(QUESTIONS.filter((question) => question.section === "development").every((question) => question.level === "core")).toBe(
+      true,
+    )
+    expect(QUESTION_BY_KEY.I1.section).toBe("ideal-dj")
+    expect(QUESTION_BY_KEY.I11.skipAllowed).toBe(true)
+    expect(QUESTIONS.filter((question) => question.section === "ideal-dj").every((question) => question.skipAllowed)).toBe(
+      true,
+    )
+    expect(QUESTIONS.filter((question) => question.section === "ideal-dj").every((question) => question.level === "core")).toBe(
       true,
     )
   })
@@ -298,6 +330,38 @@ describe("edited numbers answers stay consistent", () => {
       ]),
     )
     expect(sameFamily.state).toBe("answered")
+  })
+})
+
+describe("edited ideal DJ answers stay consistent", () => {
+  it("ignores saved I3 priorities that are no longer in I2, then restores them if I2 includes them again", () => {
+    const priorities = { questionKey: "I3", state: "answered" as const, value: ["dependable", "professional"] }
+    const incompatible = resolveQuestion(
+      QUESTION_BY_KEY.I3,
+      context(null, null, [
+        { questionKey: "I2", state: "answered", value: ["dependable", "friendly"] },
+        priorities,
+      ]),
+    )
+    expect(incompatible).toMatchObject({ key: "I3", state: "unanswered", value: null, isEstimate: false })
+
+    const restored = resolveQuestion(
+      QUESTION_BY_KEY.I3,
+      context(null, null, [
+        { questionKey: "I2", state: "answered", value: ["dependable", "friendly", "professional"] },
+        priorities,
+      ]),
+    )
+    expect(restored).toMatchObject({ state: "answered", value: ["dependable", "professional"] })
+
+    const skippedQualities = resolveQuestion(
+      QUESTION_BY_KEY.I3,
+      context(null, null, [
+        { questionKey: "I2", state: "skipped", value: null },
+        priorities,
+      ]),
+    )
+    expect(skippedQualities).toMatchObject({ state: "unanswered", value: null })
   })
 })
 

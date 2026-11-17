@@ -2,14 +2,16 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import { companyGoalCodes, companyGoalsOtherText } from "@/lib/blueprint/company-goals"
-import { DEVELOPMENT_FOOTER_NOTE, DEVELOPMENT_OPENING } from "@/lib/blueprint/development"
+import { DEVELOPMENT_OPENING } from "@/lib/blueprint/development"
 import { EVENTS_OPENING } from "@/lib/blueprint/events"
 import { loadGuidedBlueprint, requireGuidedOwner } from "@/lib/blueprint/guard"
+import { IDEAL_DJ_FOOTER_NOTE, IDEAL_DJ_OPENING } from "@/lib/blueprint/ideal-dj"
 import { NUMBERS_OPENING } from "@/lib/blueprint/numbers"
 import { blueprintSection } from "@/lib/blueprint/progress"
 import { SERVICES_OPENING } from "@/lib/blueprint/services"
 
 import { DevelopmentGuidedForm } from "../../development-guided-form"
+import { IdealDjGuidedForm } from "../../ideal-dj-guided-form"
 import { EventsGuidedForm } from "../../events-guided-form"
 import { FocusQuestion } from "../../focus-question"
 import { NumbersGuidedForm } from "../../numbers-guided-form"
@@ -37,7 +39,8 @@ export default async function BlueprintSectionRoute({
     slug !== "events" &&
     slug !== "services" &&
     slug !== "numbers" &&
-    slug !== "development"
+    slug !== "development" &&
+    slug !== "ideal-dj"
   ) {
     redirect("/blueprint")
   }
@@ -173,14 +176,40 @@ export default async function BlueprintSectionRoute({
               <Link href="/blueprint/numbers" className="bp-btn bp-btn--plain">
                 Previous: Your numbers
               </Link>
-              <Link href="/blueprint" className="bp-btn bp-btn--soft">
-                Back to your Blueprint
+              <Link href="/blueprint/ideal-dj" id="blueprint-next" className="bp-btn bp-btn--soft">
+                Next: Your ideal DJ
               </Link>
-              <p className="m-0 text-ink-2">{DEVELOPMENT_FOOTER_NOTE}</p>
             </>
           }
         >
           <DevelopmentGuidedForm resolved={resolved} />
+        </BlueprintSectionPage>
+      </BlueprintShell>
+    )
+  }
+
+  if (slug === "ideal-dj") {
+    return (
+      <BlueprintShell>
+        <FocusQuestion questionId={focusId} />
+        <BlueprintSectionPage
+          section={section}
+          status={status}
+          opening={IDEAL_DJ_OPENING}
+          framed={false}
+          footer={
+            <>
+              <Link href="/blueprint/development" className="bp-btn bp-btn--plain">
+                Previous: How you develop DJs
+              </Link>
+              <Link href="/blueprint" className="bp-btn bp-btn--soft">
+                Back to your Blueprint
+              </Link>
+              <p className="m-0 text-ink-2">{IDEAL_DJ_FOOTER_NOTE}</p>
+            </>
+          }
+        >
+          <IdealDjGuidedForm resolved={resolved} />
         </BlueprintSectionPage>
       </BlueprintShell>
     )
