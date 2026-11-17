@@ -104,7 +104,6 @@ import {
   nextApprovalRevision,
   parseApprovalChoice,
   snapshotFingerprint,
-  supersedeApproval,
 } from "@/lib/blueprint/review"
 import {
   TEAM_RANGE_MESSAGE,
@@ -162,6 +161,7 @@ async function recordProgress(
   lastSection: BlueprintSectionSlug,
   lastQuestionKey: string,
 ) {
+  // Approval invalidation is database-enforced on intake writes, not here.
   try {
     const { error } = await supabase.from("company_blueprint_progress").upsert(
       {
@@ -174,23 +174,6 @@ async function recordProgress(
     if (error) console.error("blueprint progress", error.message)
   } catch (error) {
     console.error("blueprint progress", error)
-  }
-  if (lastQuestionKey !== "R1") {
-    await advanceApprovalRevision(supabase, companyId)
-  }
-}
-
-async function advanceApprovalRevision(supabase: GuidedClient, companyId: string) {
-  try {
-    const answers = await getCurrentBlueprintAnswers()
-    const stored = answers.find((row) => row.questionKey === "R1")
-    if (!stored || stored.state !== "answered") return
-    const next = supersedeApproval(stored.value)
-    if (!next) return
-    const error = await upsertAnswer(supabase, companyId, "R1", next)
-    if (error) console.error("blueprint approval revision", error.message)
-  } catch (error) {
-    console.error("blueprint approval revision", error)
   }
 }
 
@@ -1311,6 +1294,8 @@ export async function saveIdealDjHiringCard(
 /**
  * Guided Your Blueprint write path. Uses company_blueprint_answers (S2-7).
  * Summary and approval only — do not score the business or generate a plan.
+ * Intake writes invalidate a stored approval in the same database statement
+ * via trigger; this action does not bump R1 after the fact.
  */
 export async function saveReviewApprovalCard(
   _prevState: SaveAnswerState,

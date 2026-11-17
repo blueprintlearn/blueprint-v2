@@ -1304,7 +1304,7 @@ describe("review approval card", () => {
     expect(Date.parse(written.approvedAt)).toBeGreaterThanOrEqual(before)
   })
 
-  it("bumps the approval revision when an earlier answer is saved later", async () => {
+  it("does not rewrite R1 after an intake save; invalidation is database-enforced", async () => {
     const fingerprint = snapshotFingerprint({
       goals: null,
       teamToday: mocks.team,
@@ -1329,18 +1329,9 @@ describe("review approval card", () => {
     data.append("e1", "wedding")
     data.set("e2", "90")
     expect((await saveEventsTodayCard(initial, data)).error).toBeNull()
+    expect(mocks.upsert.mock.calls.some((call) => call[0]?.question_key === "R1")).toBe(false)
     expect(mocks.upsert).toHaveBeenCalledWith(
-      expect.objectContaining({
-        question_key: "R1",
-        value: expect.objectContaining({
-          code: "approved",
-          fingerprint,
-          revision: 1,
-          currentRevision: 2,
-          approvedBy: REVIEW_FIXTURE_OWNER_ID,
-          approvedAt: REVIEW_FIXTURE_APPROVED_AT,
-        }),
-      }),
+      expect.objectContaining({ question_key: "E2", value: 90 }),
       { onConflict: "company_id,question_key" },
     )
   })

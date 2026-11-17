@@ -1,4 +1,4 @@
-import { execFileSync } from "node:child_process"
+import { execFile, execFileSync } from "node:child_process"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 
@@ -28,6 +28,18 @@ export function querySqlOn(database: string, sql: string): string {
 
 export function querySql(sql: string): string {
   return querySqlOn("postgres", sql)
+}
+
+export function querySqlAsync(sql: string): Promise<string> {
+  return new Promise((resolvePromise, reject) => {
+    execFile("docker", [...psqlArgs("postgres"), "-c", sql], { encoding: "utf8" }, (error, stdout, stderr) => {
+      if (error) {
+        reject(new Error([stdout, stderr, error.message].filter(Boolean).join("\n")))
+        return
+      }
+      resolvePromise(stdout)
+    })
+  })
 }
 
 export function querySqlAllowError(sql: string): { ok: boolean; output: string } {
