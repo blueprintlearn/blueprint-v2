@@ -58,8 +58,8 @@ export const BLUEPRINT_SECTIONS: readonly BlueprintSection[] = [
     number: 6,
     slug: "development",
     name: "How you develop DJs",
-    description: "How you hire and train today, and what to keep",
-    live: false,
+    description: "How you recruit and train today, and what you want to improve",
+    live: true,
   },
   {
     number: 7,

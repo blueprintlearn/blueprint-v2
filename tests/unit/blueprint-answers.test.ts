@@ -138,6 +138,16 @@ describe("question registry", () => {
       "N7",
       "N8",
       "N9",
+      "D1",
+      "D2",
+      "D3",
+      "D4",
+      "D5",
+      "D6",
+      "D7",
+      "D8",
+      "D9",
+      "D10",
     ])
     expect(QUESTIONS.every((question) => /^[A-Z]{1,2}[0-9]{1,2}[a-z]?$/.test(question.key))).toBe(true)
     expect(QUESTIONS.filter((question) => question.key.startsWith("N")).map((question) => question.key)).toEqual([
@@ -150,6 +160,18 @@ describe("question registry", () => {
       "N7",
       "N8",
       "N9",
+    ])
+    expect(QUESTIONS.filter((question) => question.key.startsWith("D")).map((question) => question.key)).toEqual([
+      "D1",
+      "D2",
+      "D3",
+      "D4",
+      "D5",
+      "D6",
+      "D7",
+      "D8",
+      "D9",
+      "D10",
     ])
     expect(QUESTION_BY_KEY.G1.skipAllowed).toBe(true)
     expect(QUESTION_BY_KEY.G2.skipAllowed).toBe(false)
@@ -180,6 +202,14 @@ describe("question registry", () => {
     expect(QUESTION_BY_KEY.N2.estimable).toBe(true)
     expect(QUESTION_BY_KEY.N9.level).toBe("go_deeper")
     expect(QUESTIONS.filter((question) => question.section === "numbers").every((question) => question.skipAllowed)).toBe(
+      true,
+    )
+    expect(QUESTION_BY_KEY.D1.section).toBe("development")
+    expect(QUESTION_BY_KEY.D10.skipAllowed).toBe(true)
+    expect(QUESTIONS.filter((question) => question.section === "development").every((question) => question.skipAllowed)).toBe(
+      true,
+    )
+    expect(QUESTIONS.filter((question) => question.section === "development").every((question) => question.level === "core")).toBe(
       true,
     )
   })

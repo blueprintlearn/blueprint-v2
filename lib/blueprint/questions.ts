@@ -68,6 +68,16 @@ export type QuestionKey =
   | "N7"
   | "N8"
   | "N9"
+  | "D1"
+  | "D2"
+  | "D3"
+  | "D4"
+  | "D5"
+  | "D6"
+  | "D7"
+  | "D8"
+  | "D9"
+  | "D10"
 
 export type GuidanceExample = {
   text: string
@@ -792,6 +802,186 @@ export const QUESTIONS: readonly QuestionDefinition[] = [
       examples: [
         { text: "Eventually about $400,000 a year." },
         { text: "No target yet: skip." },
+      ],
+    },
+  },
+  {
+    key: "D1",
+    section: "development",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "How do new DJs typically join your company?",
+    whyNeeded: "How people join tells Blueprint whether you hire beginners, experienced DJs, or have not recruited yet.",
+    guidance: {
+      why: "Solo operators and companies with a team both belong here. There is no right path.",
+      examples: [
+        { text: "You hire people with no DJ experience and train them." },
+        { text: "You haven’t recruited anyone yet." },
+      ],
+    },
+  },
+  {
+    key: "D2",
+    section: "development",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "How do new DJs currently learn? Choose all that apply.",
+    whyNeeded: "How people learn today is intake only. Blueprint will not recommend a training path from this yet.",
+    guidance: {
+      why: "Tell us what happens today, even if there is no formal process.",
+      examples: [
+        { text: "They shadow, then assist at events." },
+        { text: "There is no formal training process yet." },
+      ],
+    },
+  },
+  {
+    key: "D3",
+    section: "development",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Who currently handles training?",
+    whyNeeded: "Who trains today is separate from whether you already have a full training program.",
+    guidance: {
+      why: "Pick the person who usually handles it. Nobody yet is a complete answer.",
+      examples: [
+        { text: "You train people yourself." },
+        { text: "Nobody handles training yet." },
+      ],
+    },
+  },
+  {
+    key: "D4",
+    section: "development",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "How do you decide when a DJ is ready to work independently? Choose all that apply.",
+    whyNeeded: "Readiness is owner-defined. Blueprint will not certify anyone from this yet.",
+    guidance: {
+      why: "This is how you decide today, even if there is no defined process.",
+      examples: [
+        { text: "They assist at events, then you approve them." },
+        { text: "There is no defined process yet." },
+      ],
+    },
+  },
+  {
+    key: "D5",
+    section: "development",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What training materials do you already have? Choose all that apply.",
+    whyNeeded: "Existing materials stay separate from anything Blueprint might help you create later.",
+    guidance: {
+      why: "Only what you already have. You don’t need to create anything here.",
+      examples: [
+        { text: "A checklist and a few videos." },
+        { text: "Nothing documented yet." },
+      ],
+    },
+  },
+  {
+    key: "D6",
+    section: "development",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What equipment can trainees practice with?",
+    whyNeeded: "Practice equipment tells Blueprint what hands-on training is possible today.",
+    guidance: {
+      why: "This is access today, not a shopping list.",
+      examples: [
+        { text: "Shared company gear in the warehouse." },
+        { text: "They use their own equipment." },
+      ],
+    },
+  },
+  {
+    key: "D7",
+    section: "development",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "How can trainees get hands-on experience? Choose all that apply.",
+    whyNeeded: "Hands-on time is separate from classroom materials and from later recommendations.",
+    guidance: {
+      why: "What is possible today, even if it is not regular yet.",
+      examples: [
+        { text: "They observe live events, then assist." },
+        { text: "No regular opportunities yet." },
+      ],
+    },
+  },
+  {
+    key: "D8",
+    section: "development",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What is your biggest training challenge? Choose up to three.",
+    whyNeeded: "Your current challenges stay owner-reported. Blueprint will not diagnose your program from this.",
+    guidance: {
+      why: "Pick up to three. No major challenge yet is a complete answer on its own.",
+      examples: [
+        { text: "Finding time, and knowing when someone is ready." },
+        { text: "No major challenge yet." },
+      ],
+    },
+  },
+  {
+    key: "D9",
+    section: "development",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "What would you most like Blueprint to improve? Choose up to three.",
+    whyNeeded: "What you want improved is intake only. Blueprint will not recommend a certification path from this yet.",
+    guidance: {
+      why: "Pick up to three outcomes. Training recommendations come later.",
+      examples: [
+        { text: "Make training more organized, and reduce how much you have to do." },
+        { text: "Standardize experienced DJs, not only beginners." },
+      ],
+    },
+  },
+  {
+    key: "D10",
+    section: "development",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "How much time can you realistically dedicate to training?",
+    whyNeeded: "This is your own availability, not the whole team’s training capacity.",
+    guidance: {
+      why: "Your personal time each week, not everyone on the team combined.",
+      examples: [
+        { text: "About 1–2 hours a week." },
+        { text: "It varies, or you’re not sure." },
       ],
     },
   },

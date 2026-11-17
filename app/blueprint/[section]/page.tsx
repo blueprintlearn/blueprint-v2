@@ -2,12 +2,14 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import { companyGoalCodes, companyGoalsOtherText } from "@/lib/blueprint/company-goals"
+import { DEVELOPMENT_FOOTER_NOTE, DEVELOPMENT_OPENING } from "@/lib/blueprint/development"
 import { EVENTS_OPENING } from "@/lib/blueprint/events"
 import { loadGuidedBlueprint, requireGuidedOwner } from "@/lib/blueprint/guard"
-import { NUMBERS_FOOTER_NOTE, NUMBERS_OPENING } from "@/lib/blueprint/numbers"
+import { NUMBERS_OPENING } from "@/lib/blueprint/numbers"
 import { blueprintSection } from "@/lib/blueprint/progress"
 import { SERVICES_OPENING } from "@/lib/blueprint/services"
 
+import { DevelopmentGuidedForm } from "../../development-guided-form"
 import { EventsGuidedForm } from "../../events-guided-form"
 import { FocusQuestion } from "../../focus-question"
 import { NumbersGuidedForm } from "../../numbers-guided-form"
@@ -29,7 +31,14 @@ export default async function BlueprintSectionRoute({
   const membership = await requireGuidedOwner()
   const { section: slug } = await params
 
-  if (slug !== "goals" && slug !== "team" && slug !== "events" && slug !== "services" && slug !== "numbers") {
+  if (
+    slug !== "goals" &&
+    slug !== "team" &&
+    slug !== "events" &&
+    slug !== "services" &&
+    slug !== "numbers" &&
+    slug !== "development"
+  ) {
     redirect("/blueprint")
   }
 
@@ -138,14 +147,40 @@ export default async function BlueprintSectionRoute({
               <Link href="/blueprint/services" className="bp-btn bp-btn--plain">
                 Previous: Your services and market
               </Link>
-              <Link href="/blueprint" className="bp-btn bp-btn--soft">
-                Back to your Blueprint
+              <Link href="/blueprint/development" id="blueprint-next" className="bp-btn bp-btn--soft">
+                Next: How you develop DJs
               </Link>
-              <p className="m-0 text-ink-2">{NUMBERS_FOOTER_NOTE}</p>
             </>
           }
         >
           <NumbersGuidedForm resolved={resolved} />
+        </BlueprintSectionPage>
+      </BlueprintShell>
+    )
+  }
+
+  if (slug === "development") {
+    return (
+      <BlueprintShell>
+        <FocusQuestion questionId={focusId} />
+        <BlueprintSectionPage
+          section={section}
+          status={status}
+          opening={DEVELOPMENT_OPENING}
+          framed={false}
+          footer={
+            <>
+              <Link href="/blueprint/numbers" className="bp-btn bp-btn--plain">
+                Previous: Your numbers
+              </Link>
+              <Link href="/blueprint" className="bp-btn bp-btn--soft">
+                Back to your Blueprint
+              </Link>
+              <p className="m-0 text-ink-2">{DEVELOPMENT_FOOTER_NOTE}</p>
+            </>
+          }
+        >
+          <DevelopmentGuidedForm resolved={resolved} />
         </BlueprintSectionPage>
       </BlueprintShell>
     )

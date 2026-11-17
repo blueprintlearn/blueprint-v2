@@ -73,6 +73,18 @@ import {
   type PayMethodCode,
 } from "@/lib/blueprint/numbers"
 import {
+  parseChallenges,
+  parseEquipment,
+  parseHandsOn,
+  parseImprovements,
+  parseJoinPath,
+  parseLearnMethods,
+  parseMaterials,
+  parseReadySignals,
+  parseTrainer,
+  parseTrainingTime,
+} from "@/lib/blueprint/development"
+import {
   TEAM_RANGE_MESSAGE,
   T0_INCLUDED,
   T0_TEAM_ONLY,
@@ -965,6 +977,136 @@ export async function saveNumbersGoalsCard(
     if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
   }
   await recordProgress(supabase, gate.membership.companyId, "numbers", writes[writes.length - 1].key)
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
+/**
+ * Guided How you develop DJs write path. Uses company_blueprint_answers (S2-7).
+ * No new table or RPC. Intake only — do not recommend training or certification.
+ */
+export async function saveDevelopmentTodayCard(
+  _prevState: SaveAnswerState,
+  formData: FormData,
+): Promise<SaveAnswerState> {
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) return { error: gate.error, savedAt: null }
+
+  const d1Raw = formData.get("d1")
+  const d2 = formCodes(formData, "d2")
+  const d3Raw = formData.get("d3")
+  const d4 = formCodes(formData, "d4")
+  const writes: { key: "D1" | "D2" | "D3" | "D4"; value: unknown }[] = []
+
+  if (d1Raw) {
+    const parsed = parseJoinPath(d1Raw)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "D1", value: parsed.value })
+  }
+  if (d2.present) {
+    const parsed = parseLearnMethods(d2.codes)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "D2", value: parsed.value })
+  }
+  if (d3Raw) {
+    const parsed = parseTrainer(d3Raw)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "D3", value: parsed.value })
+  }
+  if (d4.present) {
+    const parsed = parseReadySignals(d4.codes)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "D4", value: parsed.value })
+  }
+
+  if (writes.length === 0) return { error: null, savedAt: null }
+
+  const supabase = await createClient()
+  for (const write of writes) {
+    const error = await upsertAnswer(supabase, gate.membership.companyId, write.key, write.value)
+    if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  await recordProgress(supabase, gate.membership.companyId, "development", writes[writes.length - 1].key)
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
+export async function saveDevelopmentResourcesCard(
+  _prevState: SaveAnswerState,
+  formData: FormData,
+): Promise<SaveAnswerState> {
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) return { error: gate.error, savedAt: null }
+
+  const d5 = formCodes(formData, "d5")
+  const d6Raw = formData.get("d6")
+  const d7 = formCodes(formData, "d7")
+  const writes: { key: "D5" | "D6" | "D7"; value: unknown }[] = []
+
+  if (d5.present) {
+    const parsed = parseMaterials(d5.codes)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "D5", value: parsed.value })
+  }
+  if (d6Raw) {
+    const parsed = parseEquipment(d6Raw)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "D6", value: parsed.value })
+  }
+  if (d7.present) {
+    const parsed = parseHandsOn(d7.codes)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "D7", value: parsed.value })
+  }
+
+  if (writes.length === 0) return { error: null, savedAt: null }
+
+  const supabase = await createClient()
+  for (const write of writes) {
+    const error = await upsertAnswer(supabase, gate.membership.companyId, write.key, write.value)
+    if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  await recordProgress(supabase, gate.membership.companyId, "development", writes[writes.length - 1].key)
+  revalidatePath("/", "layout")
+  return { error: null, savedAt: Date.now() }
+}
+
+export async function saveDevelopmentGoalsCard(
+  _prevState: SaveAnswerState,
+  formData: FormData,
+): Promise<SaveAnswerState> {
+  const gate = await requireGuidedOwnerMembership()
+  if (!gate.ok) return { error: gate.error, savedAt: null }
+
+  const d8 = formCodes(formData, "d8")
+  const d9 = formCodes(formData, "d9")
+  const d10Raw = formData.get("d10")
+  const writes: { key: "D8" | "D9" | "D10"; value: unknown }[] = []
+
+  if (d8.present) {
+    const parsed = parseChallenges(d8.codes)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "D8", value: parsed.value })
+  }
+  if (d9.present) {
+    const parsed = parseImprovements(d9.codes)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "D9", value: parsed.value })
+  }
+  if (d10Raw) {
+    const parsed = parseTrainingTime(d10Raw)
+    if (!parsed.ok) return { error: parsed.error, savedAt: null }
+    writes.push({ key: "D10", value: parsed.value })
+  }
+
+  if (writes.length === 0) return { error: null, savedAt: null }
+
+  const supabase = await createClient()
+  for (const write of writes) {
+    const error = await upsertAnswer(supabase, gate.membership.companyId, write.key, write.value)
+    if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  await recordProgress(supabase, gate.membership.companyId, "development", writes[writes.length - 1].key)
   revalidatePath("/", "layout")
   return { error: null, savedAt: Date.now() }
 }

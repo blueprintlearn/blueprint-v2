@@ -47,6 +47,9 @@ import {
   saveEventsStaffCard,
   saveEventsTodayCard,
   saveOwnerGoal,
+  saveDevelopmentGoalsCard,
+  saveDevelopmentResourcesCard,
+  saveDevelopmentTodayCard,
   saveNumbersCostsCard,
   saveNumbersGoalsCard,
   saveNumbersTodayCard,
@@ -964,6 +967,109 @@ describe("save numbers cards", () => {
     mocks.guided = true
     mocks.membership = { companyId: "company-a", companyName: "Company A", role: "manager" }
     expect(await saveNumbersTodayCard(initial, data)).toEqual({
+      error: "Only the company owner can change this.",
+      savedAt: null,
+    })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+})
+
+describe("development cards", () => {
+  it("saves training today, including nobody yet and no formal process", async () => {
+    const today = new FormData()
+    today.set("d1", "not_yet")
+    today.append("d2", "no_formal")
+    today.set("d3", "nobody")
+    today.append("d4", "no_process")
+    expect((await saveDevelopmentTodayCard(initial, today)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "D1", value: "not_yet" }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "D2", value: ["no_formal"] }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "D3", value: "nobody" }),
+      { onConflict: "company_id,question_key" },
+    )
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "D4", value: ["no_process"] }),
+      { onConflict: "company_id,question_key" },
+    )
+  })
+
+  it("rejects mixed exclusive none answers and unknown codes", async () => {
+    const mixed = new FormData()
+    mixed.append("d2", "shadow")
+    mixed.append("d2", "no_formal")
+    expect(await saveDevelopmentTodayCard(initial, mixed)).toEqual({
+      error: "Choose that option on its own.",
+      savedAt: null,
+    })
+
+    const unknown = new FormData()
+    unknown.append("d5", "written")
+    unknown.append("d5", "not_a_material")
+    expect(await saveDevelopmentResourcesCard(initial, unknown)).toEqual({
+      error: "Choose one of the options.",
+      savedAt: null,
+    })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+
+  it("rejects more than three challenges and keeps a later exclusive none from restoring mixed codes", async () => {
+    const tooMany = new FormData()
+    tooMany.append("d8", "time")
+    tooMany.append("d8", "engagement")
+    tooMany.append("d8", "consistency")
+    tooMany.append("d8", "readiness")
+    expect(await saveDevelopmentGoalsCard(initial, tooMany)).toEqual({
+      error: "Choose up to three.",
+      savedAt: null,
+    })
+
+    mocks.answers = [{ questionKey: "D8", state: "answered", value: ["time", "readiness"] }]
+    const none = new FormData()
+    none.append("d8", "no_major")
+    expect((await saveDevelopmentGoalsCard(initial, none)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "D8", value: ["no_major"] }),
+      { onConflict: "company_id,question_key" },
+    )
+  })
+
+  it("writes resources, improvements, and owner time, including I’m not sure", async () => {
+    const resources = new FormData()
+    resources.append("d5", "written")
+    resources.append("d5", "videos")
+    resources.set("d6", "shared")
+    resources.append("d7", "observe")
+    expect((await saveDevelopmentResourcesCard(initial, resources)).error).toBeNull()
+
+    const goals = new FormData()
+    goals.append("d9", "organized")
+    goals.append("d9", "less_owner")
+    goals.set("d10", "not_sure")
+    expect((await saveDevelopmentGoalsCard(initial, goals)).error).toBeNull()
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "D10", value: "not_sure" }),
+      { onConflict: "company_id,question_key" },
+    )
+  })
+
+  it("refuses development writes when the switch is off or the caller is a manager", async () => {
+    mocks.guided = false
+    const data = new FormData()
+    data.set("d1", "mix")
+    expect(await saveDevelopmentTodayCard(initial, data)).toEqual({
+      error: "That didn’t save. Please try again.",
+      savedAt: null,
+    })
+    mocks.guided = true
+    mocks.membership = { companyId: "company-a", companyName: "Company A", role: "manager" }
+    expect(await saveDevelopmentTodayCard(initial, data)).toEqual({
       error: "Only the company owner can change this.",
       savedAt: null,
     })
