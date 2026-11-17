@@ -99,7 +99,13 @@ import {
   qualitiesFromUnknown,
   SKILL_CODES,
 } from "@/lib/blueprint/ideal-dj"
-import { parseApproval, snapshotFingerprint } from "@/lib/blueprint/review"
+import {
+  isApprovalOwnerId,
+  nextApprovalRevision,
+  parseApprovalChoice,
+  snapshotFingerprint,
+  supersedeApproval,
+} from "@/lib/blueprint/review"
 import {
   TEAM_RANGE_MESSAGE,
   T0_INCLUDED,
@@ -169,6 +175,29 @@ async function recordProgress(
   } catch (error) {
     console.error("blueprint progress", error)
   }
+  if (lastQuestionKey !== "R1") {
+    await advanceApprovalRevision(supabase, companyId)
+  }
+}
+
+async function advanceApprovalRevision(supabase: GuidedClient, companyId: string) {
+  try {
+    const answers = await getCurrentBlueprintAnswers()
+    const stored = answers.find((row) => row.questionKey === "R1")
+    if (!stored || stored.state !== "answered") return
+    const next = supersedeApproval(stored.value)
+    if (!next) return
+    const error = await upsertAnswer(supabase, companyId, "R1", next)
+    if (error) console.error("blueprint approval revision", error.message)
+  } catch (error) {
+    console.error("blueprint approval revision", error)
+  }
+}
+
+async function authenticatedUserId(supabase: GuidedClient): Promise<string | null> {
+  const { data, error } = await supabase.auth.getClaims()
+  const sub = data?.claims?.sub
+  return !error && typeof sub === "string" && sub.length > 0 ? sub : null
 }
 
 async function clearAnswer(supabase: GuidedClient, companyId: string, questionKey: string) {
@@ -1290,27 +1319,45 @@ export async function saveReviewApprovalCard(
   const gate = await requireGuidedOwnerMembership()
   if (!gate.ok) return { error: gate.error, savedAt: null }
 
-  const raw = formData.get("r1")
-  if (!raw) return { error: null, savedAt: null }
-  const parsed = parseApproval(raw)
-  if (!parsed.ok) return { error: parsed.error, savedAt: null }
+  const parsed = parseApprovalChoice(formData.get("r1"))
+  if (!parsed.ok) {
+    if (!formData.get("r1")) return { error: null, savedAt: null }
+    return { error: parsed.error, savedAt: null }
+  }
 
-  const [goals, teamToday, answers] = await Promise.all([
+  const supabase = await createClient()
+  const [goals, teamToday, answers, approvedBy] = await Promise.all([
     getCurrentCompanyGoals(),
     getCurrentTeamToday(),
     getCurrentBlueprintAnswers(),
+    authenticatedUserId(supabase),
   ])
+  if (parsed.code === "approved" && !isApprovalOwnerId(approvedBy)) {
+    return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+
   const fingerprint = snapshotFingerprint({
     goals,
     teamToday,
     answers: answers.filter((row) => row.questionKey !== "R1"),
   })
-
-  const supabase = await createClient()
-  const error = await upsertAnswer(supabase, gate.membership.companyId, "R1", {
-    code: parsed.value.code,
-    fingerprint,
-  })
+  const existing = answers.find((row) => row.questionKey === "R1")
+  const revision = nextApprovalRevision(existing?.value)
+  const error = await upsertAnswer(
+    supabase,
+    gate.membership.companyId,
+    "R1",
+    parsed.code === "approved"
+      ? {
+          code: parsed.code,
+          fingerprint,
+          revision,
+          currentRevision: revision,
+          approvedBy,
+          approvedAt: new Date().toISOString(),
+        }
+      : { code: parsed.code },
+  )
   if (error) return { error: SAVE_FAILED_MESSAGE, savedAt: null }
   await recordProgress(supabase, gate.membership.companyId, "review", "R1")
   revalidatePath("/", "layout")

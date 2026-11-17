@@ -101,7 +101,19 @@ export const APPROVAL_OPTIONS: { value: ApprovalCode; label: string }[] = [
   { value: "not_sure", label: "I’m not sure" },
 ]
 
-export type ApprovalValue = { code: ApprovalCode; fingerprint: string }
+export const REVIEW_FIXTURE_OWNER_ID = "00000000-0000-4000-8000-0000000000a2"
+export const REVIEW_FIXTURE_APPROVED_AT = "2026-01-15T12:00:00.000Z"
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
+export type ApprovalValue = {
+  code: ApprovalCode
+  fingerprint: string
+  revision: number
+  currentRevision: number
+  approvedBy: string | null
+  approvedAt: string | null
+}
 
 export type SnapshotRow = {
   key: string
@@ -414,37 +426,100 @@ export function snapshotFingerprint(context: AnswerContext): string {
   return JSON.stringify(payload)
 }
 
-export function parseApproval(raw: unknown): { ok: true; value: ApprovalValue } | { ok: false; error: string } {
+export function parseApprovalChoice(raw: unknown): { ok: true; code: ApprovalCode } | { ok: false; error: string } {
   if (typeof raw === "string" && (APPROVAL_CODES as readonly string[]).includes(raw)) {
-    return { ok: true, value: { code: raw as ApprovalCode, fingerprint: "" } }
+    return { ok: true, code: raw as ApprovalCode }
   }
-  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
-    return { ok: false, error: REVIEW_CHOICE_MESSAGE }
+  return { ok: false, error: REVIEW_CHOICE_MESSAGE }
+}
+
+export function parseApproval(raw: unknown): { ok: true; code: ApprovalCode } | { ok: false; error: string } {
+  return parseApprovalChoice(raw)
+}
+
+function integerOrZero(value: unknown): number {
+  return typeof value === "number" && Number.isInteger(value) ? value : 0
+}
+
+export function parseStoredApproval(raw: unknown): { ok: true; value: ApprovalValue } | { ok: false } {
+  if (typeof raw === "string" && (APPROVAL_CODES as readonly string[]).includes(raw)) {
+    return {
+      ok: true,
+      value: {
+        code: raw as ApprovalCode,
+        fingerprint: "",
+        revision: 0,
+        currentRevision: 0,
+        approvedBy: null,
+        approvedAt: null,
+      },
+    }
   }
-  const record = raw as { code?: unknown; fingerprint?: unknown }
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return { ok: false }
+  const record = raw as {
+    code?: unknown
+    fingerprint?: unknown
+    revision?: unknown
+    currentRevision?: unknown
+    approvedBy?: unknown
+    approvedAt?: unknown
+  }
   if (typeof record.code !== "string" || !(APPROVAL_CODES as readonly string[]).includes(record.code)) {
-    return { ok: false, error: REVIEW_CHOICE_MESSAGE }
+    return { ok: false }
   }
+  const revision = integerOrZero(record.revision)
   return {
     ok: true,
     value: {
       code: record.code as ApprovalCode,
       fingerprint: typeof record.fingerprint === "string" ? record.fingerprint : "",
+      revision,
+      currentRevision: integerOrZero(record.currentRevision) || revision,
+      approvedBy: typeof record.approvedBy === "string" ? record.approvedBy : null,
+      approvedAt: typeof record.approvedAt === "string" ? record.approvedAt : null,
     },
   }
 }
 
+export function isApprovalOwnerId(value: string | null): value is string {
+  return Boolean(value && UUID_PATTERN.test(value))
+}
+
+export function isApprovalTimestamp(value: string | null): value is string {
+  if (!value || !value.includes("T")) return false
+  const time = Date.parse(value)
+  return Number.isFinite(time)
+}
+
 export function approvalStillHolds(value: unknown, fingerprint: string): boolean {
-  const parsed = parseApproval(value)
+  const parsed = parseStoredApproval(value)
   if (!parsed.ok) return false
   if (parsed.value.code !== "approved") return true
-  if (!parsed.value.fingerprint) return true
-  return parsed.value.fingerprint === fingerprint
+  const approval = parsed.value
+  if (!approval.fingerprint) return false
+  if (approval.fingerprint !== fingerprint) return false
+  if (approval.revision < 1 || approval.currentRevision !== approval.revision) return false
+  return isApprovalOwnerId(approval.approvedBy) && isApprovalTimestamp(approval.approvedAt)
 }
 
 export function approvalFromUnknown(raw: unknown): ApprovalValue | null {
-  const parsed = parseApproval(raw)
+  const parsed = parseStoredApproval(raw)
   return parsed.ok ? parsed.value : null
+}
+
+export function supersedeApproval(value: unknown): ApprovalValue | null {
+  const parsed = parseStoredApproval(value)
+  if (!parsed.ok || parsed.value.code !== "approved") return null
+  return {
+    ...parsed.value,
+    currentRevision: parsed.value.currentRevision + 1,
+  }
+}
+
+export function nextApprovalRevision(value: unknown): number {
+  const parsed = parseStoredApproval(value)
+  const current = parsed.ok ? parsed.value.currentRevision : 0
+  return current < 1 ? 1 : current
 }
 
 export function buildBusinessSnapshot(context: AnswerContext, resolved: readonly ResolvedAnswer[]): SnapshotGroup[] {
@@ -452,8 +527,13 @@ export function buildBusinessSnapshot(context: AnswerContext, resolved: readonly
     const section = BLUEPRINT_SECTIONS.find((item) => item.slug === slug)!
     const rows = resolved
       .filter((row) => row.question.section === slug)
-      .filter((row) => row.question.level === "core" || row.state === "answered" || row.state === "estimated")
-      .filter((row) => row.state !== "not_applicable")
+      .filter(
+        (row) =>
+          row.question.level === "core" ||
+          row.state === "answered" ||
+          row.state === "estimated" ||
+          row.state === "not_applicable",
+      )
       .map((row) => ({
         key: row.key,
         label: SNAPSHOT_LABELS[row.key] ?? row.question.label,
@@ -475,12 +555,23 @@ export function skippedReviewNote() {
   return SKIPPED_REVIEW_NOTE
 }
 
-export function completeReviewAnswers(fingerprint = "") {
+export function completeReviewAnswers(context: AnswerContext) {
+  const fingerprint = snapshotFingerprint({
+    ...context,
+    answers: context.answers.filter((row) => row.questionKey !== "R1"),
+  })
   return [
     {
       questionKey: "R1",
       state: "answered" as const,
-      value: { code: "approved", fingerprint } satisfies ApprovalValue,
+      value: {
+        code: "approved",
+        fingerprint,
+        revision: 1,
+        currentRevision: 1,
+        approvedBy: REVIEW_FIXTURE_OWNER_ID,
+        approvedAt: REVIEW_FIXTURE_APPROVED_AT,
+      } satisfies ApprovalValue,
     },
   ]
 }

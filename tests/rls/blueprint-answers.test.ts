@@ -351,7 +351,14 @@ describe("company_blueprint_answers and progress isolation", () => {
     const saved = await ownerA.from("company_blueprint_answers").upsert({
       company_id: COMPANY_A_ID,
       question_key: "R1",
-      value: { code: "approved", fingerprint: "fixture" },
+      value: {
+        code: "approved",
+        fingerprint: "fixture",
+        revision: 1,
+        currentRevision: 1,
+        approvedBy: UPDATED_BY,
+        approvedAt: "2026-01-15T12:00:00.000Z",
+      },
       state: "answered",
       question_version: 1,
     })
@@ -364,12 +371,48 @@ describe("company_blueprint_answers and progress isolation", () => {
     expect(progress.error).toBeNull()
     const row = await ownerA
       .from("company_blueprint_answers")
-      .select("question_key, value")
+      .select("question_key, value, updated_by")
       .eq("question_key", "R1")
       .maybeSingle()
     expect(row.data).toMatchObject({
       question_key: "R1",
-      value: { code: "approved", fingerprint: "fixture" },
+      updated_by: UPDATED_BY,
+      value: expect.objectContaining({
+        code: "approved",
+        approvedBy: UPDATED_BY,
+      }),
     })
+  })
+
+  it("does not let a manager, Company B owner, or anonymous client write a Company A approval", async () => {
+    clearBlueprintAnswers(COMPANY_A_ID)
+    const forged = {
+      company_id: COMPANY_A_ID,
+      question_key: "R1",
+      value: {
+        code: "approved",
+        fingerprint: "forged",
+        revision: 1,
+        currentRevision: 1,
+        approvedBy: "00000000-0000-4000-8000-0000000000b2",
+        approvedAt: "1999-01-01T00:00:00.000Z",
+      },
+      state: "answered" as const,
+      question_version: 1,
+    }
+
+    const managerA = await asUser(MANAGER_A_EMAIL)
+    expect((await managerA.from("company_blueprint_answers").insert(forged)).error).not.toBeNull()
+
+    const ownerB = await asUser(OWNER_B_EMAIL)
+    expect((await ownerB.from("company_blueprint_answers").insert(forged)).error).not.toBeNull()
+
+    const anon = createAnonClient()
+    expect((await anon.from("company_blueprint_answers").insert(forged)).error).not.toBeNull()
+
+    const ownerA = await asUser(OWNER_A_EMAIL)
+    expect((await ownerA.from("company_blueprint_answers").select("question_key").eq("question_key", "R1")).data ?? []).toEqual(
+      [],
+    )
   })
 })

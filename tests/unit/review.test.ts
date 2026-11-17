@@ -3,11 +3,14 @@ import { describe, expect, it } from "vitest"
 import { resolveAll } from "@/lib/blueprint/answers"
 import {
   REVIEW_CHOICE_MESSAGE,
+  REVIEW_FIXTURE_APPROVED_AT,
+  REVIEW_FIXTURE_OWNER_ID,
   approvalStillHolds,
   buildBusinessSnapshot,
   parseApproval,
   snapshotDisplay,
   snapshotFingerprint,
+  supersedeApproval,
 } from "@/lib/blueprint/review"
 import { completeEventsAnswers } from "@/lib/blueprint/events"
 import { completeIdealDjAnswers } from "@/lib/blueprint/ideal-dj"
@@ -32,22 +35,46 @@ function context(
   return { goals, teamToday: team, answers }
 }
 
+function validApproval(fingerprint: string) {
+  return {
+    code: "approved" as const,
+    fingerprint,
+    revision: 1,
+    currentRevision: 1,
+    approvedBy: REVIEW_FIXTURE_OWNER_ID,
+    approvedAt: REVIEW_FIXTURE_APPROVED_AT,
+  }
+}
+
 describe("review approval answers", () => {
-  it("accepts approve, not yet, and not sure, and rejects unknown codes", () => {
-    expect(parseApproval("approved").ok).toBe(true)
+  it("accepts approve, not yet, and not sure from the client, and rejects objects or unknown codes", () => {
+    expect(parseApproval("approved")).toEqual({ ok: true, code: "approved" })
     expect(parseApproval("not_yet").ok).toBe(true)
-    expect(parseApproval({ code: "not_sure", fingerprint: "abc" })).toEqual({
-      ok: true,
-      value: { code: "not_sure", fingerprint: "abc" },
+    expect(parseApproval({ code: "approved", approvedBy: REVIEW_FIXTURE_OWNER_ID })).toEqual({
+      ok: false,
+      error: REVIEW_CHOICE_MESSAGE,
     })
     expect(parseApproval("hire_now")).toEqual({ ok: false, error: REVIEW_CHOICE_MESSAGE })
   })
 
-  it("keeps an approved snapshot only while the fingerprint still matches", () => {
-    expect(approvalStillHolds({ code: "approved", fingerprint: "same" }, "same")).toBe(true)
-    expect(approvalStillHolds({ code: "approved", fingerprint: "old" }, "new")).toBe(false)
-    expect(approvalStillHolds({ code: "not_yet", fingerprint: "old" }, "new")).toBe(true)
-    expect(approvalStillHolds({ code: "approved" }, "anything")).toBe(true)
+  it("keeps an approved snapshot only with a valid fingerprint, revision, owner, and timestamp", () => {
+    const matching = validApproval("same")
+    expect(approvalStillHolds(matching, "same")).toBe(true)
+    expect(approvalStillHolds({ ...matching, fingerprint: "old" }, "new")).toBe(false)
+    expect(approvalStillHolds({ ...matching, fingerprint: "" }, "same")).toBe(false)
+    expect(approvalStillHolds({ code: "approved" }, "same")).toBe(false)
+    expect(approvalStillHolds({ ...matching, approvedBy: null }, "same")).toBe(false)
+    expect(approvalStillHolds({ ...matching, approvedAt: null }, "same")).toBe(false)
+    expect(approvalStillHolds({ code: "not_yet" }, "new")).toBe(true)
+  })
+
+  it("does not restore a superseded approval when the earlier answers match again", () => {
+    const fingerprint = snapshotFingerprint(context([{ questionKey: "E2", state: "answered", value: 80 }]))
+    const approved = validApproval(fingerprint)
+    expect(approvalStillHolds(approved, fingerprint)).toBe(true)
+    const superseded = supersedeApproval(approved)
+    expect(superseded?.currentRevision).toBe(2)
+    expect(approvalStillHolds(superseded, fingerprint)).toBe(false)
   })
 
   it("changes the fingerprint when an earlier answer changes", () => {
@@ -96,6 +123,27 @@ describe("business snapshot", () => {
     expect(groups.find((group) => group.slug === "development")?.rows.some((row) => row.display === "Not answered yet")).toBe(
       true,
     )
+    expect(groups.find((group) => group.slug === "team")?.rows.some((row) => row.key === "T0" && row.display === "Not applicable")).toBe(
+      true,
+    )
     expect(JSON.stringify(groups)).not.toMatch(/wedding|can_teach|yes_personality|finding_candidates/)
+  })
+
+  it("shows Not applicable answers instead of omitting them", () => {
+    const ctx = {
+      goals: { primary: { goal: "scale" }, others: [] },
+      teamToday: team,
+      answers: [{ questionKey: "N6", state: "answered" as const, value: { codes: ["none"] } }],
+    }
+    const groups = buildBusinessSnapshot(ctx, resolveAll(ctx))
+    expect(groups.find((group) => group.slug === "goals")?.rows.some((row) => row.key === "G2" && row.display === "Not applicable")).toBe(
+      true,
+    )
+    expect(groups.find((group) => group.slug === "team")?.rows.some((row) => row.key === "T0" && row.display === "Not applicable")).toBe(
+      true,
+    )
+    expect(
+      groups.find((group) => group.slug === "numbers")?.rows.some((row) => row.key === "N7" && row.display === "Not applicable"),
+    ).toBe(true)
   })
 })

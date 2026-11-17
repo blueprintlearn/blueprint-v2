@@ -81,29 +81,25 @@ const partlyTeam = progressOf(
   teamTodayFixture({ currentDjCount: 3, countBasis: "excludes_owner" }),
 )
 const allReady = progressOf({ primary: { goal: "scale" } }, completeTeam, completeAnswers)
-const allLiveReady = progressOf(
-  { primary: { goal: "scale" } },
-  completeTeam,
-  [
-    ...completeAnswers,
-    ...completeEventsAnswers(),
-    ...completeServicesAnswers(),
-    ...completeNumbersAnswers(),
-    ...completeDevelopmentAnswers(),
-    ...completeIdealDjAnswers(),
-  ],
-)
+const liveAnswers = [
+  ...completeAnswers,
+  ...completeEventsAnswers(),
+  ...completeServicesAnswers(),
+  ...completeNumbersAnswers(),
+  ...completeDevelopmentAnswers(),
+  ...completeIdealDjAnswers(),
+]
+const allLiveReady = progressOf({ primary: { goal: "scale" } }, completeTeam, liveAnswers)
 const allComplete = progressOf(
   { primary: { goal: "scale" } },
   completeTeam,
   [
-    ...completeAnswers,
-    ...completeEventsAnswers(),
-    ...completeServicesAnswers(),
-    ...completeNumbersAnswers(),
-    ...completeDevelopmentAnswers(),
-    ...completeIdealDjAnswers(),
-    ...completeReviewAnswers(),
+    ...liveAnswers,
+    ...completeReviewAnswers({
+      goals: { primary: { goal: "scale" }, others: [] },
+      teamToday: completeTeam,
+      answers: liveAnswers,
+    }),
   ],
 )
 

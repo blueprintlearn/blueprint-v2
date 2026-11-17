@@ -62,6 +62,9 @@ test.describe("Your Blueprint", () => {
     await expect(sectionStatus(page)).toHaveText("Complete")
     await page.screenshot({ path: `${SHOTS}/slice10_review_approved.png`, fullPage: true })
 
+    await expect(page.locator("[data-snapshot-key='G2'] .bp-fact__value")).toHaveText("Not applicable")
+    await expect(page.locator("[data-snapshot-key='T0'] .bp-fact__value")).toHaveText("Not applicable")
+
     await page.goto("/blueprint/events")
     await page.locator('#q-E2 input[name="e2"]').fill("90")
     await page.getByRole("button", { name: "Save your events today" }).click()
@@ -71,6 +74,16 @@ test.describe("Your Blueprint", () => {
     await expect(page.locator("[data-snapshot-key='E2'] .bp-fact__value")).toHaveText("90")
     await expect(page.locator("form[data-card='approve']")).toHaveAttribute("data-saved-r1", "")
     await expect(sectionStatus(page)).toHaveText("Needs attention")
+
+    await page.goto("/blueprint/events")
+    await page.locator('#q-E2 input[name="e2"]').fill("80")
+    await page.getByRole("button", { name: "Save your events today" }).click()
+    await expect(page.locator("form[data-card='today'] .bp-save")).toHaveText("Saved")
+    await page.goto("/blueprint/review")
+    await expect(page.locator("[data-snapshot-key='E2'] .bp-fact__value")).toHaveText("80")
+    await expect(page.locator("form[data-card='approve']")).toHaveAttribute("data-saved-r1", "")
+    await expect(sectionStatus(page)).toHaveText("Needs attention")
+
     await page.getByRole("radio", { name: "Yes, approve this for now" }).check()
     await page.getByRole("button", { name: "Save your approval" }).click()
     await expect(page.locator("form[data-card='approve']")).toHaveAttribute("data-saved-r1", "approved")

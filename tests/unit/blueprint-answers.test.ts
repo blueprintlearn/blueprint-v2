@@ -10,7 +10,12 @@ import {
   type StoredAnswer,
 } from "@/lib/blueprint/answers"
 import { QUESTION_BY_KEY, QUESTIONS } from "@/lib/blueprint/questions"
-import { snapshotFingerprint } from "@/lib/blueprint/review"
+import {
+  REVIEW_FIXTURE_APPROVED_AT,
+  REVIEW_FIXTURE_OWNER_ID,
+  snapshotFingerprint,
+  supersedeApproval,
+} from "@/lib/blueprint/review"
 import { teamTodayFixture } from "@/lib/blueprint/team-today"
 
 const context = (
@@ -375,41 +380,53 @@ describe("edited ideal DJ answers stay consistent", () => {
 })
 
 describe("edited review approval stays consistent", () => {
-  it("ignores an approved snapshot when earlier answers change, then restores it if they match again", () => {
+  it("does not restore a superseded approval when earlier answers match again", () => {
     const matching = context({ primary: { goal: "scale" }, others: [] }, null, [
       { questionKey: "E2", state: "answered", value: 80 },
     ])
     const approved = {
       questionKey: "R1",
       state: "answered" as const,
-      value: { code: "approved", fingerprint: snapshotFingerprint(matching) },
+      value: {
+        code: "approved",
+        fingerprint: snapshotFingerprint(matching),
+        revision: 1,
+        currentRevision: 1,
+        approvedBy: REVIEW_FIXTURE_OWNER_ID,
+        approvedAt: REVIEW_FIXTURE_APPROVED_AT,
+      },
     }
     expect(resolveQuestion(QUESTION_BY_KEY.R1, { ...matching, answers: [...matching.answers, approved] })).toMatchObject({
       state: "answered",
       value: approved.value,
     })
 
-    const changed = context({ primary: { goal: "expand" }, others: [] }, null, [
+    const superseded = { ...approved, value: supersedeApproval(approved.value) }
+    const restored = context({ primary: { goal: "scale" }, others: [] }, null, [
       { questionKey: "E2", state: "answered", value: 80 },
-      approved,
+      superseded,
     ])
-    expect(resolveQuestion(QUESTION_BY_KEY.R1, changed)).toMatchObject({
+    expect(resolveQuestion(QUESTION_BY_KEY.R1, restored)).toMatchObject({
       key: "R1",
       state: "unanswered",
       value: null,
       isEstimate: false,
     })
 
-    const restored = context({ primary: { goal: "scale" }, others: [] }, null, [
+    const emptyFingerprint = context({ primary: { goal: "scale" }, others: [] }, null, [
       { questionKey: "E2", state: "answered", value: 80 },
-      approved,
+      {
+        questionKey: "R1",
+        state: "answered",
+        value: { ...approved.value, fingerprint: "" },
+      },
     ])
-    expect(resolveQuestion(QUESTION_BY_KEY.R1, restored)).toMatchObject({ state: "answered", value: approved.value })
+    expect(resolveQuestion(QUESTION_BY_KEY.R1, emptyFingerprint).state).toBe("unanswered")
 
     const notYet = {
       questionKey: "R1",
       state: "answered" as const,
-      value: { code: "not_yet", fingerprint: "stale" },
+      value: { code: "not_yet" },
     }
     expect(
       resolveQuestion(

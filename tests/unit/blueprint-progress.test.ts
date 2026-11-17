@@ -42,6 +42,14 @@ const teamAnswers: StoredAnswer[] = [
   { questionKey: "T5", state: "answered", value: { codes: ["scheduling"], other: null } },
 ]
 
+function withReview(
+  goals: AnswerContext["goals"],
+  teamToday: AnswerContext["teamToday"],
+  answers: StoredAnswer[],
+) {
+  return [...answers, ...completeReviewAnswers({ goals, teamToday, answers })]
+}
+
 function progress(
   goals: AnswerContext["goals"],
   teamToday: AnswerContext["teamToday"],
@@ -231,16 +239,19 @@ describe("getBlueprintProgress from answer states", () => {
   })
 
   it("continues to a skipped question when that is what still needs attention", () => {
-    const p = progress(null, completeTeam(), [
-      ...teamAnswers,
-      ...completeEventsAnswers(),
-      ...completeServicesAnswers(),
-      ...completeNumbersAnswers(),
-      ...completeDevelopmentAnswers(),
-      ...completeIdealDjAnswers(),
-      ...completeReviewAnswers(),
-      { questionKey: "G1", state: "skipped", value: null },
-    ])
+    const p = progress(
+      null,
+      completeTeam(),
+      withReview(null, completeTeam(), [
+        ...teamAnswers,
+        ...completeEventsAnswers(),
+        ...completeServicesAnswers(),
+        ...completeNumbersAnswers(),
+        ...completeDevelopmentAnswers(),
+        ...completeIdealDjAnswers(),
+        { questionKey: "G1", state: "skipped", value: null },
+      ]),
+    )
     expect(p.statuses.goals).toBe("needs_attention")
     expect(p.completeCount).toBe(7)
     expect(p.action).toBe("continue")
@@ -273,16 +284,19 @@ describe("getBlueprintProgress from answer states", () => {
     expect(skippedTraining.next).toBe("numbers")
     expect(skippedTraining.focusQuestionKey).toBe("N1")
 
-    const skippedWhenLaterDone = progress(goal, completeTeam(), [
-      ...teamAnswers,
-      ...completeEventsAnswers(),
-      ...completeServicesAnswers().filter((row) => row.questionKey !== "S2"),
-      { questionKey: "S2", state: "skipped", value: null },
-      ...completeNumbersAnswers(),
-      ...completeDevelopmentAnswers(),
-      ...completeIdealDjAnswers(),
-      ...completeReviewAnswers(),
-    ])
+    const skippedWhenLaterDone = progress(
+      goal,
+      completeTeam(),
+      withReview(goal, completeTeam(), [
+        ...teamAnswers,
+        ...completeEventsAnswers(),
+        ...completeServicesAnswers().filter((row) => row.questionKey !== "S2"),
+        { questionKey: "S2", state: "skipped", value: null },
+        ...completeNumbersAnswers(),
+        ...completeDevelopmentAnswers(),
+        ...completeIdealDjAnswers(),
+      ]),
+    )
     expect(skippedWhenLaterDone.next).toBe("services")
     expect(skippedWhenLaterDone.focusQuestionKey).toBe("S2")
   })
@@ -328,16 +342,19 @@ describe("getBlueprintProgress from answer states", () => {
     expect(complete.focusQuestionKey).toBe("D1")
     expect(complete.action).toBe("continue")
 
-    const skippedRevenue = progress(goal, completeTeam(), [
-      ...teamAnswers,
-      ...completeEventsAnswers(),
-      ...completeServicesAnswers(),
-      ...completeNumbersAnswers().filter((row) => row.questionKey !== "N1"),
-      { questionKey: "N1", state: "skipped", value: null },
-      ...completeDevelopmentAnswers(),
-      ...completeIdealDjAnswers(),
-      ...completeReviewAnswers(),
-    ])
+    const skippedRevenue = progress(
+      goal,
+      completeTeam(),
+      withReview(goal, completeTeam(), [
+        ...teamAnswers,
+        ...completeEventsAnswers(),
+        ...completeServicesAnswers(),
+        ...completeNumbersAnswers().filter((row) => row.questionKey !== "N1"),
+        { questionKey: "N1", state: "skipped", value: null },
+        ...completeDevelopmentAnswers(),
+        ...completeIdealDjAnswers(),
+      ]),
+    )
     expect(skippedRevenue.statuses.numbers).toBe("needs_attention")
     expect(skippedRevenue.skippedCounts.numbers).toBe(1)
     expect(skippedRevenue.completeCount).toBe(7)
@@ -401,16 +418,19 @@ describe("getBlueprintProgress from answer states", () => {
     expect(complete.focusQuestionKey).toBe("I1")
     expect(complete.action).toBe("continue")
 
-    const skippedLearn = progress(goal, completeTeam(), [
-      ...teamAnswers,
-      ...completeEventsAnswers(),
-      ...completeServicesAnswers(),
-      ...completeNumbersAnswers(),
-      ...completeDevelopmentAnswers().filter((row) => row.questionKey !== "D2"),
-      { questionKey: "D2", state: "skipped", value: null },
-      ...completeIdealDjAnswers(),
-      ...completeReviewAnswers(),
-    ])
+    const skippedLearn = progress(
+      goal,
+      completeTeam(),
+      withReview(goal, completeTeam(), [
+        ...teamAnswers,
+        ...completeEventsAnswers(),
+        ...completeServicesAnswers(),
+        ...completeNumbersAnswers(),
+        ...completeDevelopmentAnswers().filter((row) => row.questionKey !== "D2"),
+        { questionKey: "D2", state: "skipped", value: null },
+        ...completeIdealDjAnswers(),
+      ]),
+    )
     expect(skippedLearn.statuses.development).toBe("needs_attention")
     expect(skippedLearn.skippedCounts.development).toBe(1)
     expect(skippedLearn.completeCount).toBe(7)
@@ -433,16 +453,19 @@ describe("getBlueprintProgress from answer states", () => {
     expect(complete.focusQuestionKey).toBe("R1")
     expect(complete.action).toBe("continue")
 
-    const skippedPerson = progress(goal, completeTeam(), [
-      ...teamAnswers,
-      ...completeEventsAnswers(),
-      ...completeServicesAnswers(),
-      ...completeNumbersAnswers(),
-      ...completeDevelopmentAnswers(),
-      ...completeIdealDjAnswers().filter((row) => row.questionKey !== "I1"),
-      { questionKey: "I1", state: "skipped", value: null },
-      ...completeReviewAnswers(),
-    ])
+    const skippedPerson = progress(
+      goal,
+      completeTeam(),
+      withReview(goal, completeTeam(), [
+        ...teamAnswers,
+        ...completeEventsAnswers(),
+        ...completeServicesAnswers(),
+        ...completeNumbersAnswers(),
+        ...completeDevelopmentAnswers(),
+        ...completeIdealDjAnswers().filter((row) => row.questionKey !== "I1"),
+        { questionKey: "I1", state: "skipped", value: null },
+      ]),
+    )
     expect(skippedPerson.statuses["ideal-dj"]).toBe("needs_attention")
     expect(skippedPerson.skippedCounts["ideal-dj"]).toBe(1)
     expect(skippedPerson.next).toBe("ideal-dj")
@@ -463,15 +486,18 @@ describe("getBlueprintProgress from answer states", () => {
   })
 
   it("marks Your Blueprint complete when the snapshot is approved, and reopens it if an earlier answer changes", () => {
-    const complete = progress(goal, completeTeam(), [
-      ...teamAnswers,
-      ...completeEventsAnswers(),
-      ...completeServicesAnswers(),
-      ...completeNumbersAnswers(),
-      ...completeDevelopmentAnswers(),
-      ...completeIdealDjAnswers(),
-      ...completeReviewAnswers(),
-    ])
+    const complete = progress(
+      goal,
+      completeTeam(),
+      withReview(goal, completeTeam(), [
+        ...teamAnswers,
+        ...completeEventsAnswers(),
+        ...completeServicesAnswers(),
+        ...completeNumbersAnswers(),
+        ...completeDevelopmentAnswers(),
+        ...completeIdealDjAnswers(),
+      ]),
+    )
     expect(complete.statuses.review).toBe("complete")
     expect(complete.completeCount).toBe(8)
     expect(complete.next).toBeNull()

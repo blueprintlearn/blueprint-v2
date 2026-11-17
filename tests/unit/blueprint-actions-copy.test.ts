@@ -25,6 +25,7 @@ const mocks = vi.hoisted(() => ({
   },
   answers: [] as { questionKey: string; state: "answered" | "estimated" | "skipped"; value: unknown }[],
   deletedKeys: [] as string[],
+  userId: "00000000-0000-4000-8000-0000000000a2",
 }))
 
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }))
@@ -68,7 +69,12 @@ import {
 } from "@/lib/blueprint/actions"
 import { emptyTeamToday } from "@/lib/blueprint/team-today"
 import { ALREADY_ANSWERED_MESSAGE, G3_CHOOSE_MESSAGE, SAVE_FAILED_MESSAGE } from "@/lib/blueprint/questions"
-import { REVIEW_CHOICE_MESSAGE, snapshotFingerprint } from "@/lib/blueprint/review"
+import {
+  REVIEW_CHOICE_MESSAGE,
+  REVIEW_FIXTURE_APPROVED_AT,
+  REVIEW_FIXTURE_OWNER_ID,
+  snapshotFingerprint,
+} from "@/lib/blueprint/review"
 import { OWNER_GOAL_OTHER_REQUIRED_MESSAGE } from "@/lib/blueprint/goals"
 
 const initial = { error: null, savedAt: null }
@@ -94,6 +100,7 @@ beforeEach(() => {
   mocks.team = emptyTeamToday()
   mocks.answers = []
   mocks.deletedKeys = []
+  mocks.userId = "00000000-0000-4000-8000-0000000000a2"
   let pendingDeleteKey: string | null = null
   const deleteChain = {
     eq: (column: string, value: unknown) => {
@@ -113,6 +120,9 @@ beforeEach(() => {
       delete: () => deleteChain,
     }),
     rpc: mocks.rpc,
+    auth: {
+      getClaims: async () => ({ data: { claims: { sub: mocks.userId } }, error: null }),
+    },
   }))
 })
 
@@ -1258,21 +1268,78 @@ describe("ideal DJ cards", () => {
 })
 
 describe("review approval card", () => {
-  it("writes R1 with the current snapshot fingerprint", async () => {
+  it("writes R1 with a server-owned approval, ignoring client owner, time, fingerprint, and revision", async () => {
     mocks.goals = { primary: { goal: "scale" }, others: [] }
     mocks.answers = [{ questionKey: "E2", state: "answered", value: 80 }]
     const data = new FormData()
     data.set("r1", "approved")
+    data.set("approvedBy", "00000000-0000-4000-8000-0000000000b2")
+    data.set("approvedAt", "1999-01-01T00:00:00.000Z")
+    data.set("fingerprint", "forged")
+    data.set("revision", "99")
+    const before = Date.now()
     expect((await saveReviewApprovalCard(initial, data)).error).toBeNull()
     const fingerprint = snapshotFingerprint({
       goals: mocks.goals,
       teamToday: mocks.team,
       answers: mocks.answers,
     })
+    const written = mocks.upsert.mock.calls.find((call) => call[0]?.question_key === "R1")?.[0]?.value as {
+      code: string
+      fingerprint: string
+      revision: number
+      currentRevision: number
+      approvedBy: string
+      approvedAt: string
+    }
+    expect(written).toMatchObject({
+      code: "approved",
+      fingerprint,
+      revision: 1,
+      currentRevision: 1,
+      approvedBy: mocks.userId,
+    })
+    expect(written.approvedBy).not.toBe("00000000-0000-4000-8000-0000000000b2")
+    expect(written.approvedAt).not.toBe("1999-01-01T00:00:00.000Z")
+    expect(Date.parse(written.approvedAt)).toBeGreaterThanOrEqual(before)
+  })
+
+  it("bumps the approval revision when an earlier answer is saved later", async () => {
+    const fingerprint = snapshotFingerprint({
+      goals: null,
+      teamToday: mocks.team,
+      answers: [{ questionKey: "E2", state: "answered", value: 80 }],
+    })
+    mocks.answers = [
+      { questionKey: "E2", state: "answered", value: 80 },
+      {
+        questionKey: "R1",
+        state: "answered",
+        value: {
+          code: "approved",
+          fingerprint,
+          revision: 1,
+          currentRevision: 1,
+          approvedBy: REVIEW_FIXTURE_OWNER_ID,
+          approvedAt: REVIEW_FIXTURE_APPROVED_AT,
+        },
+      },
+    ]
+    const data = new FormData()
+    data.append("e1", "wedding")
+    data.set("e2", "90")
+    expect((await saveEventsTodayCard(initial, data)).error).toBeNull()
     expect(mocks.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
         question_key: "R1",
-        value: { code: "approved", fingerprint },
+        value: expect.objectContaining({
+          code: "approved",
+          fingerprint,
+          revision: 1,
+          currentRevision: 2,
+          approvedBy: REVIEW_FIXTURE_OWNER_ID,
+          approvedAt: REVIEW_FIXTURE_APPROVED_AT,
+        }),
       }),
       { onConflict: "company_id,question_key" },
     )
