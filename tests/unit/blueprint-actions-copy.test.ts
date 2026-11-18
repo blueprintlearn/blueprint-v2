@@ -25,6 +25,7 @@ const mocks = vi.hoisted(() => ({
   },
   answers: [] as { questionKey: string; state: "answered" | "estimated" | "skipped"; value: unknown }[],
   deletedKeys: [] as string[],
+  userId: "00000000-0000-4000-8000-0000000000a2",
 }))
 
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }))
@@ -53,6 +54,7 @@ import {
   saveIdealDjExperienceCard,
   saveIdealDjFitCard,
   saveIdealDjHiringCard,
+  saveReviewApprovalCard,
   saveNumbersCostsCard,
   saveNumbersGoalsCard,
   saveNumbersTodayCard,
@@ -67,6 +69,12 @@ import {
 } from "@/lib/blueprint/actions"
 import { emptyTeamToday } from "@/lib/blueprint/team-today"
 import { ALREADY_ANSWERED_MESSAGE, G3_CHOOSE_MESSAGE, SAVE_FAILED_MESSAGE } from "@/lib/blueprint/questions"
+import {
+  REVIEW_CHOICE_MESSAGE,
+  REVIEW_FIXTURE_APPROVED_AT,
+  REVIEW_FIXTURE_OWNER_ID,
+  snapshotFingerprint,
+} from "@/lib/blueprint/review"
 import { OWNER_GOAL_OTHER_REQUIRED_MESSAGE } from "@/lib/blueprint/goals"
 
 const initial = { error: null, savedAt: null }
@@ -92,6 +100,7 @@ beforeEach(() => {
   mocks.team = emptyTeamToday()
   mocks.answers = []
   mocks.deletedKeys = []
+  mocks.userId = "00000000-0000-4000-8000-0000000000a2"
   let pendingDeleteKey: string | null = null
   const deleteChain = {
     eq: (column: string, value: unknown) => {
@@ -111,6 +120,9 @@ beforeEach(() => {
       delete: () => deleteChain,
     }),
     rpc: mocks.rpc,
+    auth: {
+      getClaims: async () => ({ data: { claims: { sub: mocks.userId } }, error: null }),
+    },
   }))
 })
 
@@ -1248,6 +1260,103 @@ describe("ideal DJ cards", () => {
     mocks.guided = true
     mocks.membership = { companyId: "company-a", companyName: "Company A", role: "manager" }
     expect(await saveIdealDjFitCard(initial, data)).toEqual({
+      error: "Only the company owner can change this.",
+      savedAt: null,
+    })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+})
+
+describe("review approval card", () => {
+  it("writes R1 with a server-owned approval, ignoring client owner, time, fingerprint, and revision", async () => {
+    mocks.goals = { primary: { goal: "scale" }, others: [] }
+    mocks.answers = [{ questionKey: "E2", state: "answered", value: 80 }]
+    const data = new FormData()
+    data.set("r1", "approved")
+    data.set("approvedBy", "00000000-0000-4000-8000-0000000000b2")
+    data.set("approvedAt", "1999-01-01T00:00:00.000Z")
+    data.set("fingerprint", "forged")
+    data.set("revision", "99")
+    const before = Date.now()
+    expect((await saveReviewApprovalCard(initial, data)).error).toBeNull()
+    const fingerprint = snapshotFingerprint({
+      goals: mocks.goals,
+      teamToday: mocks.team,
+      answers: mocks.answers,
+    })
+    const written = mocks.upsert.mock.calls.find((call) => call[0]?.question_key === "R1")?.[0]?.value as {
+      code: string
+      fingerprint: string
+      revision: number
+      currentRevision: number
+      approvedBy: string
+      approvedAt: string
+    }
+    expect(written).toMatchObject({
+      code: "approved",
+      fingerprint,
+      revision: 1,
+      currentRevision: 1,
+      approvedBy: mocks.userId,
+    })
+    expect(written.approvedBy).not.toBe("00000000-0000-4000-8000-0000000000b2")
+    expect(written.approvedAt).not.toBe("1999-01-01T00:00:00.000Z")
+    expect(Date.parse(written.approvedAt)).toBeGreaterThanOrEqual(before)
+  })
+
+  it("does not rewrite R1 after an intake save; invalidation is database-enforced", async () => {
+    const fingerprint = snapshotFingerprint({
+      goals: null,
+      teamToday: mocks.team,
+      answers: [{ questionKey: "E2", state: "answered", value: 80 }],
+    })
+    mocks.answers = [
+      { questionKey: "E2", state: "answered", value: 80 },
+      {
+        questionKey: "R1",
+        state: "answered",
+        value: {
+          code: "approved",
+          fingerprint,
+          revision: 1,
+          currentRevision: 1,
+          approvedBy: REVIEW_FIXTURE_OWNER_ID,
+          approvedAt: REVIEW_FIXTURE_APPROVED_AT,
+        },
+      },
+    ]
+    const data = new FormData()
+    data.append("e1", "wedding")
+    data.set("e2", "90")
+    expect((await saveEventsTodayCard(initial, data)).error).toBeNull()
+    expect(mocks.upsert.mock.calls.some((call) => call[0]?.question_key === "R1")).toBe(false)
+    expect(mocks.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ question_key: "E2", value: 90 }),
+      { onConflict: "company_id,question_key" },
+    )
+  })
+
+  it("rejects an unknown approval choice before writing", async () => {
+    const data = new FormData()
+    data.set("r1", "hire_now")
+    expect(await saveReviewApprovalCard(initial, data)).toEqual({
+      error: REVIEW_CHOICE_MESSAGE,
+      savedAt: null,
+    })
+    expect(mocks.upsert).not.toHaveBeenCalled()
+  })
+
+  it("refuses review writes when the switch is off or the caller is a manager", async () => {
+    mocks.guided = false
+    const data = new FormData()
+    data.set("r1", "approved")
+    expect(await saveReviewApprovalCard(initial, data)).toEqual({
+      error: "That didn’t save. Please try again.",
+      savedAt: null,
+    })
+    mocks.guided = true
+    mocks.membership = { companyId: "company-a", companyName: "Company A", role: "manager" }
+    expect(await saveReviewApprovalCard(initial, data)).toEqual({
       error: "Only the company owner can change this.",
       savedAt: null,
     })

@@ -169,6 +169,9 @@ isOneToOne: true
         isOneToOne: true
         isSetofReturn: false
       } },
+"invalidate_blueprint_approval":
+{ Args: { "p_company_id": string }; Returns: undefined
+                           },
 "save_company_goals":
 { Args: { "p_company_id": string,"p_goals": (Database["public"]['Enums']["owner_goal_code"])[],"p_other_text": string,"p_primary": Database["public"]['Enums']["owner_goal_code"] }; Returns: undefined
                            },

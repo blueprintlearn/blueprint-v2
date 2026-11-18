@@ -10,6 +10,12 @@ import {
   type StoredAnswer,
 } from "@/lib/blueprint/answers"
 import { QUESTION_BY_KEY, QUESTIONS } from "@/lib/blueprint/questions"
+import {
+  REVIEW_FIXTURE_APPROVED_AT,
+  REVIEW_FIXTURE_OWNER_ID,
+  snapshotFingerprint,
+  supersedeApproval,
+} from "@/lib/blueprint/review"
 import { teamTodayFixture } from "@/lib/blueprint/team-today"
 
 const context = (
@@ -159,6 +165,7 @@ describe("question registry", () => {
       "I9",
       "I10",
       "I11",
+      "R1",
     ])
     expect(QUESTIONS.every((question) => /^[A-Z]{1,2}[0-9]{1,2}[a-z]?$/.test(question.key))).toBe(true)
     expect(QUESTIONS.filter((question) => question.key.startsWith("N")).map((question) => question.key)).toEqual([
@@ -242,6 +249,13 @@ describe("question registry", () => {
       true,
     )
     expect(QUESTIONS.filter((question) => question.section === "ideal-dj").every((question) => question.level === "core")).toBe(
+      true,
+    )
+    expect(QUESTIONS.filter((question) => question.key.startsWith("R")).map((question) => question.key)).toEqual(["R1"])
+    expect(QUESTION_BY_KEY.R1.section).toBe("review")
+    expect(QUESTION_BY_KEY.R1.skipAllowed).toBe(true)
+    expect(QUESTIONS.filter((question) => question.section === "review").every((question) => question.skipAllowed)).toBe(true)
+    expect(QUESTIONS.filter((question) => question.section === "review").every((question) => question.level === "core")).toBe(
       true,
     )
   })
@@ -362,6 +376,67 @@ describe("edited ideal DJ answers stay consistent", () => {
       ]),
     )
     expect(skippedQualities).toMatchObject({ state: "unanswered", value: null })
+  })
+})
+
+describe("edited review approval stays consistent", () => {
+  it("does not restore a superseded approval when earlier answers match again", () => {
+    const matching = context({ primary: { goal: "scale" }, others: [] }, null, [
+      { questionKey: "E2", state: "answered", value: 80 },
+    ])
+    const approved = {
+      questionKey: "R1",
+      state: "answered" as const,
+      value: {
+        code: "approved",
+        fingerprint: snapshotFingerprint(matching),
+        revision: 1,
+        currentRevision: 1,
+        approvedBy: REVIEW_FIXTURE_OWNER_ID,
+        approvedAt: REVIEW_FIXTURE_APPROVED_AT,
+      },
+    }
+    expect(resolveQuestion(QUESTION_BY_KEY.R1, { ...matching, answers: [...matching.answers, approved] })).toMatchObject({
+      state: "answered",
+      value: approved.value,
+    })
+
+    const superseded = { ...approved, value: supersedeApproval(approved.value) }
+    const restored = context({ primary: { goal: "scale" }, others: [] }, null, [
+      { questionKey: "E2", state: "answered", value: 80 },
+      superseded,
+    ])
+    expect(resolveQuestion(QUESTION_BY_KEY.R1, restored)).toMatchObject({
+      key: "R1",
+      state: "unanswered",
+      value: null,
+      isEstimate: false,
+    })
+
+    const emptyFingerprint = context({ primary: { goal: "scale" }, others: [] }, null, [
+      { questionKey: "E2", state: "answered", value: 80 },
+      {
+        questionKey: "R1",
+        state: "answered",
+        value: { ...approved.value, fingerprint: "" },
+      },
+    ])
+    expect(resolveQuestion(QUESTION_BY_KEY.R1, emptyFingerprint).state).toBe("unanswered")
+
+    const notYet = {
+      questionKey: "R1",
+      state: "answered" as const,
+      value: { code: "not_yet" },
+    }
+    expect(
+      resolveQuestion(
+        QUESTION_BY_KEY.R1,
+        context({ primary: { goal: "expand" }, others: [] }, null, [
+          { questionKey: "E2", state: "answered", value: 90 },
+          notYet,
+        ]),
+      ).state,
+    ).toBe("answered")
   })
 })
 

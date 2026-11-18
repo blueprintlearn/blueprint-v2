@@ -89,6 +89,7 @@ export type QuestionKey =
   | "I9"
   | "I10"
   | "I11"
+  | "R1"
 
 export type GuidanceExample = {
   text: string
@@ -1191,6 +1192,24 @@ export const QUESTIONS: readonly QuestionDefinition[] = [
       examples: [
         { text: "Unreliable, and poor communication." },
         { text: "Unwilling to accept feedback." },
+      ],
+    },
+  },
+  {
+    key: "R1",
+    section: "review",
+    level: "core",
+    storage: "answers",
+    skipAllowed: true,
+    estimable: false,
+    version: 1,
+    label: "Approve this snapshot as your current Company Blueprint?",
+    whyNeeded: "Approval records this summary as your current Blueprint. It is not a hiring decision or a training plan.",
+    guidance: {
+      why: "Say whether this looks right for now. You can still change answers later. Blueprint will not invent a plan from this yet.",
+      examples: [
+        { text: "Yes, approve this for now." },
+        { text: "Not yet — you still want to edit a section." },
       ],
     },
   },

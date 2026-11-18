@@ -5,13 +5,15 @@ import { companyGoalCodes, companyGoalsOtherText } from "@/lib/blueprint/company
 import { DEVELOPMENT_OPENING } from "@/lib/blueprint/development"
 import { EVENTS_OPENING } from "@/lib/blueprint/events"
 import { loadGuidedBlueprint, requireGuidedOwner } from "@/lib/blueprint/guard"
-import { IDEAL_DJ_FOOTER_NOTE, IDEAL_DJ_OPENING } from "@/lib/blueprint/ideal-dj"
+import { IDEAL_DJ_OPENING } from "@/lib/blueprint/ideal-dj"
+import { REVIEW_OPENING, buildBusinessSnapshot } from "@/lib/blueprint/review"
 import { NUMBERS_OPENING } from "@/lib/blueprint/numbers"
 import { blueprintSection } from "@/lib/blueprint/progress"
 import { SERVICES_OPENING } from "@/lib/blueprint/services"
 
 import { DevelopmentGuidedForm } from "../../development-guided-form"
 import { IdealDjGuidedForm } from "../../ideal-dj-guided-form"
+import { ReviewGuidedForm } from "../../review-guided-form"
 import { EventsGuidedForm } from "../../events-guided-form"
 import { FocusQuestion } from "../../focus-question"
 import { NumbersGuidedForm } from "../../numbers-guided-form"
@@ -40,7 +42,8 @@ export default async function BlueprintSectionRoute({
     slug !== "services" &&
     slug !== "numbers" &&
     slug !== "development" &&
-    slug !== "ideal-dj"
+    slug !== "ideal-dj" &&
+    slug !== "review"
   ) {
     redirect("/blueprint")
   }
@@ -50,7 +53,7 @@ export default async function BlueprintSectionRoute({
     redirect("/blueprint")
   }
 
-  const { companyGoals, teamToday, progress, resolved, answers } = await loadGuidedBlueprint()
+  const { companyGoals, teamToday, progress, resolved, answers, context } = await loadGuidedBlueprint()
   const status = progress.statuses[slug]
   const g1Skipped = resolved.some((row) => row.key === "G1" && row.state === "skipped")
   const g3Value = resolved.find((row) => row.key === "G3" && (row.state === "answered" || row.state === "estimated"))
@@ -202,14 +205,39 @@ export default async function BlueprintSectionRoute({
               <Link href="/blueprint/development" className="bp-btn bp-btn--plain">
                 Previous: How you develop DJs
               </Link>
-              <Link href="/blueprint" className="bp-btn bp-btn--soft">
-                Back to your Blueprint
+              <Link href="/blueprint/review" id="blueprint-next" className="bp-btn bp-btn--soft">
+                Next: Your Blueprint
               </Link>
-              <p className="m-0 text-ink-2">{IDEAL_DJ_FOOTER_NOTE}</p>
             </>
           }
         >
           <IdealDjGuidedForm resolved={resolved} />
+        </BlueprintSectionPage>
+      </BlueprintShell>
+    )
+  }
+
+  if (slug === "review") {
+    return (
+      <BlueprintShell>
+        <FocusQuestion questionId={focusId} />
+        <BlueprintSectionPage
+          section={section}
+          status={status}
+          opening={REVIEW_OPENING}
+          framed={false}
+          footer={
+            <>
+              <Link href="/blueprint/ideal-dj" className="bp-btn bp-btn--plain">
+                Previous: Your ideal DJ
+              </Link>
+              <Link href="/blueprint" className="bp-btn bp-btn--soft">
+                Back to your Blueprint
+              </Link>
+            </>
+          }
+        >
+          <ReviewGuidedForm resolved={resolved} groups={buildBusinessSnapshot(context, resolved)} />
         </BlueprintSectionPage>
       </BlueprintShell>
     )
