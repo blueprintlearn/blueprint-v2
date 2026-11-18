@@ -152,6 +152,9 @@ insert into public.companies (id, name) values
   ('00000000-0000-4000-8000-0000000000a1', 'Company A'),
   ('00000000-0000-4000-8000-0000000000b1', 'Company B');
 
+insert into public.blueprint_guided_companies (company_id) values
+  ('00000000-0000-4000-8000-0000000000a1');
+
 insert into public.company_memberships (company_id, user_id, role, status) values
   (
     '00000000-0000-4000-8000-0000000000a1',

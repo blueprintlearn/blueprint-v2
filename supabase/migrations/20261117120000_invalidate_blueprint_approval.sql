@@ -5,12 +5,11 @@
 -- in the same statement. A successful edit cannot leave the previous approval
 -- valid, including when the owner later restores the earlier answers.
 --
--- Production-release blocker (S2-7): authenticated owners can still write
--- company_blueprint_answers, company_goals, save_company_goals, and
--- save_team_today_v2 directly and bypass BLUEPRINT_GUIDED_COMPANY_IDS.
--- This trigger invalidates an existing approval on those writes. It does not
--- close the switch-bypass, and it does not stop an owner from writing R1
--- jsonb directly. Do not apply this migration to production.
+-- S2-7 switch enforcement is in 20261118120000_guided_blueprint_allowlist.sql.
+-- This trigger invalidates an existing approval on later intake writes. It does
+-- not stop an owner from writing R1 jsonb directly; the later migration stamps
+-- approval owner, time, and revision from the session. Do not apply this
+-- migration to production.
 
 create function public.invalidate_blueprint_approval(p_company_id uuid)
 returns void

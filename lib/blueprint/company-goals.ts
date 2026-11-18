@@ -47,6 +47,7 @@ export const PRIMARY_SELECT_HELP =
  * PBG05 Other text missing or longer than 80
  * PBG06 DJ less and Stop DJing together
  * PBG07 not the active owner
+ * PBG08 company is not on the guided Blueprint allowlist
  */
 export const SAVE_COMPANY_GOALS_ERROR_CODES = {
   empty: "PBG01",
@@ -56,6 +57,7 @@ export const SAVE_COMPANY_GOALS_ERROR_CODES = {
   otherText: "PBG05",
   djPair: "PBG06",
   notOwner: "PBG07",
+  notGuided: "PBG08",
 } as const
 
 export type CompanyGoalEntry = {
@@ -169,6 +171,8 @@ export function mapSaveCompanyGoalsError(code: string | undefined): string {
       return DJ_PAIR_MESSAGE
     case SAVE_COMPANY_GOALS_ERROR_CODES.notOwner:
       return OWNER_ONLY_GOAL_MESSAGE
+    case SAVE_COMPANY_GOALS_ERROR_CODES.notGuided:
+      return SAVE_GOALS_FAILED_MESSAGE
     default:
       return SAVE_GOALS_FAILED_MESSAGE
   }

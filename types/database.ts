@@ -23,7 +23,26 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            "companies": {
+            "blueprint_guided_companies": {
+                  Row: {
+                    "company_id": string,"created_at": string
+                  }
+                  Insert: {
+                    "company_id": string,"created_at"?: string
+                  }
+                  Update: {
+                    "company_id"?: string,"created_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "blueprint_guided_companies_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: true
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"companies": {
                   Row: {
                     "created_at": string,"id": string,"name": string,"updated_at": string
                   }
@@ -170,6 +189,12 @@ isOneToOne: true
         isSetofReturn: false
       } },
 "invalidate_blueprint_approval":
+{ Args: { "p_company_id": string }; Returns: undefined
+                           },
+"is_guided_blueprint_company":
+{ Args: { "p_company_id": string }; Returns: boolean
+                           },
+"require_guided_blueprint_company":
 { Args: { "p_company_id": string }; Returns: undefined
                            },
 "save_company_goals":

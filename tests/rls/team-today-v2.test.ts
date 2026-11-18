@@ -15,7 +15,7 @@ import {
   SEED_PASSWORD,
 } from "./helpers"
 import { getPublicEnv } from "@/lib/env"
-import { asJwtSql, querySql, querySqlAllowError } from "./sql"
+import { asJwtSql, enableGuidedCompany, querySql, querySqlAllowError } from "./sql"
 
 async function newOwner() {
   const email = `team-v2-${randomUUID()}@blueprint.test`
@@ -25,7 +25,9 @@ async function newOwner() {
     p_name: `Team V2 ${email}`,
   })
   expect(error).toBeNull()
-  return { client, companyId: company?.id as string }
+  const companyId = company?.id as string
+  enableGuidedCompany(companyId)
+  return { client, companyId }
 }
 
 async function readTeam(client: Awaited<ReturnType<typeof newOwner>>["client"], companyId: string) {
@@ -336,6 +338,7 @@ describe("team today v2 JWT impersonation", () => {
       insert into public.company_team_today (company_id, current_dj_count, desired_dj_count)
       values ('${companyId}', 6, 8);
     `)
+    enableGuidedCompany(companyId)
 
     const before = querySql(`
       select earlier_dj_count, count_basis::text
@@ -393,6 +396,7 @@ describe("team today v2 JWT impersonation", () => {
       insert into public.company_memberships (company_id, user_id, role, status)
       values ('${companyId}', '${OWNER_A_ID}', 'owner_admin', 'active');
     `)
+    enableGuidedCompany(companyId)
 
     const asOwnerB = querySqlAllowError(
       asJwtSql(
@@ -465,6 +469,7 @@ describe("team today v2 JWT impersonation", () => {
       insert into public.company_team_today (company_id, current_dj_count)
       values ('${companyId}', 6);
     `)
+    enableGuidedCompany(companyId)
 
     querySql(
       asJwtSql(

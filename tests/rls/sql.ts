@@ -99,6 +99,14 @@ export function clearBlueprintAnswers(companyId: string) {
   `)
 }
 
+export function enableGuidedCompany(companyId: string) {
+  querySql(`
+    insert into public.blueprint_guided_companies (company_id)
+    values ('${companyId}')
+    on conflict (company_id) do nothing;
+  `)
+}
+
 export const ASSERT_NOT_ONE_PRIMARY = `
   select company_id
   from public.company_goals
