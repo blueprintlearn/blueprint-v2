@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto"
 import { describe, expect, it } from "vitest"
 
 import { createAnonClient, SEED_PASSWORD } from "../rls/helpers"
+import { enableGuidedCompany } from "../rls/sql"
 
 describe("team today v2 guided persistence", () => {
   it("lets an owner skip T1 and still save T1b and T2 on a row without a current count", async () => {
@@ -14,6 +15,7 @@ describe("team today v2 guided persistence", () => {
     })
     expect(companyError).toBeNull()
     const companyId = company?.id as string
+    enableGuidedCompany(companyId)
 
     const saved = await client.rpc("save_team_today_v2", {
       p_company_id: companyId,
@@ -44,6 +46,7 @@ describe("team today v2 guided persistence", () => {
       p_name: `History ${randomUUID()}`,
     })
     const companyId = company?.id as string
+    enableGuidedCompany(companyId)
 
     expect(
       (

@@ -386,6 +386,7 @@ export function t4CodesFromAnswers(answers: readonly { questionKey: string; stat
 
 export function mapSaveTeamTodayError(code?: string) {
   if (code === "PBG07") return "Only the company owner can change this."
+  if (code === "PBG08") return SAVE_TEAM_FAILED_MESSAGE
   if (code === "23514") return TEAM_RANGE_MESSAGE
   return SAVE_TEAM_FAILED_MESSAGE
 }

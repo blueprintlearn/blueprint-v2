@@ -294,9 +294,8 @@ export async function saveDesiredDjCount(
 
 /**
  * Guided Team today v2 write path (S2-7).
- * The server action checks the env switch and the owner role before calling
- * save_team_today_v2. The RPC itself cannot see the switch: an authenticated
- * owner can call it directly. That bypass is a production-release blocker.
+ * The server action checks the env switch. The RPC also requires a row in
+ * blueprint_guided_companies, so a direct client call cannot bypass the gate.
  */
 export async function saveTeamTodayCard(
   _prevState: SaveTeamTodayState,
@@ -1408,13 +1407,9 @@ export type SaveCompanyGoalsState = {
 }
 
 /**
- * Guided multiple-goals write path (S2-7 option A).
- * The server action checks the env switch and the owner role before calling
- * save_company_goals. The RPC itself cannot see the switch: an authenticated
- * owner can call it directly. That direct-RPC bypass is a production-release
- * blocker and is not accepted as a permanent security design. The same class
- * of bypass applies to company_blueprint_answers, company_blueprint_progress,
- * and save_team_today_v2.
+ * Guided multiple-goals write path (S2-7).
+ * The server action checks the env switch. The RPC also requires a row in
+ * blueprint_guided_companies, so a direct client call cannot bypass the gate.
  */
 export async function saveCompanyGoals(
   _prevState: SaveCompanyGoalsState,

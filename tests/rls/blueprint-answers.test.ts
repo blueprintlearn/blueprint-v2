@@ -10,10 +10,12 @@ import {
   INACTIVE_A_EMAIL,
   MANAGER_A_EMAIL,
   OWNER_A_EMAIL,
+  OWNER_A_ID,
   OWNER_B_EMAIL,
 } from "./helpers"
 import {
   clearBlueprintAnswers,
+  enableGuidedCompany,
   querySql,
   querySqlAllowError,
   querySqlAsync,
@@ -617,5 +619,208 @@ describe("durable approval invalidation", () => {
       values ('${companyId}', 2);
     `)
     expect(revision(companyId)).toBe(3)
+  })
+})
+
+describe("guided Blueprint switch (S2-7)", () => {
+  afterAll(() => {
+    clearBlueprintAnswers(COMPANY_A_ID)
+    clearBlueprintAnswers(COMPANY_B_ID)
+  })
+
+  it("lets Company A complete answer writes and stamps approval owner and time from the session", async () => {
+    clearBlueprintAnswers(COMPANY_A_ID)
+    const ownerA = await asUser(OWNER_A_EMAIL)
+    expect(
+      (
+        await ownerA.from("company_blueprint_answers").upsert({
+          company_id: COMPANY_A_ID,
+          question_key: "E2",
+          value: 80,
+          state: "answered",
+          question_version: 1,
+        })
+      ).error,
+    ).toBeNull()
+
+    const before = Date.now()
+    expect(
+      (
+        await ownerA.from("company_blueprint_answers").upsert({
+          company_id: COMPANY_A_ID,
+          question_key: "R1",
+          value: {
+            code: "approved",
+            fingerprint: "forged",
+            revision: 99,
+            currentRevision: 99,
+            approvedBy: "00000000-0000-4000-8000-0000000000b2",
+            approvedAt: "1999-01-01T00:00:00.000Z",
+          },
+          state: "answered",
+          question_version: 1,
+        })
+      ).error,
+    ).toBeNull()
+
+    const row = await ownerA
+      .from("company_blueprint_answers")
+      .select("value")
+      .eq("question_key", "R1")
+      .maybeSingle()
+    const value = row.data?.value as {
+      approvedBy: string
+      approvedAt: string
+      revision: number
+      currentRevision: number
+    }
+    expect(value.approvedBy).toBe(OWNER_A_ID)
+    expect(value.approvedBy).not.toBe("00000000-0000-4000-8000-0000000000b2")
+    expect(value.approvedAt).not.toBe("1999-01-01T00:00:00.000Z")
+    expect(Date.parse(value.approvedAt)).toBeGreaterThanOrEqual(before)
+    expect(value.revision).toBe(1)
+    expect(value.currentRevision).toBe(1)
+  })
+
+  it("lets an allowlisted owner complete guided RPCs", async () => {
+    const companyId = randomUUID()
+    querySql(`
+      insert into public.companies (id, name) values ('${companyId}', 'Guided RPC ${companyId}');
+      insert into public.company_memberships (company_id, user_id, role, status)
+      values ('${companyId}', '${OWNER_A_ID}', 'owner_admin', 'active');
+    `)
+    enableGuidedCompany(companyId)
+    const ownerA = await asUser(OWNER_A_EMAIL)
+    expect(
+      (
+        await ownerA.rpc("save_company_goals", {
+          p_company_id: companyId,
+          p_goals: ["scale"],
+          p_primary: "scale",
+          p_other_text: "",
+        })
+      ).error,
+    ).toBeNull()
+    expect(
+      (
+        await ownerA.rpc("save_team_today_v2", {
+          p_company_id: companyId,
+          p_current_dj_count: 2,
+          p_count_basis: "excludes_owner",
+        })
+      ).error,
+    ).toBeNull()
+    querySql(`delete from public.companies where id = '${companyId}';`)
+  })
+
+  it("blocks Company B from writing guided answers, progress, and guided RPCs", async () => {
+    const ownerB = await asUser(OWNER_B_EMAIL)
+    expect(
+      (
+        await ownerB.from("company_blueprint_answers").insert({
+          company_id: COMPANY_B_ID,
+          question_key: "G1",
+          value: null,
+          state: "skipped",
+          question_version: 1,
+        })
+      ).error,
+    ).not.toBeNull()
+    expect(
+      (
+        await ownerB.from("company_blueprint_progress").upsert({
+          company_id: COMPANY_B_ID,
+          last_section: "goals",
+          last_question_key: "G1",
+        })
+      ).error,
+    ).not.toBeNull()
+
+    const goals = await ownerB.rpc("save_company_goals", {
+      p_company_id: COMPANY_B_ID,
+      p_goals: ["scale"],
+      p_primary: "scale",
+      p_other_text: "",
+    })
+    expect(goals.error?.code).toBe("PBG08")
+
+    const team = await ownerB.rpc("save_team_today_v2", {
+      p_company_id: COMPANY_B_ID,
+      p_current_dj_count: 2,
+      p_count_basis: "excludes_owner",
+    })
+    expect(team.error?.code).toBe("PBG08")
+  })
+
+  it("does not let an owner add a company to the guided allowlist", async () => {
+    const ownerA = await asUser(OWNER_A_EMAIL)
+    const write = await ownerA.from("blueprint_guided_companies").insert({
+      company_id: COMPANY_B_ID,
+    })
+    expect(write.error).not.toBeNull()
+    expect((await ownerA.from("blueprint_guided_companies").select("company_id")).data ?? []).toEqual([])
+
+    expect(
+      querySqlJsonOn<{
+        ins: boolean
+        sel: boolean
+        is_guided: boolean
+        require_guided: boolean
+      }>(
+        "postgres",
+        `select json_build_object(
+           'ins', has_table_privilege('authenticated', 'public.blueprint_guided_companies', 'insert'),
+           'sel', has_table_privilege('authenticated', 'public.blueprint_guided_companies', 'select'),
+           'is_guided', has_function_privilege('authenticated', 'public.is_guided_blueprint_company(uuid)', 'execute'),
+           'require_guided', has_function_privilege('authenticated', 'public.require_guided_blueprint_company(uuid)', 'execute')
+         )`,
+      ),
+    ).toEqual({
+      ins: false,
+      sel: false,
+      is_guided: true,
+      require_guided: false,
+    })
+  })
+
+  it("still blocks managers, anonymous users, and cross-company writes", async () => {
+    const managerA = await asUser(MANAGER_A_EMAIL)
+    expect(
+      (
+        await managerA.from("company_blueprint_answers").insert({
+          company_id: COMPANY_A_ID,
+          question_key: "G3",
+          value: "no_set_date",
+          state: "answered",
+          question_version: 1,
+        })
+      ).error,
+    ).not.toBeNull()
+
+    const ownerB = await asUser(OWNER_B_EMAIL)
+    expect(
+      (
+        await ownerB.from("company_blueprint_answers").insert({
+          company_id: COMPANY_A_ID,
+          question_key: "G3",
+          value: "no_set_date",
+          state: "answered",
+          question_version: 1,
+        })
+      ).error,
+    ).not.toBeNull()
+
+    const anon = createAnonClient()
+    expect(
+      (
+        await anon.from("company_blueprint_answers").insert({
+          company_id: COMPANY_A_ID,
+          question_key: "G3",
+          value: "no_set_date",
+          state: "answered",
+          question_version: 1,
+        })
+      ).error,
+    ).not.toBeNull()
   })
 })

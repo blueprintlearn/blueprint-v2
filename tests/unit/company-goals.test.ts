@@ -75,6 +75,7 @@ describe("mapSaveCompanyGoalsError", () => {
     expect(mapSaveCompanyGoalsError(SAVE_COMPANY_GOALS_ERROR_CODES.otherText)).toBe(OWNER_GOAL_OTHER_REQUIRED_MESSAGE)
     expect(mapSaveCompanyGoalsError(SAVE_COMPANY_GOALS_ERROR_CODES.djPair)).toBe(DJ_PAIR_MESSAGE)
     expect(mapSaveCompanyGoalsError(SAVE_COMPANY_GOALS_ERROR_CODES.notOwner)).toBe("Only the company owner can change this.")
+    expect(mapSaveCompanyGoalsError(SAVE_COMPANY_GOALS_ERROR_CODES.notGuided)).toBe("That didn’t save. Please try again.")
     expect(mapSaveCompanyGoalsError("XX000")).toBe("That didn’t save. Please try again.")
     expect(mapSaveCompanyGoalsError(undefined)).toBe("That didn’t save. Please try again.")
   })

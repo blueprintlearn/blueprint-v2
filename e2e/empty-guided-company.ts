@@ -85,6 +85,9 @@ export function ensureEmptyGuidedCompany() {
     insert into public.companies (id, name) values ('${COMPANY_C_ID}', 'Company C')
     on conflict (id) do nothing;
 
+    insert into public.blueprint_guided_companies (company_id) values ('${COMPANY_C_ID}')
+    on conflict (company_id) do nothing;
+
     insert into public.company_memberships (company_id, user_id, role, status)
     select '${COMPANY_C_ID}', '${OWNER_C_ID}', 'owner_admin', 'active'
     where not exists (
