@@ -57,10 +57,19 @@ export const RESERVED_SLUGS = new Set([
   "jobs",
   "apply",
   "preview",
+  "privacy",
+  "applicants",
 ])
 
 export const APPLICATIONS_NOT_ENABLED =
-  "Applications are not open yet. This page is for sharing the role. Candidates cannot submit an application here."
+  "Applications are not open yet. This preview is for reviewing the page. Candidates cannot submit an application here."
+
+export const APPLICATION_QUESTION_MAX = 8
+export const APPLICATION_ANSWER_MAX = 2000
+export const NAME_MAX = 80
+export const EMAIL_MAX = 254
+export const PHONE_MAX = 32
+export const LOCATION_MAX = 120
 
 export type RecruitingPageContent = {
   companyName: string
@@ -79,6 +88,7 @@ export type RecruitingPageContent = {
   travel: string | null
   primaryColor: string | null
   accentColor: string | null
+  applicationQuestions: string[]
 }
 
 export type JobAd = {
@@ -232,12 +242,13 @@ export function composeRecruitingMaterials(
     travel: travelFromRequired(handoff.candidate.required),
     primaryColor: null,
     accentColor: null,
+    applicationQuestions: [],
   }
   return { page, ads: adsFromPage(page, joinPath) }
 }
 
 export function adsFromPage(page: RecruitingPageContent, joinPath: string): RecruitingAds {
-  const call = `Read the role at ${joinPath}. Applications are not open yet.`
+  const call = `Read the role and apply at ${joinPath}.`
   const pay = page.showCompensation && page.compensation ? page.compensation : null
   const title = clip(`${page.roleTitle} at ${page.companyName}`, AD_TITLE_MAX)
   const indeedSections = [

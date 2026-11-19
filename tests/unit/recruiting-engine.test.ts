@@ -67,7 +67,7 @@ describe("recruiting slugs and titles", () => {
 })
 
 describe("composeRecruitingMaterials", () => {
-  it("uses approved facts and does not invent pay, benefits, or an apply path", () => {
+  it("uses approved facts and does not invent pay, benefits, or extra claims", () => {
     const materials = composeRecruitingMaterials("Company C", handoff(), "/join/company-c")
     expect(materials.page.companyName).toBe("Company C")
     expect(materials.page.roleTitle).toBe("DJ (training provided)")
@@ -77,12 +77,12 @@ describe("composeRecruitingMaterials", () => {
     expect(materials.page.availability).toContain("Friday evenings")
     expect(materials.page.travel).toContain("Within 45 minutes")
     expect(materials.page.values[0]?.value).toBe("Show up prepared")
+    expect(materials.page.applicationQuestions).toEqual([])
     expect(materials.page.introduction).not.toMatch(/best|guarantee|competitive/i)
     for (const ad of Object.values(materials.ads)) {
       expect(ad.body).toContain("/join/company-c")
       expect(ad.body).not.toMatch(/\$\d/)
-      expect(ad.body).not.toMatch(/apply now/i)
-      expect(ad.body).toMatch(/applications are not open yet/i)
+      expect(ad.body).toMatch(/apply at \/join\/company-c/i)
       expect(ad.body).not.toMatch(/health insurance|401k|unlimited events/i)
     }
     expect(APPLICATIONS_NOT_ENABLED).toMatch(/not open yet/i)

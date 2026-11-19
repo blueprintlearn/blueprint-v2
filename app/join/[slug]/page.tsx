@@ -32,5 +32,5 @@ export default async function PublicJoinPage({ params }: { params: Promise<JoinP
   const { slug } = await params
   const loaded = await publishedPage(slug)
   if (!loaded) notFound()
-  return <JoinRecruitingPage page={loaded.page} />
+  return <JoinRecruitingPage page={loaded.page} slug={loaded.row.slug} />
 }

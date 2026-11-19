@@ -55,6 +55,119 @@ isOneToOne: true
                   Relationships: [
                     
                   ]
+                },"company_applicant_notes": {
+                  Row: {
+                    "applicant_id": string,"application_id": string | null,"body": string,"company_id": string,"created_at": string,"created_by": string,"id": string
+                  }
+                  Insert: {
+                    "applicant_id": string,"application_id"?: string | null,"body": string,"company_id": string,"created_at"?: string,"created_by": string,"id"?: string
+                  }
+                  Update: {
+                    "applicant_id"?: string,"application_id"?: string | null,"body"?: string,"company_id"?: string,"created_at"?: string,"created_by"?: string,"id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_applicant_notes_applicant_id_fkey"
+      columns: ["applicant_id"]
+isOneToOne: false
+      referencedRelation: "company_applicants"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_applicant_notes_application_id_fkey"
+      columns: ["application_id"]
+isOneToOne: false
+      referencedRelation: "company_applications"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_applicant_notes_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"company_applicant_stage_events": {
+                  Row: {
+                    "application_id": string,"changed_at": string,"changed_by": string | null,"company_id": string,"from_stage": string | null,"id": string,"to_stage": string
+                  }
+                  Insert: {
+                    "application_id": string,"changed_at"?: string,"changed_by"?: string | null,"company_id": string,"from_stage"?: string | null,"id"?: string,"to_stage": string
+                  }
+                  Update: {
+                    "application_id"?: string,"changed_at"?: string,"changed_by"?: string | null,"company_id"?: string,"from_stage"?: string | null,"id"?: string,"to_stage"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_applicant_stage_events_application_id_fkey"
+      columns: ["application_id"]
+isOneToOne: false
+      referencedRelation: "company_applications"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_applicant_stage_events_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"company_applicants": {
+                  Row: {
+                    "company_id": string,"created_at": string,"email": string,"email_normalized": string | null,"first_name": string,"id": string,"last_name": string,"location": string,"phone": string,"updated_at": string
+                  }
+                  Insert: {
+                    "company_id": string,"created_at"?: string,"email": string,"email_normalized"?: never,"first_name": string,"id"?: string,"last_name": string,"location": string,"phone": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "company_id"?: string,"created_at"?: string,"email"?: string,"email_normalized"?: never,"first_name"?: string,"id"?: string,"last_name"?: string,"location"?: string,"phone"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_applicants_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"company_application_attempts": {
+                  Row: {
+                    "created_at": string,"id": string,"ip_hash": string,"slug": string
+                  }
+                  Insert: {
+                    "created_at"?: string,"id"?: string,"ip_hash": string,"slug": string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"ip_hash"?: string,"slug"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"company_applications": {
+                  Row: {
+                    "answers": NonNullable<Json>,"applicant_id": string,"company_id": string,"created_at": string,"id": string,"idempotency_key": string,"page_version": number,"recruiting_page_id": string,"role_title": string,"slug": string,"source_strategy_id": string | null,"source_strategy_version": number | null,"stage": string,"submitted_at": string,"updated_at": string
+                  }
+                  Insert: {
+                    "answers": NonNullable<Json>,"applicant_id": string,"company_id": string,"created_at"?: string,"id"?: string,"idempotency_key": string,"page_version": number,"recruiting_page_id": string,"role_title": string,"slug": string,"source_strategy_id"?: string | null,"source_strategy_version"?: number | null,"stage": string,"submitted_at"?: string,"updated_at"?: string
+                  }
+                  Update: {
+                    "answers"?: NonNullable<Json>,"applicant_id"?: string,"company_id"?: string,"created_at"?: string,"id"?: string,"idempotency_key"?: string,"page_version"?: number,"recruiting_page_id"?: string,"role_title"?: string,"slug"?: string,"source_strategy_id"?: string | null,"source_strategy_version"?: number | null,"stage"?: string,"submitted_at"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_applications_applicant_id_fkey"
+      columns: ["applicant_id"]
+isOneToOne: false
+      referencedRelation: "company_applicants"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_applications_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"company_blueprint_answers": {
                   Row: {
                     "company_id": string,"created_at": string,"question_key": string,"question_version": number,"state": Database["public"]['Enums']["answer_state"],"updated_at": string,"updated_by": string,"value": Json | null
@@ -284,6 +397,9 @@ isOneToOne: true
                            },
 "save_team_today_v2":
 { Args: { "p_assistant_only_count"?: number,"p_company_id": string,"p_count_basis"?: Database["public"]['Enums']["team_count_basis"],"p_current_dj_count"?: number,"p_desired_count_basis"?: Database["public"]['Enums']["team_count_basis"],"p_desired_dj_count"?: number,"p_lead_capable_count"?: number,"p_owner_dj_frequency"?: Database["public"]['Enums']["owner_dj_frequency"] }; Returns: undefined
+                           },
+"submit_recruiting_application":
+{ Args: { "p_idempotency_key": string,"p_ip_hash": string,"p_payload": Json,"p_slug": string }; Returns: Json
                            }
           }
           Enums: {

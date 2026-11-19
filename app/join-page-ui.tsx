@@ -1,13 +1,17 @@
 import { Card, TenantBrandScope } from "@/components/blueprint"
+import { JoinApplyForm } from "@/app/join-apply-form"
 import { APPLICATIONS_NOT_ENABLED, type RecruitingPageContent } from "@/lib/blueprint/recruiting-engine"
 
 export function JoinRecruitingPage({
   page,
+  slug,
   preview = false,
 }: {
   page: RecruitingPageContent
+  slug?: string
   preview?: boolean
 }) {
+  const acceptApplications = Boolean(slug) && !preview
   return (
     <TenantBrandScope brand={{ primary: page.primaryColor, accent: page.accentColor }}>
       <header className="border-b border-line bg-surface">
@@ -21,7 +25,11 @@ export function JoinRecruitingPage({
             Preview only. This draft is not public.
           </p>
         ) : null}
-        <section className="flex flex-col gap-3" data-join-company={page.companyName} data-apply="disabled">
+        <section
+          className="flex flex-col gap-3"
+          data-join-company={page.companyName}
+          data-apply={acceptApplications ? "open" : "disabled"}
+        >
           <h1 className="bp-type-display-xl max-[760px]:text-[46px]!">{page.headline}</h1>
           <p className="bp-type-lead max-w-[620px] text-ink-2">{page.introduction}</p>
         </section>
@@ -105,12 +113,17 @@ export function JoinRecruitingPage({
             </ul>
           </Card>
         ) : null}
-        <Card as="section" aria-labelledby="join-apply-title" data-join-apply="closed">
+        <Card as="section" aria-labelledby="join-apply-title" data-join-apply={acceptApplications ? "open" : "closed"}>
           <h2 id="join-apply-title" className="bp-card__title">
-            How to apply
+            Apply
           </h2>
-          <p className="bp-card__body">{APPLICATIONS_NOT_ENABLED}</p>
+          {acceptApplications && slug ? (
+            <JoinApplyForm slug={slug} questions={page.applicationQuestions} idempotencyKey={crypto.randomUUID()} />
+          ) : (
+            <p className="bp-card__body">{APPLICATIONS_NOT_ENABLED}</p>
+          )}
         </Card>
+        <p className="m-0 text-[12px] text-muted">Powered by Blueprint</p>
       </main>
     </TenantBrandScope>
   )

@@ -52,7 +52,7 @@ test.describe("Recruiting page on a phone", () => {
     await page.goto("/join/company-c")
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
     expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0)
-    await expect(page.getByText("Applications are not open yet")).toBeVisible()
+    await expect(page.getByRole("button", { name: "Submit application" })).toBeVisible()
     await page.screenshot({ path: `${SHOTS}/stage32_public_join_mobile.png`, fullPage: true })
   })
 })

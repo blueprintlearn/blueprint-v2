@@ -317,6 +317,9 @@ export function RecruitStrategyView({
         <Link href="/blueprint/recruiting" className="bp-btn bp-btn--soft">
           Next: Job ads
         </Link>
+        <Link href="/blueprint/applicants" className="bp-btn bp-btn--plain">
+          Applicants
+        </Link>
         <Link href="/blueprint" className="bp-btn bp-btn--plain">
           Back to your Blueprint
         </Link>

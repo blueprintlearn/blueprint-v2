@@ -140,17 +140,16 @@ describe("buildRecruitingView", () => {
 })
 
 describe("public recruiting page", () => {
-  it("does not offer an active apply control", () => {
-    const markup = html(h(JoinRecruitingPage, { page: generated.page }))
+  it("keeps applications closed on an owner preview", () => {
+    const markup = html(h(JoinRecruitingPage, { page: generated.page, preview: true }))
     expect(markup).toContain("data-apply=\"disabled\"")
     expect(markup).toContain("Applications are not open yet")
-    expect(markup).not.toMatch(/<button[^>]*>\s*Apply/i)
-    expect(markup).not.toMatch(/href="[^"]*apply/i)
+    expect(markup).not.toMatch(/Submit application/)
   })
 })
 
 describe("stage 3.3 application handoff", () => {
-  it("identifies the published campaign and keeps applications closed", () => {
+  it("identifies the published campaign and sends applications to the hosted form", () => {
     expect(
       recruitingApplicationHandoffFromPublished({
         companyId: "company-a",
@@ -170,7 +169,7 @@ describe("stage 3.3 application handoff", () => {
       strategyVersion: 1,
       roleTitle: "Experienced DJ",
       campaignStatus: "published",
-      applicationDestination: "not_enabled",
+      applicationDestination: "blueprint_form",
     })
   })
 })

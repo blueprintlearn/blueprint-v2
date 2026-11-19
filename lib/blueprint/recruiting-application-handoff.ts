@@ -1,11 +1,16 @@
 /**
- * Typed contract for Stage 3.3 applicant submission.
+ * Typed contract for Stage 3.3 applicant submission from a published page.
  *
- * Stage 3.2 identifies the company, recruiting page, strategy version, and
- * role. It does not accept applications, create candidates, or notify anyone.
+ * Published pages accept applications through the Blueprint-hosted form.
+ * Drafts, unpublished pages, and owner previews stay closed.
  */
 
-export const APPLICATION_DESTINATION = "not_enabled" as const
+export const APPLICATION_DESTINATION = "blueprint_form" as const
+export const APPLICATION_DESTINATION_CLOSED = "not_enabled" as const
+
+export type ApplicationDestination =
+  | typeof APPLICATION_DESTINATION
+  | typeof APPLICATION_DESTINATION_CLOSED
 
 export type RecruitingApplicationHandoff = {
   companyId: string
