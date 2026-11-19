@@ -21,6 +21,12 @@ import {
   OWNER_DECISION_LABELS,
   followUpIsOutstanding,
 } from "@/lib/blueprint/candidate-review"
+import {
+  auditionStatusChipLabel,
+  checklistChipLabel,
+  conversationStatusChipLabel,
+  hiringPathChipLabel,
+} from "@/lib/blueprint/hiring-workflow"
 import { INTERVIEW_STATUS_LABELS, interviewStatusTone } from "@/lib/blueprint/interviews"
 
 const STAGE_CHIP: Record<ApplicantStage, "sky" | "butter" | "lavender" | "blush" | "mint" | "danger"> = {
@@ -95,6 +101,29 @@ function ApplicantCardView({ card }: { card: ApplicantCard }) {
             <Chip tone="lavender">{FOLLOW_UP_ACTION_LABELS[card.followUp!.action]}</Chip>
           </span>
         ) : null}
+        <span data-hiring-path={card.hiringPath}>
+          <Chip tone="lavender">{hiringPathChipLabel(card.hiringPath)}</Chip>
+        </span>
+        {card.nextActivityTitle ? (
+          <span data-next-activity="">
+            <Chip tone="butter">{card.nextActivityTitle}</Chip>
+          </span>
+        ) : null}
+        <span data-conversation-status={card.conversationStatus}>
+          <Chip tone={card.conversationStatus === "completed" ? "mint" : card.conversationStatus === "planned" ? "sky" : "neutral"}>
+            {conversationStatusChipLabel(card.conversationStatus)}
+          </Chip>
+        </span>
+        <span data-audition-status={card.auditionStatus}>
+          <Chip tone={card.auditionStatus === "completed" ? "mint" : card.auditionStatus === "planned" ? "sky" : "neutral"}>
+            {auditionStatusChipLabel(card.auditionStatus)}
+          </Chip>
+        </span>
+        <span data-hiring-checklist={`${card.checklistComplete}/${card.checklistTotal}`}>
+          <Chip tone={card.checklistComplete === card.checklistTotal && card.checklistTotal > 0 ? "mint" : "neutral"}>
+            {checklistChipLabel(card.checklistComplete, card.checklistTotal)}
+          </Chip>
+        </span>
       </div>
       <p className="m-0 text-[14px] text-muted">{card.roleTitle}</p>
       <p className="m-0 text-[13px] text-muted">Applied {submittedLabel(card.submittedAt)}</p>

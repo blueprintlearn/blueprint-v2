@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { Button, SaveStatus, Select, TextArea, TextField } from "@/components/blueprint"
 import {
@@ -26,6 +26,12 @@ import {
   type FollowUpStatus,
   type HumanEvaluation,
 } from "@/lib/blueprint/candidate-review"
+import {
+  ENGAGEMENT_MODEL_LABELS,
+  ENGAGEMENT_MODELS,
+  HIRING_OUTCOME_ENGAGEMENT_HELP,
+  HIRING_OUTCOME_HELP,
+} from "@/lib/blueprint/hiring-workflow"
 import { useSaveForm } from "./use-save-form"
 
 function useReloadWhenSaved(saveState: string) {
@@ -127,9 +133,16 @@ export function ApplicantEvaluationForm({
   )
 }
 
-export function ApplicantDecisionForm({ applicationId }: { applicationId: string }) {
+export function ApplicantDecisionForm({
+  applicationId,
+  roleTitle,
+}: {
+  applicationId: string
+  roleTitle: string
+}) {
   const { error, pending, saveState, formProps } = useSaveForm(recordApplicantDecision)
   useReloadWhenSaved(saveState)
+  const [decision, setDecision] = useState("")
   return (
     <form {...formProps} data-review-form="decision" className="grid gap-3">
       <input type="hidden" name="applicationId" value={applicationId} />
@@ -141,6 +154,7 @@ export function ApplicantDecisionForm({ applicationId }: { applicationId: string
         options={OWNER_DECISIONS.map((value) => ({ value, label: OWNER_DECISION_LABELS[value] }))}
         placeholderOption="Choose a decision"
         defaultValue={null}
+        onChange={(event) => setDecision(event.target.value)}
       />
       <TextArea
         id={`decision-reason-${applicationId}`}
@@ -149,6 +163,39 @@ export function ApplicantDecisionForm({ applicationId }: { applicationId: string
         rows={3}
         optional
       />
+      {decision === "hired" ? (
+        <div className="grid gap-3" data-hiring-outcome-fields="">
+          <p className="m-0 text-[14px] text-ink-2">{HIRING_OUTCOME_HELP}</p>
+          <TextField
+            id={`intended-role-${applicationId}`}
+            name="intendedRole"
+            label="Intended role"
+            defaultValue={roleTitle}
+          />
+          <TextField
+            id={`planned-start-${applicationId}`}
+            name="plannedStartDate"
+            type="date"
+            label="Planned start date"
+            optional
+          />
+          <Select
+            id={`engagement-${applicationId}`}
+            name="engagementModel"
+            label="Intended W-2 or 1099 engagement"
+            options={ENGAGEMENT_MODELS.map((value) => ({ value, label: ENGAGEMENT_MODEL_LABELS[value] }))}
+            defaultValue="not_specified"
+          />
+          <p className="m-0 text-[13px] text-muted">{HIRING_OUTCOME_ENGAGEMENT_HELP}</p>
+          <TextArea
+            id={`outcome-notes-${applicationId}`}
+            name="outcomeNotes"
+            label="Private hiring notes"
+            rows={3}
+            optional
+          />
+        </div>
+      ) : null}
       {error ? (
         <p className="bp-field__error" role="alert">
           {error}

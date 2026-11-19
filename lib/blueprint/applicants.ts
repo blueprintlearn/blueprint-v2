@@ -10,6 +10,15 @@ import {
   followUpIsOutstanding,
   type ApplicantReviewFilters,
 } from "@/lib/blueprint/candidate-review"
+import type {
+  ApplicantAudition,
+  ApplicantConversation,
+  AuditionStatus,
+  ConversationStatus,
+  HiringActivity,
+  HiringOutcomeRecord,
+  HiringPathKind,
+} from "@/lib/blueprint/hiring-workflow"
 import type { DisplayInterviewStatus, OwnerInterviewReview } from "@/lib/blueprint/interviews"
 import {
   APPLICATION_ANSWER_MAX,
@@ -115,6 +124,12 @@ export type ApplicantCard = {
   evaluationStatus: EvaluationStatus
   latestDecision: OwnerDecisionCode | null
   followUp: ApplicantFollowUp | null
+  hiringPath: HiringPathKind
+  nextActivityTitle: string | null
+  conversationStatus: ConversationStatus | "none"
+  auditionStatus: AuditionStatus | "none"
+  checklistComplete: number
+  checklistTotal: number
 }
 
 export type ApplicantProfile = ApplicantCard & {
@@ -124,6 +139,10 @@ export type ApplicantProfile = ApplicantCard & {
   evaluation: HumanEvaluation | null
   evaluationCategories: string[]
   decisions: OwnerDecisionRecord[]
+  hiringActivities: HiringActivity[]
+  conversations: ApplicantConversation[]
+  auditions: ApplicantAudition[]
+  hiringOutcomes: HiringOutcomeRecord[]
 }
 
 export type ApplicantBoard = {
@@ -324,6 +343,12 @@ export function cardFromRows(input: {
     evaluationStatus: "not_started",
     latestDecision: null,
     followUp: null,
+    hiringPath: "beginner",
+    nextActivityTitle: "Review application",
+    conversationStatus: "none",
+    auditionStatus: "none",
+    checklistComplete: 0,
+    checklistTotal: 5,
   }
 }
 

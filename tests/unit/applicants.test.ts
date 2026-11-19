@@ -76,6 +76,12 @@ function card(overrides: Partial<ApplicantCard> = {}): ApplicantCard {
     evaluationStatus: "not_started",
     latestDecision: null,
     followUp: null,
+    hiringPath: "beginner",
+    nextActivityTitle: "Review application",
+    conversationStatus: "none",
+    auditionStatus: "none",
+    checklistComplete: 0,
+    checklistTotal: 5,
     ...overrides,
   }
 }

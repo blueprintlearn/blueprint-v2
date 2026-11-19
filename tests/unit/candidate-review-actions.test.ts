@@ -13,6 +13,8 @@ const mocks = vi.hoisted(() => ({
   saveTemplate: vi.fn(),
   insertDecision: vi.fn(),
   saveFollowUp: vi.fn(),
+  loadOutcomes: vi.fn(),
+  insertOutcome: vi.fn(),
 }))
 
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }))
@@ -28,6 +30,10 @@ vi.mock("@/lib/blueprint/candidate-review-store", () => ({
   saveEvaluationTemplate: mocks.saveTemplate,
   insertOwnerDecision: mocks.insertDecision,
   saveApplicantFollowUp: mocks.saveFollowUp,
+}))
+vi.mock("@/lib/blueprint/hiring-workflow-store", () => ({
+  loadHiringOutcomes: mocks.loadOutcomes,
+  insertHiringOutcome: mocks.insertOutcome,
 }))
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
@@ -64,13 +70,16 @@ describe("candidate review actions", () => {
       applicantId: "person-1",
       slug: "company-a",
       stage: "new_application",
+      roleTitle: "DJ",
     })
     mocks.loadEvaluation.mockResolvedValue(null)
     mocks.resolveCategories.mockResolvedValue([...DEFAULT_EVALUATION_CATEGORIES])
     mocks.saveEvaluation.mockResolvedValue({ error: null })
     mocks.saveTemplate.mockResolvedValue({ error: null })
-    mocks.insertDecision.mockResolvedValue({ error: null, toStage: "screening" })
+    mocks.insertDecision.mockResolvedValue({ error: null, toStage: "screening", decisionId: "decision-1" })
     mocks.saveFollowUp.mockResolvedValue({ error: null })
+    mocks.loadOutcomes.mockResolvedValue([])
+    mocks.insertOutcome.mockResolvedValue({ error: null })
   })
 
   it("rejects non-owners", async () => {

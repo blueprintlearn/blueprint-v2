@@ -122,7 +122,7 @@ test.describe("Candidate review and owner decisions", () => {
     await decision.getByRole("button", { name: "Record decision" }).click()
     await expect(page.locator("[data-decision-history]")).toContainText("Mark hired")
     await expect(page.locator("[data-decision-history]")).toContainText("Reversing after a conversation.")
-    await expect(page.getByText("does not email the applicant")).toBeVisible()
+    await expect(page.locator('form[data-review-form="decision"]')).toContainText("does not email the applicant")
     await page.screenshot({ path: `${SHOTS}/stage35_decision_workflow.png`, fullPage: true })
 
     const followUp = page.locator('form[data-review-form="follow-up"]')
