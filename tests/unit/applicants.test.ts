@@ -71,6 +71,7 @@ function card(overrides: Partial<ApplicantCard> = {}): ApplicantCard {
     stage: "new_application",
     submittedAt: "2026-03-01T12:00:00.000Z",
     answers,
+    interviewStatus: "not_sent",
     ...overrides,
   }
 }
@@ -121,6 +122,15 @@ describe("applicant pipeline helpers", () => {
       { pageId: "page-2", label: "Lead DJ · /join/company-a-lead" },
     ])
     expect(applicantDisplayName(maya)).toBe("Maya Chen")
+    expect(maya.interviewStatus).toBe("not_sent")
+    expect(Object.keys(cardsByStage([maya, jordan]))).toEqual([
+      "new_application",
+      "screening",
+      "interview",
+      "decision",
+      "hired",
+      "rejected",
+    ])
   })
 
   it("keeps frozen answers when later copy differs", () => {

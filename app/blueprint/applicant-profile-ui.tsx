@@ -2,12 +2,18 @@ import Link from "next/link"
 
 import { Card, Chip, Fact } from "@/components/blueprint"
 import { ApplicantNoteForm, ApplicantStageForm } from "@/app/applicant-forms"
+import { InterviewInvitePanel, InterviewRetryForm } from "@/app/interview-forms"
 import {
   APPLICANT_STAGE_LABELS,
   applicantDisplayName,
   type ApplicantProfile,
   type ApplicantStage,
 } from "@/lib/blueprint/applicants"
+import {
+  INTERVIEW_NO_SCORE,
+  INTERVIEW_STATUS_LABELS,
+  interviewStatusTone,
+} from "@/lib/blueprint/interviews"
 
 const STAGE_CHIP: Record<ApplicantStage, "sky" | "butter" | "lavender" | "blush" | "mint" | "danger"> = {
   new_application: "sky",
@@ -39,6 +45,11 @@ export function ApplicantProfileView({
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <h1 className="bp-type-display-xl max-[760px]:text-[46px]!">{applicantDisplayName(profile)}</h1>
           <Chip tone={STAGE_CHIP[profile.stage]}>{APPLICANT_STAGE_LABELS[profile.stage]}</Chip>
+          <span data-interview-status={profile.interviewStatus}>
+            <Chip tone={interviewStatusTone(profile.interviewStatus)}>
+              {INTERVIEW_STATUS_LABELS[profile.interviewStatus]}
+            </Chip>
+          </span>
         </div>
         <p className="bp-type-lead max-w-[620px] text-ink-2">
           Applied {when(profile.submittedAt)} for {profile.roleTitle}.
@@ -67,6 +78,7 @@ export function ApplicantProfileView({
           <Fact key={row.prompt} label={row.prompt} value={row.answer} />
         ))}
       </Card>
+      <InterviewReviewSection profile={profile} />
       <Card as="section" aria-labelledby="applicant-stage-title" className="max-w-[900px] max-[760px]:p-[22px]!">
         <h2 id="applicant-stage-title" className="bp-card__title">
           Pipeline stage
@@ -108,5 +120,76 @@ export function ApplicantProfileView({
         </ol>
       </Card>
     </>
+  )
+}
+
+function InterviewReviewSection({ profile }: { profile: ApplicantProfile }) {
+  const interview = profile.interview
+  const canSend =
+    !interview ||
+    interview.status === "not_sent" ||
+    interview.status === "invited" ||
+    interview.status === "opened" ||
+    interview.status === "in_progress" ||
+    interview.status === "expired"
+  const label = !interview || interview.status === "not_sent" ? "Send interview invitation" : "Resend invitation"
+  return (
+    <Card as="section" aria-labelledby="applicant-interview-title" className="max-w-[900px] max-[760px]:p-[22px]!">
+      <h2 id="applicant-interview-title" className="bp-card__title">
+        One-way video interview
+      </h2>
+      <p className="bp-card__body">{INTERVIEW_NO_SCORE}</p>
+      <p className="bp-card__body">
+        Missing a deadline, skipping the video, or a recording failure does not reject this person. You decide the
+        pipeline stage.
+      </p>
+      {interview ? (
+        <div className="grid gap-3" data-interview-review={interview.id}>
+          <Fact label="Invited" value={when(interview.invitedAt)} />
+          {interview.openedAt ? <Fact label="Opened" value={when(interview.openedAt)} /> : null}
+          {interview.submittedAt ? <Fact label="Submitted" value={when(interview.submittedAt)} /> : null}
+          <Fact label="Deadline" value={when(interview.deadlineAt)} />
+          {interview.overallSummary ? (
+            <div data-interview-summary="overall">
+              <Fact label="AI overall summary" value={interview.overallSummary} />
+            </div>
+          ) : null}
+          {interview.processingError ? (
+            <p className="bp-field__error" role="alert">
+              {interview.processingError}
+            </p>
+          ) : null}
+          {interview.answers.map((answer) => (
+            <article key={answer.questionIndex} className="grid gap-2" data-interview-answer={answer.questionIndex}>
+              <h3 className="m-0 text-[16px] font-bold">Question {answer.questionIndex + 1}</h3>
+              <p className="m-0 text-[14px] text-ink">{answer.prompt}</p>
+              {answer.playbackUrl ? (
+                <video
+                  className="aspect-video w-full rounded-[18px] bg-ink"
+                  controls
+                  playsInline
+                  src={answer.playbackUrl}
+                  data-interview-video={answer.questionIndex}
+                />
+              ) : (
+                <p className="m-0 text-[14px] text-muted">No accepted recording yet.</p>
+              )}
+              <div data-interview-transcript={answer.questionIndex}>
+                <Fact label="Applicant said" value={answer.transcript ?? "No transcript yet."} />
+              </div>
+              <div data-interview-summary={answer.questionIndex}>
+                <Fact label="AI summary" value={answer.summary ?? "No AI summary yet."} />
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p className="bp-card__body">No invitation has been sent.</p>
+      )}
+      <InterviewInvitePanel applicationId={profile.applicationId} canSend={canSend} label={label} />
+      {interview && (interview.status === "failed" || interview.status === "submitted" || interview.status === "transcribing") ? (
+        <InterviewRetryForm applicationId={profile.applicationId} />
+      ) : null}
+    </Card>
   )
 }

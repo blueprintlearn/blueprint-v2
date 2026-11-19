@@ -8,6 +8,7 @@ import {
   PHONE_MAX,
   isValidSlug,
 } from "@/lib/blueprint/recruiting-engine"
+import type { DisplayInterviewStatus, OwnerInterviewReview } from "@/lib/blueprint/interviews"
 
 export const APPLICANT_STAGES = [
   "new_application",
@@ -97,11 +98,13 @@ export type ApplicantCard = {
   stage: ApplicantStage
   submittedAt: string
   answers: ApplicationAnswers
+  interviewStatus: DisplayInterviewStatus
 }
 
 export type ApplicantProfile = ApplicantCard & {
   notes: ApplicantNote[]
   history: ApplicantStageEvent[]
+  interview: OwnerInterviewReview | null
 }
 
 export type ApplicantBoard = {
@@ -297,6 +300,7 @@ export function cardFromRows(input: {
     stage,
     submittedAt: input.application.submitted_at,
     answers,
+    interviewStatus: "not_sent",
   }
 }
 

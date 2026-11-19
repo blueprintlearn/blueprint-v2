@@ -1,8 +1,9 @@
 /**
- * Typed contract for Stage 3.4 screening.
+ * Typed contract from Stage 3.3 into Stage 3.4 interviews.
  *
  * Stage 3.3 stores authorized application answers and pipeline status. It does
- * not score applicants, auto-reject, schedule interviews, or enroll anyone.
+ * not score applicants, auto-reject, or enroll anyone. Stage 3.4 invitations
+ * are a separate owner action.
  */
 
 import type { ApplicantStage, ApplicationAnswers } from "@/lib/blueprint/applicants"

@@ -68,6 +68,9 @@ export function RecruitingMaterialsView({
           <Link href="/blueprint/applicants" className="bp-link self-start font-bold">
             Review applicants
           </Link>
+          <Link href="/blueprint/recruiting/interview" className="bp-link self-start font-bold">
+            Video interview questions
+          </Link>
         </div>
         <p className="bp-type-small font-bold! text-muted">{companyName}</p>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
