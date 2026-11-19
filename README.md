@@ -122,6 +122,8 @@ Stage 2.2 adds a read-only Staffing & demand page at `/blueprint/staffing`. Pure
 
 Stage 2.3A adds growth planning at `/blueprint/growth`. Follow-up answers (typical lead capacity, booking target, expected bookings without expansion, closing rate, and training availability) live in `company_growth_planning`, not in the approved Stage 1 snapshot. Deterministic recommendations name the biggest obstacle to growth. The owner can accept, modify, or reject them without changing saved goals. This is not a final plan and does not start recruiting.
 
+Stage 2.3B adds a personalized growth plan at `/blueprint/growth-plan`. The owner can review Blueprint’s recommendation, modify hiring and recruiting choices, save a draft, and explicitly approve a versioned plan. If Stage 1 answers or Stage 2.3A planning inputs change, the approved plan is kept for reference and marked as needing review rather than silently updated. A typed recruitment handoff exposes only a current approved plan. Recruiting is not started. `company_growth_planning` and `company_growth_plans` remain local-only until a hosted apply is separately approved.
+
 `NEXT_PUBLIC_SENTRY_DSN` and `SENTRY_DSN` must be the same project DSN for a given target. Staging and production must use different Sentry projects. The browser SDK only initializes when `NEXT_PUBLIC_SENTRY_DSN` is a static `process.env.NEXT_PUBLIC_SENTRY_DSN` lookup that Next.js can inline. Do not send browser events through a Sentry tunnel; unique Vercel URLs are behind Deployment Protection, and a tunnel would be swallowed by SSO.
 
 Source-map upload is deferred: do not set `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, or `SENTRY_PROJECT`.

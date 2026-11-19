@@ -175,6 +175,11 @@ export function BlueprintOverview({
             See growth planning
           </Link>
         ) : null}
+        {findingsReady ? (
+          <Link href="/blueprint/growth-plan" className="bp-btn bp-btn--soft self-start">
+            See your growth plan
+          </Link>
+        ) : null}
       </section>
       <BlueprintSectionList progress={progress} />
     </>
@@ -216,6 +221,11 @@ export function BlueprintHomeCard({
         {findingsReady ? (
           <Link href="/blueprint/growth" className="bp-btn bp-btn--soft self-start">
             See growth planning
+          </Link>
+        ) : null}
+        {findingsReady ? (
+          <Link href="/blueprint/growth-plan" className="bp-btn bp-btn--soft self-start">
+            See your growth plan
           </Link>
         ) : null}
         {progress.action === "review" ? (

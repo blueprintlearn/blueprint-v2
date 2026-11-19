@@ -21,6 +21,7 @@ import {
   type PlanningFieldState,
   type PlanningNumericField,
 } from "@/lib/blueprint/growth"
+import { syncGrowthPlanValidity } from "@/lib/blueprint/growth-plan-actions"
 import { OWNER_ONLY_MESSAGE, SAVE_FAILED_MESSAGE } from "@/lib/blueprint/questions"
 import { createClient } from "@/lib/supabase/server"
 import { OWNER_ADMIN_ROLE } from "@/lib/rules/system-role"
@@ -138,6 +139,8 @@ export async function saveGrowthInputs(
   }
 
   revalidatePath("/blueprint/growth")
+  revalidatePath("/blueprint/growth-plan")
+  await syncGrowthPlanValidity(auth.membership.companyId)
   return { error: null, savedAt: Date.now() }
 }
 
@@ -189,5 +192,7 @@ export async function saveGrowthResponse(
   }
 
   revalidatePath("/blueprint/growth")
+  revalidatePath("/blueprint/growth-plan")
+  await syncGrowthPlanValidity(auth.membership.companyId)
   return { error: null, savedAt: Date.now() }
 }
