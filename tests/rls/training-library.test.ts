@@ -537,6 +537,42 @@ describe("training library RLS", () => {
     expect(anonPublish).toBeTruthy()
   })
 
+  it("rejects superseding a published version without publishing a draft in the same transaction", async () => {
+    const admin = await seedAtomicMaster()
+    const owner = await seedAtomicCompanyCourse()
+    await seedAtomicPath()
+
+    const { error: masterError } = await admin
+      .from("training_master_course_versions")
+      .update({ status: "superseded" })
+      .eq("id", ATOMIC_MASTER_V1_ID)
+    expect(masterError?.message ?? "").toMatch(/same transaction/i)
+    expect(versionStatuses("training_master_course_versions", "course_id", ATOMIC_MASTER_ID)).toEqual([
+      { version: 1, status: "published" },
+      { version: 2, status: "draft" },
+    ])
+
+    const { error: courseError } = await owner
+      .from("company_training_course_versions")
+      .update({ status: "superseded" })
+      .eq("id", ATOMIC_COURSE_V1_ID)
+    expect(courseError?.message ?? "").toMatch(/same transaction/i)
+    expect(versionStatuses("company_training_course_versions", "course_id", ATOMIC_COURSE_ID)).toEqual([
+      { version: 1, status: "published" },
+      { version: 2, status: "draft" },
+    ])
+
+    const { error: pathError } = await owner
+      .from("company_training_path_versions")
+      .update({ status: "superseded" })
+      .eq("id", ATOMIC_PATH_V1_ID)
+    expect(pathError?.message ?? "").toMatch(/same transaction/i)
+    expect(versionStatuses("company_training_path_versions", "path_id", ATOMIC_PATH_ID)).toEqual([
+      { version: 1, status: "published" },
+      { version: 2, status: "draft" },
+    ])
+  })
+
   it.each(["archived", "private"] as const)(
     "lets a company keep editing, publishing, and archiving a copy after the master is %s",
     async (visibility) => {
