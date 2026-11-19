@@ -120,4 +120,13 @@ test.describe("guided Blueprint accessibility", () => {
     const skipped = await new AxeBuilder({ page }).analyze()
     expect(skipped.violations.filter((item) => item.impact === "serious" || item.impact === "critical")).toEqual([])
   })
+
+  test("Business findings before approval has no serious or critical axe issues", async ({ page }) => {
+    ensureEmptyGuidedCompany()
+    await signIn(page)
+    await page.goto("/blueprint/findings")
+    await expect(page.getByRole("heading", { level: 1, name: "Business findings" })).toBeVisible()
+    const results = await new AxeBuilder({ page }).analyze()
+    expect(results.violations.filter((item) => item.impact === "serious" || item.impact === "critical")).toEqual([])
+  })
 })

@@ -149,7 +149,8 @@ describe("BlueprintSectionList", () => {
 })
 
 describe("BlueprintOverview", () => {
-  const render = (progress: typeof none) => html(h(BlueprintOverview, { companyName: "Company A", progress }))
+  const render = (progress: typeof none, findingsReady = false) =>
+    html(h(BlueprintOverview, { companyName: "Company A", progress, findingsReady }))
 
   it("has one h1, the company name, the lead and the count", () => {
     const out = render(none)
@@ -233,9 +234,15 @@ describe("BlueprintOverview", () => {
     const out = render(allComplete)
     expect(count(out, "bp-btn--primary")).toBe(0)
     expect(text(out)).toContain(ALL_READY_DONE_TEXT)
+    expect(out).not.toContain("/blueprint/findings")
     expect(ALL_READY_DONE_TEXT).toBe(
       "You’ve finished your Company Blueprint. You can come back and change answers any time.",
     )
+    const withFindings = render(allComplete, true)
+    expect(anchors(withFindings).some((a) => a.href === "/blueprint/findings" && a.label === "See business findings")).toBe(
+      true,
+    )
+    expect(count(withFindings, "bp-btn--primary")).toBe(0)
   })
 })
 
@@ -264,6 +271,10 @@ describe("BlueprintHomeCard", () => {
     ])
     expect(count(done, "bp-btn--primary")).toBe(0)
     expect(text(done)).toContain("8 of 8 sections complete")
+    expect(anchors(html(h(BlueprintHomeCard, { progress: allComplete, findingsReady: true })))).toEqual([
+      { href: "/blueprint/findings", className: "bp-btn bp-btn--soft self-start", label: "See business findings" },
+      { href: "/blueprint/review", className: "bp-btn bp-btn--soft self-start", label: "Review your Blueprint" },
+    ])
   })
 })
 

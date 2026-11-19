@@ -403,6 +403,10 @@ export function snapshotDisplay(row: ResolvedAnswer, goals: AnswerContext["goals
   return formatAnswered(row, goals) ?? "Answered"
 }
 
+export function snapshotLabel(key: QuestionKey, fallback: string): string {
+  return SNAPSHOT_LABELS[key] ?? fallback
+}
+
 export function snapshotFingerprint(context: AnswerContext): string {
   const team = context.teamToday
   const payload = {
