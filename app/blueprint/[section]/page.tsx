@@ -6,6 +6,7 @@ import { DEVELOPMENT_OPENING } from "@/lib/blueprint/development"
 import { EVENTS_OPENING } from "@/lib/blueprint/events"
 import { loadGuidedBlueprint, requireGuidedOwner } from "@/lib/blueprint/guard"
 import { IDEAL_DJ_OPENING } from "@/lib/blueprint/ideal-dj"
+import { findingsAreCurrent } from "@/lib/blueprint/findings"
 import { REVIEW_OPENING, buildBusinessSnapshot } from "@/lib/blueprint/review"
 import { NUMBERS_OPENING } from "@/lib/blueprint/numbers"
 import { blueprintSection } from "@/lib/blueprint/progress"
@@ -231,9 +232,15 @@ export default async function BlueprintSectionRoute({
               <Link href="/blueprint/ideal-dj" className="bp-btn bp-btn--plain">
                 Previous: Your ideal DJ
               </Link>
-              <Link href="/blueprint" className="bp-btn bp-btn--soft">
-                Back to your Blueprint
-              </Link>
+              {findingsAreCurrent(context) ? (
+                <Link href="/blueprint/findings" id="blueprint-next" className="bp-btn bp-btn--soft">
+                  Next: Business findings
+                </Link>
+              ) : (
+                <Link href="/blueprint" className="bp-btn bp-btn--soft">
+                  Back to your Blueprint
+                </Link>
+              )}
             </>
           }
         >

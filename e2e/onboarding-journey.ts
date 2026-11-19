@@ -178,10 +178,19 @@ export async function runOnboardingJourney(page: Page) {
   await expect(page.locator("form[data-card='approve']")).toHaveAttribute("data-saved-r1", "approved")
   await expect(sectionStatus(page)).toHaveText("Complete")
 
+  await page.goto("/blueprint/findings")
+  await expect(page.locator("[data-findings-gate]")).toHaveAttribute("data-findings-gate", "current")
+  await expect(page.locator("[data-findings-key='E2'] .bp-fact__value")).toHaveText("70")
+  await expect(page.locator("[data-findings-key='N1'] .bp-fact__value")).toContainText("$240,000")
+  await expect(page.getByText(/we recommend|you need \d+ DJs|training plan/)).toHaveCount(0)
+
   await page.goto("/blueprint/events")
   await page.locator('#q-E2 input[name="e2"]').fill("90")
   await page.getByRole("button", { name: "Save your events today" }).click()
   await expect(page.locator("form[data-card='today'] .bp-save")).toHaveText("Saved")
+  await page.goto("/blueprint/findings")
+  await expect(page.locator("[data-findings-gate]")).toHaveAttribute("data-findings-gate", "stale")
+  await expect(page.locator("[data-findings-key]")).toHaveCount(0)
   await page.goto("/blueprint/review")
   await expect(page.locator("[data-snapshot-key='E2'] .bp-fact__value")).toHaveText("90")
   await expect(page.locator("form[data-card='approve']")).toHaveAttribute("data-saved-r1", "")
@@ -191,4 +200,8 @@ export async function runOnboardingJourney(page: Page) {
   await page.getByRole("button", { name: "Save your approval" }).click()
   await expect(page.locator("form[data-card='approve']")).toHaveAttribute("data-saved-r1", "approved")
   await expect(sectionStatus(page)).toHaveText("Complete")
+
+  await page.goto("/blueprint/findings")
+  await expect(page.locator("[data-findings-gate]")).toHaveAttribute("data-findings-gate", "current")
+  await expect(page.locator("[data-findings-key='E2'] .bp-fact__value")).toHaveText("90")
 }

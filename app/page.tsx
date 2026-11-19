@@ -1,5 +1,6 @@
 import { TopNav } from "@/components/blueprint"
 import { getBlueprintProgressFromStates, resolveAll, resumeFromRow } from "@/lib/blueprint/answers"
+import { findingsAreCurrent } from "@/lib/blueprint/findings"
 import { isGuidedBlueprintEnabled } from "@/lib/blueprint/guided-switch"
 import {
   companyGoalsAlsoLine,
@@ -54,7 +55,9 @@ export default async function HomePage() {
             isOwner={isOwner}
             blueprintAction={progress?.action}
           />
-          {progress ? <BlueprintHomeCard progress={progress} /> : null}
+          {progress ? (
+            <BlueprintHomeCard progress={progress} findingsReady={findingsAreCurrent(context)} />
+          ) : null}
           <div className="grid items-start gap-5 lg:grid-cols-2">
             <TeamTodayCard
               currentDjCount={currentDjCount}

@@ -145,9 +145,11 @@ export function BlueprintSectionList({ progress }: { progress: BlueprintProgress
 export function BlueprintOverview({
   companyName,
   progress,
+  findingsReady = false,
 }: {
   companyName: string
   progress: BlueprintProgress
+  findingsReady?: boolean
 }) {
   return (
     <>
@@ -158,6 +160,11 @@ export function BlueprintOverview({
         <p className="bp-type-small font-bold! text-ink-2">{sectionsCompleteText(progress)}</p>
         <BlueprintPrimaryLink progress={progress} />
         {progress.action === "review" ? <p className="m-0 text-ink-2">{ALL_READY_DONE_TEXT}</p> : null}
+        {findingsReady ? (
+          <Link href="/blueprint/findings" className="bp-btn bp-btn--soft self-start">
+            See business findings
+          </Link>
+        ) : null}
       </section>
       <BlueprintSectionList progress={progress} />
     </>
@@ -165,7 +172,13 @@ export function BlueprintOverview({
 }
 
 /** The Owner Home summary card shown when the guided Blueprint is on for the owner's company. */
-export function BlueprintHomeCard({ progress }: { progress: BlueprintProgress }) {
+export function BlueprintHomeCard({
+  progress,
+  findingsReady = false,
+}: {
+  progress: BlueprintProgress
+  findingsReady?: boolean
+}) {
   const touched = progress.action !== "start"
   return (
     <Card as="section" aria-labelledby="company-blueprint-title" className="max-[760px]:p-[22px]!">
@@ -179,13 +192,20 @@ export function BlueprintHomeCard({ progress }: { progress: BlueprintProgress })
         />
       </div>
       <p className="bp-card__body">{sectionsCompleteText(progress)}</p>
-      {progress.action === "review" ? (
-        <Link href="/blueprint/review" className="bp-btn bp-btn--soft self-start">
-          Review your Blueprint
-        </Link>
-      ) : (
-        <BlueprintPrimaryLink progress={progress} />
-      )}
+      <div className="flex flex-wrap gap-3">
+        {findingsReady ? (
+          <Link href="/blueprint/findings" className="bp-btn bp-btn--soft self-start">
+            See business findings
+          </Link>
+        ) : null}
+        {progress.action === "review" ? (
+          <Link href="/blueprint/review" className="bp-btn bp-btn--soft self-start">
+            Review your Blueprint
+          </Link>
+        ) : (
+          <BlueprintPrimaryLink progress={progress} />
+        )}
+      </div>
     </Card>
   )
 }
