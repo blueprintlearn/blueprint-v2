@@ -188,6 +188,25 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"company_recruitment_strategies": {
+                  Row: {
+                    "approved_at": string | null,"approved_by": string | null,"company_id": string,"created_at": string,"decisions": NonNullable<Json>,"id": string,"inputs": NonNullable<Json>,"recommended": NonNullable<Json>,"source_fingerprint": string,"status": string,"updated_at": string,"version": number,"warnings": NonNullable<Json>
+                  }
+                  Insert: {
+                    "approved_at"?: string | null,"approved_by"?: string | null,"company_id": string,"created_at"?: string,"decisions": NonNullable<Json>,"id"?: string,"inputs": NonNullable<Json>,"recommended": NonNullable<Json>,"source_fingerprint": string,"status": string,"updated_at"?: string,"version": number,"warnings"?: NonNullable<Json>
+                  }
+                  Update: {
+                    "approved_at"?: string | null,"approved_by"?: string | null,"company_id"?: string,"created_at"?: string,"decisions"?: NonNullable<Json>,"id"?: string,"inputs"?: NonNullable<Json>,"recommended"?: NonNullable<Json>,"source_fingerprint"?: string,"status"?: string,"updated_at"?: string,"version"?: number,"warnings"?: NonNullable<Json>
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_recruitment_strategies_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"company_team_today": {
                   Row: {
                     "assistant_only_count": number | null,"company_id": string,"count_basis": Database["public"]['Enums']["team_count_basis"],"count_confirmed_at": string | null,"created_at": string,"current_dj_count": number | null,"desired_confirmed_at": string | null,"desired_count_basis": Database["public"]['Enums']["team_count_basis"],"desired_dj_count": number | null,"earlier_desired_dj_count": number | null,"earlier_dj_count": number | null,"lead_capable_count": number | null,"owner_dj_frequency": Database["public"]['Enums']["owner_dj_frequency"] | null,"updated_at": string
