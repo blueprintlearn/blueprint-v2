@@ -213,28 +213,32 @@ export async function insertOwnerDecision(
     fromStage: ApplicantStage
     createdBy: string
   },
-): Promise<{ error: string | null; toStage: ApplicantStage }> {
+): Promise<{ error: string | null; toStage: ApplicantStage; decisionId: string | null }> {
   const toStage = stageAfterDecision(input.fromStage, input.decision)
-  const inserted = await client.from("company_applicant_decisions").insert({
-    company_id: input.companyId,
-    application_id: input.applicationId,
-    applicant_id: input.applicantId,
-    decision: input.decision,
-    reason: input.reason,
-    from_stage: input.fromStage,
-    to_stage: toStage,
-    created_by: input.createdBy,
-  })
-  if (inserted.error) return { error: inserted.error.message, toStage }
+  const inserted = await client
+    .from("company_applicant_decisions")
+    .insert({
+      company_id: input.companyId,
+      application_id: input.applicationId,
+      applicant_id: input.applicantId,
+      decision: input.decision,
+      reason: input.reason,
+      from_stage: input.fromStage,
+      to_stage: toStage,
+      created_by: input.createdBy,
+    })
+    .select("id")
+    .single()
+  if (inserted.error) return { error: inserted.error.message, toStage, decisionId: null }
   if (toStage !== input.fromStage) {
     const moved = await client
       .from("company_applications")
       .update({ stage: toStage })
       .eq("id", input.applicationId)
       .eq("company_id", input.companyId)
-    if (moved.error) return { error: moved.error.message, toStage }
+    if (moved.error) return { error: moved.error.message, toStage, decisionId: inserted.data.id }
   }
-  return { error: null, toStage }
+  return { error: null, toStage, decisionId: inserted.data.id }
 }
 
 function followUpFromRow(row: {

@@ -7,6 +7,12 @@ import {
   ApplicantEvaluationForm,
   ApplicantFollowUpForm,
 } from "@/app/candidate-review-forms"
+import {
+  AuditionsSection,
+  ConversationsSection,
+  HiringChecklist,
+  HiringPathForm,
+} from "@/app/hiring-workflow-forms"
 import { InterviewInvitePanel, InterviewRetryForm } from "@/app/interview-forms"
 import {
   APPLICANT_STAGE_LABELS,
@@ -22,6 +28,17 @@ import {
   OWNER_DECISION_LABELS,
   followUpIsOutstanding,
 } from "@/lib/blueprint/candidate-review"
+import {
+  ENGAGEMENT_MODEL_LABELS,
+  HIRING_OUTCOME_HELP,
+  HIRING_OUTCOME_LABELS,
+  HIRING_PATH_LABELS,
+  TRAINING_HANDOFF_HELP,
+  auditionStatusChipLabel,
+  checklistChipLabel,
+  conversationStatusChipLabel,
+  hiringPathChipLabel,
+} from "@/lib/blueprint/hiring-workflow"
 import {
   INTERVIEW_NO_SCORE,
   INTERVIEW_STATUS_LABELS,
@@ -73,6 +90,14 @@ export function ApplicantProfileView({
               {EVALUATION_STATUS_LABELS[profile.evaluationStatus]}
             </Chip>
           </span>
+          <span data-hiring-path={profile.hiringPath}>
+            <Chip tone="lavender">{hiringPathChipLabel(profile.hiringPath)}</Chip>
+          </span>
+          <span data-hiring-checklist={`${profile.checklistComplete}/${profile.checklistTotal}`}>
+            <Chip tone={profile.checklistComplete === profile.checklistTotal ? "mint" : "neutral"}>
+              {checklistChipLabel(profile.checklistComplete, profile.checklistTotal)}
+            </Chip>
+          </span>
         </div>
         <p className="bp-type-lead max-w-[620px] text-ink-2">
           Applied {when(profile.submittedAt)} for {profile.roleTitle}. You decide every next step.
@@ -104,7 +129,16 @@ export function ApplicantProfileView({
             label="Interview submitted"
             value={profile.interview?.submittedAt ? when(profile.interview.submittedAt) : "Not submitted"}
           />
+          <Fact label="Hiring path" value={HIRING_PATH_LABELS[profile.hiringPath]} />
+          <Fact label="Next hiring activity" value={profile.nextActivityTitle ?? "None outstanding"} />
         </div>
+      </Card>
+      <Card as="section" aria-labelledby="applicant-hiring-title" className="max-w-[900px] max-[760px]:p-[22px]!">
+        <h2 id="applicant-hiring-title" className="bp-card__title">
+          Hiring path and checklist
+        </h2>
+        <HiringPathForm applicationId={profile.applicationId} path={profile.hiringPath} />
+        <HiringChecklist applicationId={profile.applicationId} activities={profile.hiringActivities} />
       </Card>
       <Card as="section" aria-labelledby="applicant-answers-title" className="max-w-[900px] max-[760px]:p-[22px]!">
         <h2 id="applicant-answers-title" className="bp-card__title">
@@ -119,6 +153,22 @@ export function ApplicantProfileView({
         ))}
       </Card>
       <InterviewReviewSection profile={profile} />
+      <Card as="section" aria-labelledby="applicant-conversations-title" className="max-w-[900px] max-[760px]:p-[22px]!">
+        <h2 id="applicant-conversations-title" className="bp-card__title">
+          Candidate conversations
+        </h2>
+        <p className="bp-card__body">
+          {conversationStatusChipLabel(profile.conversationStatus)}. Notes stay private to this company.
+        </p>
+        <ConversationsSection applicationId={profile.applicationId} conversations={profile.conversations} />
+      </Card>
+      <Card as="section" aria-labelledby="applicant-audition-title" className="max-w-[900px] max-[760px]:p-[22px]!">
+        <h2 id="applicant-audition-title" className="bp-card__title">
+          Practical audition
+        </h2>
+        <p className="bp-card__body">{auditionStatusChipLabel(profile.auditionStatus)}. Optional for every hiring path.</p>
+        <AuditionsSection applicationId={profile.applicationId} auditions={profile.auditions} />
+      </Card>
       <Card as="section" aria-labelledby="applicant-evaluation-title" className="max-w-[900px] max-[760px]:p-[22px]!">
         <h2 id="applicant-evaluation-title" className="bp-card__title">
           {HUMAN_EVALUATION_TITLE}
@@ -136,7 +186,21 @@ export function ApplicantProfileView({
         <h2 id="applicant-decision-title" className="bp-card__title">
           Owner decision
         </h2>
-        <ApplicantDecisionForm applicationId={profile.applicationId} />
+        <p className="bp-card__body">{HIRING_OUTCOME_HELP}</p>
+        <ApplicantDecisionForm applicationId={profile.applicationId} roleTitle={profile.roleTitle} />
+        {profile.hiringOutcomes.length === 0 ? null : (
+          <ol className="m-0 flex list-none flex-col gap-3 p-0" data-hiring-outcome-history="">
+            {[...profile.hiringOutcomes].reverse().map((row) => (
+              <li key={row.id} className="text-[14px] text-ink" data-hiring-outcome={row.outcome}>
+                <span className="font-bold">{HIRING_OUTCOME_LABELS[row.outcome]}</span>
+                {` · ${row.intendedRole} · ${ENGAGEMENT_MODEL_LABELS[row.engagementModel]}`}
+                {row.plannedStartDate ? <span className="block text-ink-2">Planned start {row.plannedStartDate}</span> : null}
+                {row.notes ? <span className="block text-ink-2">{row.notes}</span> : null}
+                <span className="block text-[13px] text-muted">{when(row.createdAt)}</span>
+              </li>
+            ))}
+          </ol>
+        )}
         {profile.decisions.length === 0 ? (
           <p className="bp-card__body">No owner decision recorded yet.</p>
         ) : (
@@ -153,6 +217,7 @@ export function ApplicantProfileView({
             ))}
           </ol>
         )}
+        <p className="bp-card__body">{TRAINING_HANDOFF_HELP}</p>
       </Card>
       <Card as="section" aria-labelledby="applicant-follow-up-title" className="max-w-[900px] max-[760px]:p-[22px]!">
         <h2 id="applicant-follow-up-title" className="bp-card__title">

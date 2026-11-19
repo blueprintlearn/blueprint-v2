@@ -18,6 +18,8 @@ import {
   saveEvaluationTemplate,
   saveHumanEvaluation,
 } from "@/lib/blueprint/candidate-review-store"
+import { nextHiringOutcomeCode, parseHiringOutcomeFields } from "@/lib/blueprint/hiring-workflow"
+import { insertHiringOutcome, loadHiringOutcomes } from "@/lib/blueprint/hiring-workflow-store"
 import { isGuidedBlueprintEnabled } from "@/lib/blueprint/guided-switch"
 import { OWNER_ONLY_MESSAGE, SAVE_FAILED_MESSAGE } from "@/lib/blueprint/questions"
 import { createClient } from "@/lib/supabase/server"
@@ -126,6 +128,38 @@ export async function recordApplicantDecision(
   if (saved.error) {
     console.error("applicant decision", saved.error)
     return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+  }
+  const outcomes = await loadHiringOutcomes(auth.supabase, auth.membership.companyId, applicationId)
+  const latestOutcome = outcomes.at(-1)?.outcome ?? null
+  const outcomeCode = nextHiringOutcomeCode(parsed.decision, latestOutcome)
+  if (outcomeCode) {
+    const outcomeFields =
+      parsed.decision === "hired"
+        ? parseHiringOutcomeFields(formData, profile.roleTitle)
+        : {
+            ok: true as const,
+            intendedRole: outcomes.at(-1)?.intendedRole ?? profile.roleTitle,
+            plannedStartDate: outcomes.at(-1)?.plannedStartDate ?? null,
+            engagementModel: outcomes.at(-1)?.engagementModel ?? ("not_specified" as const),
+            notes: parsed.reason,
+          }
+    if (!outcomeFields.ok) return { error: outcomeFields.error, savedAt: null }
+    const outcome = await insertHiringOutcome(auth.supabase, {
+      companyId: auth.membership.companyId,
+      applicationId,
+      applicantId: profile.applicantId,
+      decisionId: saved.decisionId,
+      outcome: outcomeCode,
+      intendedRole: outcomeFields.intendedRole,
+      plannedStartDate: outcomeFields.plannedStartDate,
+      engagementModel: outcomeFields.engagementModel,
+      notes: outcomeFields.notes,
+      createdBy: auth.userId,
+    })
+    if (outcome.error) {
+      console.error("hiring outcome", outcome.error)
+      return { error: SAVE_FAILED_MESSAGE, savedAt: null }
+    }
   }
   revalidateApplicant(applicationId)
   return { error: null, savedAt: Date.now() }

@@ -16,6 +16,13 @@ import {
   loadReviewIndicatorsByApplication,
   resolveEvaluationCategories,
 } from "@/lib/blueprint/candidate-review-store"
+import { hiringIndicatorsFromFacts } from "@/lib/blueprint/hiring-workflow"
+import { hiringWorkflowHandoffFromProfile } from "@/lib/blueprint/hiring-workflow-handoff"
+import {
+  hiringIndicatorsForCard,
+  loadHiringIndicatorsByApplication,
+  loadHiringWorkflow,
+} from "@/lib/blueprint/hiring-workflow-store"
 import { loadInterviewStatusByApplication, loadOwnerInterview, purgeExpiredInterviewMedia } from "@/lib/blueprint/interview-store"
 import type { createClient } from "@/lib/supabase/server"
 import type { Json } from "@/types/database"
@@ -64,9 +71,10 @@ export async function loadApplicantCards(client: Client, companyId: string): Pro
     .in("id", applicantIds)
   if (peopleError || !people) return []
   const byId = new Map(people.map((person) => [person.id, person]))
-  const [statuses, indicators] = await Promise.all([
+  const [statuses, indicators, hiring] = await Promise.all([
     loadInterviewStatusByApplication(client, companyId),
     loadReviewIndicatorsByApplication(client, companyId),
+    loadHiringIndicatorsByApplication(client, companyId),
     purgeExpiredInterviewMedia(client, companyId),
   ])
   return data
@@ -79,6 +87,7 @@ export async function loadApplicantCards(client: Client, companyId: string): Pro
         ...card,
         interviewStatus: statuses.get(card.applicationId) ?? "not_sent",
         ...indicatorsForCard(card.applicationId, card.stage, indicators),
+        ...hiringIndicatorsForCard(card.applicationId, hiring),
       }
     })
     .filter((card): card is ApplicantCard => card !== null)
@@ -119,17 +128,25 @@ export async function loadApplicantProfile(
       .eq("application_id", application.id)
       .order("changed_at", { ascending: true }),
   ])
-  const [interview, evaluation, decisions, followUp, evaluationCategories] = await Promise.all([
+  const [interview, evaluation, decisions, followUp, evaluationCategories, hiring] = await Promise.all([
     loadOwnerInterview(client, companyId, application.id),
     loadHumanEvaluation(client, companyId, application.id),
     loadOwnerDecisions(client, companyId, application.id),
     loadApplicantFollowUp(client, companyId, application.id),
     resolveEvaluationCategories(client, companyId, card.slug),
+    loadHiringWorkflow(client, companyId, application.id),
   ])
   const latestDecision = decisions.at(-1)?.decision ?? null
   const evaluationStatus = evaluationStatusFromRatings(evaluation?.ratings)
+  const hiringIndicators = hiringIndicatorsFromFacts({
+    path: hiring.hiringPath,
+    activities: hiring.activities,
+    conversations: hiring.conversations,
+    auditions: hiring.auditions,
+  })
   return {
     ...card,
+    ...hiringIndicators,
     notes: (notes ?? []).map((note) => ({
       id: note.id,
       body: note.body,
@@ -165,6 +182,10 @@ export async function loadApplicantProfile(
     evaluationStatus,
     latestDecision,
     reviewStatus: reviewStatusFromFacts({ stage: card.stage, evaluationStatus, latestDecision }),
+    hiringActivities: hiring.activities,
+    conversations: hiring.conversations,
+    auditions: hiring.auditions,
+    hiringOutcomes: hiring.outcomes,
   }
 }
 
@@ -185,6 +206,35 @@ export function applicantHandoffFromProfile(
     evaluationStatus: profile.evaluationStatus,
     interviewStatus: profile.interviewStatus,
     interviewSubmittedAt: profile.interview?.submittedAt ?? null,
+  })
+}
+
+export function applicantHiringHandoffFromProfile(companyId: string, profile: ApplicantProfile) {
+  const latestOutcome = profile.hiringOutcomes.at(-1) ?? null
+  return hiringWorkflowHandoffFromProfile({
+    companyId,
+    applicantId: profile.applicantId,
+    applicationId: profile.applicationId,
+    recruitingPageId: profile.recruitingPageId,
+    slug: profile.slug,
+    roleTitle: profile.roleTitle,
+    hiringPath: profile.hiringPath,
+    activities: profile.hiringActivities,
+    auditionResults: profile.auditions.map((row) => ({
+      title: row.title,
+      status: row.status,
+      skills: row.skills,
+      ratings: row.skillRatings,
+      notes: row.notes,
+    })),
+    hiringOutcome: latestOutcome
+      ? {
+          outcome: latestOutcome.outcome,
+          intendedRole: latestOutcome.intendedRole,
+          plannedStartDate: latestOutcome.plannedStartDate,
+          engagementModel: latestOutcome.engagementModel,
+        }
+      : null,
   })
 }
 
