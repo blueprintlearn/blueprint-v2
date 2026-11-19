@@ -33,6 +33,10 @@ export const STAFFING_NOT_COLLECTED = [
     note: "Onboarding asked current event volume and an optional revenue target. It did not ask how many events you want to book next year. Revenue is not converted into a booking target.",
   },
   {
+    title: "Expected bookings without expansion",
+    note: "Current yearly event volume is what you already did. It can be a historical planning proxy, but it is not a confirmed forecast of future bookings if you stay the same size. Blueprint will not use it as a forward-looking baseline.",
+  },
+  {
     title: "Closing rate",
     note: "Onboarding did not ask what share of qualified leads become bookings. Blueprint does not invent a closing percentage.",
   },
@@ -69,7 +73,12 @@ function countFrom(resolved: readonly ResolvedAnswer[], key: string): NumericInp
   if (!row || row.state === "not_applicable") return emptyNumeric("missing")
   if (row.state === "skipped") return emptyNumeric("skipped")
   if (row.state === "unanswered") return emptyNumeric("missing")
-  if (typeof row.value !== "number" || !Number.isFinite(row.value) || row.value < 0) {
+  if (
+    typeof row.value !== "number" ||
+    !Number.isFinite(row.value) ||
+    !Number.isInteger(row.value) ||
+    row.value < 0
+  ) {
     return emptyNumeric("invalid")
   }
   return { value: row.value, kind: kindFromResolved(row.state, row.isEstimate) }
@@ -120,7 +129,7 @@ export function staffingInputsFromOnboarding(
     annualEventVolume: volume,
     leadDjAnnualCapacities: null,
     targetAnnualBookings: emptyNumeric("missing"),
-    expectedAnnualBookingsWithoutExpansion: volume,
+    expectedAnnualBookingsWithoutExpansion: emptyNumeric("missing"),
     closingRatePercent: emptyNumeric("missing"),
     averageSales: averageSalesFrom(resolved),
   }
@@ -144,7 +153,7 @@ export function buildStaffingAnalysis(
     gate,
     analysis: analyzeStaffing(inputs),
     baselineNote:
-      "Expected annual bookings without expansion is the current yearly event volume you already recorded. That is an explicit baseline, not a growth target.",
+      "Current yearly event volume is historical. It can be a planning proxy, but it is not a confirmed forecast of bookings without expansion. Additional bookings need an owner-confirmed forward-looking baseline, which Stage 1 did not collect.",
     averageSaleNote: inputs.averageSales
       ? "Typical event price is one owner-reported amount. It is not a mix of package prices."
       : null,

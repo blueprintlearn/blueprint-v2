@@ -61,8 +61,13 @@ test.describe("Staffing & demand", () => {
       "unavailable",
     )
     await expect(page.locator("[data-staffing-calc='leads-annual']")).toHaveAttribute("data-staffing-status", "unavailable")
+    await expect(page.getByText(/not a confirmed forecast/).first()).toBeVisible()
+    await expect(page.getByText(/historical planning proxy/).first()).toBeVisible()
     await expect(page.getByText("Closing rate", { exact: true })).toBeVisible()
     await expect(page.getByText(/we recommend|hire \d+ DJs/)).toHaveCount(0)
+    await expect(
+      page.getByText("Expected annual bookings without expansion is the current yearly event volume"),
+    ).toHaveCount(0)
     await page.locator("[data-staffing-calc='independent-leads']").scrollIntoViewIfNeeded()
     await page.screenshot({ path: `${SHOTS}/stage22_staffing_current.png` })
     await page.screenshot({ path: `${SHOTS}/stage22_staffing_current_full.png`, fullPage: true })

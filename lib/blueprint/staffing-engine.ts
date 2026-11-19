@@ -35,7 +35,10 @@ export type StaffingEngineInput = {
   /** Per lead DJ. Null means Stage 1 never collected individual capacity. */
   leadDjAnnualCapacities: LeadDjCapacity[] | null
   targetAnnualBookings: NumericInput
-  /** Explicit baseline for bookings without expansion. Not an implied substitute. */
+  /**
+   * Owner-confirmed expected bookings without expansion.
+   * Current or historical event volume is not this input.
+   */
   expectedAnnualBookingsWithoutExpansion: NumericInput
   closingRatePercent: NumericInput
   averageSales: AverageSale[] | null
@@ -80,8 +83,21 @@ const missing = (explanation: string, gaps: string[], formula: string | null = n
   missing: gaps,
 })
 
-function fromCount(input: NumericInput, missingExplanation: string, formula: string | null = null): Calculation<number> {
-  if (input.kind === "invalid" || (input.value !== null && (!Number.isFinite(input.value) || input.value < 0))) {
+function isWholeCount(value: number): boolean {
+  return Number.isFinite(value) && Number.isInteger(value) && value >= 0
+}
+
+function fromCount(
+  input: NumericInput,
+  missingExplanation: string,
+  options: {
+    formula?: string | null
+    presentExplanation?: string
+    presentAssumptions?: string[]
+  } = {},
+): Calculation<number> {
+  const formula = options.formula ?? null
+  if (input.kind === "invalid" || (input.value !== null && !isWholeCount(input.value))) {
     return missing("This number is not a valid count, so it is not used.", ["A whole number that is 0 or more"])
   }
   if (input.kind === "missing" || input.kind === "skipped" || input.value === null) {
@@ -91,8 +107,11 @@ function fromCount(input: NumericInput, missingExplanation: string, formula: str
     status: input.kind === "estimated" ? "estimated" : "calculated",
     value: input.value,
     formula,
-    explanation: "This is the number you recorded in your approved Blueprint.",
-    assumptions: input.kind === "estimated" ? ["This number was entered as an estimate."] : [],
+    explanation: options.presentExplanation ?? "This is the number you recorded in your approved Blueprint.",
+    assumptions: [
+      ...(options.presentAssumptions ?? []),
+      ...(input.kind === "estimated" ? ["This number was entered as an estimate."] : []),
+    ],
     missing: [],
   }
 }
@@ -104,6 +123,14 @@ function usable(input: NumericInput): input is NumericInput & { value: number } 
     Number.isFinite(input.value) &&
     input.value >= 0
   )
+}
+
+function usableWholeCount(input: NumericInput): input is NumericInput & { value: number } {
+  return usable(input) && Number.isInteger(input.value)
+}
+
+function invalidWholeCount(input: NumericInput): boolean {
+  return input.kind === "invalid" || (input.value !== null && !isWholeCount(input.value))
 }
 
 export function emptyNumeric(kind: InputKind = "missing"): NumericInput {
@@ -130,6 +157,14 @@ export function analyzeStaffing(input: StaffingEngineInput): StaffingEngineResul
   const annualEventVolume = fromCount(
     input.annualEventVolume,
     "Current annual event volume is not available.",
+    {
+      presentExplanation:
+        "This is the current or historical annual event volume you recorded. It is not a confirmed forecast of bookings without expansion.",
+      presentAssumptions: [
+        "This volume can be used as a historical planning proxy.",
+        "It is not an owner-confirmed forward-looking baseline.",
+      ],
+    },
   )
 
   let ownerInvolvement: Calculation<OwnerDjFrequency>
@@ -226,7 +261,7 @@ function availableCapacity(capacities: LeadDjCapacity[] | null): Calculation<num
       "Available annual capacity = sum of each lead DJ’s available annual event capacity",
     )
   }
-  if (capacities.some((row) => !Number.isFinite(row.annualEvents) || row.annualEvents < 0)) {
+  if (capacities.some((row) => !isWholeCount(row.annualEvents))) {
     return missing("A lead DJ capacity is not a valid count, so annual capacity is not calculated.", [
       "Each lead DJ’s available annual event capacity as a whole number that is 0 or more",
     ])
@@ -252,8 +287,8 @@ function gap(target: NumericInput, available: Calculation<number>): Calculation<
       formula,
     )
   }
-  if (!usable(target)) {
-    if (target.kind === "invalid" || (target.value !== null && target.value < 0)) {
+  if (!usableWholeCount(target)) {
+    if (invalidWholeCount(target)) {
       return missing("The annual event target is not a valid count, so the capacity gap is not calculated.", [
         "Target annual events",
       ], formula)
@@ -280,35 +315,35 @@ function gap(target: NumericInput, available: Calculation<number>): Calculation<
 
 function additionalBookings(target: NumericInput, baseline: NumericInput): Calculation<number> {
   const formula = "Additional bookings needed = max(0, target annual bookings − expected annual bookings without expansion)"
-  const targetOk = usable(target)
-  const baselineOk = usable(baseline)
+  const targetOk = usableWholeCount(target)
+  const baselineOk = usableWholeCount(baseline)
   if (!targetOk && !baselineOk) {
     return missing(
-      "Additional bookings need both a target and an explicit baseline for bookings without expansion.",
+      "Additional bookings need both a target and an owner-confirmed expected bookings without expansion. Current or historical event volume is a planning proxy, not that baseline.",
       ["Target annual bookings", "Expected annual bookings without expansion"],
       formula,
     )
   }
   if (!targetOk) {
-    if (target.kind === "invalid" || (target.value !== null && target.value < 0)) {
+    if (invalidWholeCount(target)) {
       return missing("The booking target is not a valid count, so additional bookings are not calculated.", [
         "Target annual bookings",
       ], formula)
     }
     return missing(
-      "A booking target was not provided, so the incremental requirement is unknown. The baseline is not used as a substitute target.",
+      "A booking target was not provided, so the incremental requirement is unknown. Current or historical event volume is not used as a substitute target or as a confirmed forecast of bookings without expansion.",
       ["Target annual bookings"],
       formula,
     )
   }
   if (!baselineOk) {
-    if (baseline.kind === "invalid" || (baseline.value !== null && baseline.value < 0)) {
-      return missing("The baseline for bookings without expansion is not a valid count.", [
+    if (invalidWholeCount(baseline)) {
+      return missing("Expected bookings without expansion is not a valid count.", [
         "Expected annual bookings without expansion",
       ], formula)
     }
     return missing(
-      "The booking target is known, but the baseline for bookings without expansion is not, so the incremental requirement is unknown.",
+      "The booking target is known, but an owner-confirmed forward-looking baseline is not. Current or historical event volume is not used as that baseline, so the incremental requirement is unknown.",
       ["Expected annual bookings without expansion"],
       formula,
     )
@@ -318,11 +353,12 @@ function additionalBookings(target: NumericInput, baseline: NumericInput): Calcu
     value: Math.max(0, target.value - baseline.value),
     formula,
     explanation:
-      "The baseline is the expected annual bookings without expansion, not an unexplained stand-in for last year. A result of 0 means the target is already covered by that baseline.",
+      "This uses an owner-confirmed expected bookings without expansion, not current or historical event volume. A result of 0 means the target is already covered by that baseline.",
     assumptions: [
-      "Expected annual bookings without expansion is the explicit baseline passed into this calculation.",
+      "Expected annual bookings without expansion must be an owner-confirmed forward-looking baseline.",
+      "Current or historical event volume is not automatically that baseline.",
       ...(target.kind === "estimated" ? ["The booking target was entered as an estimate."] : []),
-      ...(baseline.kind === "estimated" ? ["The baseline was entered as an estimate."] : []),
+      ...(baseline.kind === "estimated" ? ["The forward-looking baseline was entered as an estimate."] : []),
     ],
     missing: [],
   }

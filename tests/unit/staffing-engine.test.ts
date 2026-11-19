@@ -96,7 +96,7 @@ describe("staffing capacity", () => {
 })
 
 describe("booking demand", () => {
-  it("uses an explicit baseline and reports zero additional bookings when the target is already covered", () => {
+  it("uses an owner-confirmed forward-looking baseline and reports zero additional bookings when the target is already covered", () => {
     const result = analyzeStaffing(
       input({
         targetAnnualBookings: present(80),
@@ -105,9 +105,10 @@ describe("booking demand", () => {
     )
     expect(result.additionalBookingsNeeded).toMatchObject({ status: "calculated", value: 0 })
     expect(result.additionalBookingsNeeded.formula).toMatch(/max\(0/)
+    expect(result.additionalBookingsNeeded.assumptions.join(" ")).toMatch(/not automatically that baseline/)
   })
 
-  it("does not use last year’s volume as an unexplained target", () => {
+  it("does not use current or historical volume as a substitute target", () => {
     const result = analyzeStaffing(
       input({
         annualEventVolume: present(80),
@@ -119,10 +120,26 @@ describe("booking demand", () => {
     expect(result.additionalBookingsNeeded.explanation).toMatch(/not used as a substitute target/)
   })
 
-  it("keeps the target and marks the increment unknown when the baseline is missing", () => {
+  it("does not treat current or historical volume as a confirmed forward-looking baseline", () => {
+    const result = analyzeStaffing(
+      input({
+        annualEventVolume: present(80),
+        targetAnnualBookings: present(100),
+      }),
+    )
+    expect(result.additionalBookingsNeeded).toMatchObject({ status: "unavailable", value: null })
+    expect(result.additionalBookingsNeeded.value).not.toBe(20)
+    expect(result.additionalBookingsNeeded.missing).toContain("Expected annual bookings without expansion")
+    expect(result.additionalBookingsNeeded.explanation).toMatch(/not used as that baseline/)
+    expect(result.currentStaffing.annualEventVolume).toMatchObject({ status: "calculated", value: 80 })
+    expect(result.currentStaffing.annualEventVolume.explanation).toMatch(/not a confirmed forecast/)
+    expect(result.currentStaffing.annualEventVolume.assumptions.join(" ")).toMatch(/historical planning proxy/)
+  })
+
+  it("keeps the target and marks the increment unknown when the forward-looking baseline is missing", () => {
     const result = analyzeStaffing(input({ targetAnnualBookings: present(100) }))
     expect(result.additionalBookingsNeeded).toMatchObject({ status: "unavailable", value: null })
-    expect(result.additionalBookingsNeeded.explanation).toMatch(/baseline/)
+    expect(result.additionalBookingsNeeded.explanation).toMatch(/forward-looking baseline/)
   })
 })
 
@@ -229,5 +246,57 @@ describe("invalid inputs", () => {
       analyzeStaffing(input({ leadDjAnnualCapacities: [{ annualEvents: -10, estimated: false }] }))
         .availableAnnualCapacity.value,
     ).toBeNull()
+  })
+
+  it("rejects fractional DJ counts, event counts, booking targets, and per-DJ capacities", () => {
+    expect(analyzeStaffing(input({ teamDjCount: present(2.5) })).currentStaffing.teamDjCount.value).toBeNull()
+    expect(analyzeStaffing(input({ leadCapableCount: present(1.5) })).currentStaffing.leadCapableCount.value).toBeNull()
+    expect(
+      analyzeStaffing(input({ assistantOnlyCount: present(0.5) })).currentStaffing.assistantOnlyCount.value,
+    ).toBeNull()
+    expect(
+      analyzeStaffing(input({ annualEventVolume: present(80.5) })).currentStaffing.annualEventVolume.value,
+    ).toBeNull()
+    expect(
+      analyzeStaffing(
+        input({
+          targetAnnualBookings: present(100.25),
+          expectedAnnualBookingsWithoutExpansion: present(80),
+        }),
+      ).additionalBookingsNeeded.value,
+    ).toBeNull()
+    expect(
+      analyzeStaffing(
+        input({
+          targetAnnualBookings: present(100),
+          expectedAnnualBookingsWithoutExpansion: present(80.5),
+        }),
+      ).additionalBookingsNeeded.value,
+    ).toBeNull()
+    expect(
+      analyzeStaffing(input({ leadDjAnnualCapacities: [{ annualEvents: 40.5, estimated: false }] }))
+        .availableAnnualCapacity.value,
+    ).toBeNull()
+    expect(
+      analyzeStaffing(
+        input({
+          leadDjAnnualCapacities: [{ annualEvents: 40, estimated: false }],
+          targetAnnualBookings: present(90.5),
+        }),
+      ).capacityGap.value,
+    ).toBeNull()
+  })
+
+  it("allows valid decimal closing rates and currency amounts", () => {
+    const result = analyzeStaffing(
+      input({
+        targetAnnualBookings: present(100),
+        expectedAnnualBookingsWithoutExpansion: present(80),
+        closingRatePercent: present(12.5),
+        averageSales: [{ label: "Typical event price", amount: 1800.5, estimated: false }],
+      }),
+    )
+    expect(result.additionalQualifiedLeadsAnnually).toMatchObject({ status: "calculated", value: 160 })
+    expect(result.potentialAdditionalGrossRevenue).toMatchObject({ status: "calculated", value: 36010 })
   })
 })

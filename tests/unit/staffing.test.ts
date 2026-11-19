@@ -92,7 +92,9 @@ describe("buildStaffingAnalysis approval gate", () => {
     expect(mapped.leadDjAnnualCapacities).toBeNull()
     expect(mapped.closingRatePercent.kind).toBe("missing")
     expect(mapped.targetAnnualBookings.kind).toBe("missing")
-    expect(mapped.expectedAnnualBookingsWithoutExpansion).toMatchObject({ value: 80, kind: "estimated" })
+    expect(mapped.annualEventVolume).toMatchObject({ value: 80, kind: "estimated" })
+    expect(mapped.expectedAnnualBookingsWithoutExpansion.kind).toBe("missing")
+    expect(mapped.expectedAnnualBookingsWithoutExpansion.value).toBeNull()
     expect(mapped.averageSales).toEqual([{ label: "Typical event price", amount: 1800, estimated: false }])
 
     const markup = html(h(StaffingDemandView, { companyName: "Company A", view }))
@@ -100,7 +102,21 @@ describe("buildStaffingAnalysis approval gate", () => {
     expect(markup).not.toContain("Company B")
     expect(text(markup)).toContain("Not available yet")
     expect(text(markup)).toMatch(/does not invent a closing percentage|Closing rate was not collected/)
+    expect(text(markup)).toMatch(/historical/)
+    expect(text(markup)).toMatch(/not a confirmed forecast/)
+    expect(text(markup)).not.toMatch(/Expected annual bookings without expansion is the current yearly/)
     expect(text(markup)).not.toMatch(/we recommend|hire \d+ DJs/)
     expect(markup).toContain('data-staffing-status="estimated"')
+  })
+
+  it("rejects fractional event volume from onboarding instead of treating it as a count", () => {
+    const approved = approvedContext([
+      ...completeEventsAnswers().filter((row) => row.questionKey !== "E2"),
+      { questionKey: "E2", state: "answered", value: 80.5 },
+    ])
+    const mapped = staffingInputsFromOnboarding(resolveAll(approved))
+    expect(mapped.annualEventVolume.kind).toBe("invalid")
+    const view = buildStaffingAnalysis(approved, resolveAll(approved))
+    expect(view.analysis?.currentStaffing.annualEventVolume.value).toBeNull()
   })
 })
