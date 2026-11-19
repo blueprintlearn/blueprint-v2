@@ -25,6 +25,9 @@ function sql(statement: string) {
 
 export function resetGuidedCompanyData(companyId: string) {
   sql(`
+    delete from public.company_interview_attempts;
+    delete from public.company_application_attempts;
+    delete from public.company_interview_templates where company_id = '${companyId}';
     delete from public.company_applicants where company_id = '${companyId}';
     delete from public.company_recruiting_pages where company_id = '${companyId}';
     delete from public.company_recruitment_strategies where company_id = '${companyId}';
@@ -100,6 +103,9 @@ export function ensureEmptyGuidedCompany() {
       where company_id = '${COMPANY_C_ID}' and user_id = '${OWNER_C_ID}'
     );
 
+    delete from public.company_interview_attempts;
+    delete from public.company_application_attempts;
+    delete from public.company_interview_templates where company_id = '${COMPANY_C_ID}';
     delete from public.company_applicants where company_id = '${COMPANY_C_ID}';
     delete from public.company_recruiting_pages where company_id = '${COMPANY_C_ID}';
     delete from public.company_recruitment_strategies where company_id = '${COMPANY_C_ID}';

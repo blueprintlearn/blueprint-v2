@@ -6,6 +6,7 @@ import {
   type ApplicantStage,
   type ApplicantStageEvent,
 } from "@/lib/blueprint/applicants"
+import { loadInterviewStatusByApplication, loadOwnerInterview, purgeExpiredInterviewMedia } from "@/lib/blueprint/interview-store"
 import type { createClient } from "@/lib/supabase/server"
 import type { Json } from "@/types/database"
 
@@ -53,11 +54,17 @@ export async function loadApplicantCards(client: Client, companyId: string): Pro
     .in("id", applicantIds)
   if (peopleError || !people) return []
   const byId = new Map(people.map((person) => [person.id, person]))
+  const [statuses] = await Promise.all([
+    loadInterviewStatusByApplication(client, companyId),
+    purgeExpiredInterviewMedia(client, companyId),
+  ])
   return data
     .map((application) => {
       const applicant = byId.get(application.applicant_id)
       if (!applicant) return null
-      return cardFromRows({ application, applicant })
+      const card = cardFromRows({ application, applicant })
+      if (!card) return null
+      return { ...card, interviewStatus: statuses.get(card.applicationId) ?? "not_sent" }
     })
     .filter((card): card is ApplicantCard => card !== null)
 }
@@ -97,6 +104,7 @@ export async function loadApplicantProfile(
       .eq("application_id", application.id)
       .order("changed_at", { ascending: true }),
   ])
+  const interview = await loadOwnerInterview(client, companyId, application.id)
   return {
     ...card,
     notes: (notes ?? []).map((note) => ({
@@ -125,6 +133,8 @@ export async function loadApplicantProfile(
         }
       })
       .filter((event): event is ApplicantStageEvent => event !== null),
+    interview,
+    interviewStatus: interview?.status ?? "not_sent",
   }
 }
 

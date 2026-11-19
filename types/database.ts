@@ -282,6 +282,38 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"company_interview_attempts": {
+                  Row: {
+                    "created_at": string,"id": string,"ip_hash": string
+                  }
+                  Insert: {
+                    "created_at"?: string,"id"?: string,"ip_hash": string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"ip_hash"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"company_interview_templates": {
+                  Row: {
+                    "company_id": string,"created_at": string,"deadline_days": number,"id": string,"questions": NonNullable<Json>,"retention_days": number,"slug": string,"updated_at": string
+                  }
+                  Insert: {
+                    "company_id": string,"created_at"?: string,"deadline_days"?: number,"id"?: string,"questions": NonNullable<Json>,"retention_days"?: number,"slug": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "company_id"?: string,"created_at"?: string,"deadline_days"?: number,"id"?: string,"questions"?: NonNullable<Json>,"retention_days"?: number,"slug"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_interview_templates_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"company_memberships": {
                   Row: {
                     "company_id": string,"created_at": string,"id": string,"role": Database["public"]['Enums']["system_role"],"status": string,"user_id": string
@@ -358,13 +390,72 @@ isOneToOne: true
       referencedColumns: ["id"]
     }
                   ]
+                },"company_video_interview_answers": {
+                  Row: {
+                    "accepted_at": string,"byte_size": number,"company_id": string,"content_type": string,"created_at": string,"duration_ms": number,"id": string,"interview_id": string,"processing_error": string | null,"processing_status": string,"prompt": string,"question_index": number,"storage_path": string,"summary": string | null,"time_limit_seconds": number,"transcript": string | null,"updated_at": string
+                  }
+                  Insert: {
+                    "accepted_at"?: string,"byte_size": number,"company_id": string,"content_type": string,"created_at"?: string,"duration_ms": number,"id"?: string,"interview_id": string,"processing_error"?: string | null,"processing_status"?: string,"prompt": string,"question_index": number,"storage_path": string,"summary"?: string | null,"time_limit_seconds": number,"transcript"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "accepted_at"?: string,"byte_size"?: number,"company_id"?: string,"content_type"?: string,"created_at"?: string,"duration_ms"?: number,"id"?: string,"interview_id"?: string,"processing_error"?: string | null,"processing_status"?: string,"prompt"?: string,"question_index"?: number,"storage_path"?: string,"summary"?: string | null,"time_limit_seconds"?: number,"transcript"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_video_interview_answers_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_video_interview_answers_interview_id_fkey"
+      columns: ["interview_id"]
+isOneToOne: false
+      referencedRelation: "company_video_interviews"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"company_video_interviews": {
+                  Row: {
+                    "applicant_id": string,"application_id": string,"company_id": string,"created_at": string,"deadline_at": string,"id": string,"invited_at": string,"opened_at": string | null,"overall_summary": string | null,"processed_at": string | null,"processing_attempt": number,"processing_error": string | null,"processing_started_at": string | null,"questions": NonNullable<Json>,"recruiting_page_id": string,"retention_until": string,"slug": string,"started_at": string | null,"status": string,"submitted_at": string | null,"token_hash": string,"updated_at": string
+                  }
+                  Insert: {
+                    "applicant_id": string,"application_id": string,"company_id": string,"created_at"?: string,"deadline_at": string,"id"?: string,"invited_at"?: string,"opened_at"?: string | null,"overall_summary"?: string | null,"processed_at"?: string | null,"processing_attempt"?: number,"processing_error"?: string | null,"processing_started_at"?: string | null,"questions": NonNullable<Json>,"recruiting_page_id": string,"retention_until": string,"slug": string,"started_at"?: string | null,"status": string,"submitted_at"?: string | null,"token_hash": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "applicant_id"?: string,"application_id"?: string,"company_id"?: string,"created_at"?: string,"deadline_at"?: string,"id"?: string,"invited_at"?: string,"opened_at"?: string | null,"overall_summary"?: string | null,"processed_at"?: string | null,"processing_attempt"?: number,"processing_error"?: string | null,"processing_started_at"?: string | null,"questions"?: NonNullable<Json>,"recruiting_page_id"?: string,"retention_until"?: string,"slug"?: string,"started_at"?: string | null,"status"?: string,"submitted_at"?: string | null,"token_hash"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_video_interviews_applicant_id_fkey"
+      columns: ["applicant_id"]
+isOneToOne: false
+      referencedRelation: "company_applicants"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_video_interviews_application_id_fkey"
+      columns: ["application_id"]
+isOneToOne: false
+      referencedRelation: "company_applications"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_video_interviews_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
                 }
           }
           Views: {
             [_ in never]: never
           }
           Functions: {
-            "create_company":
+            "complete_video_interview":
+{ Args: { "p_ip_hash": string,"p_token": string }; Returns: Json
+                           },
+"create_company":
 { Args: { "p_name": string }; Returns: {
               "created_at": string,
 "id": string,
@@ -377,8 +468,20 @@ isOneToOne: true
         isOneToOne: true
         isSetofReturn: false
       } },
+"expire_stale_video_interviews":
+{ Args: { "p_company_id": string }; Returns: number
+                           },
 "get_published_recruiting_page":
 { Args: { "p_slug": string }; Returns: Json
+                           },
+"interview_storage_owner_allowed":
+{ Args: { "p_name": string }; Returns: boolean
+                           },
+"interview_storage_upload_allowed":
+{ Args: { "p_name": string }; Returns: boolean
+                           },
+"interview_token_hash":
+{ Args: { "p_token": string }; Returns: string
                            },
 "invalidate_blueprint_approval":
 { Args: { "p_company_id": string }; Returns: undefined
@@ -386,8 +489,17 @@ isOneToOne: true
 "is_guided_blueprint_company":
 { Args: { "p_company_id": string }; Returns: boolean
                            },
+"note_interview_attempt":
+{ Args: { "p_ip_hash": string }; Returns: boolean
+                           },
+"open_video_interview":
+{ Args: { "p_ip_hash": string,"p_token": string }; Returns: Json
+                           },
 "recruiting_slug_taken":
 { Args: { "p_company_id": string,"p_slug": string }; Returns: boolean
+                           },
+"register_video_answer":
+{ Args: { "p_byte_size": number,"p_content_type": string,"p_duration_ms": number,"p_ip_hash": string,"p_question_index": number,"p_storage_path": string,"p_token": string }; Returns: Json
                            },
 "require_guided_blueprint_company":
 { Args: { "p_company_id": string }; Returns: undefined

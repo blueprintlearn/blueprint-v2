@@ -14,6 +14,7 @@ import {
   type ApplicantCard,
   type ApplicantStage,
 } from "@/lib/blueprint/applicants"
+import { INTERVIEW_STATUS_LABELS, interviewStatusTone } from "@/lib/blueprint/interviews"
 
 const STAGE_CHIP: Record<ApplicantStage, "sky" | "butter" | "lavender" | "blush" | "mint" | "danger"> = {
   new_application: "sky",
@@ -41,6 +42,11 @@ function ApplicantCardView({ card }: { card: ApplicantCard }) {
         </Link>
         <Chip tone={STAGE_CHIP[card.stage]}>{APPLICANT_STAGE_LABELS[card.stage]}</Chip>
       </div>
+      <span data-interview-status={card.interviewStatus}>
+        <Chip tone={interviewStatusTone(card.interviewStatus)}>
+          {INTERVIEW_STATUS_LABELS[card.interviewStatus]}
+        </Chip>
+      </span>
       <p className="m-0 text-[14px] text-muted">{card.roleTitle}</p>
       <p className="m-0 text-[13px] text-muted">Applied {submittedLabel(card.submittedAt)}</p>
       <ApplicantStageForm applicationId={card.applicationId} stage={card.stage} compact />
@@ -63,9 +69,14 @@ export function ApplicantsBoardView({
   return (
     <>
       <section className="flex flex-col gap-3 pt-7 md:pt-12" data-applicants="">
-        <Link href="/blueprint/recruiting" className="bp-link self-start font-bold">
-          Back to job ads
-        </Link>
+        <div className="flex flex-wrap gap-4">
+          <Link href="/blueprint/recruiting" className="bp-link self-start font-bold">
+            Back to job ads
+          </Link>
+          <Link href="/blueprint/recruiting/interview" className="bp-link self-start font-bold">
+            Video interview questions
+          </Link>
+        </div>
         <p className="bp-type-small font-bold! text-muted">{companyName}</p>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <h1 className="bp-type-display-xl max-[760px]:text-[46px]!">{APPLICANTS_PAGE_TITLE}</h1>
