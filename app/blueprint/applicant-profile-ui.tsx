@@ -13,6 +13,7 @@ import {
   HiringChecklist,
   HiringPathForm,
 } from "@/app/hiring-workflow-forms"
+import { TrainingPreparationSection } from "@/app/training-preparation-forms"
 import { InterviewInvitePanel, InterviewRetryForm } from "@/app/interview-forms"
 import {
   APPLICANT_STAGE_LABELS,
@@ -39,6 +40,7 @@ import {
   conversationStatusChipLabel,
   hiringPathChipLabel,
 } from "@/lib/blueprint/hiring-workflow"
+import { TRAINING_PREP_TITLE, trainingReadinessChipLabel } from "@/lib/blueprint/training-preparation"
 import {
   INTERVIEW_NO_SCORE,
   INTERVIEW_STATUS_LABELS,
@@ -96,6 +98,19 @@ export function ApplicantProfileView({
           <span data-hiring-checklist={`${profile.checklistComplete}/${profile.checklistTotal}`}>
             <Chip tone={profile.checklistComplete === profile.checklistTotal ? "mint" : "neutral"}>
               {checklistChipLabel(profile.checklistComplete, profile.checklistTotal)}
+            </Chip>
+          </span>
+          <span data-training-readiness={profile.trainingReadiness}>
+            <Chip
+              tone={
+                profile.trainingReadiness === "ready"
+                  ? "mint"
+                  : profile.trainingReadiness === "draft"
+                    ? "butter"
+                    : "neutral"
+              }
+            >
+              {trainingReadinessChipLabel(profile.trainingReadiness)}
             </Chip>
           </span>
         </div>
@@ -218,6 +233,12 @@ export function ApplicantProfileView({
           </ol>
         )}
         <p className="bp-card__body">{TRAINING_HANDOFF_HELP}</p>
+      </Card>
+      <Card as="section" aria-labelledby="applicant-training-title" className="max-w-[900px] max-[760px]:p-[22px]!">
+        <h2 id="applicant-training-title" className="bp-card__title">
+          {TRAINING_PREP_TITLE}
+        </h2>
+        <TrainingPreparationSection profile={profile} />
       </Card>
       <Card as="section" aria-labelledby="applicant-follow-up-title" className="max-w-[900px] max-[760px]:p-[22px]!">
         <h2 id="applicant-follow-up-title" className="bp-card__title">

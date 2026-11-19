@@ -27,6 +27,7 @@ import {
   conversationStatusChipLabel,
   hiringPathChipLabel,
 } from "@/lib/blueprint/hiring-workflow"
+import { trainingReadinessChipLabel } from "@/lib/blueprint/training-preparation"
 import { INTERVIEW_STATUS_LABELS, interviewStatusTone } from "@/lib/blueprint/interviews"
 
 const STAGE_CHIP: Record<ApplicantStage, "sky" | "butter" | "lavender" | "blush" | "mint" | "danger"> = {
@@ -124,6 +125,21 @@ function ApplicantCardView({ card }: { card: ApplicantCard }) {
             {checklistChipLabel(card.checklistComplete, card.checklistTotal)}
           </Chip>
         </span>
+        {card.stage === "hired" ? (
+          <span data-training-readiness={card.trainingReadiness}>
+            <Chip
+              tone={
+                card.trainingReadiness === "ready"
+                  ? "mint"
+                  : card.trainingReadiness === "draft"
+                    ? "butter"
+                    : "neutral"
+              }
+            >
+              {trainingReadinessChipLabel(card.trainingReadiness)}
+            </Chip>
+          </span>
+        ) : null}
       </div>
       <p className="m-0 text-[14px] text-muted">{card.roleTitle}</p>
       <p className="m-0 text-[13px] text-muted">Applied {submittedLabel(card.submittedAt)}</p>

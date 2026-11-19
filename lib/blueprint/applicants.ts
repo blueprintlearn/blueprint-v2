@@ -19,6 +19,7 @@ import type {
   HiringOutcomeRecord,
   HiringPathKind,
 } from "@/lib/blueprint/hiring-workflow"
+import type { TrainingPreparationRecord, TrainingReadiness } from "@/lib/blueprint/training-preparation"
 import type { DisplayInterviewStatus, OwnerInterviewReview } from "@/lib/blueprint/interviews"
 import {
   APPLICATION_ANSWER_MAX,
@@ -130,6 +131,7 @@ export type ApplicantCard = {
   auditionStatus: AuditionStatus | "none"
   checklistComplete: number
   checklistTotal: number
+  trainingReadiness: TrainingReadiness
 }
 
 export type ApplicantProfile = ApplicantCard & {
@@ -143,6 +145,7 @@ export type ApplicantProfile = ApplicantCard & {
   conversations: ApplicantConversation[]
   auditions: ApplicantAudition[]
   hiringOutcomes: HiringOutcomeRecord[]
+  trainingPreparations: TrainingPreparationRecord[]
 }
 
 export type ApplicantBoard = {
@@ -349,6 +352,7 @@ export function cardFromRows(input: {
     auditionStatus: "none",
     checklistComplete: 0,
     checklistTotal: 5,
+    trainingReadiness: "not_prepared",
   }
 }
 
