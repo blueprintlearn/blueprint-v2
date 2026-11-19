@@ -148,6 +148,15 @@ function PageFields({ page, slug }: { page: RecruitingPageContent; slug: string 
         defaultValue={page.availability ?? ""}
       />
       <TextField id="travel" name="travel" label="Service area" optional defaultValue={page.travel ?? ""} />
+      <TextArea
+        id="applicationQuestions"
+        name="applicationQuestions"
+        label="Additional application questions"
+        help="Optional. One question per line. Do not ask for Social Security numbers, birth dates, or other sensitive information."
+        optional
+        defaultValue={page.applicationQuestions.join("\n")}
+        rows={4}
+      />
     </div>
   )
 }
@@ -201,7 +210,7 @@ export function RecruitingEditorForm({
       {canPublish ? (
         <label className="flex items-start gap-3 text-[14px] text-ink">
           <input type="checkbox" name="confirmPublish" value="1" className="mt-1" />
-          I have reviewed this recruiting page. Publishing does not post ads or open applications.
+          I have reviewed this recruiting page. Publishing makes it public and opens applications. Blueprint does not post ads.
         </label>
       ) : null}
       {editor.error ? (

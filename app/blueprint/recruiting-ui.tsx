@@ -61,9 +61,14 @@ export function RecruitingMaterialsView({
         data-recruiting-status={view.pageStatus}
         data-recruiting-strategy={view.strategyStatus}
       >
-        <Link href="/blueprint/recruit" className="bp-link self-start font-bold">
-          Back to recruiting strategy
-        </Link>
+        <div className="flex flex-wrap gap-4">
+          <Link href="/blueprint/recruit" className="bp-link self-start font-bold">
+            Back to recruiting strategy
+          </Link>
+          <Link href="/blueprint/applicants" className="bp-link self-start font-bold">
+            Review applicants
+          </Link>
+        </div>
         <p className="bp-type-small font-bold! text-muted">{companyName}</p>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <h1 className="bp-type-display-xl max-[760px]:text-[46px]!">{RECRUITING_PAGE_TITLE}</h1>
@@ -127,7 +132,10 @@ export function RecruitingMaterialsView({
         <Link href="/blueprint/recruit" className="bp-btn bp-btn--plain">
           Previous: Recruiting strategy
         </Link>
-        <Link href="/blueprint" className="bp-btn bp-btn--soft">
+        <Link href="/blueprint/applicants" className="bp-btn bp-btn--soft">
+          Next: Applicants
+        </Link>
+        <Link href="/blueprint" className="bp-btn bp-btn--plain">
           Back to your Blueprint
         </Link>
       </div>

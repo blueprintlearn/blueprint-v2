@@ -13,6 +13,7 @@ import { querySql } from "./sql"
 
 function clearPages() {
   querySql(`
+    delete from public.company_applicants where company_id in ('${COMPANY_A_ID}', '${COMPANY_B_ID}');
     delete from public.company_recruiting_pages where company_id in ('${COMPANY_A_ID}', '${COMPANY_B_ID}');
   `)
 }

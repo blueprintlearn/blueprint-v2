@@ -2,6 +2,7 @@ import {
   AD_BODY_MAX,
   AD_CHANNELS,
   AD_TITLE_MAX,
+  APPLICATION_QUESTION_MAX,
   COMPANY_NAME_MAX,
   HEADLINE_MAX,
   INTRO_MAX,
@@ -27,7 +28,7 @@ import type { RecruitmentStrategyHandoff } from "@/lib/blueprint/recruitment-str
 
 export const RECRUITING_PAGE_TITLE = "Job ads and recruiting page"
 export const RECRUITING_OPENING =
-  "Turn your approved recruiting strategy into job ads and a company recruiting page. Saving a draft does not make the page public. Publishing does not post ads or open applications."
+  "Turn your approved recruiting strategy into job ads and a company recruiting page. Saving a draft does not make the page public. Publishing makes the page live and opens applications on that URL. Blueprint does not post ads or email candidates."
 export const RECRUITING_NEED_STRATEGY =
   "Approve a recruiting strategy before Blueprint can write job ads or a recruiting page. Draft, stale, and unapproved strategies are not used."
 export const RECRUITING_STALE_STRATEGY =
@@ -39,7 +40,11 @@ export const RECRUITING_CONFIRM_MESSAGE = "Confirm that you have reviewed this p
 export const RECRUITING_SLUG_MESSAGE = "Use a public URL of 3–48 lowercase letters, numbers, and hyphens."
 export const RECRUITING_SLUG_TAKEN = "That public URL is already in use."
 export const RECRUITING_NO_APPLY =
-  "Publishing this page does not open applications, post ads, or contact anyone."
+  "Publishing makes the public page live and lets candidates apply there. Blueprint does not post ads, send messages, or screen anyone automatically."
+export const RECRUITING_SENSITIVE_QUESTION =
+  "Do not ask for Social Security numbers, birth dates, or other sensitive information."
+export const SENSITIVE_QUESTION =
+  /social security|\bssn\b|date of birth|birth ?date|birthdate|\bdob\b/i
 export const COLOR_MESSAGE = "Use a hex color like #253860, or leave it blank."
 
 export type StoredRecruitingPage = {
@@ -153,6 +158,8 @@ export function pageContentFromUnknown(value: unknown): RecruitingPageContent | 
   const compensation =
     record.compensation == null ? null : asString(record.compensation, LIST_ITEM_MAX)
   if (record.compensation != null && compensation === null) return null
+  const applicationQuestions = applicationQuestionsFromUnknown(record.applicationQuestions)
+  if (applicationQuestions === null) return null
   return {
     companyName,
     headline,
@@ -170,7 +177,15 @@ export function pageContentFromUnknown(value: unknown): RecruitingPageContent | 
     travel: record.travel == null ? null : asString(record.travel, LIST_ITEM_MAX),
     primaryColor,
     accentColor,
+    applicationQuestions,
   }
+}
+
+function applicationQuestionsFromUnknown(value: unknown): string[] | null {
+  if (value == null) return []
+  const items = asStringList(value)
+  if (!items || items.length > APPLICATION_QUESTION_MAX) return null
+  return items
 }
 
 function adFromUnknown(channel: AdChannel, value: unknown): JobAd | null {
@@ -281,6 +296,10 @@ export function parseRecruitingEditor(formData: FormData): { ok: true; value: Re
     travel: formString(formData, "travel", LIST_ITEM_MAX),
     primaryColor: primaryRaw === "" ? null : primaryRaw,
     accentColor: accentRaw === "" ? null : accentRaw,
+    applicationQuestions: linesFromForm(formData, "applicationQuestions").slice(0, APPLICATION_QUESTION_MAX),
+  }
+  if (page.applicationQuestions.some((question) => SENSITIVE_QUESTION.test(question))) {
+    return { ok: false, error: RECRUITING_SENSITIVE_QUESTION }
   }
   const ads = {} as RecruitingAds
   for (const channel of AD_CHANNELS) {

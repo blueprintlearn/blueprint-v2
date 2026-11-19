@@ -60,7 +60,7 @@ test.describe("Job ads and recruiting pages", () => {
     await expect(page.getByText("Preview only. This draft is not public.")).toBeVisible()
     await expect(page.getByRole("heading", { level: 1, name: "Company C is hiring DJs for upcoming events" })).toBeVisible()
     await expect(page.getByText("Applications are not open yet")).toBeVisible()
-    await expect(page.getByRole("button", { name: /apply/i })).toHaveCount(0)
+    await expect(page.getByRole("button", { name: "Submit application" })).toHaveCount(0)
     await page.screenshot({ path: `${SHOTS}/stage32_recruiting_preview.png`, fullPage: true })
 
     const draftPublic = await page.goto("/join/company-c")
@@ -78,9 +78,8 @@ test.describe("Job ads and recruiting pages", () => {
 
     await page.goto("/join/company-c")
     await expect(page.getByRole("heading", { level: 1, name: "Company C is hiring DJs for upcoming events" })).toBeVisible()
-    await expect(page.getByText("Applications are not open yet")).toBeVisible()
-    await expect(page.getByRole("link", { name: /apply/i })).toHaveCount(0)
-    await expect(page.getByRole("button", { name: /apply/i })).toHaveCount(0)
+    await expect(page.getByRole("button", { name: "Submit application" })).toBeVisible()
+    await expect(page.getByText("Applications are not open yet")).toHaveCount(0)
     await page.screenshot({ path: `${SHOTS}/stage32_public_join_page.png`, fullPage: true })
   })
 

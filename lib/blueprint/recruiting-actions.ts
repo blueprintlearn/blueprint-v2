@@ -150,6 +150,7 @@ export async function publishRecruitingPage(
   }
   revalidatePath("/", "layout")
   revalidatePath("/blueprint/recruiting")
+  revalidatePath("/blueprint/applicants")
   revalidatePath(`/join/${ready.editor.slug}`)
   return { error: null, savedAt: Date.now() }
 }
@@ -231,6 +232,7 @@ export async function rebuildRecruitingDraft(
       companyName: live?.page.companyName ?? materials.page.companyName,
       primaryColor: live?.page.primaryColor ?? null,
       accentColor: live?.page.accentColor ?? null,
+      applicationQuestions: live?.page.applicationQuestions ?? materials.page.applicationQuestions,
     },
     ads: materials.ads,
     fingerprint: fingerprintOf(handoff),
