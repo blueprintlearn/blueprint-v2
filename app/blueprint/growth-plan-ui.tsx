@@ -279,7 +279,10 @@ export function GrowthPlanView({
             <Link href="/blueprint/growth" className="bp-btn bp-btn--plain">
               Previous: Growth planning
             </Link>
-            <Link href="/blueprint" className="bp-btn bp-btn--soft">
+            <Link href="/blueprint/recruit" className="bp-btn bp-btn--soft">
+              Next: Recruiting
+            </Link>
+            <Link href="/blueprint" className="bp-btn bp-btn--plain">
               Back to your Blueprint
             </Link>
           </div>
