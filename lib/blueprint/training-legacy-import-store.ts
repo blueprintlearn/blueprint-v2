@@ -4,11 +4,11 @@ import {
   LEGACY_DEFAULT_MASTER_VISIBILITY,
 } from "@/lib/blueprint/training-legacy-contract"
 import {
-  mapLegacyExport,
   type LegacyIdentifierRow,
   type LegacyImportIssue,
   type LegacyImportReport,
   type LegacyMappedCourse,
+  mapLegacyExport,
 } from "@/lib/blueprint/training-legacy-import"
 import { parseCourseContent } from "@/lib/blueprint/training-library"
 import type { Json } from "@/types/database"
@@ -21,32 +21,35 @@ export type LegacyImportApplyResult = {
   identifiers: LegacyIdentifierRow[]
 }
 
-function isUniqueViolation(message: string | undefined): boolean {
-  return Boolean(message && (message.includes("duplicate key") || message.includes("unique")))
-}
+export type LegacyImportWriteStatus = "imported" | "unchanged" | "failed"
 
-async function loadExistingByLegacyId(client: Client, legacySourceId: string) {
-  const { data, error } = await client
-    .from("training_master_courses")
-    .select("id, title, visibility, legacy_source_id, legacy_content_version")
-    .eq("legacy_source_id", legacySourceId)
-    .maybeSingle()
-  if (error) throw new Error(error.message)
-  if (!data) return null
-  const { data: versions, error: versionError } = await client
-    .from("training_master_course_versions")
-    .select("id, version, status, content")
-    .eq("course_id", data.id)
-    .order("version", { ascending: false })
-  if (versionError) throw new Error(versionError.message)
-  return { course: data, versions: versions ?? [] }
+const LEGACY_IMPORT_ERROR_CODES = [
+  "not-admin",
+  "arguments-required",
+  "published-by-mismatch",
+  "published-by-not-admin",
+  "content-not-object",
+  "existing-not-private",
+  "legacy-id-collision",
+  "content-drift",
+  "race",
+] as const
+
+export function legacyImportIssueFromMessage(message: string, sourceId: string): LegacyImportIssue {
+  const matched = LEGACY_IMPORT_ERROR_CODES.find((code) => message.includes(`legacy-import:${code}`))
+  return {
+    code: matched ?? "import-failed",
+    severity: "failed",
+    sourceId,
+    detail: message,
+  }
 }
 
 export async function applyMappedLegacyCourse(
   client: Client,
   mapped: LegacyMappedCourse,
   publishedBy: string | null,
-): Promise<{ status: "imported" | "unchanged" | "failed"; issues: LegacyImportIssue[] }> {
+): Promise<{ status: LegacyImportWriteStatus; issues: LegacyImportIssue[] }> {
   if (!importedMasterMustStayPrivate(mapped.visibility) || mapped.visibility !== LEGACY_DEFAULT_MASTER_VISIBILITY) {
     return {
       status: "failed",
@@ -74,103 +77,60 @@ export async function applyMappedLegacyCourse(
       ],
     }
   }
-
-  const existing = await loadExistingByLegacyId(client, mapped.legacySourceId)
-  if (existing) {
-    if (existing.course.visibility !== "private") {
-      return {
-        status: "failed",
-        issues: [
-          {
-            code: "existing-not-private",
-            severity: "failed",
-            sourceId: mapped.legacySourceId,
-            detail: `Existing master ${existing.course.id} is ${existing.course.visibility}; importer will not change visibility or duplicate it.`,
-          },
-        ],
-      }
-    }
-    const sameVersion = existing.course.legacy_content_version === parsed.legacy.contentVersion
-    if (sameVersion) {
-      return { status: "unchanged", issues: [] }
-    }
+  if (!publishedBy) {
     return {
       status: "failed",
       issues: [
         {
-          code: "existing-original-preserved",
+          code: "published-by-required",
           severity: "failed",
           sourceId: mapped.legacySourceId,
-          detail: `A private master already exists for LearnDash ${mapped.legacySourceId} at version ${existing.course.legacy_content_version}. The importer will not overwrite that original snapshot.`,
+          detail: "Applying the import requires a platform-admin publishedBy user id so the original snapshot can freeze as a private published version.",
+        },
+      ],
+    }
+  }
+  const legacySourceId = parsed.legacy.sourceId
+  const legacyContentVersion = parsed.legacy.contentVersion
+  if (!legacySourceId || !legacyContentVersion) {
+    return {
+      status: "failed",
+      issues: [
+        {
+          code: "content-failed-schema",
+          severity: "failed",
+          sourceId: mapped.legacySourceId,
+          detail: "Mapped course is missing legacy source id or content version.",
         },
       ],
     }
   }
 
-  const { error: courseError } = await client.from("training_master_courses").insert({
-    id: mapped.masterCourseId,
-    title: parsed.title,
-    visibility: LEGACY_DEFAULT_MASTER_VISIBILITY,
-    legacy_source_id: parsed.legacy.sourceId,
-    legacy_content_version: parsed.legacy.contentVersion,
+  const { data, error } = await client.rpc("import_legacy_master_course", {
+    p_course_id: mapped.masterCourseId,
+    p_title: parsed.title,
+    p_legacy_source_id: legacySourceId,
+    p_legacy_content_version: legacyContentVersion,
+    p_version_id: mapped.versionId,
+    p_content: parsed as unknown as JsonValue,
+    p_published_by: publishedBy,
   })
-  if (courseError) {
-    if (isUniqueViolation(courseError.message)) {
-      return { status: "unchanged", issues: [] }
-    }
-    return {
-      status: "failed",
-      issues: [
-        {
-          code: "course-insert-failed",
-          severity: "failed",
-          sourceId: mapped.legacySourceId,
-          detail: courseError.message,
-        },
-      ],
-    }
+  if (error) {
+    return { status: "failed", issues: [legacyImportIssueFromMessage(error.message, mapped.legacySourceId)] }
   }
-
-  const { error: versionError } = await client.from("training_master_course_versions").insert({
-    id: mapped.versionId,
-    course_id: mapped.masterCourseId,
-    version: 1,
-    status: "published",
-    content: parsed as unknown as JsonValue,
-    published_by: publishedBy,
-  })
-  if (versionError) {
-    const { error: rollbackError } = await client.from("training_master_courses").delete().eq("id", mapped.masterCourseId)
-    return {
-      status: "failed",
-      issues: [
-        {
-          code: "version-insert-failed",
-          severity: "failed",
-          sourceId: mapped.legacySourceId,
-          detail: versionError.message,
-        },
-        ...(rollbackError
-          ? [
-              {
-                code: "rollback-failed",
-                severity: "failed" as const,
-                sourceId: mapped.legacySourceId,
-                detail: rollbackError.message,
-              },
-            ]
-          : [
-              {
-                code: "rolled-back",
-                severity: "warning" as const,
-                sourceId: mapped.legacySourceId,
-                detail: "Course row deleted after version insert failed.",
-              },
-            ]),
-      ],
-    }
+  if (data === "unchanged") return { status: "unchanged", issues: [] }
+  if (data === "imported") return { status: "imported", issues: [] }
+  return {
+    status: "failed",
+    issues: [
+      {
+        code: "import-failed",
+        severity: "failed",
+        sourceId: mapped.legacySourceId,
+        detail: `Importer returned unexpected status ${String(data)}.`,
+      },
+    ],
   }
-  return { status: "imported", issues: [] }
 }
 
 export async function importLegacyCurriculum(

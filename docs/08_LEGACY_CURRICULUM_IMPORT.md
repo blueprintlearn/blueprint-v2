@@ -100,7 +100,7 @@ The original catalog does not fit the Stage 4.1 editor caps:
 | question kinds | four | plus `matrix_sort` | 4 matching questions |
 | text blocks | plain | optional `format: "html"` | preserve original HTML |
 
-A unique index on `training_master_courses.legacy_source_id` makes re-runs idempotent.
+A unique index on `training_master_courses.legacy_source_id` makes re-runs idempotent. Course and published-version creation go through `import_legacy_master_course` in one transaction, so a failed import cannot leave a course without its snapshot. Returning `unchanged` requires a private published snapshot whose content matches this export, not merely the same `legacy_content_version` label. Incomplete rows are completed on retry. Content drift fails and leaves the original snapshot in place.
 
 ## What is preserved vs reported
 
@@ -143,7 +143,7 @@ The local seed still contains the Stage 4.1 placeholder “Legacy Beatmixing (im
 3. Local Supabase only (`supabase start` + `db reset` from committed migrations).
 4. Dry-run: `pnpm curriculum:import -- --export /tmp/learndash-export-production.json`
 5. Apply: `pnpm curriculum:import -- --apply --export /tmp/learndash-export-production.json`
-6. `--apply` refuses non-local database URLs, stamps `published_by` from `training_platform_admins`, writes **private published** version 1 (frozen original, not Starter), and no-ops when `legacy_source_id` + `legacy_content_version` already match.
+6. `--apply` refuses non-local database URLs, stamps `published_by` from `training_platform_admins`, and writes **private published** version 1 through `import_legacy_master_course` (frozen original, not Starter). It no-ops only when that published snapshot already matches this export. It does not overwrite a drifted original.
 7. Do not import trainees, progress, or assignment files. Do not set visibility to `starter`.
 
 A later AI modernization must copy into a new draft/version. It must not overwrite these published originals.

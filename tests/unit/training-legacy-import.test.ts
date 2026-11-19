@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest"
 import { importedMasterMustStayPrivate, LEGACY_DEFAULT_MASTER_VISIBILITY } from "@/lib/blueprint/training-legacy-contract"
 import { legacyUuid } from "@/lib/blueprint/training-legacy-ids"
 import { mapLegacyCourse, mapLegacyExport } from "@/lib/blueprint/training-legacy-import"
+import { legacyImportIssueFromMessage } from "@/lib/blueprint/training-legacy-import-store"
 import {
   emptyCourseContent,
   emptyLesson,
@@ -203,6 +204,21 @@ describe("legacy curriculum import mapper", () => {
     expect(parsedQuiz.questions[2]?.options).toHaveLength(OPTION_MAX)
     expect(parsedQuiz.questions[2]?.options[0]?.html).toContain("TRA18.jpg")
     expect(parsedQuiz.questions[0]?.options.map((option) => option.correct)).toEqual([false, true, false, false])
+  })
+})
+
+describe("legacy import write errors", () => {
+  it("maps RPC integrity failures without treating them as unchanged", () => {
+    expect(legacyImportIssueFromMessage("legacy-import:content-drift: snapshot differs", "90001")).toEqual({
+      code: "content-drift",
+      severity: "failed",
+      sourceId: "90001",
+      detail: "legacy-import:content-drift: snapshot differs",
+    })
+    expect(legacyImportIssueFromMessage("legacy-import:existing-not-private: starter", "90001").code).toBe(
+      "existing-not-private",
+    )
+    expect(legacyImportIssueFromMessage("forced version failure", "90001").code).toBe("import-failed")
   })
 })
 

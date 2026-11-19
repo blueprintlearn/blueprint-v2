@@ -26,7 +26,7 @@ Do not apply until separately approved, and not before the previous recruiting/t
 6. Stage 3.7 `20261127120000_company_training_preparations`
 7. Stage 4.1 `20261128120000_training_library`
 8. Stage 4.1 follow-up `20261129120000_training_publish_atomicity`
-9. Stage 4.2 `20261130120000_training_legacy_import` (schema support only; running the importer is a separate local command)
+9. Stage 4.2 `20261130120000_training_legacy_import` (schema support and `import_legacy_master_course`; running the importer is a separate local command)
 
 Stage 2 and Stage 3.1 hosted applies are not required for local 4.1.
 
@@ -43,6 +43,8 @@ Stage 2 and Stage 3.1 hosted applies are not required for local 4.1.
 Published and superseded version `content` is frozen by trigger. Later edits create or update a draft, then publish a new version. Assigned copies, when enrollment exists later, must keep the version they were given.
 
 Publishing is atomic: `publish_training_version` supersedes the current published snapshot and publishes the draft in one transaction. A deferred constraint also rejects a superseded row unless a published row exists at commit, so a split table update cannot leave a course or path without a published version. If either step fails, the previous published version stays published.
+
+Legacy import is also atomic: `import_legacy_master_course` writes the private master course and its published version in one transaction. A re-run returns unchanged only when that published snapshot already matches the export. It does not treat a matching `legacy_content_version` label as enough, and it does not overwrite a drifted original.
 
 Master updates never overwrite company copies. `source_master_version` records the adopted master version. Owners may review and explicitly adopt a newer published master into a new company draft.
 
