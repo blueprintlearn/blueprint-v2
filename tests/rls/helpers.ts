@@ -14,6 +14,11 @@ export const OWNER_A_EMAIL = "owner-a@blueprint.test"
 export const OWNER_B_EMAIL = "owner-b@blueprint.test"
 export const MANAGER_A_EMAIL = "manager-a@blueprint.test"
 export const INACTIVE_A_EMAIL = "inactive-a@blueprint.test"
+export const PLATFORM_ADMIN_EMAIL = "platform-admin@blueprint.test"
+export const PLATFORM_ADMIN_ID = "00000000-0000-4000-8000-0000000000aa"
+export const MASTER_PRIVATE_ID = "00000000-0000-4000-8000-0000000000d1"
+export const MASTER_STARTER_ID = "00000000-0000-4000-8000-0000000000d2"
+export const MASTER_ARCHIVED_ID = "00000000-0000-4000-8000-0000000000d3"
 
 export function createAnonClient(): SupabaseClient<Database> {
   const { url, publishableKey } = getPublicEnv()

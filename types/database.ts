@@ -700,6 +700,100 @@ isOneToOne: true
       referencedColumns: ["id"]
     }
                   ]
+                },"company_training_course_versions": {
+                  Row: {
+                    "company_id": string,"content": NonNullable<Json>,"course_id": string,"created_at": string,"id": string,"published_at": string | null,"published_by": string | null,"status": string,"updated_at": string,"version": number
+                  }
+                  Insert: {
+                    "company_id": string,"content": NonNullable<Json>,"course_id": string,"created_at"?: string,"id"?: string,"published_at"?: string | null,"published_by"?: string | null,"status": string,"updated_at"?: string,"version": number
+                  }
+                  Update: {
+                    "company_id"?: string,"content"?: NonNullable<Json>,"course_id"?: string,"created_at"?: string,"id"?: string,"published_at"?: string | null,"published_by"?: string | null,"status"?: string,"updated_at"?: string,"version"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_training_course_versions_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_training_course_versions_course_id_fkey"
+      columns: ["course_id"]
+isOneToOne: false
+      referencedRelation: "company_training_courses"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"company_training_courses": {
+                  Row: {
+                    "company_id": string,"created_at": string,"id": string,"legacy_content_version": string | null,"legacy_source_id": string | null,"library_status": string,"origin": string,"source_master_course_id": string | null,"source_master_version": number | null,"title": string,"updated_at": string
+                  }
+                  Insert: {
+                    "company_id": string,"created_at"?: string,"id"?: string,"legacy_content_version"?: string | null,"legacy_source_id"?: string | null,"library_status"?: string,"origin": string,"source_master_course_id"?: string | null,"source_master_version"?: number | null,"title": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "company_id"?: string,"created_at"?: string,"id"?: string,"legacy_content_version"?: string | null,"legacy_source_id"?: string | null,"library_status"?: string,"origin"?: string,"source_master_course_id"?: string | null,"source_master_version"?: number | null,"title"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_training_courses_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_training_courses_source_master_course_id_fkey"
+      columns: ["source_master_course_id"]
+isOneToOne: false
+      referencedRelation: "training_master_courses"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"company_training_path_versions": {
+                  Row: {
+                    "company_id": string,"content": NonNullable<Json>,"created_at": string,"id": string,"path_id": string,"published_at": string | null,"published_by": string | null,"status": string,"updated_at": string,"version": number
+                  }
+                  Insert: {
+                    "company_id": string,"content": NonNullable<Json>,"created_at"?: string,"id"?: string,"path_id": string,"published_at"?: string | null,"published_by"?: string | null,"status": string,"updated_at"?: string,"version": number
+                  }
+                  Update: {
+                    "company_id"?: string,"content"?: NonNullable<Json>,"created_at"?: string,"id"?: string,"path_id"?: string,"published_at"?: string | null,"published_by"?: string | null,"status"?: string,"updated_at"?: string,"version"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_training_path_versions_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_training_path_versions_path_id_fkey"
+      columns: ["path_id"]
+isOneToOne: false
+      referencedRelation: "company_training_paths"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"company_training_paths": {
+                  Row: {
+                    "company_id": string,"created_at": string,"id": string,"library_status": string,"title": string,"updated_at": string
+                  }
+                  Insert: {
+                    "company_id": string,"created_at"?: string,"id"?: string,"library_status"?: string,"title": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "company_id"?: string,"created_at"?: string,"id"?: string,"library_status"?: string,"title"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_training_paths_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"company_video_interview_answers": {
                   Row: {
                     "accepted_at": string,"byte_size": number,"company_id": string,"content_type": string,"created_at": string,"duration_ms": number,"id": string,"interview_id": string,"processing_error": string | null,"processing_status": string,"prompt": string,"question_index": number,"storage_path": string,"summary": string | null,"time_limit_seconds": number,"transcript": string | null,"updated_at": string
@@ -756,6 +850,51 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"training_master_course_versions": {
+                  Row: {
+                    "content": NonNullable<Json>,"course_id": string,"created_at": string,"id": string,"published_at": string | null,"published_by": string | null,"status": string,"updated_at": string,"version": number
+                  }
+                  Insert: {
+                    "content": NonNullable<Json>,"course_id": string,"created_at"?: string,"id"?: string,"published_at"?: string | null,"published_by"?: string | null,"status": string,"updated_at"?: string,"version": number
+                  }
+                  Update: {
+                    "content"?: NonNullable<Json>,"course_id"?: string,"created_at"?: string,"id"?: string,"published_at"?: string | null,"published_by"?: string | null,"status"?: string,"updated_at"?: string,"version"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "training_master_course_versions_course_id_fkey"
+      columns: ["course_id"]
+isOneToOne: false
+      referencedRelation: "training_master_courses"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"training_master_courses": {
+                  Row: {
+                    "created_at": string,"id": string,"legacy_content_version": string | null,"legacy_source_id": string | null,"title": string,"updated_at": string,"visibility": string
+                  }
+                  Insert: {
+                    "created_at"?: string,"id"?: string,"legacy_content_version"?: string | null,"legacy_source_id"?: string | null,"title": string,"updated_at"?: string,"visibility"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"legacy_content_version"?: string | null,"legacy_source_id"?: string | null,"title"?: string,"updated_at"?: string,"visibility"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"training_platform_admins": {
+                  Row: {
+                    "created_at": string,"user_id": string
+                  }
+                  Insert: {
+                    "created_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 }
           }
           Views: {
@@ -799,11 +938,23 @@ isOneToOne: false
 "is_guided_blueprint_company":
 { Args: { "p_company_id": string }; Returns: boolean
                            },
+"is_guided_company_owner":
+{ Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"is_guided_owner_of":
+{ Args: { "p_company_id": string }; Returns: boolean
+                           },
+"is_training_platform_admin":
+{ Args: Record<PropertyKey, never>; Returns: boolean
+                           },
 "note_interview_attempt":
 { Args: { "p_ip_hash": string }; Returns: boolean
                            },
 "open_video_interview":
 { Args: { "p_ip_hash": string,"p_token": string }; Returns: Json
+                           },
+"publish_training_version":
+{ Args: { "p_draft_id": string,"p_kind": string,"p_parent_id": string }; Returns: undefined
                            },
 "recruiting_slug_taken":
 { Args: { "p_company_id": string,"p_slug": string }; Returns: boolean

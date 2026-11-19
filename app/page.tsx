@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 import { TopNav } from "@/components/blueprint"
 import { getBlueprintProgressFromStates, resolveAll, resumeFromRow } from "@/lib/blueprint/answers"
 import { findingsAreCurrent } from "@/lib/blueprint/findings"
@@ -14,6 +16,8 @@ import { OWNER_ADMIN_ROLE } from "@/lib/rules/system-role"
 import { createClient } from "@/lib/supabase/server"
 import { getCurrentMembership } from "@/lib/tenancy/queries"
 
+import { isCurrentTrainingPlatformAdmin } from "@/lib/blueprint/training-platform-admin"
+
 import { AuthLinks } from "./auth-links"
 import { BlueprintHomeCard } from "./blueprint/blueprint-ui"
 import { CreateCompanyForm } from "./create-company-form"
@@ -28,6 +32,7 @@ export default async function HomePage() {
   const { data } = await supabase.auth.getClaims()
   const signedIn = Boolean(data?.claims)
   const membership = signedIn ? await getCurrentMembership() : null
+  const platformAdmin = signedIn ? await isCurrentTrainingPlatformAdmin() : false
   const ownerGoal = membership ? await getCurrentOwnerGoal() : null
   const teamToday = membership ? await getCurrentTeamToday() : null
   const isOwner = membership?.role === OWNER_ADMIN_ROLE
@@ -57,6 +62,13 @@ export default async function HomePage() {
           />
           {progress ? (
             <BlueprintHomeCard progress={progress} findingsReady={findingsAreCurrent(context)} />
+          ) : null}
+          {platformAdmin ? (
+            <p>
+              <Link href="/training-admin" className="bp-link font-bold">
+                Open Blueprint course library
+              </Link>
+            </p>
           ) : null}
           <div className="grid items-start gap-5 lg:grid-cols-2">
             <TeamTodayCard
@@ -105,6 +117,14 @@ export default async function HomePage() {
         <>
           <p>Sign in or create an account to start a company.</p>
           <AuthLinks />
+        </>
+      ) : platformAdmin ? (
+        <>
+          <p>Signed in as a Blueprint platform administrator.</p>
+          <Link href="/training-admin" className="bp-link font-bold">
+            Open Blueprint course library
+          </Link>
+          <SignOutButton />
         </>
       ) : (
         <>
