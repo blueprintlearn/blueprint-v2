@@ -156,6 +156,14 @@ test.describe("guided Blueprint accessibility", () => {
     await assertNoSeriousAxeIssues(page)
   })
 
+  test("Job ads before a strategy is approved have no serious or critical axe issues", async ({ page }) => {
+    ensureEmptyGuidedCompany()
+    await signIn(page)
+    await page.goto("/blueprint/recruiting")
+    await expect(page.getByRole("heading", { level: 1, name: "Job ads and recruiting page" })).toBeVisible()
+    await assertNoSeriousAxeIssues(page)
+  })
+
   test("Staffing and demand before approval has no serious or critical axe issues", async ({ page }) => {
     ensureEmptyGuidedCompany()
     await signIn(page)

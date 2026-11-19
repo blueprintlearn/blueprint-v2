@@ -188,6 +188,25 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"company_recruiting_pages": {
+                  Row: {
+                    "ads_content": NonNullable<Json>,"company_id": string,"created_at": string,"id": string,"page_content": NonNullable<Json>,"published_at": string | null,"published_by": string | null,"slug": string,"source_fingerprint": string,"source_strategy_id": string | null,"source_strategy_version": number | null,"status": string,"updated_at": string,"version": number
+                  }
+                  Insert: {
+                    "ads_content": NonNullable<Json>,"company_id": string,"created_at"?: string,"id"?: string,"page_content": NonNullable<Json>,"published_at"?: string | null,"published_by"?: string | null,"slug": string,"source_fingerprint": string,"source_strategy_id"?: string | null,"source_strategy_version"?: number | null,"status": string,"updated_at"?: string,"version": number
+                  }
+                  Update: {
+                    "ads_content"?: NonNullable<Json>,"company_id"?: string,"created_at"?: string,"id"?: string,"page_content"?: NonNullable<Json>,"published_at"?: string | null,"published_by"?: string | null,"slug"?: string,"source_fingerprint"?: string,"source_strategy_id"?: string | null,"source_strategy_version"?: number | null,"status"?: string,"updated_at"?: string,"version"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_recruiting_pages_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"company_recruitment_strategies": {
                   Row: {
                     "approved_at": string | null,"approved_by": string | null,"company_id": string,"created_at": string,"decisions": NonNullable<Json>,"id": string,"inputs": NonNullable<Json>,"recommended": NonNullable<Json>,"source_fingerprint": string,"status": string,"updated_at": string,"version": number,"warnings": NonNullable<Json>
@@ -245,11 +264,17 @@ isOneToOne: true
         isOneToOne: true
         isSetofReturn: false
       } },
+"get_published_recruiting_page":
+{ Args: { "p_slug": string }; Returns: Json
+                           },
 "invalidate_blueprint_approval":
 { Args: { "p_company_id": string }; Returns: undefined
                            },
 "is_guided_blueprint_company":
 { Args: { "p_company_id": string }; Returns: boolean
+                           },
+"recruiting_slug_taken":
+{ Args: { "p_company_id": string,"p_slug": string }; Returns: boolean
                            },
 "require_guided_blueprint_company":
 { Args: { "p_company_id": string }; Returns: undefined

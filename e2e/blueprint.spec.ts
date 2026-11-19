@@ -35,7 +35,7 @@ async function doneCount(page: Page) {
 
 test.describe("guided Blueprint (switch on for Company A, off for Company B)", () => {
   test("signed-out visitors go home, whatever the path", async ({ page }) => {
-    for (const path of ["/blueprint", "/blueprint/goals", "/blueprint/team", "/blueprint/events", "/blueprint/services", "/blueprint/numbers", "/blueprint/development", "/blueprint/ideal-dj", "/blueprint/review", "/blueprint/findings", "/blueprint/staffing", "/blueprint/growth", "/blueprint/growth-plan", "/blueprint/recruit", "/blueprint/nope"]) {
+    for (const path of ["/blueprint", "/blueprint/goals", "/blueprint/team", "/blueprint/events", "/blueprint/services", "/blueprint/numbers", "/blueprint/development", "/blueprint/ideal-dj", "/blueprint/review", "/blueprint/findings", "/blueprint/staffing", "/blueprint/growth", "/blueprint/growth-plan", "/blueprint/recruit", "/blueprint/recruiting", "/blueprint/nope"]) {
       await page.goto(path)
       await expect(page).toHaveURL("/")
       await expect(page.getByRole("heading", { name: "Blueprint" })).toBeVisible()
@@ -456,7 +456,7 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
 
   test("Company B owner (switch off) gets not found for every Blueprint path and keeps today's home", async ({ page }) => {
     await signIn(page, "owner-b@blueprint.test")
-    for (const path of ["/blueprint", "/blueprint/goals", "/blueprint/team", "/blueprint/events", "/blueprint/services", "/blueprint/numbers", "/blueprint/development", "/blueprint/ideal-dj", "/blueprint/review", "/blueprint/findings", "/blueprint/staffing", "/blueprint/growth", "/blueprint/growth-plan", "/blueprint/recruit", "/blueprint/nope"]) {
+    for (const path of ["/blueprint", "/blueprint/goals", "/blueprint/team", "/blueprint/events", "/blueprint/services", "/blueprint/numbers", "/blueprint/development", "/blueprint/ideal-dj", "/blueprint/review", "/blueprint/findings", "/blueprint/staffing", "/blueprint/growth", "/blueprint/growth-plan", "/blueprint/recruit", "/blueprint/recruiting", "/blueprint/nope"]) {
       const response = await page.goto(path)
       expect(response?.status()).toBe(404)
       await expect(page).toHaveURL(path)
@@ -470,7 +470,7 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
 
   test("Company A manager is sent home from every Blueprint path and sees today's read-only home", async ({ page }) => {
     await signIn(page, "manager-a@blueprint.test")
-    for (const path of ["/blueprint", "/blueprint/goals", "/blueprint/team", "/blueprint/events", "/blueprint/services", "/blueprint/numbers", "/blueprint/development", "/blueprint/ideal-dj", "/blueprint/review", "/blueprint/findings", "/blueprint/staffing", "/blueprint/growth", "/blueprint/growth-plan", "/blueprint/recruit", "/blueprint/nope"]) {
+    for (const path of ["/blueprint", "/blueprint/goals", "/blueprint/team", "/blueprint/events", "/blueprint/services", "/blueprint/numbers", "/blueprint/development", "/blueprint/ideal-dj", "/blueprint/review", "/blueprint/findings", "/blueprint/staffing", "/blueprint/growth", "/blueprint/growth-plan", "/blueprint/recruit", "/blueprint/recruiting", "/blueprint/nope"]) {
       await page.goto(path)
       await expect(page).toHaveURL("/")
       await expect(page.getByRole("heading", { level: 1, name: "Welcome back." })).toBeVisible()
