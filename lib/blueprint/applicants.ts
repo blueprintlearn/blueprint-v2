@@ -1,3 +1,16 @@
+import type {
+  ApplicantFollowUp,
+  ApplicantReviewStatus,
+  EvaluationStatus,
+  OwnerDecisionCode,
+  OwnerDecisionRecord,
+  HumanEvaluation,
+} from "@/lib/blueprint/candidate-review"
+import {
+  followUpIsOutstanding,
+  type ApplicantReviewFilters,
+} from "@/lib/blueprint/candidate-review"
+import type { DisplayInterviewStatus, OwnerInterviewReview } from "@/lib/blueprint/interviews"
 import {
   APPLICATION_ANSWER_MAX,
   APPLICATION_QUESTION_MAX,
@@ -8,7 +21,6 @@ import {
   PHONE_MAX,
   isValidSlug,
 } from "@/lib/blueprint/recruiting-engine"
-import type { DisplayInterviewStatus, OwnerInterviewReview } from "@/lib/blueprint/interviews"
 
 export const APPLICANT_STAGES = [
   "new_application",
@@ -99,12 +111,19 @@ export type ApplicantCard = {
   submittedAt: string
   answers: ApplicationAnswers
   interviewStatus: DisplayInterviewStatus
+  reviewStatus: ApplicantReviewStatus
+  evaluationStatus: EvaluationStatus
+  latestDecision: OwnerDecisionCode | null
+  followUp: ApplicantFollowUp | null
 }
 
 export type ApplicantProfile = ApplicantCard & {
   notes: ApplicantNote[]
   history: ApplicantStageEvent[]
   interview: OwnerInterviewReview | null
+  evaluation: HumanEvaluation | null
+  evaluationCategories: string[]
+  decisions: OwnerDecisionRecord[]
 }
 
 export type ApplicantBoard = {
@@ -301,6 +320,10 @@ export function cardFromRows(input: {
     submittedAt: input.application.submitted_at,
     answers,
     interviewStatus: "not_sent",
+    reviewStatus: "needs_review",
+    evaluationStatus: "not_started",
+    latestDecision: null,
+    followUp: null,
   }
 }
 
@@ -321,10 +344,18 @@ export function filterApplicantCards(
   cards: ApplicantCard[],
   query: string,
   campaignId: string,
+  extra: Pick<ApplicantReviewFilters, "stage" | "review" | "followUp"> = {
+    stage: "",
+    review: "",
+    followUp: false,
+  },
 ): ApplicantCard[] {
   const needle = query.trim().toLowerCase()
   return cards.filter((card) => {
     if (campaignId && card.recruitingPageId !== campaignId) return false
+    if (extra.stage && card.stage !== extra.stage) return false
+    if (extra.review && card.reviewStatus !== extra.review) return false
+    if (extra.followUp && !followUpIsOutstanding(card.followUp)) return false
     if (!needle) return true
     const name = applicantDisplayName(card).toLowerCase()
     return name.includes(needle)

@@ -6,6 +6,16 @@ import {
   type ApplicantStage,
   type ApplicantStageEvent,
 } from "@/lib/blueprint/applicants"
+import { evaluationStatusFromRatings, reviewStatusFromFacts } from "@/lib/blueprint/candidate-review"
+import { candidateReviewHandoffFromProfile } from "@/lib/blueprint/candidate-review-handoff"
+import {
+  indicatorsForCard,
+  loadApplicantFollowUp,
+  loadHumanEvaluation,
+  loadOwnerDecisions,
+  loadReviewIndicatorsByApplication,
+  resolveEvaluationCategories,
+} from "@/lib/blueprint/candidate-review-store"
 import { loadInterviewStatusByApplication, loadOwnerInterview, purgeExpiredInterviewMedia } from "@/lib/blueprint/interview-store"
 import type { createClient } from "@/lib/supabase/server"
 import type { Json } from "@/types/database"
@@ -54,8 +64,9 @@ export async function loadApplicantCards(client: Client, companyId: string): Pro
     .in("id", applicantIds)
   if (peopleError || !people) return []
   const byId = new Map(people.map((person) => [person.id, person]))
-  const [statuses] = await Promise.all([
+  const [statuses, indicators] = await Promise.all([
     loadInterviewStatusByApplication(client, companyId),
+    loadReviewIndicatorsByApplication(client, companyId),
     purgeExpiredInterviewMedia(client, companyId),
   ])
   return data
@@ -64,7 +75,11 @@ export async function loadApplicantCards(client: Client, companyId: string): Pro
       if (!applicant) return null
       const card = cardFromRows({ application, applicant })
       if (!card) return null
-      return { ...card, interviewStatus: statuses.get(card.applicationId) ?? "not_sent" }
+      return {
+        ...card,
+        interviewStatus: statuses.get(card.applicationId) ?? "not_sent",
+        ...indicatorsForCard(card.applicationId, card.stage, indicators),
+      }
     })
     .filter((card): card is ApplicantCard => card !== null)
 }
@@ -104,7 +119,15 @@ export async function loadApplicantProfile(
       .eq("application_id", application.id)
       .order("changed_at", { ascending: true }),
   ])
-  const interview = await loadOwnerInterview(client, companyId, application.id)
+  const [interview, evaluation, decisions, followUp, evaluationCategories] = await Promise.all([
+    loadOwnerInterview(client, companyId, application.id),
+    loadHumanEvaluation(client, companyId, application.id),
+    loadOwnerDecisions(client, companyId, application.id),
+    loadApplicantFollowUp(client, companyId, application.id),
+    resolveEvaluationCategories(client, companyId, card.slug),
+  ])
+  const latestDecision = decisions.at(-1)?.decision ?? null
+  const evaluationStatus = evaluationStatusFromRatings(evaluation?.ratings)
   return {
     ...card,
     notes: (notes ?? []).map((note) => ({
@@ -135,7 +158,34 @@ export async function loadApplicantProfile(
       .filter((event): event is ApplicantStageEvent => event !== null),
     interview,
     interviewStatus: interview?.status ?? "not_sent",
+    evaluation,
+    evaluationCategories: evaluation?.categories ?? evaluationCategories,
+    decisions,
+    followUp,
+    evaluationStatus,
+    latestDecision,
+    reviewStatus: reviewStatusFromFacts({ stage: card.stage, evaluationStatus, latestDecision }),
   }
+}
+
+export function applicantHandoffFromProfile(
+  companyId: string,
+  profile: ApplicantProfile,
+) {
+  return candidateReviewHandoffFromProfile({
+    companyId,
+    applicantId: profile.applicantId,
+    applicationId: profile.applicationId,
+    recruitingPageId: profile.recruitingPageId,
+    slug: profile.slug,
+    roleTitle: profile.roleTitle,
+    stage: profile.stage,
+    decision: profile.latestDecision,
+    followUp: profile.followUp,
+    evaluationStatus: profile.evaluationStatus,
+    interviewStatus: profile.interviewStatus,
+    interviewSubmittedAt: profile.interview?.submittedAt ?? null,
+  })
 }
 
 export async function updateApplicationStage(

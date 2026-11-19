@@ -90,16 +90,22 @@ export function ApplicantNoteForm({ applicationId }: { applicationId: string }) 
 export function ApplicantBoardFilters({
   query,
   campaignId,
+  stage,
+  review,
+  followUp,
   campaigns,
 }: {
   query: string
   campaignId: string
+  stage: string
+  review: string
+  followUp: boolean
   campaigns: { pageId: string; label: string }[]
 }) {
   const router = useRouter()
   return (
     <form
-      className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] md:items-end"
+      className="grid gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] md:items-end"
       data-applicant-form="filters"
       onSubmit={(event) => {
         event.preventDefault()
@@ -107,8 +113,14 @@ export function ApplicantBoardFilters({
         const next = new URLSearchParams()
         const q = String(data.get("q") ?? "").trim()
         const campaign = String(data.get("campaign") ?? "").trim()
+        const nextStage = String(data.get("stage") ?? "").trim()
+        const nextReview = String(data.get("review") ?? "").trim()
+        const nextFollowUp = data.get("followup") === "1"
         if (q) next.set("q", q)
         if (campaign) next.set("campaign", campaign)
+        if (nextStage) next.set("stage", nextStage)
+        if (nextReview) next.set("review", nextReview)
+        if (nextFollowUp) next.set("followup", "1")
         const suffix = next.toString()
         router.push(suffix ? `/blueprint/applicants?${suffix}` : "/blueprint/applicants")
       }}
@@ -123,6 +135,31 @@ export function ApplicantBoardFilters({
         options={campaigns.map((campaign) => ({ value: campaign.pageId, label: campaign.label }))}
         defaultValue={campaignId || null}
       />
+      <Select
+        id="applicant-stage"
+        name="stage"
+        label="Pipeline stage"
+        optional
+        placeholderOption="All stages"
+        options={APPLICANT_STAGES.map((value) => ({ value, label: APPLICANT_STAGE_LABELS[value] }))}
+        defaultValue={stage || null}
+      />
+      <Select
+        id="applicant-review"
+        name="review"
+        label="Review status"
+        optional
+        placeholderOption="Any review status"
+        options={[
+          { value: "needs_review", label: "Needs review" },
+          { value: "reviewed", label: "Reviewed" },
+        ]}
+        defaultValue={review || null}
+      />
+      <label className="flex items-center gap-2 pb-2 text-[14px] text-ink">
+        <input type="checkbox" name="followup" value="1" defaultChecked={followUp} className="mt-0" />
+        Outstanding follow-ups
+      </label>
       <Button type="submit" variant="soft">
         Filter
       </Button>

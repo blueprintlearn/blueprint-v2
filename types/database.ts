@@ -55,6 +55,99 @@ isOneToOne: true
                   Relationships: [
                     
                   ]
+                },"company_applicant_decisions": {
+                  Row: {
+                    "applicant_id": string,"application_id": string,"company_id": string,"created_at": string,"created_by": string,"decision": string,"from_stage": string | null,"id": string,"reason": string | null,"to_stage": string
+                  }
+                  Insert: {
+                    "applicant_id": string,"application_id": string,"company_id": string,"created_at"?: string,"created_by": string,"decision": string,"from_stage"?: string | null,"id"?: string,"reason"?: string | null,"to_stage": string
+                  }
+                  Update: {
+                    "applicant_id"?: string,"application_id"?: string,"company_id"?: string,"created_at"?: string,"created_by"?: string,"decision"?: string,"from_stage"?: string | null,"id"?: string,"reason"?: string | null,"to_stage"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_applicant_decisions_applicant_id_fkey"
+      columns: ["applicant_id"]
+isOneToOne: false
+      referencedRelation: "company_applicants"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_applicant_decisions_application_id_fkey"
+      columns: ["application_id"]
+isOneToOne: false
+      referencedRelation: "company_applications"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_applicant_decisions_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"company_applicant_evaluations": {
+                  Row: {
+                    "applicant_id": string,"application_id": string,"categories": NonNullable<Json>,"company_id": string,"completed_at": string | null,"created_at": string,"id": string,"ratings": NonNullable<Json>,"updated_at": string,"updated_by": string
+                  }
+                  Insert: {
+                    "applicant_id": string,"application_id": string,"categories": NonNullable<Json>,"company_id": string,"completed_at"?: string | null,"created_at"?: string,"id"?: string,"ratings": NonNullable<Json>,"updated_at"?: string,"updated_by": string
+                  }
+                  Update: {
+                    "applicant_id"?: string,"application_id"?: string,"categories"?: NonNullable<Json>,"company_id"?: string,"completed_at"?: string | null,"created_at"?: string,"id"?: string,"ratings"?: NonNullable<Json>,"updated_at"?: string,"updated_by"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_applicant_evaluations_applicant_id_fkey"
+      columns: ["applicant_id"]
+isOneToOne: false
+      referencedRelation: "company_applicants"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_applicant_evaluations_application_id_fkey"
+      columns: ["application_id"]
+isOneToOne: false
+      referencedRelation: "company_applications"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_applicant_evaluations_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"company_applicant_follow_ups": {
+                  Row: {
+                    "action": string,"applicant_id": string,"application_id": string,"company_id": string,"created_at": string,"due_on": string | null,"id": string,"status": string,"updated_at": string,"updated_by": string
+                  }
+                  Insert: {
+                    "action": string,"applicant_id": string,"application_id": string,"company_id": string,"created_at"?: string,"due_on"?: string | null,"id"?: string,"status": string,"updated_at"?: string,"updated_by": string
+                  }
+                  Update: {
+                    "action"?: string,"applicant_id"?: string,"application_id"?: string,"company_id"?: string,"created_at"?: string,"due_on"?: string | null,"id"?: string,"status"?: string,"updated_at"?: string,"updated_by"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_applicant_follow_ups_applicant_id_fkey"
+      columns: ["applicant_id"]
+isOneToOne: false
+      referencedRelation: "company_applicants"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_applicant_follow_ups_application_id_fkey"
+      columns: ["application_id"]
+isOneToOne: false
+      referencedRelation: "company_applications"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_applicant_follow_ups_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"company_applicant_notes": {
                   Row: {
                     "applicant_id": string,"application_id": string | null,"body": string,"company_id": string,"created_at": string,"created_by": string,"id": string
@@ -221,6 +314,25 @@ isOneToOne: true
       foreignKeyName: "company_blueprints_company_id_fkey"
       columns: ["company_id"]
 isOneToOne: true
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"company_evaluation_templates": {
+                  Row: {
+                    "categories": NonNullable<Json>,"company_id": string,"created_at": string,"id": string,"slug": string,"updated_at": string
+                  }
+                  Insert: {
+                    "categories": NonNullable<Json>,"company_id": string,"created_at"?: string,"id"?: string,"slug": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "categories"?: NonNullable<Json>,"company_id"?: string,"created_at"?: string,"id"?: string,"slug"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_evaluation_templates_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
       referencedRelation: "companies"
       referencedColumns: ["id"]
     }
