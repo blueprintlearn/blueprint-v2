@@ -106,7 +106,7 @@ isOneToOne: false
     },{
       foreignKeyName: "company_applicant_evaluations_application_id_fkey"
       columns: ["application_id"]
-isOneToOne: true
+isOneToOne: false
       referencedRelation: "company_applications"
       referencedColumns: ["id"]
     },{
@@ -137,7 +137,7 @@ isOneToOne: false
     },{
       foreignKeyName: "company_applicant_follow_ups_application_id_fkey"
       columns: ["application_id"]
-isOneToOne: true
+isOneToOne: false
       referencedRelation: "company_applications"
       referencedColumns: ["id"]
     },{
