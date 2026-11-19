@@ -953,6 +953,9 @@ isOneToOne: false
 "open_video_interview":
 { Args: { "p_ip_hash": string,"p_token": string }; Returns: Json
                            },
+"publish_training_version":
+{ Args: { "p_draft_id": string,"p_kind": string,"p_parent_id": string }; Returns: undefined
+                           },
 "recruiting_slug_taken":
 { Args: { "p_company_id": string,"p_slug": string }; Returns: boolean
                            },

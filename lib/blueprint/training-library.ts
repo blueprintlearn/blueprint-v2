@@ -761,6 +761,19 @@ export function companyCanSeeMaster(visibility: MasterVisibility): boolean {
   return visibility === "starter"
 }
 
+export const TRAINING_ADOPT_OPERATIONS = [
+  "create_copy",
+  "adopt_update",
+  "edit_copy",
+  "publish_copy",
+  "archive_copy",
+] as const
+export type TrainingAdoptOperation = (typeof TRAINING_ADOPT_OPERATIONS)[number]
+
+export function adoptRequiresStarter(operation: TrainingAdoptOperation): boolean {
+  return operation === "create_copy" || operation === "adopt_update"
+}
+
 export function updateAvailable(course: Pick<StoredCompanyCourse, "origin" | "sourceMasterVersion">, latestMasterVersion: number | null): boolean {
   if (course.origin !== "adopted" || course.sourceMasterVersion == null || latestMasterVersion == null) return false
   return latestMasterVersion > course.sourceMasterVersion

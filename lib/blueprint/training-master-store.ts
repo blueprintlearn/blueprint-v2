@@ -9,7 +9,7 @@ import {
   type MasterVisibility,
   type StoredMasterCourse,
 } from "@/lib/blueprint/training-library"
-import { loadMasterCourse, loadMasterCourses } from "@/lib/blueprint/training-library-store"
+import { loadMasterCourse, loadMasterCourses, publishTrainingVersion } from "@/lib/blueprint/training-library-store"
 import type { Json } from "@/types/database"
 
 type JsonValue = NonNullable<Json>
@@ -66,19 +66,7 @@ export async function publishMasterCourse(
 ): Promise<{ error: string | null }> {
   const draft = currentDraft(course.versions)
   if (!draft) return { error: "Save a draft before publishing." }
-  const published = currentPublished(course.versions)
-  if (published) {
-    const { error } = await client
-      .from("training_master_course_versions")
-      .update({ status: "superseded" })
-      .eq("id", published.id)
-    if (error) return { error: error.message }
-  }
-  const { error } = await client
-    .from("training_master_course_versions")
-    .update({ status: "published" })
-    .eq("id", draft.id)
-  return { error: error?.message ?? null }
+  return publishTrainingVersion(client, "master_course", course.id, draft.id)
 }
 
 export async function setMasterVisibility(

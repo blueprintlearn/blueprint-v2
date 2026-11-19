@@ -40,7 +40,11 @@ Stage 2 and Stage 3.1 hosted applies are not required for local 4.1.
 
 Published and superseded version `content` is frozen by trigger. Later edits create or update a draft, then publish a new version. Assigned copies, when enrollment exists later, must keep the version they were given.
 
+Publishing is atomic: `publish_training_version` supersedes the current published snapshot and publishes the draft in one transaction. If either step fails, the previous published version stays published.
+
 Master updates never overwrite company copies. `source_master_version` records the adopted master version. Owners may review and explicitly adopt a newer published master into a new company draft.
+
+Archiving or privatizing a master course does not freeze existing company copies. Owners can still edit, publish, and archive those copies. Starter visibility is required only when adding a starter course or explicitly adopting a later master update.
 
 ## Stage 3.7 handoff
 

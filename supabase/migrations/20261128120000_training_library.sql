@@ -12,6 +12,8 @@
 --
 -- Imported legacy content must default to private master visibility.
 -- Company copies are independent. Published versions are immutable.
+-- Publishing a version supersedes the previous published snapshot atomically.
+-- Starter visibility is enforced on adopt and update-adopt, not later copy edits.
 -- There is no trainee account, enrollment, progress, invitation, or certificate.
 
 create table public.training_platform_admins (
@@ -347,7 +349,15 @@ begin
     end if;
   end if;
 
-  if new.origin = 'adopted' then
+  -- Starter visibility is required when creating an adopted copy or
+  -- explicitly adopting a later master version. Ordinary edits, publishes,
+  -- and archives of an existing copy must keep working after the master
+  -- is privatized or archived.
+  if new.origin = 'adopted'
+     and (
+       tg_op = 'INSERT'
+       or new.source_master_version is distinct from old.source_master_version
+     ) then
     if not exists (
       select 1
       from public.training_master_courses as master
@@ -513,6 +523,191 @@ before insert or update on public.company_training_path_versions
 for each row
 execute function public.company_training_path_versions_touch();
 
+create function public.publish_training_version(
+  p_kind text,
+  p_parent_id uuid,
+  p_draft_id uuid
+)
+returns void
+language plpgsql
+security invoker
+set search_path = pg_catalog, public
+as $$
+declare
+  published_id uuid;
+  draft_status text;
+  updated integer;
+begin
+  if p_kind is null or p_parent_id is null or p_draft_id is null then
+    raise exception 'publish arguments are required';
+  end if;
+
+  if p_kind = 'master_course' then
+    perform 1
+    from public.training_master_courses
+    where id = p_parent_id
+    for update;
+    if not found then
+      raise exception 'training version not found';
+    end if;
+
+    perform 1
+    from public.training_master_course_versions
+    where course_id = p_parent_id
+    order by version
+    for update;
+
+    select status into draft_status
+    from public.training_master_course_versions
+    where id = p_draft_id
+      and course_id = p_parent_id;
+    if draft_status is null then
+      raise exception 'save a draft before publishing';
+    end if;
+    if draft_status <> 'draft' then
+      raise exception 'only a draft can be published';
+    end if;
+
+    select id into published_id
+    from public.training_master_course_versions
+    where course_id = p_parent_id
+      and status = 'published';
+
+    if published_id is not null then
+      update public.training_master_course_versions
+      set status = 'superseded'
+      where id = published_id
+        and status = 'published';
+      get diagnostics updated = row_count;
+      if updated <> 1 then
+        raise exception 'could not publish training version';
+      end if;
+    end if;
+
+    update public.training_master_course_versions
+    set status = 'published'
+    where id = p_draft_id
+      and course_id = p_parent_id
+      and status = 'draft';
+    get diagnostics updated = row_count;
+    if updated <> 1 then
+      raise exception 'could not publish training version';
+    end if;
+    return;
+  end if;
+
+  if p_kind = 'company_course' then
+    perform 1
+    from public.company_training_courses
+    where id = p_parent_id
+    for update;
+    if not found then
+      raise exception 'training version not found';
+    end if;
+
+    perform 1
+    from public.company_training_course_versions
+    where course_id = p_parent_id
+    order by version
+    for update;
+
+    select status into draft_status
+    from public.company_training_course_versions
+    where id = p_draft_id
+      and course_id = p_parent_id;
+    if draft_status is null then
+      raise exception 'save a draft before publishing';
+    end if;
+    if draft_status <> 'draft' then
+      raise exception 'only a draft can be published';
+    end if;
+
+    select id into published_id
+    from public.company_training_course_versions
+    where course_id = p_parent_id
+      and status = 'published';
+
+    if published_id is not null then
+      update public.company_training_course_versions
+      set status = 'superseded'
+      where id = published_id
+        and status = 'published';
+      get diagnostics updated = row_count;
+      if updated <> 1 then
+        raise exception 'could not publish training version';
+      end if;
+    end if;
+
+    update public.company_training_course_versions
+    set status = 'published'
+    where id = p_draft_id
+      and course_id = p_parent_id
+      and status = 'draft';
+    get diagnostics updated = row_count;
+    if updated <> 1 then
+      raise exception 'could not publish training version';
+    end if;
+    return;
+  end if;
+
+  if p_kind = 'company_path' then
+    perform 1
+    from public.company_training_paths
+    where id = p_parent_id
+    for update;
+    if not found then
+      raise exception 'training version not found';
+    end if;
+
+    perform 1
+    from public.company_training_path_versions
+    where path_id = p_parent_id
+    order by version
+    for update;
+
+    select status into draft_status
+    from public.company_training_path_versions
+    where id = p_draft_id
+      and path_id = p_parent_id;
+    if draft_status is null then
+      raise exception 'save a draft before publishing';
+    end if;
+    if draft_status <> 'draft' then
+      raise exception 'only a draft can be published';
+    end if;
+
+    select id into published_id
+    from public.company_training_path_versions
+    where path_id = p_parent_id
+      and status = 'published';
+
+    if published_id is not null then
+      update public.company_training_path_versions
+      set status = 'superseded'
+      where id = published_id
+        and status = 'published';
+      get diagnostics updated = row_count;
+      if updated <> 1 then
+        raise exception 'could not publish training version';
+      end if;
+    end if;
+
+    update public.company_training_path_versions
+    set status = 'published'
+    where id = p_draft_id
+      and path_id = p_parent_id
+      and status = 'draft';
+    get diagnostics updated = row_count;
+    if updated <> 1 then
+      raise exception 'could not publish training version';
+    end if;
+    return;
+  end if;
+
+  raise exception 'unknown training version kind';
+end;
+$$;
+
 alter table public.training_platform_admins enable row level security;
 alter table public.training_master_courses enable row level security;
 alter table public.training_master_course_versions enable row level security;
@@ -540,9 +735,11 @@ grant select, insert, update, delete on table public.company_training_path_versi
 revoke all on function public.is_training_platform_admin() from public;
 revoke all on function public.is_guided_company_owner() from public;
 revoke all on function public.is_guided_owner_of(uuid) from public;
+revoke all on function public.publish_training_version(text, uuid, uuid) from public;
 grant execute on function public.is_training_platform_admin() to authenticated;
 grant execute on function public.is_guided_company_owner() to authenticated;
 grant execute on function public.is_guided_owner_of(uuid) to authenticated;
+grant execute on function public.publish_training_version(text, uuid, uuid) to authenticated;
 
 create policy training_platform_admins_self_select
 on public.training_platform_admins

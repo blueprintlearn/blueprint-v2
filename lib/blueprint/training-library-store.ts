@@ -32,8 +32,25 @@ const PATH_VERSION_COLUMNS = "id, path_id, company_id, version, status, content,
 const MASTER_COLUMNS = "id, title, visibility, legacy_source_id, legacy_content_version" as const
 const MASTER_VERSION_COLUMNS = "id, course_id, version, status, content, published_by, published_at" as const
 
+export const TRAINING_PUBLISH_KINDS = ["master_course", "company_course", "company_path"] as const
+export type TrainingPublishKind = (typeof TRAINING_PUBLISH_KINDS)[number]
+
 function asStatus(value: unknown): TrainingVersionStatus | null {
   return value === "draft" || value === "published" || value === "superseded" ? value : null
+}
+
+export async function publishTrainingVersion(
+  client: Client,
+  kind: TrainingPublishKind,
+  parentId: string,
+  draftId: string,
+): Promise<{ error: string | null }> {
+  const { error } = await client.rpc("publish_training_version", {
+    p_kind: kind,
+    p_parent_id: parentId,
+    p_draft_id: draftId,
+  })
+  return { error: error?.message ?? null }
 }
 
 function versionFromRow(row: {
@@ -233,21 +250,7 @@ export async function publishCompanyCourse(
 ): Promise<{ error: string | null }> {
   const draft = currentDraft(course.versions)
   if (!draft) return { error: "Save a draft before publishing." }
-  const published = currentPublished(course.versions)
-  if (published) {
-    const { error } = await client
-      .from("company_training_course_versions")
-      .update({ status: "superseded" })
-      .eq("id", published.id)
-      .eq("company_id", course.companyId)
-    if (error) return { error: error.message }
-  }
-  const { error } = await client
-    .from("company_training_course_versions")
-    .update({ status: "published" })
-    .eq("id", draft.id)
-    .eq("company_id", course.companyId)
-  return { error: error?.message ?? null }
+  return publishTrainingVersion(client, "company_course", course.id, draft.id)
 }
 
 export async function setCompanyCourseLibraryStatus(
@@ -398,21 +401,7 @@ export async function publishCompanyPath(
 ): Promise<{ error: string | null }> {
   const draft = currentDraft(path.versions)
   if (!draft) return { error: "Save a draft before publishing." }
-  const published = currentPublished(path.versions)
-  if (published) {
-    const { error } = await client
-      .from("company_training_path_versions")
-      .update({ status: "superseded" })
-      .eq("id", published.id)
-      .eq("company_id", path.companyId)
-    if (error) return { error: error.message }
-  }
-  const { error } = await client
-    .from("company_training_path_versions")
-    .update({ status: "published" })
-    .eq("id", draft.id)
-    .eq("company_id", path.companyId)
-  return { error: error?.message ?? null }
+  return publishTrainingVersion(client, "company_path", path.id, draft.id)
 }
 
 export async function setCompanyPathLibraryStatus(

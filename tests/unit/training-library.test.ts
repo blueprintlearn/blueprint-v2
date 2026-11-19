@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import {
   addLessonToContent,
+  adoptRequiresStarter,
   cloneCourseContent,
   companyCanSeeMaster,
   currentDraft,
@@ -84,6 +85,14 @@ describe("training library content", () => {
     expect(starterCatalogVisible("starter", "published")).toBe(true)
     expect(starterCatalogVisible("starter", "draft")).toBe(false)
     expect(starterCatalogVisible("private", "published")).toBe(false)
+  })
+
+  it("requires starter visibility only when adopting a copy or an update", () => {
+    expect(adoptRequiresStarter("create_copy")).toBe(true)
+    expect(adoptRequiresStarter("adopt_update")).toBe(true)
+    expect(adoptRequiresStarter("edit_copy")).toBe(false)
+    expect(adoptRequiresStarter("publish_copy")).toBe(false)
+    expect(adoptRequiresStarter("archive_copy")).toBe(false)
   })
 
   it("never auto-applies a newer master version onto a company copy", () => {
