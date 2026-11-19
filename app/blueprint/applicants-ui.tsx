@@ -14,6 +14,13 @@ import {
   type ApplicantCard,
   type ApplicantStage,
 } from "@/lib/blueprint/applicants"
+import {
+  APPLICANT_REVIEW_STATUS_LABELS,
+  EVALUATION_STATUS_LABELS,
+  FOLLOW_UP_ACTION_LABELS,
+  OWNER_DECISION_LABELS,
+  followUpIsOutstanding,
+} from "@/lib/blueprint/candidate-review"
 import { INTERVIEW_STATUS_LABELS, interviewStatusTone } from "@/lib/blueprint/interviews"
 
 const STAGE_CHIP: Record<ApplicantStage, "sky" | "butter" | "lavender" | "blush" | "mint" | "danger"> = {
@@ -42,11 +49,53 @@ function ApplicantCardView({ card }: { card: ApplicantCard }) {
         </Link>
         <Chip tone={STAGE_CHIP[card.stage]}>{APPLICANT_STAGE_LABELS[card.stage]}</Chip>
       </div>
-      <span data-interview-status={card.interviewStatus}>
-        <Chip tone={interviewStatusTone(card.interviewStatus)}>
-          {INTERVIEW_STATUS_LABELS[card.interviewStatus]}
-        </Chip>
-      </span>
+      <div className="flex flex-wrap gap-2">
+        <span data-review-status={card.reviewStatus}>
+          <Chip tone={card.reviewStatus === "reviewed" ? "mint" : "butter"}>
+            {APPLICANT_REVIEW_STATUS_LABELS[card.reviewStatus]}
+          </Chip>
+        </span>
+        <span data-interview-status={card.interviewStatus}>
+          <Chip tone={interviewStatusTone(card.interviewStatus)}>
+            {INTERVIEW_STATUS_LABELS[card.interviewStatus]}
+          </Chip>
+        </span>
+        <span data-evaluation-status={card.evaluationStatus}>
+          <Chip
+            tone={
+              card.evaluationStatus === "complete"
+                ? "mint"
+                : card.evaluationStatus === "incomplete"
+                  ? "butter"
+                  : "neutral"
+            }
+          >
+            {EVALUATION_STATUS_LABELS[card.evaluationStatus]}
+          </Chip>
+        </span>
+        {card.latestDecision ? (
+          <span data-latest-decision={card.latestDecision}>
+            <Chip
+              tone={
+                card.latestDecision === "hired"
+                  ? "mint"
+                  : card.latestDecision === "reject"
+                    ? "danger"
+                    : card.latestDecision === "hold"
+                      ? "butter"
+                      : "sky"
+              }
+            >
+              {OWNER_DECISION_LABELS[card.latestDecision]}
+            </Chip>
+          </span>
+        ) : null}
+        {followUpIsOutstanding(card.followUp) ? (
+          <span data-follow-up={card.followUp?.action}>
+            <Chip tone="lavender">{FOLLOW_UP_ACTION_LABELS[card.followUp!.action]}</Chip>
+          </span>
+        ) : null}
+      </div>
       <p className="m-0 text-[14px] text-muted">{card.roleTitle}</p>
       <p className="m-0 text-[13px] text-muted">Applied {submittedLabel(card.submittedAt)}</p>
       <ApplicantStageForm applicationId={card.applicationId} stage={card.stage} compact />
@@ -59,11 +108,17 @@ export function ApplicantsBoardView({
   board,
   query,
   campaignId,
+  stage,
+  review,
+  followUp,
 }: {
   companyName: string
   board: ApplicantBoard
   query: string
   campaignId: string
+  stage: string
+  review: string
+  followUp: boolean
 }) {
   const grouped = cardsByStage(board.cards)
   return (
@@ -76,6 +131,9 @@ export function ApplicantsBoardView({
           <Link href="/blueprint/recruiting/interview" className="bp-link self-start font-bold">
             Video interview questions
           </Link>
+          <Link href="/blueprint/recruiting/scorecard" className="bp-link self-start font-bold">
+            Evaluation categories
+          </Link>
         </div>
         <p className="bp-type-small font-bold! text-muted">{companyName}</p>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
@@ -86,7 +144,14 @@ export function ApplicantsBoardView({
           />
         </div>
         <p className="bp-type-lead max-w-[620px] text-ink-2">{APPLICANTS_OPENING}</p>
-        <ApplicantBoardFilters query={query} campaignId={campaignId} campaigns={board.campaigns} />
+        <ApplicantBoardFilters
+          query={query}
+          campaignId={campaignId}
+          stage={stage}
+          review={review}
+          followUp={followUp}
+          campaigns={board.campaigns}
+        />
       </section>
       {board.cards.length === 0 ? (
         <Card as="section" aria-labelledby="applicants-empty-title" className="max-w-[900px] max-[760px]:p-[22px]!">

@@ -2,6 +2,11 @@ import Link from "next/link"
 
 import { Card, Chip, Fact } from "@/components/blueprint"
 import { ApplicantNoteForm, ApplicantStageForm } from "@/app/applicant-forms"
+import {
+  ApplicantDecisionForm,
+  ApplicantEvaluationForm,
+  ApplicantFollowUpForm,
+} from "@/app/candidate-review-forms"
 import { InterviewInvitePanel, InterviewRetryForm } from "@/app/interview-forms"
 import {
   APPLICANT_STAGE_LABELS,
@@ -9,6 +14,14 @@ import {
   type ApplicantProfile,
   type ApplicantStage,
 } from "@/lib/blueprint/applicants"
+import {
+  APPLICANT_REVIEW_STATUS_LABELS,
+  EVALUATION_STATUS_LABELS,
+  FOLLOW_UP_ACTION_LABELS,
+  HUMAN_EVALUATION_TITLE,
+  OWNER_DECISION_LABELS,
+  followUpIsOutstanding,
+} from "@/lib/blueprint/candidate-review"
 import {
   INTERVIEW_NO_SCORE,
   INTERVIEW_STATUS_LABELS,
@@ -45,14 +58,24 @@ export function ApplicantProfileView({
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <h1 className="bp-type-display-xl max-[760px]:text-[46px]!">{applicantDisplayName(profile)}</h1>
           <Chip tone={STAGE_CHIP[profile.stage]}>{APPLICANT_STAGE_LABELS[profile.stage]}</Chip>
+          <span data-review-status={profile.reviewStatus}>
+            <Chip tone={profile.reviewStatus === "reviewed" ? "mint" : "butter"}>
+              {APPLICANT_REVIEW_STATUS_LABELS[profile.reviewStatus]}
+            </Chip>
+          </span>
           <span data-interview-status={profile.interviewStatus}>
             <Chip tone={interviewStatusTone(profile.interviewStatus)}>
               {INTERVIEW_STATUS_LABELS[profile.interviewStatus]}
             </Chip>
           </span>
+          <span data-evaluation-status={profile.evaluationStatus}>
+            <Chip tone={profile.evaluationStatus === "complete" ? "mint" : "neutral"}>
+              {EVALUATION_STATUS_LABELS[profile.evaluationStatus]}
+            </Chip>
+          </span>
         </div>
         <p className="bp-type-lead max-w-[620px] text-ink-2">
-          Applied {when(profile.submittedAt)} for {profile.roleTitle}.
+          Applied {when(profile.submittedAt)} for {profile.roleTitle}. You decide every next step.
         </p>
       </section>
       <Card as="section" aria-labelledby="applicant-contact-title" className="max-w-[900px] max-[760px]:p-[22px]!">
@@ -64,6 +87,23 @@ export function ApplicantProfileView({
           <Fact label="Phone" value={profile.phone} />
           <Fact label="Location" value={profile.location} />
           <Fact label="Campaign" value={`${profile.roleTitle} · /join/${profile.slug}`} />
+        </div>
+      </Card>
+      <Card as="section" aria-labelledby="applicant-dates-title" className="max-w-[900px] max-[760px]:p-[22px]!">
+        <h2 id="applicant-dates-title" className="bp-card__title">
+          Dates
+        </h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          <Fact label="Application received" value={when(profile.submittedAt)} />
+          <Fact label="Current stage" value={APPLICANT_STAGE_LABELS[profile.stage]} />
+          <Fact
+            label="Interview invited"
+            value={profile.interview ? when(profile.interview.invitedAt) : "Not sent"}
+          />
+          <Fact
+            label="Interview submitted"
+            value={profile.interview?.submittedAt ? when(profile.interview.submittedAt) : "Not submitted"}
+          />
         </div>
       </Card>
       <Card as="section" aria-labelledby="applicant-answers-title" className="max-w-[900px] max-[760px]:p-[22px]!">
@@ -79,6 +119,62 @@ export function ApplicantProfileView({
         ))}
       </Card>
       <InterviewReviewSection profile={profile} />
+      <Card as="section" aria-labelledby="applicant-evaluation-title" className="max-w-[900px] max-[760px]:p-[22px]!">
+        <h2 id="applicant-evaluation-title" className="bp-card__title">
+          {HUMAN_EVALUATION_TITLE}
+        </h2>
+        <p className="bp-card__body">
+          Optional. Leave a category as Not evaluated if you have not rated it yet. There is no overall score.
+        </p>
+        <ApplicantEvaluationForm
+          applicationId={profile.applicationId}
+          categories={profile.evaluationCategories}
+          evaluation={profile.evaluation}
+        />
+      </Card>
+      <Card as="section" aria-labelledby="applicant-decision-title" className="max-w-[900px] max-[760px]:p-[22px]!">
+        <h2 id="applicant-decision-title" className="bp-card__title">
+          Owner decision
+        </h2>
+        <ApplicantDecisionForm applicationId={profile.applicationId} />
+        {profile.decisions.length === 0 ? (
+          <p className="bp-card__body">No owner decision recorded yet.</p>
+        ) : (
+          <ol className="m-0 flex list-none flex-col gap-3 p-0" data-decision-history="">
+            {[...profile.decisions].reverse().map((row) => (
+              <li key={row.id} className="text-[14px] text-ink" data-decision={row.id}>
+                <span className="font-bold">{OWNER_DECISION_LABELS[row.decision]}</span>
+                {row.fromStage
+                  ? ` · ${APPLICANT_STAGE_LABELS[row.fromStage]} → ${APPLICANT_STAGE_LABELS[row.toStage]}`
+                  : ` · ${APPLICANT_STAGE_LABELS[row.toStage]}`}
+                {row.reason ? <span className="block text-ink-2">{row.reason}</span> : null}
+                <span className="block text-[13px] text-muted">{when(row.createdAt)}</span>
+              </li>
+            ))}
+          </ol>
+        )}
+      </Card>
+      <Card as="section" aria-labelledby="applicant-follow-up-title" className="max-w-[900px] max-[760px]:p-[22px]!">
+        <h2 id="applicant-follow-up-title" className="bp-card__title">
+          Follow-up
+        </h2>
+        {followUpIsOutstanding(profile.followUp) ? (
+          <p className="bp-card__body" data-follow-up-pending={profile.followUp?.action}>
+            Pending: {FOLLOW_UP_ACTION_LABELS[profile.followUp!.action]}
+            {profile.followUp?.dueOn ? ` by ${profile.followUp.dueOn}` : ""}.
+          </p>
+        ) : profile.followUp ? (
+          <p className="bp-card__body">Last follow-up marked done.</p>
+        ) : (
+          <p className="bp-card__body">No follow-up recorded.</p>
+        )}
+        <ApplicantFollowUpForm
+          applicationId={profile.applicationId}
+          action={profile.followUp?.action ?? null}
+          dueOn={profile.followUp?.dueOn ?? null}
+          status={profile.followUp?.status ?? null}
+        />
+      </Card>
       <Card as="section" aria-labelledby="applicant-stage-title" className="max-w-[900px] max-[760px]:p-[22px]!">
         <h2 id="applicant-stage-title" className="bp-card__title">
           Pipeline stage

@@ -28,6 +28,7 @@ export function resetGuidedCompanyData(companyId: string) {
     delete from public.company_interview_attempts;
     delete from public.company_application_attempts;
     delete from public.company_interview_templates where company_id = '${companyId}';
+    delete from public.company_evaluation_templates where company_id = '${companyId}';
     delete from public.company_applicants where company_id = '${companyId}';
     delete from public.company_recruiting_pages where company_id = '${companyId}';
     delete from public.company_recruitment_strategies where company_id = '${companyId}';
@@ -106,6 +107,7 @@ export function ensureEmptyGuidedCompany() {
     delete from public.company_interview_attempts;
     delete from public.company_application_attempts;
     delete from public.company_interview_templates where company_id = '${COMPANY_C_ID}';
+    delete from public.company_evaluation_templates where company_id = '${COMPANY_C_ID}';
     delete from public.company_applicants where company_id = '${COMPANY_C_ID}';
     delete from public.company_recruiting_pages where company_id = '${COMPANY_C_ID}';
     delete from public.company_recruitment_strategies where company_id = '${COMPANY_C_ID}';

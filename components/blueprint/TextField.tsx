@@ -4,7 +4,7 @@ import { describedBy, Field, type FieldProps } from "./Field"
 
 export type TextFieldProps = FieldProps &
   Omit<InputHTMLAttributes<HTMLInputElement>, "className" | "type" | "required"> & {
-    type?: "text" | "email" | "tel" | "url" | "search"
+    type?: "text" | "email" | "tel" | "url" | "search" | "date"
   }
 
 /** A labelled single-line text input. Uncontrolled by default; pass value/onChange to control it. */

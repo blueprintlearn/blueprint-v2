@@ -72,6 +72,10 @@ function card(overrides: Partial<ApplicantCard> = {}): ApplicantCard {
     submittedAt: "2026-03-01T12:00:00.000Z",
     answers,
     interviewStatus: "not_sent",
+    reviewStatus: "needs_review",
+    evaluationStatus: "not_started",
+    latestDecision: null,
+    followUp: null,
     ...overrides,
   }
 }
@@ -115,6 +119,31 @@ describe("applicant pipeline helpers", () => {
     })
     expect(filterApplicantCards([maya, jordan], "maya", "")).toEqual([maya])
     expect(filterApplicantCards([maya, jordan], "", "page-2")).toEqual([jordan])
+    expect(
+      filterApplicantCards([maya, jordan], "", "", { stage: "interview", review: "", followUp: false }),
+    ).toEqual([jordan])
+    expect(
+      filterApplicantCards(
+        [
+          maya,
+          card({
+            applicationId: "app-3",
+            firstName: "Sam",
+            lastName: "Ortiz",
+            followUp: {
+              action: "review_video",
+              dueOn: "2026-04-01",
+              status: "pending",
+              updatedAt: "2026-03-02T12:00:00.000Z",
+              updatedBy: "user-a",
+            },
+          }),
+        ],
+        "",
+        "",
+        { stage: "", review: "", followUp: true },
+      ),
+    ).toHaveLength(1)
     expect(cardsByStage([maya, jordan]).interview).toEqual([jordan])
     expect(cardsByStage([maya, jordan]).new_application).toEqual([maya])
     expect(buildApplicantBoard([maya, jordan]).campaigns).toEqual([
