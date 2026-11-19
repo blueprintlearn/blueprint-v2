@@ -253,6 +253,7 @@ describe("BlueprintOverview", () => {
     )
     expect(anchors(withFindings).some((a) => a.href === "/blueprint/recruit" && a.label === "Start recruiting")).toBe(true)
     expect(anchors(withFindings).some((a) => a.href === "/blueprint/applicants" && a.label === "Review applicants")).toBe(true)
+    expect(anchors(withFindings).some((a) => a.href === "/blueprint/training" && a.label === "Training library")).toBe(true)
     expect(count(withFindings, "bp-btn--primary")).toBe(0)
   })
 })
@@ -280,6 +281,7 @@ describe("BlueprintHomeCard", () => {
     expect(anchors(done)).toEqual([
       { href: "/blueprint/recruit", className: "bp-btn bp-btn--soft self-start", label: "Start recruiting" },
       { href: "/blueprint/applicants", className: "bp-btn bp-btn--soft self-start", label: "Review applicants" },
+      { href: "/blueprint/training", className: "bp-btn bp-btn--soft self-start", label: "Training library" },
       { href: "/blueprint/review", className: "bp-btn bp-btn--soft self-start", label: "Review your Blueprint" },
     ])
     expect(count(done, "bp-btn--primary")).toBe(0)
@@ -291,6 +293,7 @@ describe("BlueprintHomeCard", () => {
       { href: "/blueprint/growth-plan", className: "bp-btn bp-btn--soft self-start", label: "See your growth plan" },
       { href: "/blueprint/recruit", className: "bp-btn bp-btn--soft self-start", label: "Start recruiting" },
       { href: "/blueprint/applicants", className: "bp-btn bp-btn--soft self-start", label: "Review applicants" },
+      { href: "/blueprint/training", className: "bp-btn bp-btn--soft self-start", label: "Training library" },
       { href: "/blueprint/review", className: "bp-btn bp-btn--soft self-start", label: "Review your Blueprint" },
     ])
   })

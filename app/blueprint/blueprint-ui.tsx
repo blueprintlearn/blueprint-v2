@@ -186,6 +186,9 @@ export function BlueprintOverview({
         <Link href="/blueprint/applicants" className="bp-btn bp-btn--soft self-start">
           Review applicants
         </Link>
+        <Link href="/blueprint/training" className="bp-btn bp-btn--soft self-start">
+          Training library
+        </Link>
       </section>
       <BlueprintSectionList progress={progress} />
     </>
@@ -239,6 +242,9 @@ export function BlueprintHomeCard({
         </Link>
         <Link href="/blueprint/applicants" className="bp-btn bp-btn--soft self-start">
           Review applicants
+        </Link>
+        <Link href="/blueprint/training" className="bp-btn bp-btn--soft self-start">
+          Training library
         </Link>
         {progress.action === "review" ? (
           <Link href="/blueprint/review" className="bp-btn bp-btn--soft self-start">

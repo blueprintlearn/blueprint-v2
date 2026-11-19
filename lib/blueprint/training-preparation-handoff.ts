@@ -1,7 +1,8 @@
 /**
  * Typed Stage 4 training contract. Stage 3.7 records an owner-approved
- * preparation. The training system is not enabled yet and must not depend on
- * recruitment UI components.
+ * preparation. Stage 4.1 keeps nextStepDestination at not_enabled. Future
+ * enrollment selection lives in training-enrollment.ts and must not assign
+ * courses, invite trainees, or create progress.
  */
 
 import type { TrainingApproach, TrainingExperienceLevel, TrainingPreparationRecord } from "@/lib/blueprint/training-preparation"
