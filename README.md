@@ -120,6 +120,8 @@ Stage 2.1 adds a read-only Business Findings page at `/blueprint/findings`. It i
 
 Stage 2.2 adds a read-only Staffing & demand page at `/blueprint/staffing`. Pure functions calculate current staffing facts, capacity, additional bookings, qualified leads, and revenue opportunity when the required inputs exist. Stage 1 never collected per-DJ capacity, a booking target, a closing rate, or an owner-confirmed expected bookings without expansion, so those results stay unavailable instead of inventing defaults. Current event volume is historical and is not used as a forward-looking baseline. Approval is checked before any calculation runs. No hiring targets are written, and no new tables are added.
 
+Stage 2.3A adds growth planning at `/blueprint/growth`. Follow-up answers (typical lead capacity, booking target, expected bookings without expansion, closing rate, and training availability) live in `company_growth_planning`, not in the approved Stage 1 snapshot. Deterministic recommendations name the biggest obstacle to growth. The owner can accept, modify, or reject them without changing saved goals. This is not a final plan and does not start recruiting.
+
 `NEXT_PUBLIC_SENTRY_DSN` and `SENTRY_DSN` must be the same project DSN for a given target. Staging and production must use different Sentry projects. The browser SDK only initializes when `NEXT_PUBLIC_SENTRY_DSN` is a static `process.env.NEXT_PUBLIC_SENTRY_DSN` lookup that Next.js can inline. Do not send browser events through a Sentry tunnel; unique Vercel URLs are behind Deployment Protection, and a tunnel would be swallowed by SSO.
 
 Source-map upload is deferred: do not set `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, or `SENTRY_PROJECT`.
