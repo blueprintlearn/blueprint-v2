@@ -142,8 +142,8 @@ export function BusinessFindingsView({
             <Link href="/blueprint/review" className="bp-btn bp-btn--plain">
               {FINDINGS_REVIEW_CTA}
             </Link>
-            <Link href="/blueprint" className="bp-btn bp-btn--soft">
-              Back to your Blueprint
+            <Link href="/blueprint/staffing" id="blueprint-next" className="bp-btn bp-btn--soft">
+              Next: Staffing and demand
             </Link>
           </div>
         </>

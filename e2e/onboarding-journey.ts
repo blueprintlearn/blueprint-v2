@@ -184,6 +184,14 @@ export async function runOnboardingJourney(page: Page) {
   await expect(page.locator("[data-findings-key='N1'] .bp-fact__value")).toContainText("$240,000")
   await expect(page.getByText(/we recommend|you need \d+ DJs|training plan/)).toHaveCount(0)
 
+  await page.goto("/blueprint/staffing")
+  await expect(page.locator("[data-staffing-gate]")).toHaveAttribute("data-staffing-gate", "current")
+  await expect(page.locator("[data-staffing-calc='volume'] .bp-fact__value")).toHaveText("70")
+  await expect(page.locator("[data-staffing-calc='independent-leads'] .bp-fact__value")).toHaveText("1")
+  await expect(page.locator("[data-staffing-calc='assistants'] .bp-fact__value")).toHaveText("1")
+  await expect(page.locator("[data-staffing-calc='capacity']")).toHaveAttribute("data-staffing-status", "unavailable")
+  await expect(page.getByText(/we recommend|hire \d+ DJs/)).toHaveCount(0)
+
   await page.goto("/blueprint/events")
   await page.locator('#q-E2 input[name="e2"]').fill("90")
   await page.getByRole("button", { name: "Save your events today" }).click()
@@ -191,6 +199,9 @@ export async function runOnboardingJourney(page: Page) {
   await page.goto("/blueprint/findings")
   await expect(page.locator("[data-findings-gate]")).toHaveAttribute("data-findings-gate", "stale")
   await expect(page.locator("[data-findings-key]")).toHaveCount(0)
+  await page.goto("/blueprint/staffing")
+  await expect(page.locator("[data-staffing-gate]")).toHaveAttribute("data-staffing-gate", "stale")
+  await expect(page.locator("[data-staffing-calc]")).toHaveCount(0)
   await page.goto("/blueprint/review")
   await expect(page.locator("[data-snapshot-key='E2'] .bp-fact__value")).toHaveText("90")
   await expect(page.locator("form[data-card='approve']")).toHaveAttribute("data-saved-r1", "")
@@ -204,4 +215,7 @@ export async function runOnboardingJourney(page: Page) {
   await page.goto("/blueprint/findings")
   await expect(page.locator("[data-findings-gate]")).toHaveAttribute("data-findings-gate", "current")
   await expect(page.locator("[data-findings-key='E2'] .bp-fact__value")).toHaveText("90")
+  await page.goto("/blueprint/staffing")
+  await expect(page.locator("[data-staffing-gate]")).toHaveAttribute("data-staffing-gate", "current")
+  await expect(page.locator("[data-staffing-calc='volume'] .bp-fact__value")).toHaveText("90")
 }
