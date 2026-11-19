@@ -1,0 +1,5441 @@
+[
+  {
+    "kind": "course",
+    "legacyId": "28417",
+    "v2Id": "ed31fdb7-1b80-56ec-9c57-38388dcab0db",
+    "parentLegacyId": null,
+    "title": "Beatmixing Basics"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28477",
+    "v2Id": "5570f2b1-44d6-5865-ab10-a026913779fa",
+    "parentLegacyId": "28417",
+    "title": "BEATMIXING BASICS: What is Beatmixing? [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28477",
+    "v2Id": "a3789271-cc51-59df-b3f0-3160b08ede2c",
+    "parentLegacyId": "28477",
+    "title": "BEATMIXING BASICS: What is Beatmixing? [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28475",
+    "v2Id": "456ae7ab-ca6d-5157-a4ce-4e3c0b835b50",
+    "parentLegacyId": "28417",
+    "title": "BEATMIXING BASICS: Phrase Mixing [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28475",
+    "v2Id": "26ce144c-14b0-5614-8fa6-87af0e80a3de",
+    "parentLegacyId": "28475",
+    "title": "BEATMIXING BASICS: Phrase Mixing [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28473",
+    "v2Id": "62042f92-d3cb-54ce-8602-d1ab0001614e",
+    "parentLegacyId": "28417",
+    "title": "BEATMIXING BASICS: Low EQ Knob [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28473",
+    "v2Id": "08424f65-63ec-569c-afa5-61b6fefeaabb",
+    "parentLegacyId": "28473",
+    "title": "BEATMIXING BASICS: Low EQ Knob [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28471",
+    "v2Id": "2bf07649-45f2-5640-82b1-2255da00d7c1",
+    "parentLegacyId": "28417",
+    "title": "BEATMIXING BASICS: Filter Knob [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28471",
+    "v2Id": "55721401-e78e-5d4d-84fc-38e769eb03ae",
+    "parentLegacyId": "28471",
+    "title": "BEATMIXING BASICS: Filter Knob [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28469",
+    "v2Id": "44fab4d9-c347-56a9-82c2-a8000b1ead33",
+    "parentLegacyId": "28417",
+    "title": "BEATMIXING BASICS: Echo Out + BPM Cycle [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28469",
+    "v2Id": "5180daf1-ccbf-5f1d-ac68-37adf6de6f14",
+    "parentLegacyId": "28469",
+    "title": "BEATMIXING BASICS: Echo Out + BPM Cycle [!] upload"
+  },
+  {
+    "kind": "course",
+    "legacyId": "28419",
+    "v2Id": "c9d24b14-2289-5727-b69d-ba65dda58504",
+    "parentLegacyId": null,
+    "title": "Controller Extension"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28493",
+    "v2Id": "89785541-cccc-577c-a39f-6907c2a7f745",
+    "parentLegacyId": "28419",
+    "title": "CONTROLLER EXTENSION: Beatgrids"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28491",
+    "v2Id": "65b64d61-fe5d-50d6-b875-54d5702479b6",
+    "parentLegacyId": "28419",
+    "title": "CONTROLLER EXTENSION: Hot Cues [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28491",
+    "v2Id": "c122387d-03f0-5add-abcf-9ace71f376c0",
+    "parentLegacyId": "28491",
+    "title": "CONTROLLER EXTENSION: Hot Cues [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28489",
+    "v2Id": "2c691b5f-ca64-596a-804c-86fba29e578e",
+    "parentLegacyId": "28419",
+    "title": "CONTROLLER EXTENSION: Looping"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28487",
+    "v2Id": "a791c692-524d-508c-8aa3-5e495c14d6f3",
+    "parentLegacyId": "28419",
+    "title": "CONTROLLER EXTENSION: Slip Mode+"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28485",
+    "v2Id": "818af86f-cb1c-5b69-b46f-c8da475ce16c",
+    "parentLegacyId": "28419",
+    "title": "CONTROLLER EXTENSION: Sampler"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28483",
+    "v2Id": "6c87c522-fda4-5480-8a45-8b89eda599bc",
+    "parentLegacyId": "28419",
+    "title": "CONTROLLER EXTENSION: FX"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28481",
+    "v2Id": "517d4c67-af29-52e2-82b2-d6a28263e094",
+    "parentLegacyId": "28419",
+    "title": "CONTROLLER EXTENSION: Midi Mapping"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28479",
+    "v2Id": "43f4e254-7086-5307-9a11-43633de6724b",
+    "parentLegacyId": "28419",
+    "title": "CONTROLLER EXTENSION: Extra Features+ [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28479",
+    "v2Id": "d620a700-572e-568b-bee6-0eb0dfc82472",
+    "parentLegacyId": "28479",
+    "title": "CONTROLLER EXTENSION: Extra Features+ [!] upload"
+  },
+  {
+    "kind": "course",
+    "legacyId": "28881",
+    "v2Id": "77b7df59-1607-5da2-b19b-b8dd260db7b8",
+    "parentLegacyId": null,
+    "title": "How to Train an Event DJ"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28890",
+    "v2Id": "44c8c8d5-7f68-53e5-9a81-5ec449b26e69",
+    "parentLegacyId": "28881",
+    "title": "1. Start Here"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28889",
+    "v2Id": "faf9ad62-4107-5042-97ef-97bdbc4f23f3",
+    "parentLegacyId": "28881",
+    "title": "2. Strategic Steps"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28900",
+    "v2Id": "72fb9f3d-9b56-5c9b-963e-6929844af789",
+    "parentLegacyId": "28891",
+    "title": "What is a common mistake made by multi-op owners and managers?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28901",
+    "v2Id": "4a339119-74c0-5784-a051-f0587d973f89",
+    "parentLegacyId": "28891",
+    "title": "What analogy is used to describe generating enough leads needed to grow your team?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28902",
+    "v2Id": "2abd5d79-c9aa-558a-901d-1416797154f5",
+    "parentLegacyId": "28891",
+    "title": "Reflecting on changes in your personal life highlights the importance of:"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28891",
+    "v2Id": "7cbc8b5b-4e5e-50fc-9ecc-32a04f830c0c",
+    "parentLegacyId": "28889",
+    "title": "How to Train a DJ - lesson 2 Quiz"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28888",
+    "v2Id": "90c49828-ce95-54c6-8bbe-410b62d43740",
+    "parentLegacyId": "28881",
+    "title": "3. Cultivating Core Values"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28903",
+    "v2Id": "1a51872d-e5f6-53fd-977a-bb1a89fa23d5",
+    "parentLegacyId": "28898",
+    "title": "What is the impact of core value alignment in your DJ business?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28904",
+    "v2Id": "57c48e93-a9f4-5951-baa2-486002552042",
+    "parentLegacyId": "28898",
+    "title": "How many core values are recommended?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28905",
+    "v2Id": "91f30b10-c455-5af3-a0ba-6145a9acd0c7",
+    "parentLegacyId": "28898",
+    "title": "What is the reason for making core values into verbs?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28898",
+    "v2Id": "5c86e026-87ac-57ca-9c46-9f4bf3114404",
+    "parentLegacyId": "28888",
+    "title": "How to Train an Event DJ - lesson 3"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28887",
+    "v2Id": "49c77230-2aeb-5c66-9a5c-7745716be403",
+    "parentLegacyId": "28881",
+    "title": "4. Your Perfect DJ"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28906",
+    "v2Id": "7f9bf198-ea0e-5c58-a028-91267080c6a1",
+    "parentLegacyId": "28897",
+    "title": "What does \"Core Essentials\" refer to in the context of creating a DJ avatar?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28907",
+    "v2Id": "63d615b8-e7dd-58b2-a38e-805520075e15",
+    "parentLegacyId": "28897",
+    "title": "What is the distinction between hard and soft skills?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28899",
+    "v2Id": "ee0553fb-fd70-53dd-a104-baf11c15d812",
+    "parentLegacyId": "28897",
+    "title": "What is the primary goal of identifying the perfect DJ avatar for your company?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28897",
+    "v2Id": "bba49fd1-8ec0-57a6-ab9a-56cf6063df77",
+    "parentLegacyId": "28887",
+    "title": "How to Train an Event DJ - Lesson 4 Quiz"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28886",
+    "v2Id": "88e3bba4-75f5-5c98-87af-ed053f20b9c0",
+    "parentLegacyId": "28881",
+    "title": "5. Rockstar Recruitment"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28909",
+    "v2Id": "c280b642-e326-55aa-8556-4e654e9e954b",
+    "parentLegacyId": "28895",
+    "title": "What is the function of a recruitment funnel?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28918",
+    "v2Id": "88f1981c-0c88-542d-a25a-cdf2b729570b",
+    "parentLegacyId": "28895",
+    "title": "What is a key aspect of digital recruiting?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28925",
+    "v2Id": "abaeab1b-b086-53ae-a1d7-d370e551a9ff",
+    "parentLegacyId": "28895",
+    "title": "How can you use multiple job listing sites effectively?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28924",
+    "v2Id": "e9830b1e-3cca-5355-82b1-1e5141d056c2",
+    "parentLegacyId": "28895",
+    "title": "What overarching strategy for recruitment is suggested?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28895",
+    "v2Id": "187cd9dc-82cc-5810-9603-501f9b035a28",
+    "parentLegacyId": "28886",
+    "title": "How to Train an Event DJ - Lesson 5 Quiz"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28885",
+    "v2Id": "d5e4cc33-1cb6-59f4-89d3-330490b3afe3",
+    "parentLegacyId": "28881",
+    "title": "6. Filtering Your Funnel"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28923",
+    "v2Id": "2cad3f68-70e7-52ff-9c66-1e387ed94017",
+    "parentLegacyId": "28896",
+    "title": "What is the primary objective of the \"tripwire task\u201d?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28908",
+    "v2Id": "df8d6a60-2d0b-5296-9780-e03cd35c31c0",
+    "parentLegacyId": "28896",
+    "title": "In the \"real-life rapport\" interview, what is the first aspect to screen for?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28922",
+    "v2Id": "519ef581-d4fe-5944-9e75-9e6fff4a259e",
+    "parentLegacyId": "28896",
+    "title": "Why is it essential to meet a candidate in person?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28896",
+    "v2Id": "f61b4ce7-f2b8-5ade-9723-06eb75286c41",
+    "parentLegacyId": "28885",
+    "title": "How to Train an Event DJ - Lesson 6 Quiz"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28884",
+    "v2Id": "748204c5-5d1f-5882-8775-0b6689426c99",
+    "parentLegacyId": "28881",
+    "title": "7. Training Structure"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28921",
+    "v2Id": "867078ac-55b3-542f-a2dd-56512d791385",
+    "parentLegacyId": "28892",
+    "title": "What is the primary goal of the 3-part framework for an effective DJ training program?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28920",
+    "v2Id": "a70dd3c5-cc78-5a7c-a100-6ab1c0547dec",
+    "parentLegacyId": "28892",
+    "title": "How does the Online Instruction component of the training program contribute to a trainee's development?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28919",
+    "v2Id": "acc9edbe-3518-5484-ab0b-b8dfc9bba0a8",
+    "parentLegacyId": "28892",
+    "title": "What is the purpose of the Observations component in the training program?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28917",
+    "v2Id": "164853f1-250e-5269-b40c-8b71c868412f",
+    "parentLegacyId": "28892",
+    "title": "Why is the apprentice training model considered less effective in the lesson?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28892",
+    "v2Id": "1d5df29a-1c77-5f96-a29e-5365350dabd4",
+    "parentLegacyId": "28884",
+    "title": "How to Train an Event DJ - Lesson 7 Quiz"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28883",
+    "v2Id": "33801a64-5ef5-50da-84bd-f5c81f1e82b8",
+    "parentLegacyId": "28881",
+    "title": "8. Training Management"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28910",
+    "v2Id": "c7c87850-1ce0-5f15-ace0-fa361d57a404",
+    "parentLegacyId": "28894",
+    "title": "What is the purpose of setting deadlines in the training management process?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28916",
+    "v2Id": "64c4dd32-e806-51f4-bbd0-51c7e5a1f763",
+    "parentLegacyId": "28894",
+    "title": "In the context of the DQR framework, what does 'Quality' refer to?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28915",
+    "v2Id": "20c7c1d1-8893-5129-bd28-5e6fd05a80ad",
+    "parentLegacyId": "28894",
+    "title": "What is the role of the 'Report' component in the DQR framework?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28914",
+    "v2Id": "b72b019e-24d7-5ba3-8964-04efd1315705",
+    "parentLegacyId": "28894",
+    "title": "How is the training plan used in managing trainees?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28913",
+    "v2Id": "2b349345-abe5-5bb0-a534-52dc5e69eab3",
+    "parentLegacyId": "28894",
+    "title": "What is the function of observation evaluation documents?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28894",
+    "v2Id": "fd3df67a-f8bc-5834-a87d-06505271436f",
+    "parentLegacyId": "28883",
+    "title": "How to Train an Event DJ - Lesson 8 Quiz"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28882",
+    "v2Id": "8231e61d-d476-5da7-8422-c0f61497a4b4",
+    "parentLegacyId": "28881",
+    "title": "9. Growth Mindset"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28912",
+    "v2Id": "710a285a-b41a-53b5-ad0d-75df70b98c8c",
+    "parentLegacyId": "28893",
+    "title": "What is the primary goal of continuing training for DJs after they complete the foundation course?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28911",
+    "v2Id": "16a19491-5531-5db2-8333-d424ca4ace32",
+    "parentLegacyId": "28893",
+    "title": "How are 'Launch Events' used in the post-training process?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28893",
+    "v2Id": "3b2aa918-4694-5767-834a-3412574b060b",
+    "parentLegacyId": "28882",
+    "title": "How to Train an Event DJ - Lesson 9 Quiz"
+  },
+  {
+    "kind": "course",
+    "legacyId": "28303",
+    "v2Id": "3f83add7-dfef-58ba-94dd-8527c93fd4c0",
+    "parentLegacyId": null,
+    "title": "Onboarding [For Instructors]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28305",
+    "v2Id": "b73ad8d1-17f6-5e37-851f-0142a0170c2a",
+    "parentLegacyId": "28303",
+    "title": "Lesson 1 - Blueprint for Success"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28307",
+    "v2Id": "88522173-2a71-5619-8fc7-190b4b80d0ba",
+    "parentLegacyId": "28303",
+    "title": "Lesson 2 - Roadmap"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28309",
+    "v2Id": "6fedb389-9e75-57af-8770-36e90669e7c3",
+    "parentLegacyId": "28303",
+    "title": "Lesson 3 - Instructor Account Walkthrough"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28341",
+    "v2Id": "1042cb37-7d2b-507d-ae78-21169ded60ce",
+    "parentLegacyId": "28339",
+    "title": "Where can you find short instructional videos on how to use Blueprint Teams?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28345",
+    "v2Id": "5c9347c0-b613-5328-800f-135c43b3c124",
+    "parentLegacyId": "28339",
+    "title": "Why did we intentionally leave out a \"not approved button\" on the assignment page?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28348",
+    "v2Id": "5fb79ca6-5f68-5c3b-8fef-5d61e2091bb7",
+    "parentLegacyId": "28339",
+    "title": "Where do you go to change your profile picture?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28339",
+    "v2Id": "6500dadb-4b83-5ed7-a89f-d9f131042dbb",
+    "parentLegacyId": "28309",
+    "title": "Onboarding Instructor Account"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28311",
+    "v2Id": "c78287d7-6f3a-5b19-ab10-a6ab9c86f1c7",
+    "parentLegacyId": "28303",
+    "title": "Lesson 4 - Student Account Walkthrough"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28313",
+    "v2Id": "d379d827-c1c1-5ac9-ac1e-2b13359a8aa4",
+    "parentLegacyId": "28303",
+    "title": "Lesson 5 - Student Management"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28315",
+    "v2Id": "acff6961-fbcd-5e66-bdf0-37140bfa1e04",
+    "parentLegacyId": "28303",
+    "title": "Lesson 6 - Training Plans"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28315",
+    "v2Id": "cd316bcf-8a88-5ea5-9e24-6f10025302c6",
+    "parentLegacyId": "28315",
+    "title": "Lesson 6 - Training Plans upload"
+  },
+  {
+    "kind": "course",
+    "legacyId": "28931",
+    "v2Id": "d5a9eef0-fdac-5570-a487-4daa3f0fc7ef",
+    "parentLegacyId": null,
+    "title": "Social Media Success"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28932",
+    "v2Id": "1e7fb665-977c-5481-90b4-0a303e76124c",
+    "parentLegacyId": "28931",
+    "title": "1. The Identity"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28991",
+    "v2Id": "6554857b-764d-5657-a064-d455f5f26764",
+    "parentLegacyId": "28949",
+    "title": "How does Malike define a brand?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28990",
+    "v2Id": "f5f36ce8-bc63-540c-b5c4-9165a5a960f8",
+    "parentLegacyId": "28949",
+    "title": "What is an avatar in the context of branding?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28989",
+    "v2Id": "31bec0ae-fa9f-5d7f-bd8f-7c959513899f",
+    "parentLegacyId": "28949",
+    "title": "Which of the following is NOT considered a visual element of a brand?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28988",
+    "v2Id": "89180093-5a60-53c4-a917-8c8704809190",
+    "parentLegacyId": "28949",
+    "title": "According to the lesson, what should your brand's tone of voice be consistent in?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28987",
+    "v2Id": "2267793b-b706-5594-a743-57d3d0e10aae",
+    "parentLegacyId": "28949",
+    "title": "Why is it important to know your story and your reader before learning about content capture, creation, and strategy?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28949",
+    "v2Id": "edc45a59-4ec4-52ff-bfb8-9896b0197916",
+    "parentLegacyId": "28932",
+    "title": "1. Social Media: Identity"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28940",
+    "v2Id": "969d2624-6168-5499-8ab6-76117da74320",
+    "parentLegacyId": "28931",
+    "title": "2. The Voice"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28986",
+    "v2Id": "36778d19-000e-5b8b-acb0-8f8cbc4aa94c",
+    "parentLegacyId": "28948",
+    "title": "What is the significance of core values for a brand?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28985",
+    "v2Id": "0b4adc3b-8e33-53c8-99c4-1f7d19834bc5",
+    "parentLegacyId": "28948",
+    "title": "What are core qualities described as in the lesson?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28984",
+    "v2Id": "5dc1e5bc-656f-5c84-8684-a5bef8adb447",
+    "parentLegacyId": "28948",
+    "title": "What is the easiest way to find out your core qualities according to the lesson?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28983",
+    "v2Id": "c7cc8960-87e3-598c-8dff-473aa455d658",
+    "parentLegacyId": "28948",
+    "title": "What must your brand voice match?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28982",
+    "v2Id": "b1e681fa-3e20-5c1e-93d6-c86348e91382",
+    "parentLegacyId": "28948",
+    "title": "What should every piece of content reflect?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28948",
+    "v2Id": "cc4703fd-f36f-58d2-864d-70c08c0ed436",
+    "parentLegacyId": "28940",
+    "title": "2. The Voice"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28939",
+    "v2Id": "511d2329-9275-569f-97fb-9c8b9b67212b",
+    "parentLegacyId": "28931",
+    "title": "3. The Setup"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28981",
+    "v2Id": "fdcca131-7957-53a6-840e-2b378d6913d0",
+    "parentLegacyId": "28947",
+    "title": "Which phone model is recommended for capturing high-quality videos?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28980",
+    "v2Id": "9c800c6f-fa14-5d8e-aa16-1e92260efa1c",
+    "parentLegacyId": "28947",
+    "title": "When should HDR be turned off?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28979",
+    "v2Id": "048665cc-21bf-5b85-8e40-093fbf306bf5",
+    "parentLegacyId": "28947",
+    "title": "True or False: Always use auto-exposure on a phone camera"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28978",
+    "v2Id": "08c4d728-002e-5df8-b2a6-f383f2607437",
+    "parentLegacyId": "28947",
+    "title": "What orientation is recommended for shooting social media content on a phone?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28977",
+    "v2Id": "47741700-9c6f-5ff7-b714-20cdea46f94d",
+    "parentLegacyId": "28947",
+    "title": "Why is it important to clean the lens before shooting?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28976",
+    "v2Id": "7bf015d4-cf76-5a28-8e1c-74708e2b3155",
+    "parentLegacyId": "28947",
+    "title": "What is recommended for audio settings when filming educational content?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28947",
+    "v2Id": "1e956dea-be63-5404-9ba2-d01964667a9f",
+    "parentLegacyId": "28939",
+    "title": "3. The Setup"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28933",
+    "v2Id": "eea390a9-4ad5-5e3b-9baa-8f2933b27874",
+    "parentLegacyId": "28931",
+    "title": "4. The Capture"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28975",
+    "v2Id": "e26bb82f-b58b-50d7-91fe-2c37993f8af9",
+    "parentLegacyId": "28946",
+    "title": "What should you use to position the phone camera for proper framing at events?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28974",
+    "v2Id": "31f21022-aaa4-511b-af29-7ef6a0fdebb6",
+    "parentLegacyId": "28946",
+    "title": "Why is it important to plan out spots to capture content during setup and sound check?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28973",
+    "v2Id": "874ee5c5-b31e-51b7-9b30-73110a04dc96",
+    "parentLegacyId": "28946",
+    "title": "What is the purpose of adding motion to your shots?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28972",
+    "v2Id": "04280b1c-3b82-5063-b54d-697e0cfa0142",
+    "parentLegacyId": "28946",
+    "title": "What does a \"pan\" refer to in camera motion?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28971",
+    "v2Id": "3aba80b7-a948-5c6e-8d3b-916080723453",
+    "parentLegacyId": "28946",
+    "title": "What is a \"push in\" motion?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28970",
+    "v2Id": "b209fec5-bb70-54a9-ba2c-4aedf3f18fa2",
+    "parentLegacyId": "28946",
+    "title": "Why is it recommended to practice camera movements at home or in your office/warehouse?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28946",
+    "v2Id": "b25518c4-bc55-537b-8990-f9aeca7ba15e",
+    "parentLegacyId": "28933",
+    "title": "4. The Capture"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28938",
+    "v2Id": "2d9b7e30-f7a8-5cf0-97f8-684134a35a9e",
+    "parentLegacyId": "28931",
+    "title": "5. The Content"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28969",
+    "v2Id": "b6c62a8b-3330-5985-ad63-d0f13999319c",
+    "parentLegacyId": "28945",
+    "title": "Why is it important to \"shoot to edit\"?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28968",
+    "v2Id": "af3c518d-873b-5949-b94e-ec0e2306113d",
+    "parentLegacyId": "28945",
+    "title": "What type of content should you aim to capture for entertainment and inspiration?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28967",
+    "v2Id": "5b93f0dd-dd4a-5ec7-b90f-1258815c5966",
+    "parentLegacyId": "28945",
+    "title": "How long should you generally keep your clips for easier editing?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28966",
+    "v2Id": "8660d1f1-a202-5aa1-85ab-b97e7c0fe640",
+    "parentLegacyId": "28945",
+    "title": "What should you do with clearly unusable footage at the end of the event?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28965",
+    "v2Id": "a9e4ceed-0bfe-5393-ba7d-8f314b18ffa2",
+    "parentLegacyId": "28945",
+    "title": "What is recommended for file transfer to avoid quality loss?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28945",
+    "v2Id": "d19fa475-dc72-54c8-b17a-2344b3a346b2",
+    "parentLegacyId": "28938",
+    "title": "5. The Content"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28937",
+    "v2Id": "f0798b85-90ef-5428-850e-82334aa90f54",
+    "parentLegacyId": "28931",
+    "title": "6. The Creation"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28964",
+    "v2Id": "d507ab1c-6d22-5a6e-a4b7-c1672a0a81bd",
+    "parentLegacyId": "28944",
+    "title": "What is the critical timeframe to hook a viewer's attention?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28963",
+    "v2Id": "1b5b32c1-536b-50e9-bb8b-eab8e5a94fce",
+    "parentLegacyId": "28944",
+    "title": "What type of content should you put at the beginning of your video to engage viewers?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28962",
+    "v2Id": "b809062f-f6a4-5255-8ff1-be402e7a36d0",
+    "parentLegacyId": "28944",
+    "title": "What is crucial to staying relevant on social media?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28944",
+    "v2Id": "6e663bfb-0bb4-5ccc-ba05-d64d590d9c36",
+    "parentLegacyId": "28937",
+    "title": "6. The Creation"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28936",
+    "v2Id": "e6732726-b0c7-50fe-a8d7-b5c6fa43e986",
+    "parentLegacyId": "28931",
+    "title": "7. The Delivery"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28961",
+    "v2Id": "5e7a7d30-1b20-50c6-8cce-ca53b7d52e05",
+    "parentLegacyId": "28943",
+    "title": "Why is it important to make content easy to consume?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28960",
+    "v2Id": "a05fe780-f6c0-51a4-8be9-633e79047201",
+    "parentLegacyId": "28943",
+    "title": "How often should you post content?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28943",
+    "v2Id": "1809aab3-2db2-5b6e-bb2d-fbe28b8a009e",
+    "parentLegacyId": "28936",
+    "title": "7. The Delivery"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28935",
+    "v2Id": "53ed790f-11f0-51a9-8092-3a4f9b870ff1",
+    "parentLegacyId": "28931",
+    "title": "8. The Engagement"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28959",
+    "v2Id": "25757e08-f09b-59ac-b108-c48b59b2ade1",
+    "parentLegacyId": "28942",
+    "title": "What should you do before posting content on social media?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28958",
+    "v2Id": "1e0aeeba-c0e0-5b4a-bae5-e359d910217a",
+    "parentLegacyId": "28942",
+    "title": "What type of comments should you avoid when engaging with other accounts?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28957",
+    "v2Id": "8eadedb3-395a-52fe-b964-a4cb2138db95",
+    "parentLegacyId": "28942",
+    "title": "What should you do if you tag a vendor twice and still get no reaction?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28956",
+    "v2Id": "74a611ae-4c75-55d7-9e8f-4e37cd5edc29",
+    "parentLegacyId": "28942",
+    "title": "What should you do after posting content?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28955",
+    "v2Id": "5b25c81f-166d-5011-9315-09cfdd14d70c",
+    "parentLegacyId": "28942",
+    "title": "When should you sponsor a post?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28942",
+    "v2Id": "0855e83e-4869-5d75-b6ed-683f5d35a66f",
+    "parentLegacyId": "28935",
+    "title": "8. The Engagement"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28934",
+    "v2Id": "441238bc-d7bf-5a3e-91c3-3328ef83dd3a",
+    "parentLegacyId": "28931",
+    "title": "9. The Strategy"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28954",
+    "v2Id": "ff62bc5b-1d76-5a20-adf5-d8d56abe6871",
+    "parentLegacyId": "28941",
+    "title": "How long does it typically take to see the results of your social media efforts?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28953",
+    "v2Id": "c56b485e-076d-5286-92bc-e3e3aecd51bc",
+    "parentLegacyId": "28941",
+    "title": "What should a sales scorecard include besides leads per week and bookings?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28952",
+    "v2Id": "7709088f-787e-5fb8-b9e3-b0d5193d2485",
+    "parentLegacyId": "28941",
+    "title": "What is one purpose of tracking secondary level information about inquiries?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28951",
+    "v2Id": "67134fd3-c4a3-53e5-96f5-9afe479999e3",
+    "parentLegacyId": "28941",
+    "title": "What is suggested if you are not good at clerical tasks related to scorecards?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28950",
+    "v2Id": "1462c8ef-3a7b-5361-983b-3b07358e2378",
+    "parentLegacyId": "28941",
+    "title": "What is a nurture list?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28941",
+    "v2Id": "3760815c-b736-5d94-a198-a4b184fa220c",
+    "parentLegacyId": "28934",
+    "title": "9. The Strategy"
+  },
+  {
+    "kind": "course",
+    "legacyId": "28770",
+    "v2Id": "4334a90b-229f-5aa7-8c38-7d67da2ba912",
+    "parentLegacyId": null,
+    "title": "The Art of Networking"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28775",
+    "v2Id": "bb142af2-dc11-5ab4-9852-94b3136eabfd",
+    "parentLegacyId": "28770",
+    "title": "Networking Mindset"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28782",
+    "v2Id": "dd92e9fa-a147-5aa4-bcac-2b98e9e96170",
+    "parentLegacyId": "28776",
+    "title": "What is the main goal of networking?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28783",
+    "v2Id": "2d149345-7241-5251-84b4-216ec0df095c",
+    "parentLegacyId": "28776",
+    "title": "What do ALL networking events have in common?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28784",
+    "v2Id": "2f42b959-acf1-571b-8434-c33228241be5",
+    "parentLegacyId": "28776",
+    "title": "Which option is NOT a reason for attending networking events?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28776",
+    "v2Id": "f10b7156-0239-5b92-915a-47dfccdcab64",
+    "parentLegacyId": "28775",
+    "title": "Networking Mindset"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28774",
+    "v2Id": "437338c6-ff14-5c58-bca9-d25c6bb2f2fb",
+    "parentLegacyId": "28770",
+    "title": "Invest"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28785",
+    "v2Id": "f603915b-6d33-52e9-ac04-8d4638f0b9cc",
+    "parentLegacyId": "28779",
+    "title": "Which of the following is a crucial step in preparing for a networking event?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28786",
+    "v2Id": "33d7d24b-bba9-5445-91d2-ded15e061030",
+    "parentLegacyId": "28779",
+    "title": "What does Toryn suggest about making an impression at networking events?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28787",
+    "v2Id": "6669ef5c-16f3-593e-b77c-751b29c934ee",
+    "parentLegacyId": "28779",
+    "title": "Why should you carry business cards to networking events?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28788",
+    "v2Id": "5a6debd0-15ca-55d4-8dbd-70b7027cb21f",
+    "parentLegacyId": "28779",
+    "title": "Why is intentionality important at networking events?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28789",
+    "v2Id": "f96bf7ca-35d7-5e08-a579-494c6b004662",
+    "parentLegacyId": "28779",
+    "title": "What is the significance of 'investing effort'?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28779",
+    "v2Id": "80be70e7-d7e9-5d4f-b3b3-bfba9ea3a01f",
+    "parentLegacyId": "28774",
+    "title": "Networking: Invest"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28773",
+    "v2Id": "2d9637c9-1ce7-5c9e-894d-6a3515a9448d",
+    "parentLegacyId": "28770",
+    "title": "Initiate"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28781",
+    "v2Id": "47979c8e-d3f8-5c60-a082-0a2e5a124d86",
+    "parentLegacyId": "28780",
+    "title": "What is one of the primary objectives when attending networking events?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28791",
+    "v2Id": "5aa6cf6e-6cea-54b8-99d7-7122b9fd05c4",
+    "parentLegacyId": "28780",
+    "title": "What strategy is recommended for those feeling anxious or unsure of where to start at a networking event?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28792",
+    "v2Id": "9b74cca1-f5c7-581b-ac53-4524cbc83594",
+    "parentLegacyId": "28780",
+    "title": "What benefit does arriving early at a networking event provide?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28793",
+    "v2Id": "749523da-a91a-544a-8ed2-64137b73fe12",
+    "parentLegacyId": "28780",
+    "title": "What is crucial about your handshake when introducing yourself?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28790",
+    "v2Id": "b50a0d7f-504b-5d4a-922e-c346b4d232af",
+    "parentLegacyId": "28780",
+    "title": "How should you handle introductions when joining a group conversation?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28780",
+    "v2Id": "073259f4-4c7f-5d31-aa01-cb1b895a4b88",
+    "parentLegacyId": "28773",
+    "title": "Networking: Initiate"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28772",
+    "v2Id": "9340e4f2-d0eb-54b3-acf0-6525537a7ceb",
+    "parentLegacyId": "28770",
+    "title": "Interact"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28794",
+    "v2Id": "c1d13f6c-456a-58e1-8751-cb42eb9ec192",
+    "parentLegacyId": "28777",
+    "title": "What is NOT part of the interesting-intro framework?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28795",
+    "v2Id": "56a3d8e9-5bb7-5803-a11e-4c4c77382108",
+    "parentLegacyId": "28777",
+    "title": "According to the lesson, what is NOT a useful technique for remembering names after meeting someone new?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28796",
+    "v2Id": "9fd689e0-4915-573d-9875-be6d55b2065a",
+    "parentLegacyId": "28777",
+    "title": "How can you deepen a conversation at a networking event?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28797",
+    "v2Id": "6755f105-86ea-528c-8a9c-5113910423e3",
+    "parentLegacyId": "28777",
+    "title": "Finding a common interest outside of the professional sphere is crucial for what reason?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28798",
+    "v2Id": "5dc71d48-9e0b-534c-b497-61480cf13d2a",
+    "parentLegacyId": "28777",
+    "title": "What should you do if you're ready to exit a conversation at a networking event?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28777",
+    "v2Id": "7bfabe6b-a72a-5c7f-8028-61b52369e83f",
+    "parentLegacyId": "28772",
+    "title": "Networking: Interact"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28771",
+    "v2Id": "87b4c92b-3091-5bb6-a005-416e481c6ac8",
+    "parentLegacyId": "28770",
+    "title": "Integrate"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28799",
+    "v2Id": "d4dd7419-1f27-5f70-b37c-c2ef10f48be7",
+    "parentLegacyId": "28778",
+    "title": "Following up after meeting new contacts at a networking event is crucial because:"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28800",
+    "v2Id": "da244f3a-367e-5216-8281-6cca89a42268",
+    "parentLegacyId": "28778",
+    "title": "Adding new contacts to a CRM system shortly after meeting them benefits your networking efforts by:"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28801",
+    "v2Id": "b1ef58cd-6013-5b55-9dd6-d926253fa316",
+    "parentLegacyId": "28778",
+    "title": "Personalized notes in your follow-up messages enhance the connection with new contacts by:"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28802",
+    "v2Id": "a5ebe2c2-cf94-580c-9e11-9485ad440fb8",
+    "parentLegacyId": "28778",
+    "title": "The language used in an invitation to a one-on-one meeting affects the likelihood of getting a positive response by:"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28803",
+    "v2Id": "90c90726-f5b3-50c7-8fcd-0a3c5feba579",
+    "parentLegacyId": "28778",
+    "title": "According to Jeffrey Hall's 2018 study, it typically takes:"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28778",
+    "v2Id": "4d307549-c16d-5ba7-a4e1-7ac2fc420006",
+    "parentLegacyId": "28771",
+    "title": "Networking: Integrate"
+  },
+  {
+    "kind": "course",
+    "legacyId": "27976",
+    "v2Id": "4bb87b01-2397-5d34-9e3f-ff3450366997",
+    "parentLegacyId": null,
+    "title": "\u2699\ufe0f Event Assistant"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28218",
+    "v2Id": "c33b74c9-9dda-5342-af97-5a3cb5a618b0",
+    "parentLegacyId": "27976",
+    "title": "SUPPORT BASICS: Electricity Basics [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28128",
+    "v2Id": "2eb9d681-25c7-5a68-8d25-e04800dec3dd",
+    "parentLegacyId": "28006",
+    "title": "What is the standard Amperage of a residential circuit?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28130",
+    "v2Id": "2133fb4b-ced4-5c54-b576-4afd87bc208e",
+    "parentLegacyId": "28006",
+    "title": "What is the standard Amperage of a commercial circuit?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28132",
+    "v2Id": "50ac6eb8-edf9-537e-85d5-143f66a9a75e",
+    "parentLegacyId": "28006",
+    "title": "Are outlets on separate circuits?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28134",
+    "v2Id": "695e3dca-0f60-500f-b95a-3f370cb2c053",
+    "parentLegacyId": "28006",
+    "title": "What is the standard voltage of a circuit?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28006",
+    "v2Id": "7941b448-6a7d-5520-8925-501dc5de0234",
+    "parentLegacyId": "28218",
+    "title": "[QUIZ] Amps & Volts [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28220",
+    "v2Id": "5cff5104-839a-5fab-864d-6a52c8a74256",
+    "parentLegacyId": "27976",
+    "title": "SUPPORT BASICS: Power Management [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28216",
+    "v2Id": "df35afca-c19a-5bf0-9d58-4dac9704ff5a",
+    "parentLegacyId": "27976",
+    "title": "SUPPORT BASICS: Tables/Linens [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28214",
+    "v2Id": "5b1d0035-71b7-53c3-8d70-725f2834e48c",
+    "parentLegacyId": "27976",
+    "title": "SUPPORT BASICS: Gaff Tape [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28116",
+    "v2Id": "84a4f801-d832-5602-8fae-79698399957e",
+    "parentLegacyId": "28002",
+    "title": "Why is cable management important?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28118",
+    "v2Id": "b92d89aa-659a-5b0b-aa0e-4ae18046a9ca",
+    "parentLegacyId": "28002",
+    "title": "What are the characteristics of Gaff tape?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28120",
+    "v2Id": "9f6f52b6-8244-53f4-8341-93c7e00eb65f",
+    "parentLegacyId": "28002",
+    "title": "How can you secure cables on outdoor surfaces such as dirt or grass?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28122",
+    "v2Id": "19f04ae1-aaf8-543b-b79e-8cfef848a1ec",
+    "parentLegacyId": "28002",
+    "title": "Which is the correct way to tape cables to a speaker stand?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28002",
+    "v2Id": "8ad56a2b-13b3-5999-ab3f-73000a48cc0c",
+    "parentLegacyId": "28214",
+    "title": "[QUIZ] Securing Cables [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28212",
+    "v2Id": "ce532a15-b8fc-5433-bf18-075126a9c244",
+    "parentLegacyId": "27976",
+    "title": "SUPPORT BASICS: Gear Transportation [!] [assistant]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28212",
+    "v2Id": "12bbfdad-c838-512f-b72d-1ce56b07bf6a",
+    "parentLegacyId": "28212",
+    "title": "SUPPORT BASICS: Gear Transportation [!] [assistant] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28248",
+    "v2Id": "45d7776a-c62b-56b5-9147-40b59c1e6033",
+    "parentLegacyId": "27976",
+    "title": "CABLES & CONNECTIONS: Balanced vs. Unbalanced [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28160",
+    "v2Id": "2c8d0347-2207-553c-b632-89b511cd2e74",
+    "parentLegacyId": "28020",
+    "title": "How many wires are inside of an unbalanced cable?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28164",
+    "v2Id": "92ab75d5-1207-5838-b490-ab24aa32512a",
+    "parentLegacyId": "28020",
+    "title": "Why is a balanced audio cable preferred over an unbalanced audio cable for longer applications?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28162",
+    "v2Id": "7d38497b-3ccb-58ee-a007-c074bfc4ee08",
+    "parentLegacyId": "28020",
+    "title": "How many wires are inside of a balanced audio cable?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28020",
+    "v2Id": "5ea356a2-7d72-57ae-9756-621d8e61c53c",
+    "parentLegacyId": "28248",
+    "title": "[QUIZ] Balanced vs Unbalanced [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28244",
+    "v2Id": "72213463-795f-5bda-9c84-9c82f336cca2",
+    "parentLegacyId": "27976",
+    "title": "CABLES & CONNECTIONS: Unbalanced Connections [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28246",
+    "v2Id": "8ac6fca5-0f60-562f-affa-fb37c390d6c3",
+    "parentLegacyId": "27976",
+    "title": "CABLES & CONNECTIONS: Balanced Connections [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28158",
+    "v2Id": "bea941db-b094-5df3-b661-2e0df866580d",
+    "parentLegacyId": "28018",
+    "title": "Drag each connector type (name) to match each picture"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28018",
+    "v2Id": "ad4303d7-d296-5e97-bd40-58a9795cc75a",
+    "parentLegacyId": "28246",
+    "title": "[QUIZ] Connector Sorting [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28242",
+    "v2Id": "6114b7a0-6c78-579f-a440-2dd86c0e3944",
+    "parentLegacyId": "27976",
+    "title": "CABLES & CONNECTIONS: Adapters [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28238",
+    "v2Id": "2aed96ab-e53d-5d73-8799-134465103bc1",
+    "parentLegacyId": "27976",
+    "title": "CABLES & CONNECTIONS: Cable Management [!] [assistant]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28238",
+    "v2Id": "52fd0a95-4f68-545b-ae79-7084dc283fd5",
+    "parentLegacyId": "28238",
+    "title": "CABLES & CONNECTIONS: Cable Management [!] [assistant] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28240",
+    "v2Id": "0263d32b-dda7-5012-98b6-094056f58125",
+    "parentLegacyId": "27976",
+    "title": "SPEAKER BASICS: Overview [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28154",
+    "v2Id": "335b43ac-3bbb-555c-897f-1aeef3c030a4",
+    "parentLegacyId": "28014",
+    "title": "What's the difference between a 2-way and 3-way speaker?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28152",
+    "v2Id": "168e0ea1-c887-5bd9-940a-0df5abe4a10a",
+    "parentLegacyId": "28014",
+    "title": "How is a speaker's size determined?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28014",
+    "v2Id": "d9b568d6-766b-5e72-bbc5-2ea12a7bfc29",
+    "parentLegacyId": "28240",
+    "title": "[QUIZ] Speaker Types [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28236",
+    "v2Id": "8eaf8d37-7c75-543a-b00c-1cbad05f1ae5",
+    "parentLegacyId": "27976",
+    "title": "SPEAKER BASICS: Passive vs. Active [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28232",
+    "v2Id": "6cdcd9d9-a75e-54c3-8b0f-3a62b8e7f74b",
+    "parentLegacyId": "27976",
+    "title": "SPEAKER BASICS: Speaker Stand Assembly [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28156",
+    "v2Id": "bc40fbfd-67ab-5066-a694-6593ade1c972",
+    "parentLegacyId": "28016",
+    "title": "Which is the correct speaker stand leg position?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28016",
+    "v2Id": "435c143e-8df6-5a72-b916-576b83dd1e75",
+    "parentLegacyId": "28232",
+    "title": "[QUIZ] Speaker Stand [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28234",
+    "v2Id": "247e3726-cc06-55f0-a7a2-81aac8e7a38d",
+    "parentLegacyId": "27976",
+    "title": "SPEAKER BASICS: Speaker Specifications [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28148",
+    "v2Id": "eff01a6a-61c6-5783-9630-919b6ab7d4a6",
+    "parentLegacyId": "28012",
+    "title": "What dB (decibel) level is the pain threshold?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28146",
+    "v2Id": "5414a19e-e2b1-5f1a-8ad0-cb4a46568249",
+    "parentLegacyId": "28012",
+    "title": "How many decibels (dB) is equal to twice the perceived volume?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28150",
+    "v2Id": "54712639-969f-5678-8fd1-0a47f280ae22",
+    "parentLegacyId": "28012",
+    "title": "Besides being louder, what is a benefit of a higher speaker SPL rating?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28012",
+    "v2Id": "5ffe9dab-697f-5eba-9555-f4268a6cb451",
+    "parentLegacyId": "28234",
+    "title": "[QUIZ] Speaker Specs [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28230",
+    "v2Id": "8808cb74-e209-5144-b3b5-c786608541ba",
+    "parentLegacyId": "27976",
+    "title": "SPEAKER BASICS: Coverage Angle [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28142",
+    "v2Id": "a6ee1c6d-ce3b-5ac1-b7cc-fd6f57082eb1",
+    "parentLegacyId": "28010",
+    "title": "Which speaker has the widest coverage angle?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28144",
+    "v2Id": "80316b2a-40c6-51e1-834d-c56d0f73c323",
+    "parentLegacyId": "28010",
+    "title": "Which speaker likely has the longest \"throw distance\" (sound carries the furthest)?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28010",
+    "v2Id": "41a5cb34-1e72-57bd-ac25-57f0780b3fbd",
+    "parentLegacyId": "28230",
+    "title": "[QUIZ] Coverage Angle [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28226",
+    "v2Id": "b8771c80-9836-5517-af9b-08bea845de07",
+    "parentLegacyId": "27976",
+    "title": "MICROPHONE BASICS: Microphone Descriptors [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28228",
+    "v2Id": "7dd64457-ed0b-5d9a-85d1-a35d52123c4d",
+    "parentLegacyId": "27976",
+    "title": "MICROPHONE BASICS: Mic Stand Assembly [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28224",
+    "v2Id": "8cdfa6ae-4f15-5a04-b3e1-a5a36c22b5a7",
+    "parentLegacyId": "27976",
+    "title": "MICROPHONE BASICS: Signal / Noise Ratio [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28136",
+    "v2Id": "72de1d15-31b5-51f7-b32e-0101adcc3876",
+    "parentLegacyId": "28008",
+    "title": "What is microphone feedback?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28138",
+    "v2Id": "64ce883a-9c16-5834-8e95-20121e46693a",
+    "parentLegacyId": "28008",
+    "title": "How can you increase the signal/noise ratio, lowering feedback?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28140",
+    "v2Id": "d3f3e987-90c3-51f2-a5ad-72d0f9183040",
+    "parentLegacyId": "28008",
+    "title": "Which is the correct way to hold a handheld microphone?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28008",
+    "v2Id": "f9867295-1ed6-53f0-a2d4-a3e63d8f355c",
+    "parentLegacyId": "28224",
+    "title": "[QUIZ] Signal : Noise [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28222",
+    "v2Id": "088ae2eb-090d-5d77-8b9b-3fb3b25e9200",
+    "parentLegacyId": "27976",
+    "title": "MICROPHONE BASICS: Music and Mic Balance [!] [assistant]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28222",
+    "v2Id": "037d8112-026b-51c9-8ca9-0aa28b66504a",
+    "parentLegacyId": "28222",
+    "title": "MICROPHONE BASICS: Music and Mic Balance [!] [assistant] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28210",
+    "v2Id": "9f1f832d-5503-52ff-9f10-bbaa73a3d09d",
+    "parentLegacyId": "27976",
+    "title": "CONTROLLER BASICS: Rear Panel Connections [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28208",
+    "v2Id": "c5d5854e-5195-5e9d-bfa2-390d806a4660",
+    "parentLegacyId": "27976",
+    "title": "CONTROLLER BASICS: Gain Staging [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28200",
+    "v2Id": "4d117ae8-fc26-5373-bceb-78bd35f961d8",
+    "parentLegacyId": "27976",
+    "title": "WIRELESS MICROPHONES: Wireless Overview [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28100",
+    "v2Id": "98745eea-b613-5bb1-9d51-25e0dd05f7e4",
+    "parentLegacyId": "27998",
+    "title": "What is the device called that wirelessly sends an audio signal?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28102",
+    "v2Id": "b7ca302a-a4a3-5648-8ebb-29427c2b186f",
+    "parentLegacyId": "27998",
+    "title": "What is the device calls the accepts the wireless audio signal?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28104",
+    "v2Id": "7f1bfb55-363d-5a9b-a105-27d0107578dd",
+    "parentLegacyId": "27998",
+    "title": "What is RF (for wireless microphones)?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28108",
+    "v2Id": "23458053-6660-50f9-bfdf-aba06513bb70",
+    "parentLegacyId": "27998",
+    "title": "What is AF (for wireless microphones)?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28106",
+    "v2Id": "6c54178f-5cb9-501b-b9bd-dd6526cb516a",
+    "parentLegacyId": "27998",
+    "title": "Can all wireless microphone transmitters work with all wireless microphone receivers?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27998",
+    "v2Id": "10c28a44-c424-5df2-ab46-e1c17ab79c3e",
+    "parentLegacyId": "28200",
+    "title": "[QUIZ] Wireless Mic Basics [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28196",
+    "v2Id": "3e7a86a8-7a7c-5a57-867a-1c32dce7bc4c",
+    "parentLegacyId": "27976",
+    "title": "WIRELESS MICROPHONES: Antennae Types [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28094",
+    "v2Id": "7a4f863f-8a4d-57f1-9cc0-0c4b63d72c82",
+    "parentLegacyId": "27996",
+    "title": "What can cause interference?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28096",
+    "v2Id": "f9d16bef-e305-510b-b657-5641975d1b3a",
+    "parentLegacyId": "27996",
+    "title": "What is \"line-of-sight\" (for wireless microphones)?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28098",
+    "v2Id": "746f2bf9-dfb6-5a01-9ba3-14704d487420",
+    "parentLegacyId": "27996",
+    "title": "Which antenna should you use (when you have a choice)?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27996",
+    "v2Id": "642b3fb4-99c1-5c9d-8b7c-d286d1b71212",
+    "parentLegacyId": "28196",
+    "title": "[QUIZ] RF [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28194",
+    "v2Id": "0a25c927-fada-53a6-b2fc-41f2384c8bb9",
+    "parentLegacyId": "27976",
+    "title": "WIRELESS MICROPHONES: Sync + Output [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28084",
+    "v2Id": "ae035f9c-e682-509b-b75f-c9580defa890",
+    "parentLegacyId": "27994",
+    "title": "When should you scan for open/available microphone frequencies?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28086",
+    "v2Id": "a1b30967-a4ef-59c8-ab22-efb999171342",
+    "parentLegacyId": "27994",
+    "title": "Should two receivers use the same frequency?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28088",
+    "v2Id": "727ff939-3c53-5542-b9ad-8bdd4591dc99",
+    "parentLegacyId": "27994",
+    "title": "Can two wireless transmitters on the same channel use the same receiver?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28090",
+    "v2Id": "03f6a480-af67-581b-82d4-9b7046b6bd6f",
+    "parentLegacyId": "27994",
+    "title": "Why would you adjust the microphone sensitivity?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28092",
+    "v2Id": "38b2f4f1-5dc5-5b60-bcf9-72e3b75a607a",
+    "parentLegacyId": "27994",
+    "title": "What visual readout can be used to measure the incoming audio level?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27994",
+    "v2Id": "3282b645-a5fc-599d-823c-49b68d9624d8",
+    "parentLegacyId": "28194",
+    "title": "[QUIZ] RF + AF [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28190",
+    "v2Id": "20a85ec7-54bd-53f4-a603-5a6daf890d92",
+    "parentLegacyId": "27976",
+    "title": "WIRELESS MICROPHONES: Handheld Wireless [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28192",
+    "v2Id": "0336dd6f-750a-5729-adca-f798c96747b5",
+    "parentLegacyId": "27976",
+    "title": "WIRELESS MICROPHONES: Worn Wireless [!] [assistant]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28192",
+    "v2Id": "24f9f3bb-3f5c-532e-9644-8af8922d4036",
+    "parentLegacyId": "28192",
+    "title": "WIRELESS MICROPHONES: Worn Wireless [!] [assistant] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28204",
+    "v2Id": "2e3fdfbe-363c-528e-bf2e-7f58e576ae50",
+    "parentLegacyId": "27976",
+    "title": "LIGHTING BASICS: Lighting Overview [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28124",
+    "v2Id": "3a480902-807d-5f44-b9d7-26487f3bf012",
+    "parentLegacyId": "28004",
+    "title": "What's the most disruptive outdoor light source?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28126",
+    "v2Id": "0b800e56-df09-5943-bd12-2c794fa32c15",
+    "parentLegacyId": "28004",
+    "title": "When should you find the venue lighting controls?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28004",
+    "v2Id": "db72bff6-7a98-5d2c-8100-b9cca7fa8df6",
+    "parentLegacyId": "28204",
+    "title": "[QUIZ] Lighting Basics [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28206",
+    "v2Id": "524c2b1d-0e56-5906-b05f-bd264991a689",
+    "parentLegacyId": "27976",
+    "title": "LIGHTING BASICS: Basic Lighting Terms [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28110",
+    "v2Id": "0912bf20-718d-52b7-bb48-f17c4d8e1554",
+    "parentLegacyId": "28000",
+    "title": "What value represents maximum diode intensity?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28112",
+    "v2Id": "a2439206-5bb0-57ac-9166-b542cb6e801f",
+    "parentLegacyId": "28000",
+    "title": "Mixing additional colors make the resulting light:"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28114",
+    "v2Id": "b8d04ddf-dd52-56f2-b91f-8a20b94c4bb3",
+    "parentLegacyId": "28000",
+    "title": "How can you increase the Sound-Active sensitivity?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28000",
+    "v2Id": "2d7d32e3-b0ad-517a-bd32-cb3a5edb09dc",
+    "parentLegacyId": "28206",
+    "title": "[QUIZ] Lighting Terms [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28202",
+    "v2Id": "dbaa4bb7-474c-514c-afcf-4c71e6840a96",
+    "parentLegacyId": "27976",
+    "title": "LIGHTING BASICS: Lighting Menus [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28198",
+    "v2Id": "9bc2c442-05af-51ff-87ef-8ddc315ed824",
+    "parentLegacyId": "27976",
+    "title": "LIGHTING BASICS: Dancefloor Lighting [!] [assistant]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28198",
+    "v2Id": "41b90859-2965-52dd-99f1-4ec1609ccbb0",
+    "parentLegacyId": "28198",
+    "title": "LIGHTING BASICS: Dancefloor Lighting [!] [assistant] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28188",
+    "v2Id": "b7472941-efb2-50ed-90fb-b3d809731d87",
+    "parentLegacyId": "27976",
+    "title": "PERFORMANCE SYSTEMS: Sound Mixer [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28082",
+    "v2Id": "71576c65-6ab5-5516-bdb1-dd8299478fb0",
+    "parentLegacyId": "27992",
+    "title": "Is this an appropriate audio level setting?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28080",
+    "v2Id": "9782cb15-2622-5dc3-b2bd-d015c4e3437c",
+    "parentLegacyId": "27992",
+    "title": "What is this knob's function?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28070",
+    "v2Id": "a5747d1d-5cc5-5164-b18a-d106311853d5",
+    "parentLegacyId": "27992",
+    "title": "What is a channel strip?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28072",
+    "v2Id": "828a0e4a-e561-5a9d-b393-06138748f1ac",
+    "parentLegacyId": "27992",
+    "title": "Which has a louder audio signal?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28074",
+    "v2Id": "3197b147-4603-5dd8-8f36-3282ce69dbbe",
+    "parentLegacyId": "27992",
+    "title": "What does an input channel need to boost an incoming mic level signal?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28076",
+    "v2Id": "50b3043e-d264-559c-b7f7-f7a3fad3816e",
+    "parentLegacyId": "27992",
+    "title": "Do channels 3/4 have a mic preamp?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28078",
+    "v2Id": "3d063af2-5913-5de3-b387-c59b9ffa1169",
+    "parentLegacyId": "27992",
+    "title": "If you connect a line level input to channel 2, how can you lower the incoming dB level?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27992",
+    "v2Id": "af659283-6549-5487-9a95-f728e41b9229",
+    "parentLegacyId": "28188",
+    "title": "[QUIZ] Sound Mixer [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28184",
+    "v2Id": "1e0bc41b-756f-5582-9944-0cd66e49f7b4",
+    "parentLegacyId": "27976",
+    "title": "PERFORMANCE SYSTEMS: Speaker Pair Connection [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28064",
+    "v2Id": "6a169bad-d459-5f4d-b7a9-e3d081de4d4e",
+    "parentLegacyId": "27990",
+    "title": "What connection type is required to connect a controller DIRECTLY to a pair of powered speakers?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28066",
+    "v2Id": "878b81be-78ad-5a8d-b980-39175ce241ca",
+    "parentLegacyId": "27990",
+    "title": "Which connection method facilitates using more microphones?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28068",
+    "v2Id": "68291024-cd65-59ef-ae1e-b0375651ba68",
+    "parentLegacyId": "27990",
+    "title": "Which daisy chain output option passes channel A audio only?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27990",
+    "v2Id": "1013370a-f1c4-5fdd-a894-5b3b2c78c4e5",
+    "parentLegacyId": "28184",
+    "title": "[QUIZ] Speaker Pair [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28186",
+    "v2Id": "2c77d869-e046-5839-ba73-09ba9b27abb6",
+    "parentLegacyId": "27976",
+    "title": "PERFORMANCE SYSTEMS: Speaker Placement [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28058",
+    "v2Id": "a9205c3b-e1b7-53ab-883e-f0a0ad937ca9",
+    "parentLegacyId": "27988",
+    "title": "When using fixed-height column array speakers, how can you increase the sound coverage?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28060",
+    "v2Id": "834d5cba-eaec-54f0-887a-3dec08eb9957",
+    "parentLegacyId": "27988",
+    "title": "Which speaker position is better for speeches/toasts?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28062",
+    "v2Id": "f9c2c656-1f9b-5963-9aea-b4081f0b2259",
+    "parentLegacyId": "27988",
+    "title": "Which speaker position is better for dancing?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28054",
+    "v2Id": "b09fb627-7fb9-50ad-8cf6-4caaa084af61",
+    "parentLegacyId": "27988",
+    "title": "Which is the optimal speaker positioning?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27988",
+    "v2Id": "3a79e0bc-c510-561d-a1c5-0e0b24afc77a",
+    "parentLegacyId": "28186",
+    "title": "[QUIZ] Speaker Placement [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28182",
+    "v2Id": "5322623d-d05d-58c6-8431-bdb811668066",
+    "parentLegacyId": "27976",
+    "title": "PERFORMANCE SYSTEMS: Adding Subwoofers [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28044",
+    "v2Id": "df84bfee-22ad-5d0a-bc32-8a12f23f7428",
+    "parentLegacyId": "27984",
+    "title": "Volume knob positions on the subwoofers and main speakers should:"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28042",
+    "v2Id": "07d9a595-a9a7-5e27-bb75-c5f204950ec6",
+    "parentLegacyId": "27984",
+    "title": "What are two common crowd control issues with subwoofers?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28046",
+    "v2Id": "d51338f9-307c-5774-a049-bbf38d120a0c",
+    "parentLegacyId": "27984",
+    "title": "What is subwoofer coupling used for?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27984",
+    "v2Id": "64696991-ab33-55ee-912c-fbd9a851268e",
+    "parentLegacyId": "28182",
+    "title": "[QUIZ] Subwoofers [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28178",
+    "v2Id": "2e6f8838-392c-5934-a1d4-c5582539c1d9",
+    "parentLegacyId": "27976",
+    "title": "PERFORMANCE SYSTEMS: Single Speaker [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28180",
+    "v2Id": "3941acd6-f013-5682-8f6b-86891d393f33",
+    "parentLegacyId": "27976",
+    "title": "PERFORMANCE SYSTEMS: Choosing Systems [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28052",
+    "v2Id": "25fd74b6-be3a-5854-ad36-7edd6f98a0ad",
+    "parentLegacyId": "27986",
+    "title": "Which performance system is optimal for a High School Dance Indoor venue 100' x 50' 275 Guests"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28050",
+    "v2Id": "e404c7a5-69fc-5035-9aa0-30449ff52148",
+    "parentLegacyId": "27986",
+    "title": "Which performance system is optimal for a: Law Office Grand Opening Outdoor parking lot 45 Guests"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28048",
+    "v2Id": "b46ddbea-dee8-5454-8dd6-794162011072",
+    "parentLegacyId": "27986",
+    "title": "Which performance system is optimal for a Wedding Indoor ballroom 40' x 75' 175 Guests"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27986",
+    "v2Id": "5c020ce1-9ff9-5bdf-be9c-a53e4bb8dd2a",
+    "parentLegacyId": "28180",
+    "title": "[QUIZ] Speaker Systems [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28176",
+    "v2Id": "d5fb093e-d577-54b6-9b55-b433ba8d88e7",
+    "parentLegacyId": "27976",
+    "title": "PERFORMANCE SYSTEMS: Gear Protection [!] [assistant]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28176",
+    "v2Id": "21b0b0bb-f954-5584-8115-e3458c011916",
+    "parentLegacyId": "28176",
+    "title": "PERFORMANCE SYSTEMS: Gear Protection [!] [assistant] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28174",
+    "v2Id": "ab7f913f-01a2-536a-8f5a-562f6fe5a511",
+    "parentLegacyId": "27976",
+    "title": "WEDDING DJ/MC: Ceremony [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28038",
+    "v2Id": "f3e16752-879d-5894-868f-9b76948d3300",
+    "parentLegacyId": "27982",
+    "title": "True or False: The pre-ceremony sound check is the only time to check/adjust microphone volume levels"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28034",
+    "v2Id": "ed67b827-d5e1-5a84-819a-380df9dbfb6d",
+    "parentLegacyId": "27982",
+    "title": "Where should the officiant stand during their sound check?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28036",
+    "v2Id": "1ad73e81-d1d9-5b8b-b74d-403924b1081c",
+    "parentLegacyId": "27982",
+    "title": "What is the standard length for prelude music?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28040",
+    "v2Id": "e192cb5b-21ce-523b-ab6c-4b77916f7b91",
+    "parentLegacyId": "27982",
+    "title": "Why do you ask the officiant for their \"final words before the recessional song\"?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27982",
+    "v2Id": "836e05dc-6ce4-5722-a3d8-ce0056794f7c",
+    "parentLegacyId": "28174",
+    "title": "[QUIZ] Wedding Ceremony [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28172",
+    "v2Id": "2d83041d-6778-54c0-8cc6-e604e31d29b4",
+    "parentLegacyId": "27976",
+    "title": "WEDDING DJ/MC: Cocktail Hour [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28170",
+    "v2Id": "8623137b-400c-5db9-941e-595d027e7ec6",
+    "parentLegacyId": "27976",
+    "title": "WEDDING DJ/MC: Dinner [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28028",
+    "v2Id": "4e1e1e02-8253-50c8-a3ac-f13f9cfa9819",
+    "parentLegacyId": "27980",
+    "title": "When you are eating a vendor meal in a separate room you are:"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28030",
+    "v2Id": "926f5596-3f3d-52ac-b6f3-503751a6d344",
+    "parentLegacyId": "27980",
+    "title": "When the father of the bride comes up to you behind your DJ table to ask a question, you both are:"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28032",
+    "v2Id": "23cd0ed6-30a5-5124-a25c-802b20a414e4",
+    "parentLegacyId": "27980",
+    "title": "When you have a conversation with the photographer on the dancefloor you are:"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27980",
+    "v2Id": "8d441ccd-f5a0-562f-8cb9-4a9b807c3548",
+    "parentLegacyId": "28170",
+    "title": "[QUIZ] Wedding Dinner [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28168",
+    "v2Id": "4caaf6e2-8af6-59cc-bdae-66a36d1e9360",
+    "parentLegacyId": "27976",
+    "title": "SOCIAL STRATEGY: Strategic Mindset [assistant]"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28166",
+    "v2Id": "c6288ed5-26a5-521e-8069-432eb999c12d",
+    "parentLegacyId": "27976",
+    "title": "SOCIAL STRATEGY: Vendor Relationships [assistant]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28022",
+    "v2Id": "980fc5f6-7889-5d87-a60f-e014b4d968cd",
+    "parentLegacyId": "27978",
+    "title": "Which is NOT a coomon source of repeat business for DJs?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28024",
+    "v2Id": "68348abd-abad-5b4d-988d-5bf6ee490325",
+    "parentLegacyId": "27978",
+    "title": "When you arrive on site for an event you should:"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28026",
+    "v2Id": "c887eadc-0533-533e-b302-261860b9cf8b",
+    "parentLegacyId": "27978",
+    "title": "Which is NOT a benefit of reaching out to planners several weeks before an event?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27978",
+    "v2Id": "4ec61e3e-a61a-5e8f-afd4-b7cb41f64120",
+    "parentLegacyId": "28166",
+    "title": "[QUIZ] Vendors [assistant]"
+  },
+  {
+    "kind": "course",
+    "legacyId": "25905",
+    "v2Id": "815953b1-1b35-5d0d-af9d-69aefb7c381a",
+    "parentLegacyId": null,
+    "title": "\ud83c\udfb6 Beatmixing Bootcamp"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25951",
+    "v2Id": "02fc262f-373a-5bcb-8552-780abfcb059d",
+    "parentLegacyId": "25905",
+    "title": "CONTROLLER EXTENSION: Beatgrids"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25949",
+    "v2Id": "eeee0d91-86ed-57c5-83ac-d43ca5331e1e",
+    "parentLegacyId": "25905",
+    "title": "CONTROLLER EXTENSION: Hot Cues [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25949",
+    "v2Id": "c85894d7-650b-5373-a1f8-781dca96d8af",
+    "parentLegacyId": "25949",
+    "title": "CONTROLLER EXTENSION: Hot Cues [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25947",
+    "v2Id": "a097ca35-3047-5b29-beae-f14e8d940dcd",
+    "parentLegacyId": "25905",
+    "title": "CONTROLLER EXTENSION: Looping"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25945",
+    "v2Id": "c2047b9f-b39e-5789-89a6-4631d49a61b0",
+    "parentLegacyId": "25905",
+    "title": "CONTROLLER EXTENSION: Slip Mode+"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25943",
+    "v2Id": "18437e55-07c7-5603-b14f-1bd36d68c09f",
+    "parentLegacyId": "25905",
+    "title": "CONTROLLER EXTENSION: Sampler"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25941",
+    "v2Id": "282f2fe0-b004-5688-970e-3cfe1ca500b6",
+    "parentLegacyId": "25905",
+    "title": "CONTROLLER EXTENSION: FX"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25939",
+    "v2Id": "28f49bed-2618-5825-b322-9db3a7a03616",
+    "parentLegacyId": "25905",
+    "title": "CONTROLLER EXTENSION: Midi Mapping"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25937",
+    "v2Id": "01f901c2-cea8-5719-8319-3666580b1c9f",
+    "parentLegacyId": "25905",
+    "title": "CONTROLLER EXTENSION: Extra Features+ [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25937",
+    "v2Id": "c0725ea8-c7f8-5b39-be8a-e2abd57fa8e8",
+    "parentLegacyId": "25937",
+    "title": "CONTROLLER EXTENSION: Extra Features+ [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25935",
+    "v2Id": "5ce4de65-6590-5a27-9782-a80911d4b115",
+    "parentLegacyId": "25905",
+    "title": "BEATMIXING BASICS: What is Beatmixing? [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25935",
+    "v2Id": "a32f472b-e9d8-52d2-93b1-a30124b6351a",
+    "parentLegacyId": "25935",
+    "title": "BEATMIXING BASICS: What is Beatmixing? [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25933",
+    "v2Id": "7bc9116a-9865-5dc7-ad30-ccbc26fef04a",
+    "parentLegacyId": "25905",
+    "title": "BEATMIXING BASICS: Phrase Mixing [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25933",
+    "v2Id": "84590290-bdf4-54c8-9511-7317f5a01ea8",
+    "parentLegacyId": "25933",
+    "title": "BEATMIXING BASICS: Phrase Mixing [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25931",
+    "v2Id": "dbd9201b-2d56-5c42-97dc-6f577f342731",
+    "parentLegacyId": "25905",
+    "title": "BEATMIXING BASICS: Low EQ Knob [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25931",
+    "v2Id": "43dfd7d9-4c33-59eb-9fab-c5a091466aac",
+    "parentLegacyId": "25931",
+    "title": "BEATMIXING BASICS: Low EQ Knob [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25929",
+    "v2Id": "59c252b3-be7a-571a-86bb-8c5947f5b550",
+    "parentLegacyId": "25905",
+    "title": "BEATMIXING BASICS: Filter Knob [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25929",
+    "v2Id": "78e0495b-9796-532c-8b17-ae60a36374ee",
+    "parentLegacyId": "25929",
+    "title": "BEATMIXING BASICS: Filter Knob [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25927",
+    "v2Id": "50989471-46a3-5d3c-8262-b12eb3bff758",
+    "parentLegacyId": "25905",
+    "title": "BEATMIXING BASICS: Echo Out + BPM Cycle [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25927",
+    "v2Id": "5b904913-21bd-5e82-8644-4c34523d5953",
+    "parentLegacyId": "25927",
+    "title": "BEATMIXING BASICS: Echo Out + BPM Cycle [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25925",
+    "v2Id": "467d2197-5b0d-5a0c-9c77-aa05c8fbcd38",
+    "parentLegacyId": "25905",
+    "title": "REMIX READY: Incoming Loops [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25925",
+    "v2Id": "66bbbc4a-ff18-5d2f-92a5-f3f04121de9c",
+    "parentLegacyId": "25925",
+    "title": "REMIX READY: Incoming Loops [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25923",
+    "v2Id": "1d48e5d2-4577-5adb-9be8-7891f232e08e",
+    "parentLegacyId": "25905",
+    "title": "REMIX READY: Beat Jump Catch Up [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25923",
+    "v2Id": "88581138-9973-56b6-9cc4-5b0cb4973913",
+    "parentLegacyId": "25923",
+    "title": "REMIX READY: Beat Jump Catch Up [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25921",
+    "v2Id": "3791cc0d-1cc9-55d4-9f59-a4578133450a",
+    "parentLegacyId": "25905",
+    "title": "REMIX READY: Outgoing Loops [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25921",
+    "v2Id": "06f65999-8a21-5298-ad6b-d6684149c641",
+    "parentLegacyId": "25921",
+    "title": "REMIX READY: Outgoing Loops [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25919",
+    "v2Id": "d7df2a69-5fee-5fb0-9abb-9fe469c7ab62",
+    "parentLegacyId": "25905",
+    "title": "REMIX READY: Beatmixing Originals [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25919",
+    "v2Id": "2c84b953-ecc2-557d-a66d-f47e56b744b3",
+    "parentLegacyId": "25919",
+    "title": "REMIX READY: Beatmixing Originals [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25917",
+    "v2Id": "7b3e1694-9338-5640-9224-c4cb930c4eb4",
+    "parentLegacyId": "25905",
+    "title": "REMIX READY: Loop Buildup [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25917",
+    "v2Id": "5928eebf-7fc4-577c-8fe3-dd734a3909e8",
+    "parentLegacyId": "25917",
+    "title": "REMIX READY: Loop Buildup [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25915",
+    "v2Id": "406fc563-6b40-52c5-9d4a-2d0d4285e51c",
+    "parentLegacyId": "25905",
+    "title": "MIX & MASH: Instrumentals & Acapellas [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25915",
+    "v2Id": "f5ead313-eee9-5af2-8e8d-c52da48eba52",
+    "parentLegacyId": "25915",
+    "title": "MIX & MASH: Instrumentals & Acapellas [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25913",
+    "v2Id": "2dfaf58c-da36-537a-895a-58a1372065eb",
+    "parentLegacyId": "25905",
+    "title": "MIX & MASH: Mixing in Key [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25913",
+    "v2Id": "4821bfa5-387d-5834-a742-661c9795c289",
+    "parentLegacyId": "25913",
+    "title": "MIX & MASH: Mixing in Key [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25911",
+    "v2Id": "993ae7be-b074-5bc0-a129-ecbfb67178a5",
+    "parentLegacyId": "25905",
+    "title": "MIX & MASH: Acapella In & out [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25911",
+    "v2Id": "7cab7f14-1229-5e80-8455-c4f9099a3de2",
+    "parentLegacyId": "25911",
+    "title": "MIX & MASH: Acapella In & out [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25909",
+    "v2Id": "62f5069f-171f-5dc9-b7a3-ebc6f28c1bb0",
+    "parentLegacyId": "25905",
+    "title": "MIX & MASH: Large Tempo Transitions [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25909",
+    "v2Id": "7913ca79-5f48-5d99-8758-ece0acdf7380",
+    "parentLegacyId": "25909",
+    "title": "MIX & MASH: Large Tempo Transitions [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25907",
+    "v2Id": "8621c0bd-7d0e-58e5-bfa5-34cbffcb58ad",
+    "parentLegacyId": "25905",
+    "title": "MIX & MASH: Open Format [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25907",
+    "v2Id": "552dee8c-64de-54c6-ab8d-36fd2a632a7a",
+    "parentLegacyId": "25907",
+    "title": "MIX & MASH: Open Format [!] upload"
+  },
+  {
+    "kind": "course",
+    "legacyId": "28809",
+    "v2Id": "9d9f3e99-05f7-559f-88ec-ea7705479f6a",
+    "parentLegacyId": null,
+    "title": "\ud83d\udcbb Curating A Vibe"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28819",
+    "v2Id": "b5d9f2ff-9535-51f5-ba7d-3b1c32d761eb",
+    "parentLegacyId": "28809",
+    "title": "Curating a Vibe: Next-Level Programming"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28820",
+    "v2Id": "8bf1eadb-a2cf-56e7-8942-6b58079cebc6",
+    "parentLegacyId": "28809",
+    "title": "Curating a Vibe: Programming Energy"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28821",
+    "v2Id": "d6236b50-c5da-5c9a-8800-8b3f10962e7e",
+    "parentLegacyId": "28809",
+    "title": "Curating a Vibe: Tagging System"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28822",
+    "v2Id": "6d7d33fd-7d33-5ba0-b317-3088791d38f4",
+    "parentLegacyId": "28809",
+    "title": "Curating a Vibe: Smart Crates"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28823",
+    "v2Id": "575b21a0-69e1-5ba0-bce0-c22733ea5648",
+    "parentLegacyId": "28809",
+    "title": "Curating a Vibe: Curated Collection"
+  },
+  {
+    "kind": "course",
+    "legacyId": "26067",
+    "v2Id": "c9c6eaf2-335c-5873-bb1d-40aded88ad9a",
+    "parentLegacyId": null,
+    "title": "\ud83c\udf89 Event DJ Foundations"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26221",
+    "v2Id": "69434293-7610-5cd7-9f75-692a4e327b30",
+    "parentLegacyId": "26067",
+    "title": "MUSIC BASICS: Song Sections"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26349",
+    "v2Id": "1e3330b3-b8ed-56d0-a039-67b408c1ea65",
+    "parentLegacyId": "26347",
+    "title": "At what timestamp does the first chorus begin? [audio mp3=\"https://woocommerce-989891-6333451.cloudwaysapps.com/wp-content/uploads/2022/10/13-Return-Of-The-Mack.mp3\"][/audio]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26354",
+    "v2Id": "5881b6e6-1735-5c10-8944-d4aa8a7f1fa9",
+    "parentLegacyId": "26347",
+    "title": "At what timestamp does the intro end? [audio mp3=\"https://woocommerce-989891-6333451.cloudwaysapps.com/wp-content/uploads/2022/10/01-Seven-Nation-Army.mp3\"][/audio]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26360",
+    "v2Id": "3ec88c86-74a8-5480-a4ec-8673e5e53c07",
+    "parentLegacyId": "26347",
+    "title": "At what timestamp does the bridge begin? [audio mp3=\"https://woocommerce-989891-6333451.cloudwaysapps.com/wp-content/uploads/2022/10/06-Single-Ladies-Put-A-Ring-On-It.mp3\"][/audio]"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26347",
+    "v2Id": "868aae9d-da71-5de7-8433-2812f6f1c7d9",
+    "parentLegacyId": "26221",
+    "title": "QUIZ: Song Sections"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26217",
+    "v2Id": "843c591e-7ac6-5018-aefa-8a86da39454e",
+    "parentLegacyId": "26067",
+    "title": "MUSIC BASICS: Genre"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26215",
+    "v2Id": "66b85413-79a1-57cc-9cc8-b9f6ae2202c2",
+    "parentLegacyId": "26067",
+    "title": "MUSIC BASICS: Time Period"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26213",
+    "v2Id": "ec390511-0fc2-5b11-97d9-57714c5bdc25",
+    "parentLegacyId": "26067",
+    "title": "MUSIC BASICS: Beats Per Minute"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26219",
+    "v2Id": "3aa0812c-3f20-52c1-9b31-fb609ed00084",
+    "parentLegacyId": "26067",
+    "title": "MUSIC BASICS: Grouping Beats"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26367",
+    "v2Id": "b1abc79a-2a91-5a66-b540-d2d5ecdff46c",
+    "parentLegacyId": "26365",
+    "title": "Which song is 4/4 meter and 120 BPM?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26370",
+    "v2Id": "e6cb593e-e4a0-5074-98cb-9bda0a350447",
+    "parentLegacyId": "26365",
+    "title": "Which song is late 1970's Disco?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26373",
+    "v2Id": "bb022f92-4e4c-5dcc-aaba-9a5465328aae",
+    "parentLegacyId": "26365",
+    "title": "Which song has the oldest release date?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26365",
+    "v2Id": "45cf6718-55f0-51bb-9676-c375c3d342df",
+    "parentLegacyId": "26219",
+    "title": "QUIZ: Tempo | BPM | Genre | Time Period"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26211",
+    "v2Id": "48f10561-6e26-550f-8ec0-c83bf2bd4ff7",
+    "parentLegacyId": "26067",
+    "title": "MUSICAL CONTROL: Personal Device"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26454",
+    "v2Id": "3c9e7ecf-01f8-547f-8ef1-f4f44ef7a195",
+    "parentLegacyId": "26452",
+    "title": "How can you prevent playback interruptions on a personal device?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26457",
+    "v2Id": "6913d2d1-0bce-5515-a57e-416bb9adcbe5",
+    "parentLegacyId": "26452",
+    "title": "Why is it important to be able to use a personal device as a DJ?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26452",
+    "v2Id": "edf0b15c-a23a-5821-8a72-39690341fe6c",
+    "parentLegacyId": "26211",
+    "title": "QUIZ: Personal Device"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26209",
+    "v2Id": "16b4e569-4860-535e-8c78-b0d821665c85",
+    "parentLegacyId": "26067",
+    "title": "MUSICAL CONTROL: Playback Control"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26207",
+    "v2Id": "2636414e-7181-5f8f-b9ee-95e15b223ae7",
+    "parentLegacyId": "26067",
+    "title": "MUSICAL CONTROL: Fades"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26205",
+    "v2Id": "c8ea12ec-e09a-5819-9288-9b9306d977a4",
+    "parentLegacyId": "26067",
+    "title": "MUSICAL CONTROL: Performing Fades [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "26205",
+    "v2Id": "cbd03ef3-333e-5169-ab9a-797f4b9978ad",
+    "parentLegacyId": "26205",
+    "title": "MUSICAL CONTROL: Performing Fades [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26175",
+    "v2Id": "4be9b47b-8577-5a27-bdf1-ee283d56af69",
+    "parentLegacyId": "26067",
+    "title": "MC BASICS: What is an MC?"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26173",
+    "v2Id": "c71e2034-cc54-5948-a30e-1b44333fa990",
+    "parentLegacyId": "26067",
+    "title": "MC BASICS: Coach Role"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26171",
+    "v2Id": "76e51d28-cc4a-546e-8bc1-716f1e460196",
+    "parentLegacyId": "26067",
+    "title": "MC BASICS: Cheerleader Role"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26169",
+    "v2Id": "837ca9ab-b6a2-5a5b-9291-4b5074d1e25a",
+    "parentLegacyId": "26067",
+    "title": "MC BASICS: Counselor Role"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26167",
+    "v2Id": "4253b47a-2cd5-5cfc-9bff-912747498f21",
+    "parentLegacyId": "26067",
+    "title": "MC BASICS: MC Script [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "26167",
+    "v2Id": "7c5e4b66-8d3f-57ee-9651-ed86c15b0b01",
+    "parentLegacyId": "26167",
+    "title": "MC BASICS: MC Script [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26165",
+    "v2Id": "d65e844c-495a-5ab4-ae1f-542b9119ebbf",
+    "parentLegacyId": "26067",
+    "title": "PROGRAMMING BASICS: Reading the Crowd [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "26165",
+    "v2Id": "64ac7316-0594-5024-945b-88b88600e4fc",
+    "parentLegacyId": "26165",
+    "title": "PROGRAMMING BASICS: Reading the Crowd [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26163",
+    "v2Id": "94fef625-0662-5dbe-8863-a216449927d8",
+    "parentLegacyId": "26067",
+    "title": "PROGRAMMING BASICS: Charts [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "26163",
+    "v2Id": "9d9dcfdb-c7e0-5d0a-bc96-19d5acc0223d",
+    "parentLegacyId": "26163",
+    "title": "PROGRAMMING BASICS: Charts [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26161",
+    "v2Id": "73ef8b06-dcd9-542f-9fdb-a3048f432f47",
+    "parentLegacyId": "26067",
+    "title": "PROGRAMMING BASICS: Playlist Creation [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "26161",
+    "v2Id": "2d131473-8530-5e34-9f7e-c8aaeddb93f3",
+    "parentLegacyId": "26161",
+    "title": "PROGRAMMING BASICS: Playlist Creation [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26159",
+    "v2Id": "fa451f99-26a2-5f9b-82de-e1a1072926d8",
+    "parentLegacyId": "26067",
+    "title": "PROGRAMMING BASICS: Dancer Types [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "26159",
+    "v2Id": "64bfbdcb-e77f-552b-98f4-abc7e5cb9f0c",
+    "parentLegacyId": "26159",
+    "title": "PROGRAMMING BASICS: Dancer Types [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26157",
+    "v2Id": "4d7c024f-a4b2-54c9-beb3-7daab08bc4eb",
+    "parentLegacyId": "26067",
+    "title": "PROGRAMMING BASICS: Mini Sets [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "26157",
+    "v2Id": "e89bdd02-f4e5-5a21-98a0-3dbe7a873258",
+    "parentLegacyId": "26157",
+    "title": "PROGRAMMING BASICS: Mini Sets [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26203",
+    "v2Id": "2a4555c3-c5ad-52ae-ba46-c7e06d0a94b5",
+    "parentLegacyId": "26067",
+    "title": "CABLES & CONNECTIONS: Balanced vs. Unbalanced"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26480",
+    "v2Id": "e406433e-26cb-52f0-b85e-00d42f94daf4",
+    "parentLegacyId": "26478",
+    "title": "How many wires are inside of an unbalanced cable?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26483",
+    "v2Id": "2cc387c0-d743-5a57-b8a0-5cc309361fef",
+    "parentLegacyId": "26478",
+    "title": "How many wires are inside of a balanced audio cable?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26486",
+    "v2Id": "775dfe02-cf97-5b20-8309-0b5faace05c9",
+    "parentLegacyId": "26478",
+    "title": "Why is a balanced audio cable preferred over an unbalanced audio cable for longer applications?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26478",
+    "v2Id": "20dc8c0b-f461-5bb8-a53b-31a3c65dc10f",
+    "parentLegacyId": "26203",
+    "title": "[QUIZ] Balanced vs Unbalanced"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26201",
+    "v2Id": "ea8ab1b9-d72c-54ab-8802-5f808ce2060e",
+    "parentLegacyId": "26067",
+    "title": "CABLES & CONNECTIONS: Unbalanced Connections"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26199",
+    "v2Id": "414b1a9f-831c-5234-a6cb-500f3931779c",
+    "parentLegacyId": "26067",
+    "title": "CABLES & CONNECTIONS: Balanced Connections"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26491",
+    "v2Id": "03e966f0-6fb5-5236-9f5b-da4a8a2bb4bf",
+    "parentLegacyId": "26489",
+    "title": "Drag each connector type (name) to match each picture"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26489",
+    "v2Id": "debb734f-4f6c-5101-8ba7-7603b5e6db33",
+    "parentLegacyId": "26199",
+    "title": "[QUIZ] Connector Sorting"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26197",
+    "v2Id": "624afee2-b45c-52f2-af16-4f99ef7ac75a",
+    "parentLegacyId": "26067",
+    "title": "CABLES & CONNECTIONS: Adapters"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26195",
+    "v2Id": "c306064c-1096-507f-8010-1d891ecd3e7f",
+    "parentLegacyId": "26067",
+    "title": "CABLES & CONNECTIONS: Cable Management [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "26195",
+    "v2Id": "aca8c0a3-41cc-5974-8858-698dea761436",
+    "parentLegacyId": "26195",
+    "title": "CABLES & CONNECTIONS: Cable Management [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26193",
+    "v2Id": "a972b9d1-c0fc-5690-bb95-6269aad5084d",
+    "parentLegacyId": "26067",
+    "title": "SPEAKER BASICS: Overview"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26529",
+    "v2Id": "0552e55b-29c7-5f45-bcaa-e8df59130355",
+    "parentLegacyId": "26528",
+    "title": "How is a speaker's size determined?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26533",
+    "v2Id": "a633e1f5-95c1-52fb-8923-088dafc43c59",
+    "parentLegacyId": "26528",
+    "title": "What's the difference between a 2-way and 3-way speaker?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26528",
+    "v2Id": "800b91d0-a921-5263-b4e0-ad31ba330a04",
+    "parentLegacyId": "26193",
+    "title": "[QUIZ] Speaker Types"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26191",
+    "v2Id": "95ab7fbe-1da1-57fd-ae70-068627659958",
+    "parentLegacyId": "26067",
+    "title": "SPEAKER BASICS: Passive vs. Active"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26189",
+    "v2Id": "c4b501c9-256f-5cfb-b06b-c148b3db82f8",
+    "parentLegacyId": "26067",
+    "title": "SPEAKER BASICS: Speaker Stand Assembly"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27329",
+    "v2Id": "cd5a5fd5-4df1-5fd9-9de2-fcf2fbc70543",
+    "parentLegacyId": "27327",
+    "title": "Which is the correct speaker stand leg position?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27327",
+    "v2Id": "5d26d215-d1d8-5aa0-9bf3-2b4ff9c64dee",
+    "parentLegacyId": "26189",
+    "title": "[QUIZ] Speaker Stand"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26187",
+    "v2Id": "9995acbb-344b-5992-8a38-2938e52b8609",
+    "parentLegacyId": "26067",
+    "title": "SPEAKER BASICS: Speaker Specifications"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26538",
+    "v2Id": "9f9910c4-a258-5fb9-971a-d8075e39c053",
+    "parentLegacyId": "26536",
+    "title": "How many decibels (dB) is equal to twice the perceived volume?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26541",
+    "v2Id": "15916643-21d8-53f0-a098-897c75d39528",
+    "parentLegacyId": "26536",
+    "title": "What dB (decibel) level is the pain threshold?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26544",
+    "v2Id": "b4a5317e-c37d-54a7-b6d3-7190cb91bf46",
+    "parentLegacyId": "26536",
+    "title": "Besides being louder, what is a benefit of a higher speaker SPL rating?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26536",
+    "v2Id": "54304486-aaf2-5510-83b6-b8a8d6350a73",
+    "parentLegacyId": "26187",
+    "title": "[QUIZ] Speaker Specs"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26185",
+    "v2Id": "290e4e5c-6bb5-526e-824e-6f876b6c174c",
+    "parentLegacyId": "26067",
+    "title": "SPEAKER BASICS: Coverage Angle"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26549",
+    "v2Id": "5199ac8c-c6af-5089-9723-24f320264df7",
+    "parentLegacyId": "26547",
+    "title": "Which speaker has the widest coverage angle?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26552",
+    "v2Id": "3928dd0b-394c-542f-b29d-e4655a3c553c",
+    "parentLegacyId": "26547",
+    "title": "Which speaker likely has the longest \"throw distance\" (sound carries the furthest)?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26547",
+    "v2Id": "32f00b59-e982-59a3-92d6-d2cb80e78508",
+    "parentLegacyId": "26185",
+    "title": "[QUIZ] Coverage Angle"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26183",
+    "v2Id": "4aa7be7e-63f3-5faa-99d6-0bba019962ee",
+    "parentLegacyId": "26067",
+    "title": "MICROPHONE BASICS: Microphone Descriptors"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26181",
+    "v2Id": "56b3e376-5125-53e7-b578-2ed804051e7e",
+    "parentLegacyId": "26067",
+    "title": "MICROPHONE BASICS: Mic Stand Assembly"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26179",
+    "v2Id": "391d700b-033e-5042-a9b9-9a9365908a41",
+    "parentLegacyId": "26067",
+    "title": "MICROPHONE BASICS: Signal / Noise Ratio"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26556",
+    "v2Id": "68bc5349-ba78-50d3-8f56-fea2f21a7ec0",
+    "parentLegacyId": "26555",
+    "title": "What is microphone feedback?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26560",
+    "v2Id": "cba490d4-8cb2-5f8f-a6c4-8fd4fa35ca0a",
+    "parentLegacyId": "26555",
+    "title": "How can you increase the signal/noise ratio, lowering feedback?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27319",
+    "v2Id": "f0a59686-42c8-5039-8170-f98d099f2820",
+    "parentLegacyId": "26555",
+    "title": "Which is the correct way to hold a handheld microphone?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26555",
+    "v2Id": "95c2ae6d-ed53-5ed8-afe4-931505ec0a16",
+    "parentLegacyId": "26179",
+    "title": "[QUIZ] Signal : Noise"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26177",
+    "v2Id": "45abf5a2-d74a-56a2-832d-c9fbc1c5c842",
+    "parentLegacyId": "26067",
+    "title": "MICROPHONE BASICS: Music and Mic Balance [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "26177",
+    "v2Id": "4d87205f-a73f-543a-a2c9-6b6b0acc1f84",
+    "parentLegacyId": "26177",
+    "title": "MICROPHONE BASICS: Music and Mic Balance [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26141",
+    "v2Id": "44e08da0-f5f8-50d7-9662-406657c6d1ee",
+    "parentLegacyId": "26067",
+    "title": "SUPPORT BASICS: Electricity Basics"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26632",
+    "v2Id": "c651170a-9d1d-5090-a5dd-4658ee21b080",
+    "parentLegacyId": "26630",
+    "title": "What is the standard Amperage of a residential circuit?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26635",
+    "v2Id": "376ef9b1-0d04-5ed6-9fdd-f3dbcf3fd9ca",
+    "parentLegacyId": "26630",
+    "title": "What is the standard Amperage of a commercial circuit?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26638",
+    "v2Id": "7582b166-629b-51de-87a6-75ea648d07ab",
+    "parentLegacyId": "26630",
+    "title": "Are outlets on separate circuits?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26642",
+    "v2Id": "b853ddf1-7aa0-5b2f-9d32-0be0186f25fb",
+    "parentLegacyId": "26630",
+    "title": "What is the standard voltage of a circuit?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26630",
+    "v2Id": "66ccc81a-b731-5a03-bf3f-2f02693220e7",
+    "parentLegacyId": "26141",
+    "title": "[QUIZ] Amps & Volts"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26139",
+    "v2Id": "a7e60106-5b72-5e68-8c40-1641e5b4aad8",
+    "parentLegacyId": "26067",
+    "title": "SUPPORT BASICS: Power Management"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26137",
+    "v2Id": "05b4ca0f-0488-5bfb-ba12-5c1528a7d538",
+    "parentLegacyId": "26067",
+    "title": "SUPPORT BASICS: Tables/Linens"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26135",
+    "v2Id": "6f09073e-eace-5f6e-ae5c-7816d1694ba5",
+    "parentLegacyId": "26067",
+    "title": "SUPPORT BASICS: Gaff Tape"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26650",
+    "v2Id": "a5c3f8da-c730-5aa1-a41f-7df7e5c58d95",
+    "parentLegacyId": "26646",
+    "title": "Why is cable management important?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26653",
+    "v2Id": "01c65d1d-8c5a-530a-bb2c-5f7e51e55c75",
+    "parentLegacyId": "26646",
+    "title": "What are the characteristics of Gaff tape?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26656",
+    "v2Id": "6845ef72-9241-587d-93c0-4552757627fa",
+    "parentLegacyId": "26646",
+    "title": "How can you secure cables on outdoor surfaces such as dirt or grass?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26659",
+    "v2Id": "6929664f-ce59-56c9-8df9-ef72ff48fa99",
+    "parentLegacyId": "26646",
+    "title": "Which is the correct way to tape cables to a speaker stand?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26646",
+    "v2Id": "48bd3001-3b24-53f8-b2d3-ef7de85371ea",
+    "parentLegacyId": "26135",
+    "title": "[QUIZ] Securing Cables"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26133",
+    "v2Id": "34789fcd-0b72-561d-b1fc-5c66ccd23337",
+    "parentLegacyId": "26067",
+    "title": "SUPPORT BASICS: Gear Transportation [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "26133",
+    "v2Id": "4e14a883-db96-580b-9122-91f601dd68bc",
+    "parentLegacyId": "26133",
+    "title": "SUPPORT BASICS: Gear Transportation [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26155",
+    "v2Id": "991a864c-f402-5982-972e-f66ff726ce3a",
+    "parentLegacyId": "26067",
+    "title": "CONTROLLER BASICS: Controller Overview"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26153",
+    "v2Id": "dcf5ba9f-08a5-53d7-aa3a-0953a0490a8a",
+    "parentLegacyId": "26067",
+    "title": "CONTROLLER BASICS: Serato Overview"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26147",
+    "v2Id": "a6b75f4d-a996-52c5-b4af-89dc92c85210",
+    "parentLegacyId": "26067",
+    "title": "CONTROLLER BASICS: Rear Panel Connections"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26151",
+    "v2Id": "f0ae4416-c99b-522e-92be-2058aec96992",
+    "parentLegacyId": "26067",
+    "title": "CONTROLLER BASICS: Playback Control"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26149",
+    "v2Id": "97182d82-bba0-53ff-8051-c4375381a5e0",
+    "parentLegacyId": "26067",
+    "title": "CONTROLLER BASICS: Gain Staging"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26145",
+    "v2Id": "99f592cb-2385-56ab-9704-5add3d8fec72",
+    "parentLegacyId": "26067",
+    "title": "CONTROLLER BASICS: Extra Control"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26143",
+    "v2Id": "5e80d6aa-2556-53e0-b291-5caa367fa841",
+    "parentLegacyId": "26067",
+    "title": "CONTROLLER BASICS: Extra Features [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "26143",
+    "v2Id": "e7ee0012-5ca1-563b-bc83-576d12c2be63",
+    "parentLegacyId": "26143",
+    "title": "CONTROLLER BASICS: Extra Features [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26131",
+    "v2Id": "7c8dc4a2-cf2d-58a6-b103-4dd325fa56ca",
+    "parentLegacyId": "26067",
+    "title": "LIGHTING BASICS: Lighting Overview"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26774",
+    "v2Id": "9a548f65-c18f-5333-805a-61bdebf3d123",
+    "parentLegacyId": "26772",
+    "title": "What's the most disruptive outdoor light source?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26777",
+    "v2Id": "2abccbb8-3fe7-5412-9c2b-94b088c97dbd",
+    "parentLegacyId": "26772",
+    "title": "When should you find the venue lighting controls?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26772",
+    "v2Id": "19f0ebb7-1986-5cc9-93d9-b16dbd8f6510",
+    "parentLegacyId": "26131",
+    "title": "[QUIZ] Lighting Basics"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26129",
+    "v2Id": "fb4a2dd6-512d-55ae-8fb4-798f57e23903",
+    "parentLegacyId": "26067",
+    "title": "LIGHTING BASICS: Basic Lighting Terms"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26782",
+    "v2Id": "76add7dd-05d3-55a4-8642-a992f46dbd71",
+    "parentLegacyId": "26780",
+    "title": "What value represents maximum diode intensity?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26785",
+    "v2Id": "b07ca3db-875b-561d-b3f3-c0c0d0e17e67",
+    "parentLegacyId": "26780",
+    "title": "Mixing additional colors make the resulting light:"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26788",
+    "v2Id": "ed627111-2134-598c-ae4b-0c7b3354a06a",
+    "parentLegacyId": "26780",
+    "title": "How can you increase the Sound-Active sensitivity?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26780",
+    "v2Id": "046acf49-30ea-56b8-8fde-2f04edbab99e",
+    "parentLegacyId": "26129",
+    "title": "[QUIZ] Lighting Terms"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26127",
+    "v2Id": "50c528e6-8f35-5918-9e80-2d3844f3110a",
+    "parentLegacyId": "26067",
+    "title": "LIGHTING BASICS: Lighting Menus"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26125",
+    "v2Id": "58c5d8db-81c5-55f1-aa23-1495b4b5d11a",
+    "parentLegacyId": "26067",
+    "title": "LIGHTING BASICS: Dancefloor Lighting [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "26125",
+    "v2Id": "50d3c3e1-3c40-59a0-9a4c-d7af6c23f38e",
+    "parentLegacyId": "26125",
+    "title": "LIGHTING BASICS: Dancefloor Lighting [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26123",
+    "v2Id": "430efc6e-263f-55be-95c6-5f51d4e7e731",
+    "parentLegacyId": "26067",
+    "title": "WIRELESS MICROPHONES: Wireless Overview"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26802",
+    "v2Id": "c40efcaf-3ea8-5745-b1a0-29a51cc84eeb",
+    "parentLegacyId": "26800",
+    "title": "What is the device called that wirelessly sends an audio signal?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26805",
+    "v2Id": "4451109e-a705-53ce-8d0a-e4c6ab3240a1",
+    "parentLegacyId": "26800",
+    "title": "What is the device calls the accepts the wireless audio signal?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26808",
+    "v2Id": "f98f7f34-079c-536c-adfe-126aac061370",
+    "parentLegacyId": "26800",
+    "title": "What is RF (for wireless microphones)?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26812",
+    "v2Id": "c93e2daa-91e3-5786-b086-b58a504fe6d1",
+    "parentLegacyId": "26800",
+    "title": "Can all wireless microphone transmitters work with all wireless microphone receivers?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26815",
+    "v2Id": "f4e82cea-a658-588a-b96a-aea65496c9ea",
+    "parentLegacyId": "26800",
+    "title": "What is AF (for wireless microphones)?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26800",
+    "v2Id": "0edc0f15-edb4-5935-8abe-147ab19a32b4",
+    "parentLegacyId": "26123",
+    "title": "[QUIZ] Wireless Mic Basics"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26121",
+    "v2Id": "adb10863-38da-5903-a04e-b26114b8ca2b",
+    "parentLegacyId": "26067",
+    "title": "WIRELESS MICROPHONES: Antennae Types"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26820",
+    "v2Id": "14d51140-9457-5bf8-8a2c-a976b37a1f34",
+    "parentLegacyId": "26818",
+    "title": "What can cause interference?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26823",
+    "v2Id": "63080a08-4e78-58a1-b8d8-8cfaa9287208",
+    "parentLegacyId": "26818",
+    "title": "What is \"line-of-sight\" (for wireless microphones)?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26827",
+    "v2Id": "ce84e87e-e755-5aa8-8fc1-a33b3617cb03",
+    "parentLegacyId": "26818",
+    "title": "Which antenna should you use (when you have a choice)?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26818",
+    "v2Id": "9bbb6572-eed1-5936-8940-ad6e301ac9af",
+    "parentLegacyId": "26121",
+    "title": "[QUIZ] RF"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26119",
+    "v2Id": "7bd3798a-a7d9-59af-8ebb-65e4c1ea57e2",
+    "parentLegacyId": "26067",
+    "title": "WIRELESS MICROPHONES: Sync + Output"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26832",
+    "v2Id": "71c91f2d-e50f-58a1-92cd-51f950b7ad5a",
+    "parentLegacyId": "26830",
+    "title": "When should you scan for open/available microphone frequencies?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26835",
+    "v2Id": "cab2b68e-d3cf-5a75-91af-8d87eaa37595",
+    "parentLegacyId": "26830",
+    "title": "Should two receivers use the same frequency?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26838",
+    "v2Id": "853814f0-baa2-5e33-b60d-4cd209bd3442",
+    "parentLegacyId": "26830",
+    "title": "Can two wireless transmitters on the same channel use the same receiver?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26841",
+    "v2Id": "427cd999-a199-5579-a590-f2896d246230",
+    "parentLegacyId": "26830",
+    "title": "Why would you adjust the microphone sensitivity?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26844",
+    "v2Id": "37f1973e-eebd-557e-8800-ba3e875ad65d",
+    "parentLegacyId": "26830",
+    "title": "What visual readout can be used to measure the incoming audio level?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26830",
+    "v2Id": "d83ad354-51b7-58c0-bbf6-8943335570fc",
+    "parentLegacyId": "26119",
+    "title": "[QUIZ] RF + AF"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26117",
+    "v2Id": "7ae3ab8b-ffb3-5078-b5e2-7df17e540138",
+    "parentLegacyId": "26067",
+    "title": "WIRELESS MICROPHONES: Handheld Wireless"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26115",
+    "v2Id": "70720a0b-3eea-53d5-9291-49f519c3ee19",
+    "parentLegacyId": "26067",
+    "title": "WIRELESS MICROPHONES: Worn Wireless [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "26115",
+    "v2Id": "cca96c1c-0699-55a6-b1b7-39d5ae5d72e0",
+    "parentLegacyId": "26115",
+    "title": "WIRELESS MICROPHONES: Worn Wireless [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26113",
+    "v2Id": "dbc66d9f-6ae0-5a6d-b663-d5910e8bbffc",
+    "parentLegacyId": "26067",
+    "title": "PERFORMANCE SYSTEMS: Sound Mixer"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26897",
+    "v2Id": "40578eb3-9de9-5f67-81bd-a523cc6a6236",
+    "parentLegacyId": "26895",
+    "title": "What is a channel strip?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26900",
+    "v2Id": "a3b256ec-e685-567d-916e-f78b309980d4",
+    "parentLegacyId": "26895",
+    "title": "Which has a louder audio signal?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26904",
+    "v2Id": "624b7081-f4c4-5f1c-9275-a2e85712d9af",
+    "parentLegacyId": "26895",
+    "title": "What does an input channel need to boost an incoming mic level signal?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26907",
+    "v2Id": "23abb778-78cc-525a-a8a6-992da8454ef6",
+    "parentLegacyId": "26895",
+    "title": "Do channels 3/4 have a mic preamp?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26916",
+    "v2Id": "56641682-ecf0-5a66-a02d-25da685cc5d7",
+    "parentLegacyId": "26895",
+    "title": "If you connect a line level input to channel 2, how can you lower the incoming dB level?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26919",
+    "v2Id": "a133f83c-8ca4-5bfa-ac76-eb00f4add3e7",
+    "parentLegacyId": "26895",
+    "title": "What is this knob's function?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26922",
+    "v2Id": "0b34ddd9-ea0e-5bf0-8865-860369227e45",
+    "parentLegacyId": "26895",
+    "title": "Is this an appropriate audio level setting?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26895",
+    "v2Id": "11a65e5a-26b9-5ac3-82da-608c57241742",
+    "parentLegacyId": "26113",
+    "title": "[QUIZ] Sound Mixer"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26111",
+    "v2Id": "345d434f-5180-5746-acf9-68be6a2e28fc",
+    "parentLegacyId": "26067",
+    "title": "PERFORMANCE SYSTEMS: Speaker Pair Connection"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26927",
+    "v2Id": "c97a717f-b6ca-507d-8f13-e219d40866b1",
+    "parentLegacyId": "26925",
+    "title": "What connection type is required to connect a controller DIRECTLY to a pair of powered speakers?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26930",
+    "v2Id": "d2b03208-646c-5923-8638-0de08369f44b",
+    "parentLegacyId": "26925",
+    "title": "Which connection method facilitates using more microphones?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26933",
+    "v2Id": "b203e2fd-2446-5868-a7d2-ce40c812eb5f",
+    "parentLegacyId": "26925",
+    "title": "Which daisy chain output option passes channel A audio only?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26925",
+    "v2Id": "bb9313a2-1915-5150-91bf-dc700526a773",
+    "parentLegacyId": "26111",
+    "title": "[QUIZ] Speaker Pair"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26109",
+    "v2Id": "efd4dfd2-33cf-5d45-98c1-ea1fee620b69",
+    "parentLegacyId": "26067",
+    "title": "PERFORMANCE SYSTEMS: Speaker Placement"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26938",
+    "v2Id": "10c46275-1b96-595a-9801-404e92cc3d61",
+    "parentLegacyId": "26936",
+    "title": "How high should a 2-way speaker be positioned?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26941",
+    "v2Id": "5d90376c-5961-551f-ad68-4de66ce072f5",
+    "parentLegacyId": "26936",
+    "title": "When using fixed-height column array speakers, how can you increase the sound coverage?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26944",
+    "v2Id": "d136b050-9953-5f14-a7fa-29ed5fc22263",
+    "parentLegacyId": "26936",
+    "title": "Which speaker position is better for speeches/toasts?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26949",
+    "v2Id": "6939e33b-115b-567c-8214-9dde537fe023",
+    "parentLegacyId": "26936",
+    "title": "Which speaker position is better for dancing?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26952",
+    "v2Id": "532643be-7ad3-56cd-a8bb-ba16376cc6af",
+    "parentLegacyId": "26936",
+    "title": "Which is the optimal speaker positioning?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26936",
+    "v2Id": "dd696b65-1d91-5527-b737-908a9ef0ccb9",
+    "parentLegacyId": "26109",
+    "title": "[QUIZ] Speaker Placement"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26107",
+    "v2Id": "ab733006-f5e9-5220-8727-f353a9076a45",
+    "parentLegacyId": "26067",
+    "title": "PERFORMANCE SYSTEMS: Adding Subwoofers"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26962",
+    "v2Id": "7a195705-29f3-5f17-9281-eb36a8543103",
+    "parentLegacyId": "26957",
+    "title": "What are two common crowd control issues with subwoofers?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26965",
+    "v2Id": "ea02b65b-0f06-50e7-9426-f3126ca4f228",
+    "parentLegacyId": "26957",
+    "title": "Volume knob positions on the subwoofers and main speakers should:"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26971",
+    "v2Id": "0e1f4f1d-833e-5470-9a7a-7ffd9272722a",
+    "parentLegacyId": "26957",
+    "title": "What is subwoofer coupling used for?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26957",
+    "v2Id": "53021d89-ed7b-5ad1-ad51-4f0fcfbc60b9",
+    "parentLegacyId": "26107",
+    "title": "[QUIZ] Subwoofers"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26105",
+    "v2Id": "71c29ccf-b62f-5a10-b7d5-1cdbff14842c",
+    "parentLegacyId": "26067",
+    "title": "PERFORMANCE SYSTEMS: Single Speaker"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26103",
+    "v2Id": "9cddc796-13de-5f5a-b8d4-34561e705adf",
+    "parentLegacyId": "26067",
+    "title": "PERFORMANCE SYSTEMS: Choosing Systems"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26976",
+    "v2Id": "8e27d564-15b8-5df3-af94-8faad05a0808",
+    "parentLegacyId": "26974",
+    "title": "Which performance system is optimal for a Wedding Indoor ballroom 40' x 75' 175 Guests"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26978",
+    "v2Id": "7c6b751e-1955-5c55-881e-633f84b94fab",
+    "parentLegacyId": "26974",
+    "title": "Which performance system is optimal for a: Law Office Grand Opening Outdoor parking lot 45 Guests"
+  },
+  {
+    "kind": "question",
+    "legacyId": "26980",
+    "v2Id": "811ce138-4ec1-5145-8ee8-b2c55de04cae",
+    "parentLegacyId": "26974",
+    "title": "Which performance system is optimal for a High School Dance Indoor venue 100' x 50' 275 Guests"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "26974",
+    "v2Id": "6de061bf-ec50-5c91-a7eb-e1f27d8f8f93",
+    "parentLegacyId": "26103",
+    "title": "[QUIZ] Speaker Systems"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26101",
+    "v2Id": "292da4f0-0c95-54a8-913e-2c934d4c6a2e",
+    "parentLegacyId": "26067",
+    "title": "PERFORMANCE SYSTEMS: Gear Protection [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "26101",
+    "v2Id": "e8fc82e5-eb06-533e-8d2f-bb4cd8dee8ef",
+    "parentLegacyId": "26101",
+    "title": "PERFORMANCE SYSTEMS: Gear Protection [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26099",
+    "v2Id": "0b6181f1-d824-52cb-b6ad-f637466fe4ac",
+    "parentLegacyId": "26067",
+    "title": "WEDDING DJ/MC: Ceremony"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27122",
+    "v2Id": "d6510c3f-bf44-5aa3-8cb8-f5786f2219a0",
+    "parentLegacyId": "27120",
+    "title": "Where should the officiant stand during their sound check?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27125",
+    "v2Id": "7370bc60-5545-5ee6-baca-e76b94f8af1b",
+    "parentLegacyId": "27120",
+    "title": "What is the standard length for prelude music?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27128",
+    "v2Id": "1113a399-96bd-5114-813f-43b8e3d7fde9",
+    "parentLegacyId": "27120",
+    "title": "True or False: The pre-ceremony sound check is the only time to check/adjust microphone volume levels"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27131",
+    "v2Id": "4acff4e8-6f0b-55e5-a178-5d9164966e06",
+    "parentLegacyId": "27120",
+    "title": "Why do you ask the officiant for their \"final words before the recessional song\"?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27120",
+    "v2Id": "b17182f9-1afd-50cf-9ca2-8f82a5c29348",
+    "parentLegacyId": "26099",
+    "title": "[QUIZ] Wedding Ceremony"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26097",
+    "v2Id": "86a813fa-02aa-5f82-a406-d3a737db5a8e",
+    "parentLegacyId": "26067",
+    "title": "WEDDING DJ/MC: Cocktail Hour"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27136",
+    "v2Id": "0823acf0-f285-579a-8fff-77697c80fa1b",
+    "parentLegacyId": "27134",
+    "title": "Is the cocktail hour part of the wedding ceremony or the reception?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27139",
+    "v2Id": "5e24720d-56d2-5274-8823-3b4a33eebc6d",
+    "parentLegacyId": "27134",
+    "title": "How long should your cocktail hour playlist be?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27134",
+    "v2Id": "62639f16-47ed-5c61-a82d-cab6ee2bb9e0",
+    "parentLegacyId": "26097",
+    "title": "[QUIZ] Wedding Cocktail Hour"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26095",
+    "v2Id": "c3366d04-2e2c-5bb4-9d85-817eba738658",
+    "parentLegacyId": "26067",
+    "title": "WEDDING DJ/MC: Formality Block #1 [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "26095",
+    "v2Id": "a90e87f5-5e85-59f4-bd53-cbd9be4d2720",
+    "parentLegacyId": "26095",
+    "title": "WEDDING DJ/MC: Formality Block #1 [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26093",
+    "v2Id": "d09e2255-d7ac-5f8c-9730-74b679c0736d",
+    "parentLegacyId": "26067",
+    "title": "WEDDING DJ/MC: Dinner"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27144",
+    "v2Id": "71295561-50be-5b98-a546-419d045c0c63",
+    "parentLegacyId": "27142",
+    "title": "When you are eating a vendor meal in a separate room you are:"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27147",
+    "v2Id": "c67042ce-2eba-599b-ac44-9d13af881640",
+    "parentLegacyId": "27142",
+    "title": "When the father of the bride comes up to you behind your DJ table to ask a question, you both are:"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27150",
+    "v2Id": "cc3b06c8-485c-5e70-9501-1d0f01f02423",
+    "parentLegacyId": "27142",
+    "title": "When you have a conversation with the photographer on the dancefloor you are:"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27142",
+    "v2Id": "37463810-8357-5416-a334-b4b263ecae8e",
+    "parentLegacyId": "26093",
+    "title": "[QUIZ] Wedding Dinner"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26091",
+    "v2Id": "9d882797-bab0-5765-97ad-7b5a9b028a02",
+    "parentLegacyId": "26067",
+    "title": "WEDDING DJ/MC: Formality Block #2"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27155",
+    "v2Id": "2016af89-d626-5a83-beb3-9bcc2c0e8611",
+    "parentLegacyId": "27153",
+    "title": "How much attention should the cake cutting get?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27158",
+    "v2Id": "5d16e8ef-8bb4-5af3-802b-080881d1b128",
+    "parentLegacyId": "27153",
+    "title": "When making announcements you should:"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27161",
+    "v2Id": "006b3b46-cbb6-5b2d-a8ed-c905100cd80a",
+    "parentLegacyId": "27153",
+    "title": "Why should you coach speech/toast givers on handling a microphone?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27164",
+    "v2Id": "e3e1367b-11f3-598d-8586-8424ae5cd621",
+    "parentLegacyId": "27153",
+    "title": "True or False: Making sure the parents are in the room (or nearby) before announcing their special dance helps to facilitate a seamless transition"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27169",
+    "v2Id": "1d722fd9-1bd7-5d1e-9e67-f2c8dbdbad7d",
+    "parentLegacyId": "27153",
+    "title": "What should you do during the parent dances?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27153",
+    "v2Id": "df6419f5-0c8c-50c1-bd3c-24c9de2351ab",
+    "parentLegacyId": "26091",
+    "title": "[QUIZ] Cake | Speeches | Parent Dances"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26089",
+    "v2Id": "95dd0012-2c9b-5cd0-a4b6-f92a6badbb5f",
+    "parentLegacyId": "26067",
+    "title": "WEDDING DJ/MC: Interactive Activities"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26087",
+    "v2Id": "69146401-0820-58bb-8881-0dd1aa599a06",
+    "parentLegacyId": "26067",
+    "title": "WEDDING DJ/MC: Dancing"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27174",
+    "v2Id": "9cc11c38-7dee-59fe-a56a-4e184ee500b1",
+    "parentLegacyId": "27172",
+    "title": "True or False: Your job as a DJ is to get the most people dancing for the most amount of time"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27177",
+    "v2Id": "b49a09cd-20e9-5800-86f0-2ea349625c0a",
+    "parentLegacyId": "27172",
+    "title": "Generally speaking, how often will you reset the dance floor?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27180",
+    "v2Id": "c912f9a1-77a1-5127-bf27-96401e456c94",
+    "parentLegacyId": "27172",
+    "title": "How many beats does a jump cue typically last?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27183",
+    "v2Id": "03b4f424-b442-50f2-a96f-df6582e59599",
+    "parentLegacyId": "27172",
+    "title": "For a clap cue, you should:"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27186",
+    "v2Id": "a145b152-4230-5cac-8833-2c94916982ad",
+    "parentLegacyId": "27172",
+    "title": "What is a benefit of the sing cue?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27172",
+    "v2Id": "d88c7592-e9d8-5d6a-b7ee-7f65017be064",
+    "parentLegacyId": "26087",
+    "title": "[QUIZ] Dancing"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26085",
+    "v2Id": "27e865ea-8649-5e62-b020-368285ae6dee",
+    "parentLegacyId": "26067",
+    "title": "WEDDING DJ/MC: Ending the Reception [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "26085",
+    "v2Id": "91ab9131-b0ff-5f7c-9bf2-a84c2bd9fa5b",
+    "parentLegacyId": "26085",
+    "title": "WEDDING DJ/MC: Ending the Reception [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26083",
+    "v2Id": "e2129c3a-0ae4-50e4-bd0e-a6caacd0e868",
+    "parentLegacyId": "26067",
+    "title": "SOCIAL STRATEGY: Strategic Mindset"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27231",
+    "v2Id": "d236b09d-97e2-53a8-b99c-1a8f19c74906",
+    "parentLegacyId": "27229",
+    "title": "Which of the following does NOT help you look more confident?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27234",
+    "v2Id": "acafe8d7-66a6-549f-b03b-776df8cf4f5e",
+    "parentLegacyId": "27229",
+    "title": "Which action does NOT help you be more curious?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27237",
+    "v2Id": "4e46147c-30cf-5090-86e3-3e20e63ca735",
+    "parentLegacyId": "27229",
+    "title": "When a dance party isn't going well:"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27229",
+    "v2Id": "ab7e8fc1-28d7-540a-bede-5e90268e1167",
+    "parentLegacyId": "26083",
+    "title": "[QUIZ] Mindset"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26081",
+    "v2Id": "11c27672-9486-506b-869d-d19c320d1d30",
+    "parentLegacyId": "26067",
+    "title": "SOCIAL STRATEGY: Client Relationship"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27242",
+    "v2Id": "28d996a9-beb8-54e3-8655-59c082f848d4",
+    "parentLegacyId": "27240",
+    "title": "Which of the following should you NOT include in your client planning meetings?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27247",
+    "v2Id": "30662ac5-d81f-56b6-b02f-e60de21c5a31",
+    "parentLegacyId": "27240",
+    "title": "True or False: Replying to client messages quickly helps to build trust"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27240",
+    "v2Id": "4da5955b-dbf2-5de6-8da9-48a86fe813d8",
+    "parentLegacyId": "26081",
+    "title": "[QUIZ] Client Relationship"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26079",
+    "v2Id": "33089e0f-7228-5bd1-831d-f0dac8c7934f",
+    "parentLegacyId": "26067",
+    "title": "SOCIAL STRATEGY: Vendor Relationships"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27253",
+    "v2Id": "f5920287-4852-5a6b-9637-9b9a1942db7f",
+    "parentLegacyId": "27251",
+    "title": "Which is NOT a coomon source of repeat business for DJs?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27257",
+    "v2Id": "45031005-01df-58bb-bb17-3dcdb504eb38",
+    "parentLegacyId": "27251",
+    "title": "When you arrive on site for an event you should:"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27262",
+    "v2Id": "5a0db114-13f3-54b8-9903-f26a7ddc34e1",
+    "parentLegacyId": "27251",
+    "title": "Which is NOT a benefit of reaching out to planners several weeks before an event?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27251",
+    "v2Id": "122fc5d1-7bed-557d-aeb6-faee02b9cd82",
+    "parentLegacyId": "26079",
+    "title": "[QUIZ] Vendors"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26077",
+    "v2Id": "2c83b5e1-6395-5608-912d-21693e5ba340",
+    "parentLegacyId": "26067",
+    "title": "SOCIAL STRATEGY: Guest Relationships"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27268",
+    "v2Id": "8ee7c5c2-4ea5-54ba-8b2f-4981a008a677",
+    "parentLegacyId": "27266",
+    "title": "What's an easy way to build trust with guests"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27271",
+    "v2Id": "d2d0e563-6de3-5b4d-a830-e483e9d75e14",
+    "parentLegacyId": "27266",
+    "title": "Do all crowds with the same demographics respond the same way?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27266",
+    "v2Id": "ffd96049-42a7-5574-8754-91501fd19c0c",
+    "parentLegacyId": "26077",
+    "title": "[QUIZ] Guests"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26075",
+    "v2Id": "d9e7df6c-dbe4-5d36-b810-3525cf54c5da",
+    "parentLegacyId": "26067",
+    "title": "SONG STRATEGY: Programming Puzzle"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27279",
+    "v2Id": "bff34764-e3f0-5ddc-8503-f2dd9f9aa8ad",
+    "parentLegacyId": "27277",
+    "title": "Which is NOT a way to get familiar with more songs?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27282",
+    "v2Id": "d545b1d6-bd15-50ab-b697-a53ca16c9f24",
+    "parentLegacyId": "27277",
+    "title": "Which is NOT indicator that you are familiar with a song?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27277",
+    "v2Id": "f5bedae2-f8cf-5bf4-85ef-1669bb9c1972",
+    "parentLegacyId": "26075",
+    "title": "[QUIZ] Knowing Music"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26073",
+    "v2Id": "ff4ae371-280f-5389-9065-b817271bee03",
+    "parentLegacyId": "26067",
+    "title": "SONG STRATEGY: Reasonable Requests"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27288",
+    "v2Id": "45e80ec9-b856-58b0-b439-45d9c17ada71",
+    "parentLegacyId": "27286",
+    "title": "Which is the correct mindset?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27291",
+    "v2Id": "0addf27a-e988-5e73-a8c6-2435b00f40e6",
+    "parentLegacyId": "27286",
+    "title": "True or False: It's a good idea to program a challenging request before a formality, planned dance floor reset, or a banger (song likely to get everyone excited)"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27286",
+    "v2Id": "3017b2d8-295a-5aaa-bbfd-618f72fc1568",
+    "parentLegacyId": "26073",
+    "title": "[QUIZ] Requests"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26071",
+    "v2Id": "dc54ea8f-a610-5b9b-bef3-02934e1fe07e",
+    "parentLegacyId": "26067",
+    "title": "SONG STRATEGY: Participation Songs"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "26069",
+    "v2Id": "150d3eac-073a-584d-a0a5-5082c07c6c7b",
+    "parentLegacyId": "26067",
+    "title": "SONG STRATEGY: Increasing Impact"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "26069",
+    "v2Id": "51656972-ee51-503e-8b42-e12c1cb1b56e",
+    "parentLegacyId": "26069",
+    "title": "SONG STRATEGY: Increasing Impact upload"
+  },
+  {
+    "kind": "course",
+    "legacyId": "25649",
+    "v2Id": "7a4c2044-bdce-5f83-ad0b-a7026c793366",
+    "parentLegacyId": null,
+    "title": "\ud83d\udca1 Event Lighting Course"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25681",
+    "v2Id": "e3a0f6b2-6254-58d1-b725-67799b35c21c",
+    "parentLegacyId": "25649",
+    "title": "UPLIGHTING: Overview"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25748",
+    "v2Id": "adae721e-3155-5e50-a7a8-d4a7f086830d",
+    "parentLegacyId": "25746",
+    "title": "What is beam angle?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25751",
+    "v2Id": "a47dcc84-ebe8-5bcc-b0a7-347ccfc6431c",
+    "parentLegacyId": "25746",
+    "title": "What does the W stand for in RGBAW?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25754",
+    "v2Id": "5bbd4865-2edf-5033-b87e-0ac0e0a76d31",
+    "parentLegacyId": "25746",
+    "title": "Which uses more battery power?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "25746",
+    "v2Id": "3913d7a3-58af-5983-8e0b-d23413be9cb5",
+    "parentLegacyId": "25681",
+    "title": "QUIZ: Uplighting Overview"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25679",
+    "v2Id": "db093347-9341-5a4c-ac03-9a6d1734fd7a",
+    "parentLegacyId": "25649",
+    "title": "UPLIGHTING: Static Color"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25760",
+    "v2Id": "d39befc4-12e6-53d8-af5c-ffc3ce2b8375",
+    "parentLegacyId": "25758",
+    "title": "Choose the diode intensity value that is closest to 50% brightness"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25763",
+    "v2Id": "f508a9c7-3f79-541e-942b-831bee4fc191",
+    "parentLegacyId": "25758",
+    "title": "True or False: All uplight brands produce the exact same resulting colors and can used interchangeably"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25766",
+    "v2Id": "4a699558-b9d1-5b77-aab2-9c1233698e63",
+    "parentLegacyId": "25758",
+    "title": "What color uplighting is most challenging for photographers?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "25758",
+    "v2Id": "511f4b0e-8955-5e07-9a81-419c23e3e032",
+    "parentLegacyId": "25679",
+    "title": "QUIZ: Uplighting Static Color"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25677",
+    "v2Id": "fdbe9062-0de3-5976-84ea-2dbff3624812",
+    "parentLegacyId": "25649",
+    "title": "UPLIGHTING: Application"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25772",
+    "v2Id": "35cfc30c-b2ab-5f63-a782-c0f4ec315a5d",
+    "parentLegacyId": "25770",
+    "title": "How many uplights do you need for an event?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25776",
+    "v2Id": "45be3a48-b002-5bb2-a5e9-20227abbe930",
+    "parentLegacyId": "25770",
+    "title": "How important is symmetry in uplighting placement?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25779",
+    "v2Id": "82d776a1-edb3-5407-bc2b-d55e5072bcc6",
+    "parentLegacyId": "25770",
+    "title": "True or False: It's a good idea to place uplights in front of window and/or mirrors"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25783",
+    "v2Id": "6818c46c-dafd-5a80-9a64-73bfd5c04aad",
+    "parentLegacyId": "25770",
+    "title": "Which direction should the menu face?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "25770",
+    "v2Id": "76b1455f-b671-528f-a9d9-56304078f4df",
+    "parentLegacyId": "25677",
+    "title": "QUIZ: Uplighting Application"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25675",
+    "v2Id": "d1c69b08-0234-5515-8bdd-41d0df44266f",
+    "parentLegacyId": "25649",
+    "title": "UPLIGHTING: Management [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25675",
+    "v2Id": "5e65399c-2a3c-52c4-93d3-41f2a359b4ba",
+    "parentLegacyId": "25675",
+    "title": "UPLIGHTING: Management [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25673",
+    "v2Id": "c9e98531-d284-572e-a772-d58c0c0dba8c",
+    "parentLegacyId": "25649",
+    "title": "LIGHTING CONTROL: DMX"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25789",
+    "v2Id": "6e104344-b99c-5a52-ace9-f9392bb315e5",
+    "parentLegacyId": "25787",
+    "title": "How many channels are in a DMX universe?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25792",
+    "v2Id": "45ff41d7-fb42-598f-a3e6-dc4eeb81f882",
+    "parentLegacyId": "25787",
+    "title": "A fixture is set to 6-channel mode and it's starting address is 16. What are all the channels it will use?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "25787",
+    "v2Id": "a4fe056c-4343-5001-8028-1384ab76f249",
+    "parentLegacyId": "25673",
+    "title": "QUIZ: DMX Basics"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25671",
+    "v2Id": "998bd574-a397-5d6f-b640-c3f8f1e43c71",
+    "parentLegacyId": "25649",
+    "title": "LIGHTING CONTROL: DMX Control"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25800",
+    "v2Id": "0f676617-6edb-5e5c-9f52-fd3026719582",
+    "parentLegacyId": "25798",
+    "title": "What is NOT a difference between DMX and XLR cables?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25803",
+    "v2Id": "b32f1ea0-8db6-5570-9182-71efe594e557",
+    "parentLegacyId": "25798",
+    "title": "True or False: With DMX control, you'll never need the manual for the lighting fixture"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25806",
+    "v2Id": "ced67554-0e03-5425-a8c5-c1f703d3cc1a",
+    "parentLegacyId": "25798",
+    "title": "How can you control multiple fixtures using DMX cable(s)?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "25798",
+    "v2Id": "bb0131bb-f93f-5f7c-8f79-dc5ebd9e8d59",
+    "parentLegacyId": "25671",
+    "title": "QUIZ: DMX Control"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25669",
+    "v2Id": "ad356231-4a23-585e-954a-689999fab901",
+    "parentLegacyId": "25649",
+    "title": "LIGHTING CONTROL: Wireless DMX"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25811",
+    "v2Id": "a0ec057c-c5d2-5693-a9b5-f0d7018d70eb",
+    "parentLegacyId": "25809",
+    "title": "When do you need a separate receiver antenna for your lighting fixtures?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25814",
+    "v2Id": "a1539c3c-227d-5bbb-b30b-5ea7c2dbaab8",
+    "parentLegacyId": "25809",
+    "title": "What is the primary benefit of using a wireless DMX transmitter that includes a DMX output connection?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25817",
+    "v2Id": "1406fbd9-cf4e-529a-8324-45d25b3f6e48",
+    "parentLegacyId": "25809",
+    "title": "If the transmitter and receiver antennae are on different wireless channels, will they respond to DMX control?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "25809",
+    "v2Id": "706bdccb-29f4-5c97-8423-487511bc8f4d",
+    "parentLegacyId": "25669",
+    "title": "QUIZ: Wireless DMX"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25667",
+    "v2Id": "c38af448-c75a-5a0d-8eca-517100842fa4",
+    "parentLegacyId": "25649",
+    "title": "LIGHTING CONTROL: Remote Control [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25667",
+    "v2Id": "abfc8341-bd23-51f6-9fb9-3407da91887b",
+    "parentLegacyId": "25667",
+    "title": "LIGHTING CONTROL: Remote Control [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25665",
+    "v2Id": "8c849f34-452a-576c-9164-1bb852a95425",
+    "parentLegacyId": "25649",
+    "title": "MOUNTING FIXTURES: Truss Basics"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25822",
+    "v2Id": "eb38ba12-48ef-5809-b4e7-4712a1114eff",
+    "parentLegacyId": "25820",
+    "title": "What unit is used to measure truss length?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25828",
+    "v2Id": "af009404-f93e-5308-a8d3-6d34d4b555d1",
+    "parentLegacyId": "25820",
+    "title": "What is deflection length?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25831",
+    "v2Id": "697d5eff-adbd-5da7-a58e-ca0ce8b5c7b9",
+    "parentLegacyId": "25820",
+    "title": "Which side should the scrim seam face?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "25820",
+    "v2Id": "00918565-9f8f-5f9a-a33c-5f61a5aa9ffc",
+    "parentLegacyId": "25665",
+    "title": "QUIZ: Truss"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25663",
+    "v2Id": "b2be5d92-12b9-5b94-8d7d-57fd9f63bfdc",
+    "parentLegacyId": "25649",
+    "title": "MOUNTING FIXTURES: Clamps"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25836",
+    "v2Id": "7df2d4d5-426b-5cfc-a07a-bfe906349e7f",
+    "parentLegacyId": "25834",
+    "title": "When should safety cables be used?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25839",
+    "v2Id": "83949c66-4bc3-5f9b-8d6e-7870ac531f1f",
+    "parentLegacyId": "25834",
+    "title": "What two things does a safety cable connect?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25842",
+    "v2Id": "445a9883-7253-517e-9e4a-d62f062a7ea6",
+    "parentLegacyId": "25834",
+    "title": "Will safety cables work on all fixtures?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "25834",
+    "v2Id": "827ab4a0-1c92-54b7-b065-230cf6b1e924",
+    "parentLegacyId": "25663",
+    "title": "QUIZ: Safety Cables"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25661",
+    "v2Id": "c0608cb5-7cb9-5dc2-bcb4-49288d87e689",
+    "parentLegacyId": "25649",
+    "title": "MOUNTING FIXTURES: Mounted Application [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25661",
+    "v2Id": "636c3f75-776c-558f-a7dc-2aa7d7cc6267",
+    "parentLegacyId": "25661",
+    "title": "MOUNTING FIXTURES: Mounted Application [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25659",
+    "v2Id": "413e8f29-5478-5b77-88da-aacb8c532fa7",
+    "parentLegacyId": "25649",
+    "title": "MOVING HEADS: Spot Mover Overview"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25858",
+    "v2Id": "07d791a0-4e6d-5ed8-8f3e-6c8ba73c1486",
+    "parentLegacyId": "25856",
+    "title": "Which function allows for gradual change in brightness?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25861",
+    "v2Id": "9eb56aaf-37a5-5f8e-9b7a-11ad7d4a481e",
+    "parentLegacyId": "25856",
+    "title": "What unit is used to measure brightness?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25864",
+    "v2Id": "d15cc783-96d5-5db1-9584-0f887e279e4f",
+    "parentLegacyId": "25856",
+    "title": "What does the prism function do?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25870",
+    "v2Id": "866d898e-e5d7-5201-a4d9-9dda930f848f",
+    "parentLegacyId": "25856",
+    "title": "What is a color wheel used for?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25874",
+    "v2Id": "d89f4c2a-77b2-5b10-a62d-86d177423aec",
+    "parentLegacyId": "25856",
+    "title": "What is a GOBO?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "25856",
+    "v2Id": "258dd3e5-7475-5a1f-9b4c-807b523dc963",
+    "parentLegacyId": "25659",
+    "title": "QUIZ: Spot Movers"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25657",
+    "v2Id": "25d424f5-c0c0-5a8a-9621-8b2d706b03b3",
+    "parentLegacyId": "25649",
+    "title": "MOVING HEADS: Haze"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25879",
+    "v2Id": "07b286eb-865e-5695-a996-0d4fd6087af0",
+    "parentLegacyId": "25877",
+    "title": "What is the benefit of using haze?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25882",
+    "v2Id": "460a82e2-52ee-50cd-a9c3-a832ac11749b",
+    "parentLegacyId": "25877",
+    "title": "Do water-based hazers need a warm-up period?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25885",
+    "v2Id": "068a49ed-8b3e-53f9-acf4-536f224dacc5",
+    "parentLegacyId": "25877",
+    "title": "Can haze set off a fire alarm?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "25877",
+    "v2Id": "150cf97a-9090-5e27-8d1f-dde498fba09d",
+    "parentLegacyId": "25657",
+    "title": "QUIZ: Haze"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25655",
+    "v2Id": "0001f2f0-4040-58f2-b08f-fb1f62fba494",
+    "parentLegacyId": "25649",
+    "title": "MOVING HEADS: Beam & Wash Movers"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25653",
+    "v2Id": "b326cba3-1148-5da4-a704-bec44034ca78",
+    "parentLegacyId": "25649",
+    "title": "MOVING HEADS: Mover Placement [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25653",
+    "v2Id": "b8972ae9-17ae-5636-a3ec-47411fd4334c",
+    "parentLegacyId": "25653",
+    "title": "MOVING HEADS: Mover Placement [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25651",
+    "v2Id": "4577fc51-8296-51d6-a427-00c62ba7e87c",
+    "parentLegacyId": "25649",
+    "title": "MOVING HEADS: Mover Movements"
+  },
+  {
+    "kind": "course",
+    "legacyId": "27865",
+    "v2Id": "044a58ac-f00c-52a2-96db-ad17d75c34be",
+    "parentLegacyId": null,
+    "title": "\ud83c\udf89 Observation Basics"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "27867",
+    "v2Id": "8810d24f-42c6-59fd-b6ad-1799cf52e7c8",
+    "parentLegacyId": "27865",
+    "title": "OBSERVATION BASICS: Observer Role"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27893",
+    "v2Id": "a13bc9e5-6474-5b55-90e4-ba33959130ee",
+    "parentLegacyId": "27891",
+    "title": "Which of these will you NOT be asked to do at an observation?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27896",
+    "v2Id": "ef53ee80-0e67-501c-8eaf-8ea9b7d98037",
+    "parentLegacyId": "27891",
+    "title": "Which is NOT a way to \"Serve Others\" at an event?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27899",
+    "v2Id": "14fe931a-c56f-5625-8604-0cda1f2b1101",
+    "parentLegacyId": "27891",
+    "title": "Which is NOT a way to \"Share Joy\" at an event?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27902",
+    "v2Id": "baa308ac-f0a8-5715-ba35-2208aed27dc9",
+    "parentLegacyId": "27891",
+    "title": "Which is NOT a way to \"Take Action\" at an event?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27891",
+    "v2Id": "362750e2-318d-5f87-b192-99f3bdfb115d",
+    "parentLegacyId": "27867",
+    "title": "[QUIZ] OBSERVATION BASICS: Role"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "27869",
+    "v2Id": "88ca3472-4b28-5ff6-9052-9d4e581f4462",
+    "parentLegacyId": "27865",
+    "title": "OBSERVATION BASICS: Observer Attire"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27907",
+    "v2Id": "2e7127c5-22eb-5a7a-afc9-213a5d685825",
+    "parentLegacyId": "27905",
+    "title": "Why should you (as an observer or assistant) wear stage black?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27911",
+    "v2Id": "1277d702-3ed3-5a7f-bdba-67c38d43b0cf",
+    "parentLegacyId": "27905",
+    "title": "What is NOT included in a \"stage black\" outfit?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27914",
+    "v2Id": "f0e9209c-ae0d-5298-9d2e-464c5191d85c",
+    "parentLegacyId": "27905",
+    "title": "You will be asked to upload a picture of your stage black outfit in the next lesson."
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27905",
+    "v2Id": "196b50ae-bd89-578f-963b-dd95f76ec810",
+    "parentLegacyId": "27869",
+    "title": "[QUIZ] OBSERVATION BASICS: Attire"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "27871",
+    "v2Id": "72b0463b-f907-5c7b-91ce-c91a1cb0c1a2",
+    "parentLegacyId": "27865",
+    "title": "OBSERVATION BASICS: Observer Behavior [!]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27921",
+    "v2Id": "99065cc6-bae2-54f1-9d5c-a84a9272e67a",
+    "parentLegacyId": "27917",
+    "title": "When should you arrive at the venue?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27924",
+    "v2Id": "d515136a-c761-51fa-92be-eb1fea2dc6c5",
+    "parentLegacyId": "27917",
+    "title": "What is the first thing you should do when you arrive at the venue?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27927",
+    "v2Id": "25aa513e-1c19-5717-8e25-0bbae68fc74f",
+    "parentLegacyId": "27917",
+    "title": "What is NOT a way to be more likable?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "27931",
+    "v2Id": "b9681ddb-1071-5b52-af0a-bcc81ee1923e",
+    "parentLegacyId": "27917",
+    "title": "Why should you NOT fold your arms during the event (when in view of guests)?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "27917",
+    "v2Id": "8c828444-33be-5e54-b33a-afd42ae7bc51",
+    "parentLegacyId": "27871",
+    "title": "[QUIZ] OBSERVATION BASICS: Observer Behavior"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "27871",
+    "v2Id": "6f86ff30-b212-5bcc-a17c-48d413dfc22c",
+    "parentLegacyId": "27871",
+    "title": "OBSERVATION BASICS: Observer Behavior [!] upload"
+  },
+  {
+    "kind": "course",
+    "legacyId": "28810",
+    "v2Id": "bd78d57c-2f26-55df-83c1-fa859fddd2a5",
+    "parentLegacyId": null,
+    "title": "\ud83c\udfa7 Scratch Toolkit"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28834",
+    "v2Id": "5f0059c7-0fd4-5d08-b0e4-fa6c7182c4dc",
+    "parentLegacyId": "28810",
+    "title": "SCRATCH TOOLKIT: Scratching Foundations"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28814",
+    "v2Id": "357491f8-9574-5aa0-8559-ec714aae85f6",
+    "parentLegacyId": "28810",
+    "title": "SCRATCH TOOLKIT: Setup + Settings"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28827",
+    "v2Id": "d56412a3-c669-53f9-90ba-1637921c7cee",
+    "parentLegacyId": "28810",
+    "title": "SCRATCH TOOLKIT: Baby Scratch"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28835",
+    "v2Id": "be6298ad-af90-5323-a382-b26dd7aab174",
+    "parentLegacyId": "28810",
+    "title": "SCRATCH TOOLKIT: Push, Drag, Release Scratch"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28813",
+    "v2Id": "549c1ea3-9065-59c8-a87f-44dc88037ce1",
+    "parentLegacyId": "28810",
+    "title": "SCRATCH TOOLKIT: Stab Scratch"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28811",
+    "v2Id": "1e7ecc0c-463b-5c68-9c22-58e292b0a2d0",
+    "parentLegacyId": "28810",
+    "title": "SCRATCH TOOLKIT: Chirp Scratch"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28815",
+    "v2Id": "9136ff45-c6fd-52a0-ba8a-12e5ba4074c3",
+    "parentLegacyId": "28810",
+    "title": "SCRATCH TOOLKIT: Transformer Scratch"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28816",
+    "v2Id": "46ee24f5-a2e9-5d70-bba0-92c4f383b570",
+    "parentLegacyId": "28810",
+    "title": "SCRATCH TOOLKIT: Crab Scratch"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28817",
+    "v2Id": "3394ce72-3eb1-5a94-b088-20e2bfd9650a",
+    "parentLegacyId": "28810",
+    "title": "SCRACH TOOLKIT: Beat Juggling"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28818",
+    "v2Id": "a93be142-8d7f-5617-9071-ecd25efa6b57",
+    "parentLegacyId": "28810",
+    "title": "SCRATCH TOOLKIT: Scratching in Sets"
+  },
+  {
+    "kind": "course",
+    "legacyId": "28808",
+    "v2Id": "9dc99824-5a45-552f-9e0e-b341f0f1747b",
+    "parentLegacyId": null,
+    "title": "\ud83c\udfa4 The Master MC"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28812",
+    "v2Id": "76159885-b7b2-5934-a16a-2e35df67163b",
+    "parentLegacyId": "28808",
+    "title": "Course Introduction"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28825",
+    "v2Id": "939d8b82-5369-5355-9fb5-9e3d18b44237",
+    "parentLegacyId": "28808",
+    "title": "1:  Three MC Roles"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28842",
+    "v2Id": "987291e6-66cf-5981-a296-6b3d191c3b97",
+    "parentLegacyId": "28839",
+    "title": "Which MC Role is this? [embed]https://vimeo.com/866827686?share=copy[/embed]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28847",
+    "v2Id": "b016755c-cd0a-543b-8dd1-ca3cab543c98",
+    "parentLegacyId": "28839",
+    "title": "Which MC Role is this? [embed]https://vimeo.com/866827752?share=copy[/embed]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28843",
+    "v2Id": "5de3bd9f-67d7-5d73-9a35-6731d2f2bd6e",
+    "parentLegacyId": "28839",
+    "title": "Which MC Role is this? [embed]https://vimeo.com/866827708?share=copy[/embed]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28844",
+    "v2Id": "cfff0ac4-051f-51c0-a6e5-a29e49dbc3a3",
+    "parentLegacyId": "28839",
+    "title": "Which MC Role is this? [embed]https://vimeo.com/866827720?share=copy[/embed]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28845",
+    "v2Id": "dbe17683-6f07-5123-ac71-d65ef0332bba",
+    "parentLegacyId": "28839",
+    "title": "Which MC Role is this? [embed]https://vimeo.com/866827655?share=copy[/embed]"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28846",
+    "v2Id": "d8a160cf-a542-5d0c-9e4f-acc98584fb5b",
+    "parentLegacyId": "28839",
+    "title": "Which MC Role is this? [embed]https://vimeo.com/866827734?share=copy[/embed]"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28839",
+    "v2Id": "a6dbdd9f-2d2f-57bc-89d6-cb04240e1838",
+    "parentLegacyId": "28825",
+    "title": "[QUIZ] Master MC_3 Roles"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28826",
+    "v2Id": "0fd9967e-1c94-5fe7-ad14-e082682bc9e8",
+    "parentLegacyId": "28808",
+    "title": "2: Talking Technique [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28826",
+    "v2Id": "f191d872-cdf1-5618-bdb9-c134da2de03a",
+    "parentLegacyId": "28826",
+    "title": "2: Talking Technique [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28824",
+    "v2Id": "071c2730-a87c-50c4-869f-68414733d67c",
+    "parentLegacyId": "28808",
+    "title": "3: Polished Presentation [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28824",
+    "v2Id": "82bf5d5d-3ea8-5c73-8173-26a6f295d002",
+    "parentLegacyId": "28824",
+    "title": "3: Polished Presentation [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28828",
+    "v2Id": "0a75348b-71a3-581d-9b4a-54cdc611f154",
+    "parentLegacyId": "28808",
+    "title": "4: Anatomy of Attention"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28848",
+    "v2Id": "6dc9a744-6b18-5f5d-b872-2b266c614ab0",
+    "parentLegacyId": "28838",
+    "title": "True or False: People pay the most attention to unfamiliar, unexpected, or unpredictable cues."
+  },
+  {
+    "kind": "question",
+    "legacyId": "28841",
+    "v2Id": "8e19868e-9e2d-5422-84ab-af21a3086c59",
+    "parentLegacyId": "28838",
+    "title": "Which is NOT a way to turn on \"attention switches\"?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28840",
+    "v2Id": "e91a281d-1a6d-50b1-afa5-18e2f453d53f",
+    "parentLegacyId": "28838",
+    "title": "A \"Foundational announcement where you energetically greet your audience, welcome them to the event, and introduce yourself as the MC\" is called:"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28849",
+    "v2Id": "ea2abf36-2b22-596b-a2d3-bdfa661d1368",
+    "parentLegacyId": "28838",
+    "title": "Which does NOT help you gain the attention of the audience?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28838",
+    "v2Id": "dff2477c-8722-50e2-8504-da7876837ed8",
+    "parentLegacyId": "28828",
+    "title": "[QUIZ] Master MC_Attention"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28829",
+    "v2Id": "f5b53946-3633-5a6c-8070-0b7e1586740b",
+    "parentLegacyId": "28808",
+    "title": "5: Which Words"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28850",
+    "v2Id": "97b5bffd-97b3-5e7c-ae5f-84494cc9e1a0",
+    "parentLegacyId": "28837",
+    "title": "Match the text with it's element"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28852",
+    "v2Id": "c1a1b130-c8de-51e1-b2d0-c039d47fb07c",
+    "parentLegacyId": "28837",
+    "title": "Match the text with it's element"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28853",
+    "v2Id": "d323858b-a7d9-5be9-8d5b-0fdcb6c59b5c",
+    "parentLegacyId": "28837",
+    "title": "Which is NOT one of Rob's \"Magic Words\""
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28837",
+    "v2Id": "86175aff-e34a-5959-8234-f413c38d9951",
+    "parentLegacyId": "28829",
+    "title": "Master MC_What to Say"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28830",
+    "v2Id": "6d4006fa-4169-54e7-abe5-f57b180d896b",
+    "parentLegacyId": "28808",
+    "title": "6: Hosting Homework"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28831",
+    "v2Id": "d9eb67d1-8fb7-5a34-8db9-1c138e000e1d",
+    "parentLegacyId": "28808",
+    "title": "7: Managing the Minutes [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28831",
+    "v2Id": "b8bc60a0-9819-5b31-bf26-bb4c2feff5eb",
+    "parentLegacyId": "28831",
+    "title": "7: Managing the Minutes [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28832",
+    "v2Id": "22992615-4e3b-56c2-afd0-cbe4857c8fcc",
+    "parentLegacyId": "28808",
+    "title": "8: Crowd Connection"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28854",
+    "v2Id": "c07c6b1b-835b-5bbd-837f-23e27e958e83",
+    "parentLegacyId": "28836",
+    "title": "What\u2019s a vibe check?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28855",
+    "v2Id": "f5fdf5b3-584e-5c22-a283-9a21e6b82c60",
+    "parentLegacyId": "28836",
+    "title": "What\u2019s wrong with saying \u201cyou can do better than that\u201d to the crowd?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28856",
+    "v2Id": "eaefdc63-56bd-58c0-a0fc-e46419313848",
+    "parentLegacyId": "28836",
+    "title": "What is NOT a way to endear the crowd to you?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28857",
+    "v2Id": "40543761-d8bc-599a-8726-fb1c26e4a357",
+    "parentLegacyId": "28836",
+    "title": "True or False: When you are at a much different energy level from your crowd, you can appear inauthentic"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28858",
+    "v2Id": "43a39520-6651-58a0-afce-3c3c5c03041e",
+    "parentLegacyId": "28836",
+    "title": "Why does involving audience members on stage maximize the moment?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28836",
+    "v2Id": "507e3239-443c-500d-9caa-67bae4cb55a8",
+    "parentLegacyId": "28832",
+    "title": "Master MC_Crowd Connection"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28833",
+    "v2Id": "e919b367-cb7b-5867-b815-e1ed4cb44dbf",
+    "parentLegacyId": "28808",
+    "title": "9: Ferre's Final Thoughts"
+  },
+  {
+    "kind": "course",
+    "legacyId": "28521",
+    "v2Id": "d89236f3-7bc8-567d-a062-1c86b27b205a",
+    "parentLegacyId": null,
+    "title": "\ud83d\udca1 UPLIGHTING"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28522",
+    "v2Id": "7afb1617-e320-5afe-a166-af83f3ee59dc",
+    "parentLegacyId": "28521",
+    "title": "UPLIGHTING COURSE: Overview"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28567",
+    "v2Id": "550c6b4b-cf3f-584a-a526-d743f5988b30",
+    "parentLegacyId": "28523",
+    "title": "Which uses more battery power?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28566",
+    "v2Id": "26cd9aae-9171-53a0-8e33-20bc46962504",
+    "parentLegacyId": "28523",
+    "title": "What does the W stand for in RGBAW?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28565",
+    "v2Id": "694bb8bb-ddc2-5edb-bc31-635545213f16",
+    "parentLegacyId": "28523",
+    "title": "What is beam angle?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28523",
+    "v2Id": "b8e30fa8-e033-5faa-a528-8ca5db956907",
+    "parentLegacyId": "28522",
+    "title": "QUIZ: Uplighting Overview"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28524",
+    "v2Id": "59e27b94-6c7f-568f-960c-8acb65f702df",
+    "parentLegacyId": "28521",
+    "title": "UPLIGHTING COURSE: Static Color"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28571",
+    "v2Id": "28aa4d32-807d-5e29-b956-580b8c113dcb",
+    "parentLegacyId": "28525",
+    "title": "What color uplighting is most challenging for photographers?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28570",
+    "v2Id": "0a977a37-5732-5576-9bce-2d70423d0e31",
+    "parentLegacyId": "28525",
+    "title": "True or False: All uplight brands produce the exact same resulting colors and can used interchangeably"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28569",
+    "v2Id": "94c111f1-9eff-53e6-a70b-bb0edc993ca4",
+    "parentLegacyId": "28525",
+    "title": "Choose the diode intensity value that is closest to 50% brightness"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28525",
+    "v2Id": "13f342a0-d92a-538e-84b6-bef24d64c7af",
+    "parentLegacyId": "28524",
+    "title": "QUIZ: Uplighting Static Color"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28526",
+    "v2Id": "d4e6bc76-b753-5888-8750-ecb3cb9eb3f6",
+    "parentLegacyId": "28521",
+    "title": "UPLIGHTING COURSE: Application"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28576",
+    "v2Id": "1ac1e5f3-30fd-5f0c-9d00-07f0847f04f7",
+    "parentLegacyId": "28527",
+    "title": "Which direction should the menu face?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28575",
+    "v2Id": "e82f912d-dc45-54e5-9670-40aaf9f96d83",
+    "parentLegacyId": "28527",
+    "title": "True or False: It's a good idea to place uplights in front of window and/or mirrors"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28574",
+    "v2Id": "49777fec-3291-5d61-9e3b-e56b73b1039c",
+    "parentLegacyId": "28527",
+    "title": "How important is symmetry in uplighting placement?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "28573",
+    "v2Id": "de28a569-b1ac-50e1-a9b9-b9196469ee2b",
+    "parentLegacyId": "28527",
+    "title": "How many uplights do you need for an event?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "28527",
+    "v2Id": "28eed9f4-deef-5648-a460-ec9578166c31",
+    "parentLegacyId": "28526",
+    "title": "QUIZ: Uplighting Application"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "28528",
+    "v2Id": "a128a552-0470-5a1a-ac79-af1574e08d01",
+    "parentLegacyId": "28521",
+    "title": "UPLIGHTING COURSE: Management [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "28528",
+    "v2Id": "e8ca68bf-0027-5d45-894d-9917e85bb318",
+    "parentLegacyId": "28528",
+    "title": "UPLIGHTING COURSE: Management [!] upload"
+  },
+  {
+    "kind": "course",
+    "legacyId": "25339",
+    "v2Id": "95e84369-9cda-57f6-9c29-e1168a1e676a",
+    "parentLegacyId": null,
+    "title": "\ud83d\udca1SoundSwitch Tutorial"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25341",
+    "v2Id": "7da21a9f-6408-5de3-a50a-3245dd58c96d",
+    "parentLegacyId": "25339",
+    "title": "SoundSwitch: Overview"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25388",
+    "v2Id": "a57a7f11-0fb8-57bc-a6be-e9c1941d8eb4",
+    "parentLegacyId": "25386",
+    "title": "What is a dongle used for?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25392",
+    "v2Id": "39319a03-e2ae-50b4-bf35-e9a13a490e5d",
+    "parentLegacyId": "25386",
+    "title": "Select the 2 primary SoundSwitch modes"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25395",
+    "v2Id": "3f45aaa6-d8d4-5b78-a236-9b9d9d045567",
+    "parentLegacyId": "25386",
+    "title": "Which is NOT a SoundSwitch lightshow type"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "25386",
+    "v2Id": "8db2add8-64d1-5e4b-8c83-9a00c84be157",
+    "parentLegacyId": "25341",
+    "title": "[QUIZ] SoundSwitch: Overview"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25343",
+    "v2Id": "db4d62a7-c0e0-5c96-8154-37f61b0effa9",
+    "parentLegacyId": "25339",
+    "title": "SoundSwitch: Edit Mode"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25401",
+    "v2Id": "a84f0739-10fc-5b68-bb5b-ca37a0c57828",
+    "parentLegacyId": "25399",
+    "title": "How many DMX channels are available in each SoundSwitch universe?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25406",
+    "v2Id": "f7464868-8e8e-5eec-9d38-8b006fb358ad",
+    "parentLegacyId": "25399",
+    "title": "What is wrong with this picture?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25410",
+    "v2Id": "b94c0cfd-4b2a-50a4-8401-6ac0fd00b155",
+    "parentLegacyId": "25399",
+    "title": "What is a benefit of grouping lighting fixtures in SoundSwitch?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25414",
+    "v2Id": "a7172ac8-f467-565f-a30d-a7710741ad28",
+    "parentLegacyId": "25399",
+    "title": "True or False? Moving fixture position coordinates are set by default by SoundSwitch"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "25399",
+    "v2Id": "caa1f5ff-df28-5def-a09e-d7ba7272cf84",
+    "parentLegacyId": "25343",
+    "title": "[QUIZ] SoundSwitch: Edit Mode"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25345",
+    "v2Id": "915eb1ae-590f-5f57-932e-70a81f5b8abb",
+    "parentLegacyId": "25339",
+    "title": "SoundSwitch: Autoloops"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25441",
+    "v2Id": "e7678f8e-f439-56df-a2f6-4daac70bfa27",
+    "parentLegacyId": "25438",
+    "title": "How many total autoloops can SoundSwitch have?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25444",
+    "v2Id": "84fe25b3-4478-5482-a7a3-54fb1982f90a",
+    "parentLegacyId": "25438",
+    "title": "Which mode allows you to edit autoloops?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25457",
+    "v2Id": "2397e5c0-1202-58eb-a467-63903ecbf2d1",
+    "parentLegacyId": "25438",
+    "title": "When the playhead hits a position cue, what happens?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "25438",
+    "v2Id": "797f9b1c-d8c7-57aa-afc6-d989efa69204",
+    "parentLegacyId": "25345",
+    "title": "[QUIZ] SoundSwitch: Autoloops"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25347",
+    "v2Id": "092533b2-888a-5562-a24c-d0c295b6d14c",
+    "parentLegacyId": "25339",
+    "title": "SoundSwitch: Performance Mode [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25347",
+    "v2Id": "c7d13017-890a-5421-ab17-2928f2154615",
+    "parentLegacyId": "25347",
+    "title": "SoundSwitch: Performance Mode [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25349",
+    "v2Id": "107a8e50-faf3-5175-b5f3-0467bab75db5",
+    "parentLegacyId": "25339",
+    "title": "SoundSwitch: Static Looks [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25349",
+    "v2Id": "9bfdfe8c-5b2f-5eda-a994-20aa2c07b612",
+    "parentLegacyId": "25349",
+    "title": "SoundSwitch: Static Looks [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25351",
+    "v2Id": "ea6aa493-ea55-5e42-9f05-b3582cd5ad7d",
+    "parentLegacyId": "25339",
+    "title": "SoundSwitch: Control One"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25353",
+    "v2Id": "f3c32bee-2868-5f00-9f49-a6080eceb602",
+    "parentLegacyId": "25339",
+    "title": "SoundSwitch: Autoscripts [!]"
+  },
+  {
+    "kind": "assignment",
+    "legacyId": "25353",
+    "v2Id": "fda6f1af-53d5-5ee7-886a-d912d18f31da",
+    "parentLegacyId": "25353",
+    "title": "SoundSwitch: Autoscripts [!] upload"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25355",
+    "v2Id": "4b2fafe3-60a3-5495-8a6d-d4cf33801ffc",
+    "parentLegacyId": "25339",
+    "title": "SoundSwitch: Manual Scripts"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25466",
+    "v2Id": "7e2ea385-28ea-5ef6-8956-d19a2c073acb",
+    "parentLegacyId": "25460",
+    "title": "Why do you need a beatgrid to script a track?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25462",
+    "v2Id": "369b3a97-a99d-5163-81e9-c09d9baa6f25",
+    "parentLegacyId": "25460",
+    "title": "What is this icon?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25469",
+    "v2Id": "4b4cc594-95e0-52f9-b3c5-378452fb0d05",
+    "parentLegacyId": "25460",
+    "title": "What is this an example of?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "25460",
+    "v2Id": "b86f45ec-d666-57f0-a65f-d9afe2a84280",
+    "parentLegacyId": "25355",
+    "title": "[QUIZ] SoundSwitch: Manual Scripting"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25357",
+    "v2Id": "d07de8f1-e47b-5cb5-92b3-67c7b659404f",
+    "parentLegacyId": "25339",
+    "title": "SoundSwitch: Standalone Mode"
+  },
+  {
+    "kind": "lesson",
+    "legacyId": "25359",
+    "v2Id": "eb5d516f-5c8c-5149-8427-c3993346054c",
+    "parentLegacyId": "25339",
+    "title": "SoundSwitch: Performance Tips"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25475",
+    "v2Id": "f4ed9d1f-69dc-57ff-b0de-81afb5a54841",
+    "parentLegacyId": "25473",
+    "title": "Where is the \"disable strobe\" option found?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25478",
+    "v2Id": "7d564c9e-4193-50c8-8165-f6e1068197cf",
+    "parentLegacyId": "25473",
+    "title": "Where is the \"override scripted tracks\" option found?"
+  },
+  {
+    "kind": "question",
+    "legacyId": "25481",
+    "v2Id": "d5d9534d-b53c-515d-9a59-df228aa33be6",
+    "parentLegacyId": "25473",
+    "title": "Which autoloop bank should you select to guarantee slow lighting changes?"
+  },
+  {
+    "kind": "quiz",
+    "legacyId": "25473",
+    "v2Id": "e7627f58-1ddc-5bc6-b44f-894e51ea985f",
+    "parentLegacyId": "25359",
+    "title": "[QUIZ] SoundSwitch: Disabling Strobes"
+  }
+]

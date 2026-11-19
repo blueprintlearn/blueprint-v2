@@ -146,7 +146,7 @@ export const CONTENT_BLOCK_LABELS: Record<ContentBlockType, string> = {
   assignment: "Assignment",
 }
 
-export const QUIZ_QUESTION_KINDS = ["single_choice", "multiple_choice", "true_false", "written"] as const
+export const QUIZ_QUESTION_KINDS = ["single_choice", "multiple_choice", "true_false", "written", "matrix_sort"] as const
 export type QuizQuestionKind = (typeof QUIZ_QUESTION_KINDS)[number]
 
 export const QUIZ_QUESTION_LABELS: Record<QuizQuestionKind, string> = {
@@ -154,24 +154,30 @@ export const QUIZ_QUESTION_LABELS: Record<QuizQuestionKind, string> = {
   multiple_choice: "Multiple choice",
   true_false: "True or false",
   written: "Written",
+  matrix_sort: "Match items",
 }
+
+export const TEXT_BLOCK_FORMATS = ["plain", "html"] as const
+export type TextBlockFormat = (typeof TEXT_BLOCK_FORMATS)[number]
 
 export const TRAINING_ACTOR_ROLES = ["company_owner", "training_manager", "designated_trainer", "trainee"] as const
 export type TrainingActorRole = (typeof TRAINING_ACTOR_ROLES)[number]
 
 export const TITLE_MAX = 80
-export const DESCRIPTION_MAX = 400
+export const DESCRIPTION_MAX = 2000
 export const ROLE_MAX = 80
-export const BODY_MAX = 8000
+export const BODY_MAX = 50000
 export const URL_MAX = 500
-export const LESSON_MAX = 40
+export const LESSON_MAX = 80
 export const BLOCK_MAX = 12
 export const QUESTION_MAX = 8
-export const OPTION_MAX = 6
+export const OPTION_MAX = 8
+export const OPTION_LABEL_MAX = 200
+export const ANSWER_HTML_MAX = 2000
 export const PATH_COURSE_MAX = 20
 export const DURATION_MIN = 1
 export const DURATION_MAX = 600
-export const RETRY_MAX = 20
+export const RETRY_MAX = 50
 export const WAIT_HOURS_MAX = 720
 export const SCORE_MAX = 100
 
@@ -188,6 +194,8 @@ export type QuizOption = {
   id: string
   label: string
   correct: boolean
+  html?: string
+  sortString?: string
 }
 
 export type QuizQuestion = {
@@ -196,6 +204,7 @@ export type QuizQuestion = {
   kind: QuizQuestionKind
   options: QuizOption[]
   writtenFeedback: WrittenFeedbackMode
+  legacy?: LegacyRef
 }
 
 export type QuizConfig = {
@@ -205,7 +214,7 @@ export type QuizConfig = {
   passingScorePercent: number | null
 }
 
-export type TextBlock = { id: string; type: "text"; body: string }
+export type TextBlock = { id: string; type: "text"; body: string; format?: TextBlockFormat }
 export type VideoBlock = { id: string; type: "video"; url: string; caption: string }
 export type ImageBlock = { id: string; type: "image"; url: string; alt: string }
 export type ResourceBlock = { id: string; type: "resource"; url: string; label: string }
@@ -215,6 +224,7 @@ export type QuizBlock = {
   title: string
   questions: QuizQuestion[]
   config: QuizConfig
+  legacy?: LegacyRef
 }
 export type AssignmentBlock = {
   id: string
@@ -224,6 +234,7 @@ export type AssignmentBlock = {
   verification: "online" | "in_person"
   requiresHumanApproval: boolean
   retryLimit: number | null
+  legacy?: LegacyRef
 }
 
 export type ContentBlock = TextBlock | VideoBlock | ImageBlock | ResourceBlock | QuizBlock | AssignmentBlock
@@ -279,6 +290,7 @@ export type CourseContent = {
   lessons: LessonContent[]
   extensions: CourseExtensions
   legacy: LegacyRef
+  materialsHtml?: string
 }
 
 export type PathCourseRef = {
@@ -411,14 +423,36 @@ function asExtensions(value: unknown): CourseExtensions | null {
   return defaultExtensions()
 }
 
+function asOptionalLegacy(value: unknown): LegacyRef | undefined | null {
+  if (value == null) return undefined
+  const legacy = asLegacy(value)
+  if (!legacy) return null
+  if (!legacy.sourceId && !legacy.contentVersion) return undefined
+  return legacy
+}
+
 function asQuizOption(value: unknown): QuizOption | null {
   if (!value || typeof value !== "object") return null
   const record = value as Record<string, unknown>
   const id = asTrimmed(record.id, 1, 80)
-  const label = asTrimmed(record.label, 1, TITLE_MAX)
+  const label = asTrimmed(record.label, 1, OPTION_LABEL_MAX)
   const correct = asBoolean(record.correct)
   if (!id || !label || correct == null) return null
-  return { id, label, correct }
+  const html =
+    record.html == null || record.html === "" ? undefined : asTrimmed(record.html, 1, ANSWER_HTML_MAX)
+  const sortString =
+    record.sortString == null || record.sortString === ""
+      ? undefined
+      : asTrimmed(record.sortString, 1, OPTION_LABEL_MAX)
+  if (record.html != null && record.html !== "" && html == null) return null
+  if (record.sortString != null && record.sortString !== "" && sortString == null) return null
+  return {
+    id,
+    label,
+    correct,
+    ...(html ? { html } : {}),
+    ...(sortString ? { sortString } : {}),
+  }
 }
 
 function asQuizQuestion(value: unknown): QuizQuestion | null {
@@ -428,10 +462,11 @@ function asQuizQuestion(value: unknown): QuizQuestion | null {
   const prompt = asTrimmed(record.prompt, 1, DESCRIPTION_MAX)
   const kind = asEnum(record.kind, QUIZ_QUESTION_KINDS)
   const writtenFeedback = asEnum(record.writtenFeedback, WRITTEN_FEEDBACK_MODES) ?? "none"
-  if (!id || !prompt || !kind) return null
+  const legacy = asOptionalLegacy(record.legacy)
+  if (!id || !prompt || !kind || legacy === null) return null
   if (kind === "written") {
     if (record.options != null && (!Array.isArray(record.options) || record.options.length > 0)) return null
-    return { id, prompt, kind, options: [], writtenFeedback }
+    return { id, prompt, kind, options: [], writtenFeedback, ...(legacy ? { legacy } : {}) }
   }
   if (!Array.isArray(record.options) || record.options.length < 2 || record.options.length > OPTION_MAX) return null
   const options = record.options.map(asQuizOption)
@@ -443,7 +478,8 @@ function asQuizQuestion(value: unknown): QuizQuestion | null {
   }
   if (kind === "true_false" && parsed.length !== 2) return null
   if (kind === "multiple_choice" && correctCount < 1) return null
-  return { id, prompt, kind, options: parsed, writtenFeedback }
+  if (kind === "matrix_sort" && parsed.length < 2) return null
+  return { id, prompt, kind, options: parsed, writtenFeedback, ...(legacy ? { legacy } : {}) }
 }
 
 function asQuizConfig(value: unknown): QuizConfig | null {
@@ -466,7 +502,9 @@ function asBlock(value: unknown): ContentBlock | null {
   if (!id || !type) return null
   if (type === "text") {
     const body = asTrimmed(record.body, 1, BODY_MAX)
-    return body ? { id, type, body } : null
+    const format = record.format == null || record.format === "plain" ? "plain" : asEnum(record.format, TEXT_BLOCK_FORMATS)
+    if (!body || !format) return null
+    return format === "html" ? { id, type, body, format } : { id, type, body }
   }
   if (type === "video") {
     const url = asTrimmed(record.url, 1, URL_MAX)
@@ -493,16 +531,36 @@ function asBlock(value: unknown): ContentBlock | null {
     }
     const questions = record.questions.map(asQuizQuestion)
     const config = asQuizConfig(record.config)
-    if (!config || questions.some((question) => question == null)) return null
-    return { id, type, title, questions: questions as QuizQuestion[], config }
+    const legacy = asOptionalLegacy(record.legacy)
+    if (!config || questions.some((question) => question == null) || legacy === null) return null
+    return {
+      id,
+      type,
+      title,
+      questions: questions as QuizQuestion[],
+      config,
+      ...(legacy ? { legacy } : {}),
+    }
   }
   const title = asTrimmed(record.title, 1, TITLE_MAX)
   const instructions = asTrimmed(record.instructions, 1, BODY_MAX)
   const verification = record.verification === "online" || record.verification === "in_person" ? record.verification : null
   const requiresHumanApproval = asBoolean(record.requiresHumanApproval)
   const retryLimit = asOptionalInt(record.retryLimit, 0, RETRY_MAX)
-  if (!title || !instructions || !verification || requiresHumanApproval == null || retryLimit === undefined) return null
-  return { id, type, title, instructions, verification, requiresHumanApproval, retryLimit }
+  const legacy = asOptionalLegacy(record.legacy)
+  if (!title || !instructions || !verification || requiresHumanApproval == null || retryLimit === undefined || legacy === null) {
+    return null
+  }
+  return {
+    id,
+    type,
+    title,
+    instructions,
+    verification,
+    requiresHumanApproval,
+    retryLimit,
+    ...(legacy ? { legacy } : {}),
+  }
 }
 
 function asLesson(value: unknown): LessonContent | null {
@@ -584,7 +642,12 @@ export function parseCourseContent(value: unknown): CourseContent | null {
   if (lessons.some((lesson) => lesson == null)) return null
   const extensions = asExtensions(record.extensions)
   const legacy = asLegacy(record.legacy)
+  const materialsHtml =
+    record.materialsHtml == null || record.materialsHtml === ""
+      ? undefined
+      : asTrimmed(record.materialsHtml, 1, BODY_MAX)
   if (!extensions || !legacy) return null
+  if (record.materialsHtml != null && record.materialsHtml !== "" && materialsHtml == null) return null
   return {
     title,
     description,
@@ -605,6 +668,7 @@ export function parseCourseContent(value: unknown): CourseContent | null {
     lessons: lessons as LessonContent[],
     extensions,
     legacy,
+    ...(materialsHtml ? { materialsHtml } : {}),
   }
 }
 
@@ -917,10 +981,18 @@ function parseOptions(data: FormData, prefix: string): QuizOption[] | null {
   const options: QuizOption[] = []
   for (let index = 0; index < count; index += 1) {
     const id = asTrimmed(formValue(data, `${prefix}-opt-${index}-id`), 1, 80) ?? newId()
-    const label = asTrimmed(formValue(data, `${prefix}-opt-${index}-label`), 1, TITLE_MAX)
+    const label = asTrimmed(formValue(data, `${prefix}-opt-${index}-label`), 1, OPTION_LABEL_MAX)
     const correct = data.get(`${prefix}-opt-${index}-correct`) === "1"
+    const html = asTrimmed(formValue(data, `${prefix}-opt-${index}-html`), 1, ANSWER_HTML_MAX)
+    const sortString = asTrimmed(formValue(data, `${prefix}-opt-${index}-sortString`), 1, OPTION_LABEL_MAX)
     if (!label) return null
-    options.push({ id, label, correct })
+    options.push({
+      id,
+      label,
+      correct,
+      ...(html ? { html } : {}),
+      ...(sortString ? { sortString } : {}),
+    })
   }
   return options
 }
@@ -936,13 +1008,19 @@ function parseQuestions(data: FormData, prefix: string): QuizQuestion[] | null {
     const kind = asEnum(formValue(data, `${qPrefix}-kind`), QUIZ_QUESTION_KINDS)
     const writtenFeedback = asEnum(formValue(data, `${qPrefix}-writtenFeedback`), WRITTEN_FEEDBACK_MODES) ?? "none"
     if (!prompt || !kind) return null
+    const legacySourceId = asTrimmed(formValue(data, `${qPrefix}-legacySourceId`), 1, 120)
+    const legacyContentVersion = asTrimmed(formValue(data, `${qPrefix}-legacyContentVersion`), 1, 120)
+    const legacy =
+      legacySourceId || legacyContentVersion
+        ? { sourceId: legacySourceId, contentVersion: legacyContentVersion }
+        : undefined
     if (kind === "written") {
-      questions.push({ id, prompt, kind, options: [], writtenFeedback })
+      questions.push({ id, prompt, kind, options: [], writtenFeedback, ...(legacy ? { legacy } : {}) })
       continue
     }
     const options = parseOptions(data, qPrefix)
     if (!options) return null
-    questions.push({ id, prompt, kind, options, writtenFeedback })
+    questions.push({ id, prompt, kind, options, writtenFeedback, ...(legacy ? { legacy } : {}) })
   }
   return questions
 }
@@ -954,7 +1032,9 @@ function parseBlockFromForm(data: FormData, index: number): ContentBlock | strin
   if (!type) return TRAINING_BLOCK_INVALID
   if (type === "text") {
     const body = asTrimmed(formValue(data, `${prefix}-body`), 1, BODY_MAX)
-    return body ? { id, type, body } : TRAINING_BLOCK_INVALID
+    const format = formValue(data, `${prefix}-format`) === "html" ? "html" : "plain"
+    if (!body) return TRAINING_BLOCK_INVALID
+    return format === "html" ? { id, type, body, format } : { id, type, body }
   }
   if (type === "video") {
     const url = asTrimmed(formValue(data, `${prefix}-url`), 1, URL_MAX)
@@ -984,12 +1064,17 @@ function parseBlockFromForm(data: FormData, index: number): ContentBlock | strin
     if (!title || !questions || retryLimit === undefined || retryWaitHours === undefined || passingScorePercent === undefined) {
       return TRAINING_QUIZ_INVALID
     }
+    const quizLegacySourceId = asTrimmed(formValue(data, `${prefix}-legacySourceId`), 1, 120)
+    const quizLegacyContentVersion = asTrimmed(formValue(data, `${prefix}-legacyContentVersion`), 1, 120)
     const parsed = asBlock({
       id,
       type,
       title,
       questions,
       config: { grading: "objective", retryLimit, retryWaitHours, passingScorePercent },
+      ...(quizLegacySourceId || quizLegacyContentVersion
+        ? { legacy: { sourceId: quizLegacySourceId, contentVersion: quizLegacyContentVersion } }
+        : {}),
     })
     return parsed ?? TRAINING_QUIZ_INVALID
   }
@@ -998,8 +1083,21 @@ function parseBlockFromForm(data: FormData, index: number): ContentBlock | strin
   const verification = formValue(data, `${prefix}-verification`) === "in_person" ? "in_person" : "online"
   const requiresHumanApproval = data.get(`${prefix}-requiresHumanApproval`) === "1"
   const retryLimit = asOptionalInt(formValue(data, `${prefix}-retryLimit`), 0, RETRY_MAX)
+  const assignmentLegacySourceId = asTrimmed(formValue(data, `${prefix}-legacySourceId`), 1, 120)
+  const assignmentLegacyContentVersion = asTrimmed(formValue(data, `${prefix}-legacyContentVersion`), 1, 120)
   if (!title || !instructions || retryLimit === undefined) return TRAINING_ASSIGNMENT_INVALID
-  return { id, type: "assignment", title, instructions, verification, requiresHumanApproval, retryLimit }
+  return {
+    id,
+    type: "assignment",
+    title,
+    instructions,
+    verification,
+    requiresHumanApproval,
+    retryLimit,
+    ...(assignmentLegacySourceId || assignmentLegacyContentVersion
+      ? { legacy: { sourceId: assignmentLegacySourceId, contentVersion: assignmentLegacyContentVersion } }
+      : {}),
+  }
 }
 
 export function parseLessonEditorForm(data: FormData): LessonContent | string {
@@ -1024,6 +1122,8 @@ export function parseLessonEditorForm(data: FormData): LessonContent | string {
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean)
+  const legacySourceId = asTrimmed(formValue(data, "legacySourceId"), 1, 120)
+  const legacyContentVersion = asTrimmed(formValue(data, "legacyContentVersion"), 1, 120)
   const lesson = asLesson({
     id,
     title,
@@ -1031,7 +1131,10 @@ export function parseLessonEditorForm(data: FormData): LessonContent | string {
     completion: { requireAllBlocks, requiredBlockIds },
     progression: { lockedUntilPreviousComplete },
     blocks,
-    legacy: emptyLegacyRef,
+    legacy: {
+      sourceId: legacySourceId,
+      contentVersion: legacyContentVersion,
+    },
   })
   return lesson ?? TRAINING_BLOCK_INVALID
 }

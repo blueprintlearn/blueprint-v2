@@ -923,6 +923,9 @@ isOneToOne: false
 "get_published_recruiting_page":
 { Args: { "p_slug": string }; Returns: Json
                            },
+"import_legacy_master_course":
+{ Args: { "p_content": Json,"p_course_id": string,"p_legacy_content_version": string,"p_legacy_source_id": string,"p_published_by": string,"p_title": string,"p_version_id": string }; Returns: string
+                           },
 "interview_storage_owner_allowed":
 { Args: { "p_name": string }; Returns: boolean
                            },

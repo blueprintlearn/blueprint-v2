@@ -42,6 +42,8 @@ test.describe("Training library", () => {
     await expect(page.getByText("Trainee enrollment is not enabled yet")).toBeVisible()
     await expect(page.getByText("Legacy Beatmixing (import)")).toHaveCount(0)
     await expect(page.getByText("Old Photo Booth")).toHaveCount(0)
+    await expect(page.getByText("Event DJ Foundations")).toHaveCount(0)
+    await expect(page.getByText("Fixture Mix Lab")).toHaveCount(0)
     await expect(page.locator("[data-training-starter=catalog]").getByText("MC Foundations")).toBeVisible()
     await page.screenshot({ path: `${SHOTS}/stage41-company-library.png`, fullPage: true })
 

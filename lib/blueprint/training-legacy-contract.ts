@@ -1,11 +1,12 @@
 /**
- * Mapping contract for a later legacy Blueprint import. Stage 4.1 does not
- * import production content. Inspect the actual export before writing an importer.
+ * Mapping contract for the Stage 4.2 LearnDash import.
+ * The importer reads the canonical export from outside main, maps assigned
+ * courses into private master records, and never publishes them to Starter.
  */
 
 import { emptyCourseContent, type CourseContent, type LegacyRef } from "@/lib/blueprint/training-library"
 
-export const LEGACY_IMPORT_STATUS = "not_enabled" as const
+export const LEGACY_IMPORT_STATUS = "local_cli" as const
 export const LEGACY_DEFAULT_MASTER_VISIBILITY = "private" as const
 export const LEGACY_CANONICAL_EXPORT = "scripts/data/learndash-export-production.json" as const
 export const LEGACY_CANONICAL_EXPORT_BRANCH = "curriculum-learndash-export" as const
@@ -15,7 +16,6 @@ export const LEGACY_DO_NOT_IMPORT = [
   "assignment_submissions",
   "unassigned lessons",
   "unassigned quizzes",
-  "full 242-lesson catalog on the first importer",
   "trainee accounts",
   "lesson completion history",
   "quiz attempts",
@@ -53,7 +53,8 @@ export const LEGACY_FIELD_MAP = {
   "quiz + questions": "quiz block; keep correct flags inside the version snapshot",
   "assignment.upload_enabled": "assignment block, no learner files",
   "course status: private": "master visibility private",
-  "course / lesson / quiz / assignment ids": "legacy.sourceId",
+  "course status: publish": "master visibility private; never Starter Library",
+  "course / lesson / quiz / assignment ids": "legacy.sourceId (LearnDash post id)",
   "export generation / post modified": "legacy.contentVersion",
 } as const
 
@@ -64,11 +65,12 @@ export function legacyRefFromSource(sourceId: string, contentVersion = `learndas
 export function mapLegacyCourseToPrivateMaster(source: LegacyCourseSource): { content: CourseContent; mapping: LegacyImportMapping } {
   const content = emptyCourseContent(source.title)
   content.legacy = legacyRefFromSource(source.sourceId, source.contentVersion)
+  content.experienceLevel = "custom"
   const lessonLegacy: LegacyRef[] = []
   const skipped: string[] = []
   for (const lesson of source.lessons ?? []) {
     content.lessons.push({
-      id: crypto.randomUUID(),
+      id: lesson.sourceId,
       title: lesson.title,
       description: "",
       completion: { requireAllBlocks: true, requiredBlockIds: [] },
@@ -77,9 +79,9 @@ export function mapLegacyCourseToPrivateMaster(source: LegacyCourseSource): { co
       legacy: legacyRefFromSource(lesson.sourceId, lesson.contentVersion ?? source.contentVersion),
     })
     lessonLegacy.push(legacyRefFromSource(lesson.sourceId, lesson.contentVersion ?? source.contentVersion))
-    if (lesson.quiz) skipped.push(`quiz:${lesson.sourceId}:deferred-full-question-map`)
-    if (lesson.assignment?.upload_enabled) skipped.push(`assignment-files:${lesson.sourceId}:not-imported`)
+    skipped.push("Use mapLegacyExport / importLegacyCurriculum for the full LearnDash mapper.")
   }
+  for (const item of LEGACY_DO_NOT_IMPORT) skipped.push(item)
   return {
     content,
     mapping: {

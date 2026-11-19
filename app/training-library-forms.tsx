@@ -39,6 +39,7 @@ import {
   PATH_FOCUS_VALUES,
   QUIZ_QUESTION_LABELS,
   QUIZ_QUESTION_KINDS,
+  RETRY_MAX,
   SUBMISSION_MODES,
   TRAINING_ADOPT_STARTER,
   TRAINING_ADOPT_UPDATE,
@@ -207,7 +208,7 @@ export function CourseMetadataFields({ content }: { content: CourseContent }) {
         label="Retry limit"
         optional
         min={0}
-        max={20}
+        max={RETRY_MAX}
         defaultValue={content.assessment.retryLimit}
       />
       <NumberField
@@ -340,13 +341,15 @@ function QuizFields({ block, index }: { block: QuizBlock; index: number }) {
     <div className="grid gap-4">
       <TextField id={`block-${index}-title`} name={`block-${index}-title`} label="Quiz title" defaultValue={block.title} />
       <input type="hidden" name={`block-${index}-questionCount`} value={block.questions.length} />
+      <input type="hidden" name={`block-${index}-legacySourceId`} value={block.legacy?.sourceId ?? ""} />
+      <input type="hidden" name={`block-${index}-legacyContentVersion`} value={block.legacy?.contentVersion ?? ""} />
       <NumberField
         id={`block-${index}-retryLimit`}
         name={`block-${index}-retryLimit`}
         label="Quiz retry limit"
         optional
         min={0}
-        max={20}
+        max={RETRY_MAX}
         defaultValue={block.config.retryLimit}
       />
       <NumberField
@@ -370,6 +373,12 @@ function QuizFields({ block, index }: { block: QuizBlock; index: number }) {
       {block.questions.map((question, questionIndex) => (
         <div key={question.id} className="grid gap-3 rounded-[18px] border border-line p-4">
           <input type="hidden" name={`block-${index}-q-${questionIndex}-id`} value={question.id} />
+          <input type="hidden" name={`block-${index}-q-${questionIndex}-legacySourceId`} value={question.legacy?.sourceId ?? ""} />
+          <input
+            type="hidden"
+            name={`block-${index}-q-${questionIndex}-legacyContentVersion`}
+            value={question.legacy?.contentVersion ?? ""}
+          />
           <TextField
             id={`block-${index}-q-${questionIndex}-prompt`}
             name={`block-${index}-q-${questionIndex}-prompt`}
@@ -399,21 +408,37 @@ function QuizFields({ block, index }: { block: QuizBlock; index: number }) {
               {question.options.map((option, optionIndex) => (
                 <div key={option.id} className="grid gap-2">
                   <input type="hidden" name={`block-${index}-q-${questionIndex}-opt-${optionIndex}-id`} value={option.id} />
+                  {option.html ? (
+                    <input
+                      type="hidden"
+                      name={`block-${index}-q-${questionIndex}-opt-${optionIndex}-html`}
+                      value={option.html}
+                    />
+                  ) : null}
+                  {option.sortString ? (
+                    <input
+                      type="hidden"
+                      name={`block-${index}-q-${questionIndex}-opt-${optionIndex}-sortString`}
+                      value={option.sortString}
+                    />
+                  ) : null}
                   <TextField
                     id={`block-${index}-q-${questionIndex}-opt-${optionIndex}-label`}
                     name={`block-${index}-q-${questionIndex}-opt-${optionIndex}-label`}
                     label={`Choice ${optionIndex + 1}`}
                     defaultValue={option.label}
                   />
-                  <label className="flex items-start gap-2 text-[14px] text-ink">
-                    <input
-                      type="checkbox"
-                      name={`block-${index}-q-${questionIndex}-opt-${optionIndex}-correct`}
-                      value="1"
-                      defaultChecked={option.correct}
-                    />
-                    Correct answer
-                  </label>
+                  {question.kind === "matrix_sort" ? null : (
+                    <label className="flex items-start gap-2 text-[14px] text-ink">
+                      <input
+                        type="checkbox"
+                        name={`block-${index}-q-${questionIndex}-opt-${optionIndex}-correct`}
+                        value="1"
+                        defaultChecked={option.correct}
+                      />
+                      Correct answer
+                    </label>
+                  )}
                 </div>
               ))}
             </>
@@ -431,7 +456,10 @@ function BlockFields({ block, index }: { block: ContentBlock; index: number }) {
       <input type="hidden" name={`block-${index}-type`} value={block.type} />
       <p className="m-0 text-[14px] font-bold text-ink">{CONTENT_BLOCK_LABELS[block.type]}</p>
       {block.type === "text" ? (
-        <TextArea id={`block-${index}-body`} name={`block-${index}-body`} label="Text" defaultValue={block.body} />
+        <>
+          {block.format === "html" ? <input type="hidden" name={`block-${index}-format`} value="html" /> : null}
+          <TextArea id={`block-${index}-body`} name={`block-${index}-body`} label="Text" defaultValue={block.body} />
+        </>
       ) : null}
       {block.type === "video" ? (
         <>
@@ -454,6 +482,8 @@ function BlockFields({ block, index }: { block: ContentBlock; index: number }) {
       {block.type === "quiz" ? <QuizFields block={block} index={index} /> : null}
       {block.type === "assignment" ? (
         <>
+          <input type="hidden" name={`block-${index}-legacySourceId`} value={block.legacy?.sourceId ?? ""} />
+          <input type="hidden" name={`block-${index}-legacyContentVersion`} value={block.legacy?.contentVersion ?? ""} />
           <TextField id={`block-${index}-title`} name={`block-${index}-title`} label="Assignment title" defaultValue={block.title} />
           <TextArea
             id={`block-${index}-instructions`}
@@ -481,7 +511,7 @@ function BlockFields({ block, index }: { block: ContentBlock; index: number }) {
             label="Assignment retry limit"
             optional
             min={0}
-            max={20}
+            max={RETRY_MAX}
             defaultValue={block.retryLimit}
           />
         </>
@@ -506,6 +536,8 @@ export function LessonEditorForm({
       <input type="hidden" name="courseId" value={courseId} />
       <input type="hidden" name="lessonId" value={lesson.id} />
       <input type="hidden" name="blockCount" value={lesson.blocks.length} />
+      <input type="hidden" name="legacySourceId" value={lesson.legacy.sourceId ?? ""} />
+      <input type="hidden" name="legacyContentVersion" value={lesson.legacy.contentVersion ?? ""} />
       <TextField id="lesson-title" name="title" label="Lesson title" defaultValue={lesson.title} />
       <TextArea id="lesson-description" name="description" label="Description" optional rows={3} defaultValue={lesson.description} />
       <label className="flex items-start gap-2 text-[14px] text-ink">
