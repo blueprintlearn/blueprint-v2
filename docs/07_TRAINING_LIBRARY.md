@@ -12,7 +12,7 @@ Source of truth for product rules remains `docs/01`–`05`. Curriculum export no
 - Mixed lesson content blocks: text, video, image, downloadable resource, quiz, assignment.
 - Training paths: ordered company courses, optional prerequisites, draft/published versions.
 - Stored progression and assessment configuration. No grading, submissions, or certifications.
-- A documented legacy import mapping. No production import.
+- A documented legacy import mapping. Stage 4.2 can import the assigned LearnDash catalog into **private** local masters. It does not import production trainee data.
 
 ## Hosted apply order
 
@@ -26,6 +26,7 @@ Do not apply until separately approved, and not before the previous recruiting/t
 6. Stage 3.7 `20261127120000_company_training_preparations`
 7. Stage 4.1 `20261128120000_training_library`
 8. Stage 4.1 follow-up `20261129120000_training_publish_atomicity`
+9. Stage 4.2 `20261130120000_training_legacy_import` (schema support only; running the importer is a separate local command)
 
 Stage 2 and Stage 3.1 hosted applies are not required for local 4.1.
 
@@ -53,9 +54,9 @@ Archiving or privatizing a master course does not freeze existing company copies
 
 ## Legacy import contract
 
-Do not assume the export format without inspecting the actual files on `curriculum-learndash-export`. Map later imports to **private** master records, preserving `legacy.sourceId` and `legacy.contentVersion`. See `lib/blueprint/training-legacy-contract.ts`.
+Do not assume the export format without inspecting the actual files on `curriculum-learndash-export`. Stage 4.2 maps assigned courses to **private** master records, preserving `legacy.sourceId` and `legacy.contentVersion`. See `lib/blueprint/training-legacy-contract.ts` and `docs/08_LEGACY_CURRICULUM_IMPORT.md`.
 
-Do not import assignment submission files, unassigned lessons/quizzes, trainee accounts, or historical progress in this stage.
+Do not import assignment submission files, unassigned lessons/quizzes, trainee accounts, or historical progress in this stage. Do not publish imported courses to the Starter Library.
 
 ## Intentionally deferred
 

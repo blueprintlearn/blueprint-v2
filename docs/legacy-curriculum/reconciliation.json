@@ -1,0 +1,361 @@
+{
+  "dryRun": true,
+  "exportGeneratedAt": "2026-08-03T11:39:44.751Z",
+  "contentVersion": "learndash-2026-08-03",
+  "totals": {
+    "courses": 16,
+    "lessons": 242,
+    "quizzes": 103,
+    "questions": 356,
+    "assignments": 60,
+    "videos": 297,
+    "resources": 186,
+    "unsupported": 3,
+    "skipped": 209,
+    "failed": 0
+  },
+  "courses": [
+    {
+      "status": "dry_run",
+      "title": "Beatmixing Basics",
+      "slug": "beatmixing-basics",
+      "wordpressStatus": "publish",
+      "legacySourceId": "28417",
+      "masterCourseId": "ed31fdb7-1b80-56ec-9c57-38388dcab0db",
+      "lessonCount": 5,
+      "quizCount": 0,
+      "questionCount": 0,
+      "assignmentCount": 5,
+      "videoCount": 10,
+      "resourceCount": 15,
+      "visibility": "private"
+    },
+    {
+      "status": "dry_run",
+      "title": "Controller Extension",
+      "slug": "controller-extension",
+      "wordpressStatus": "publish",
+      "legacySourceId": "28419",
+      "masterCourseId": "c9d24b14-2289-5727-b69d-ba65dda58504",
+      "lessonCount": 8,
+      "quizCount": 0,
+      "questionCount": 0,
+      "assignmentCount": 2,
+      "videoCount": 9,
+      "resourceCount": 9,
+      "visibility": "private"
+    },
+    {
+      "status": "dry_run",
+      "title": "How to Train an Event DJ",
+      "slug": "how-to-train-an-event-dj-2",
+      "wordpressStatus": "publish",
+      "legacySourceId": "28881",
+      "masterCourseId": "77b7df59-1607-5da2-b19b-b8dd260db7b8",
+      "lessonCount": 9,
+      "quizCount": 8,
+      "questionCount": 27,
+      "assignmentCount": 0,
+      "videoCount": 9,
+      "resourceCount": 9,
+      "visibility": "private"
+    },
+    {
+      "status": "dry_run",
+      "title": "Onboarding [For Instructors]",
+      "slug": "onboarding-for-instructors",
+      "wordpressStatus": "private",
+      "legacySourceId": "28303",
+      "masterCourseId": "3f83add7-dfef-58ba-94dd-8527c93fd4c0",
+      "lessonCount": 6,
+      "quizCount": 1,
+      "questionCount": 3,
+      "assignmentCount": 1,
+      "videoCount": 6,
+      "resourceCount": 1,
+      "visibility": "private"
+    },
+    {
+      "status": "dry_run",
+      "title": "Social Media Success",
+      "slug": "social-media-success",
+      "wordpressStatus": "publish",
+      "legacySourceId": "28931",
+      "masterCourseId": "d5a9eef0-fdac-5570-a487-4daa3f0fc7ef",
+      "lessonCount": 9,
+      "quizCount": 9,
+      "questionCount": 42,
+      "assignmentCount": 0,
+      "videoCount": 9,
+      "resourceCount": 2,
+      "visibility": "private"
+    },
+    {
+      "status": "dry_run",
+      "title": "The Art of Networking",
+      "slug": "the-art-of-networking",
+      "wordpressStatus": "publish",
+      "legacySourceId": "28770",
+      "masterCourseId": "4334a90b-229f-5aa7-8c38-7d67da2ba912",
+      "lessonCount": 5,
+      "quizCount": 5,
+      "questionCount": 23,
+      "assignmentCount": 0,
+      "videoCount": 5,
+      "resourceCount": 9,
+      "visibility": "private"
+    },
+    {
+      "status": "dry_run",
+      "title": "\u2699\ufe0f Event Assistant",
+      "slug": "event-assistant",
+      "wordpressStatus": "publish",
+      "legacySourceId": "27976",
+      "masterCourseId": "4bb87b01-2397-5d34-9e3f-ff3450366997",
+      "lessonCount": 42,
+      "quizCount": 22,
+      "questionCount": 71,
+      "assignmentCount": 6,
+      "videoCount": 43,
+      "resourceCount": 7,
+      "visibility": "private"
+    },
+    {
+      "status": "dry_run",
+      "title": "\ud83c\udfb6 Beatmixing Bootcamp",
+      "slug": "beatmixing-bootcamp-instructor",
+      "wordpressStatus": "publish",
+      "legacySourceId": "25905",
+      "masterCourseId": "815953b1-1b35-5d0d-af9d-69aefb7c381a",
+      "lessonCount": 23,
+      "quizCount": 0,
+      "questionCount": 0,
+      "assignmentCount": 17,
+      "videoCount": 37,
+      "resourceCount": 53,
+      "visibility": "private"
+    },
+    {
+      "status": "dry_run",
+      "title": "\ud83d\udcbb Curating A Vibe",
+      "slug": "curating-a-vibe-2",
+      "wordpressStatus": "publish",
+      "legacySourceId": "28809",
+      "masterCourseId": "9d9f3e99-05f7-559f-88ec-ea7705479f6a",
+      "lessonCount": 5,
+      "quizCount": 0,
+      "questionCount": 0,
+      "assignmentCount": 0,
+      "videoCount": 6,
+      "resourceCount": 6,
+      "visibility": "private"
+    },
+    {
+      "status": "dry_run",
+      "title": "\ud83c\udf89 Event DJ Foundations",
+      "slug": "event-dj-foundations-instructor",
+      "wordpressStatus": "publish",
+      "legacySourceId": "26067",
+      "masterCourseId": "c9c6eaf2-335c-5873-bb1d-40aded88ad9a",
+      "lessonCount": 77,
+      "quizCount": 33,
+      "questionCount": 103,
+      "assignmentCount": 17,
+      "videoCount": 82,
+      "resourceCount": 46,
+      "visibility": "private"
+    },
+    {
+      "status": "dry_run",
+      "title": "\ud83d\udca1 Event Lighting Course",
+      "slug": "event-lighting-instructor",
+      "wordpressStatus": "publish",
+      "legacySourceId": "25649",
+      "masterCourseId": "7a4c2044-bdce-5f83-ad0b-a7026c793366",
+      "lessonCount": 16,
+      "quizCount": 10,
+      "questionCount": 32,
+      "assignmentCount": 4,
+      "videoCount": 16,
+      "resourceCount": 11,
+      "visibility": "private"
+    },
+    {
+      "status": "dry_run",
+      "title": "\ud83c\udf89 Observation Basics",
+      "slug": "%f0%9f%8e%89-observer-basics",
+      "wordpressStatus": "publish",
+      "legacySourceId": "27865",
+      "masterCourseId": "044a58ac-f00c-52a2-96db-ad17d75c34be",
+      "lessonCount": 3,
+      "quizCount": 3,
+      "questionCount": 11,
+      "assignmentCount": 1,
+      "videoCount": 3,
+      "resourceCount": 0,
+      "visibility": "private"
+    },
+    {
+      "status": "dry_run",
+      "title": "\ud83c\udfa7 Scratch Toolkit",
+      "slug": "scratch-toolkit-2",
+      "wordpressStatus": "publish",
+      "legacySourceId": "28810",
+      "masterCourseId": "bd78d57c-2f26-55df-83c1-fa859fddd2a5",
+      "lessonCount": 10,
+      "quizCount": 0,
+      "questionCount": 0,
+      "assignmentCount": 0,
+      "videoCount": 24,
+      "resourceCount": 9,
+      "visibility": "private"
+    },
+    {
+      "status": "dry_run",
+      "title": "\ud83c\udfa4 The Master MC",
+      "slug": "the-master-mc-2",
+      "wordpressStatus": "publish",
+      "legacySourceId": "28808",
+      "masterCourseId": "9dc99824-5a45-552f-9e0e-b341f0f1747b",
+      "lessonCount": 10,
+      "quizCount": 4,
+      "questionCount": 18,
+      "assignmentCount": 3,
+      "videoCount": 21,
+      "resourceCount": 4,
+      "visibility": "private"
+    },
+    {
+      "status": "dry_run",
+      "title": "\ud83d\udca1 UPLIGHTING",
+      "slug": "%f0%9f%92%a1-uplighting",
+      "wordpressStatus": "publish",
+      "legacySourceId": "28521",
+      "masterCourseId": "d89236f3-7bc8-567d-a062-1c86b27b205a",
+      "lessonCount": 4,
+      "quizCount": 3,
+      "questionCount": 10,
+      "assignmentCount": 1,
+      "videoCount": 4,
+      "resourceCount": 2,
+      "visibility": "private"
+    },
+    {
+      "status": "dry_run",
+      "title": "\ud83d\udca1SoundSwitch Tutorial",
+      "slug": "soundswitch-tutorial",
+      "wordpressStatus": "publish",
+      "legacySourceId": "25339",
+      "masterCourseId": "95e84369-9cda-57f6-9c29-e1168a1e676a",
+      "lessonCount": 10,
+      "quizCount": 5,
+      "questionCount": 16,
+      "assignmentCount": 3,
+      "videoCount": 13,
+      "resourceCount": 3,
+      "visibility": "private"
+    }
+  ],
+  "issueCounts": {
+    "unassigned-lesson": 20,
+    "unassigned-quiz": 16,
+    "assignment-submission": 9,
+    "trainee-progress": 1,
+    "wordpress-publish-is-not-starter": 15,
+    "assignment-files-not-imported": 60,
+    "intended-role-not-in-export": 16,
+    "duration-estimated": 16,
+    "broken-answer-message": 356,
+    "course-quiz-already-on-lesson": 103,
+    "matrix-sort-extension": 4,
+    "course-prerequisites": 3,
+    "question-vimeo": 6,
+    "malformed-youtube-url": 1
+  },
+  "issueExamples": {
+    "unassigned-lesson": {
+      "code": "unassigned-lesson",
+      "severity": "skipped",
+      "sourceId": "28511",
+      "detail": "unassigned lessons: 1:  Three MC Roles (course_id 28421)."
+    },
+    "unassigned-quiz": {
+      "code": "unassigned-quiz",
+      "severity": "skipped",
+      "sourceId": "28429",
+      "detail": "unassigned quizzes: [QUIZ] Master MC_3 Roles (lesson_id 28511, course_id 28421)."
+    },
+    "assignment-submission": {
+      "code": "assignment-submission",
+      "severity": "skipped",
+      "sourceId": "28412",
+      "detail": "assignment_submissions for lesson null / author 9 were not imported."
+    },
+    "trainee-progress": {
+      "code": "trainee-progress",
+      "severity": "skipped",
+      "sourceId": "progress",
+      "detail": "trainee accounts and historical progress"
+    },
+    "wordpress-publish-is-not-starter": {
+      "code": "wordpress-publish-is-not-starter",
+      "severity": "warning",
+      "sourceId": "28417",
+      "detail": "LearnDash status publish maps to a private Blueprint master course, not the Starter Library."
+    },
+    "assignment-files-not-imported": {
+      "code": "assignment-files-not-imported",
+      "severity": "skipped",
+      "sourceId": "28477",
+      "detail": "Assignment upload requirement imported. Learner files and assignment_submissions were not imported."
+    },
+    "intended-role-not-in-export": {
+      "code": "intended-role-not-in-export",
+      "severity": "warning",
+      "sourceId": "28417",
+      "detail": "LearnDash has no intended-role field. The course uses the library default role DJ."
+    },
+    "duration-estimated": {
+      "code": "duration-estimated",
+      "severity": "warning",
+      "sourceId": "28417",
+      "detail": "Estimated duration 40 minutes is derived from lesson count, not a LearnDash field."
+    },
+    "broken-answer-message": {
+      "code": "broken-answer-message",
+      "severity": "warning",
+      "sourceId": "28900",
+      "detail": "LearnDash correct/incorrect messages were exported as [object Object] and were not invented or repaired."
+    },
+    "course-quiz-already-on-lesson": {
+      "code": "course-quiz-already-on-lesson",
+      "severity": "skipped",
+      "sourceId": "28891",
+      "detail": "Course-level quiz is the same record as a lesson quiz and was not imported twice."
+    },
+    "matrix-sort-extension": {
+      "code": "matrix-sort-extension",
+      "severity": "warning",
+      "sourceId": "28158",
+      "detail": "Mapped to the Stage 4.2 matrix_sort question kind. Pairing uses sortString plus original answer HTML."
+    },
+    "course-prerequisites": {
+      "code": "course-prerequisites",
+      "severity": "unsupported",
+      "sourceId": "25905",
+      "detail": "LearnDash prerequisites [26067] are not a Stage 4.1 path. Original ids are preserved here for a later path import."
+    },
+    "question-vimeo": {
+      "code": "question-vimeo",
+      "severity": "warning",
+      "sourceId": "28842",
+      "detail": "Question-level Vimeo URL kept as a lesson video block: https://vimeo.com/866827686"
+    },
+    "malformed-youtube-url": {
+      "code": "malformed-youtube-url",
+      "severity": "warning",
+      "sourceId": "25347",
+      "detail": "YouTube URL kept as exported: https://www.youtube.com/watch?v=pbON1Ce46OEhttps"
+    }
+  }
+}

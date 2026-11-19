@@ -1,0 +1,241 @@
+{
+  "export_info": {
+    "source_site": "https://woocommerce-989891-6333451.cloudwaysapps.com",
+    "platform": "LearnDash (WordPress)",
+    "generated_at": "2026-08-03T11:39:44.751Z",
+    "schema_version": "1.0",
+    "notes": "Sanitized Stage 4.2 fixture. Synthetic copy and answer keys. Not the production catalog."
+  },
+  "courses": [
+    {
+      "id": 90001,
+      "title": "Fixture Mix Lab",
+      "slug": "fixture-mix-lab",
+      "status": "publish",
+      "description_html": "",
+      "description_text": "Short mixing course used only in tests.",
+      "materials_html": null,
+      "categories": [{ "id": 24, "name": "Controlling Music", "slug": "controlling-music" }],
+      "tags": [],
+      "settings": {
+        "certificate": 0,
+        "prerequisite_enabled": false,
+        "prerequisites": [""],
+        "points_enabled": false,
+        "progression_disabled": false
+      },
+      "access": { "price_type": "free" },
+      "lessons": [
+        {
+          "id": 91001,
+          "title": "What is beatmatching?",
+          "slug": "what-is-beatmatching",
+          "status": "publish",
+          "order": 1,
+          "course_id": 90001,
+          "content_html": "<p>Watch the routine. <img src=\"https://media.blueprintteams.com/2022/10/TS.jpg\" alt=\"TS\" /></p>",
+          "content_text": "Watch the routine.",
+          "media": {
+            "vimeo": [
+              {
+                "id": "681060412",
+                "url": "https://vimeo.com/681060412",
+                "player_url": "https://player.vimeo.com/video/681060412",
+                "matched": "https://vimeo.com/681060412"
+              }
+            ],
+            "youtube": [],
+            "iframes": []
+          },
+          "links": [
+            { "url": "https://drive.google.com/drive/folders/fixture-pack", "text": "Track pack" }
+          ],
+          "assignment": {
+            "upload_enabled": true,
+            "points_enabled": false,
+            "points_amount": 0,
+            "auto_approve": false,
+            "deletion_enabled": true,
+            "allowed_extensions": "",
+            "max_size": "",
+            "max_count": 1
+          },
+          "quizzes": [],
+          "topics": [],
+          "timer": { "forced_timer_enabled": false, "amount": 0 },
+          "visibility": { "type": "", "after": 0, "specific_date": "" }
+        },
+        {
+          "id": 91002,
+          "title": "Phrase matching",
+          "slug": "phrase-matching",
+          "status": "publish",
+          "order": 2,
+          "course_id": 90001,
+          "content_html": "<p>Keep the original HTML.</p>",
+          "content_text": "Keep the original HTML.",
+          "media": {
+            "vimeo": [
+              {
+                "id": "681060007",
+                "url": "https://vimeo.com/681060007",
+                "player_url": "https://player.vimeo.com/video/681060007"
+              }
+            ],
+            "youtube": [
+              { "id": "pbON1Ce46OEhttps", "url": "https://www.youtube.com/watch?v=pbON1Ce46OEhttps" }
+            ],
+            "iframes": []
+          },
+          "links": [],
+          "assignment": { "upload_enabled": false },
+          "quizzes": [],
+          "topics": [],
+          "timer": { "forced_timer_enabled": false, "amount": 0 },
+          "visibility": { "type": "", "after": 0, "specific_date": "" }
+        }
+      ],
+      "course_quizzes": []
+    },
+    {
+      "id": 90002,
+      "title": "Onboarding Quiz Lab",
+      "slug": "fixture-quiz-lab",
+      "status": "private",
+      "description_html": "",
+      "description_text": "Onboarding quiz fixture.",
+      "materials_html": "<p>Bring headphones.</p>",
+      "categories": [],
+      "tags": [],
+      "settings": {
+        "certificate": 0,
+        "prerequisite_enabled": true,
+        "prerequisites": [90001],
+        "points_enabled": false,
+        "progression_disabled": false
+      },
+      "lessons": [
+        {
+          "id": 92001,
+          "title": "Strategic steps",
+          "slug": "strategic-steps",
+          "status": "publish",
+          "order": 1,
+          "course_id": 90002,
+          "content_html": "<h2>Steps</h2><p>Original copy.</p>",
+          "content_text": "Steps Original copy.",
+          "media": { "vimeo": [], "youtube": [], "iframes": [] },
+          "links": [],
+          "assignment": { "upload_enabled": false },
+          "quizzes": [
+            {
+              "id": 93001,
+              "title": "Lesson 1 quiz",
+              "slug": "lesson-1-quiz",
+              "status": "publish",
+              "order": 1,
+              "course_id": 90002,
+              "lesson_id": 92001,
+              "settings": {
+                "passing_percentage": 100,
+                "retry_restrictions_enabled": true,
+                "retry_repeats": 50
+              },
+              "questions": [
+                {
+                  "id": 94001,
+                  "title": "Common growth mistake",
+                  "question_html": "<p>What is a common mistake?</p>",
+                  "question_text": "What is a common mistake?",
+                  "type": "single",
+                  "order": 1,
+                  "points_total": 1,
+                  "correct_message": "[object Object]",
+                  "incorrect_message": "[object Object]",
+                  "answers": [
+                    { "index": 1, "text": "Focusing too much on profits", "html": null, "correct": false, "points": 1, "sort_string": null },
+                    { "index": 2, "text": "Lack of a clear vision or direction", "html": null, "correct": true, "points": 0, "sort_string": null },
+                    { "index": 3, "text": "Overinvesting in equipment", "html": null, "correct": false, "points": 0, "sort_string": null },
+                    { "index": 4, "text": "Hiring too many experienced DJs", "html": null, "correct": false, "points": 0, "sort_string": null }
+                  ]
+                },
+                {
+                  "id": 94002,
+                  "title": "Select both true statements",
+                  "question_html": "<p>Select every true statement.</p>",
+                  "question_text": "Select every true statement.",
+                  "type": "multiple",
+                  "order": 2,
+                  "points_total": 1,
+                  "answers": [
+                    { "index": 1, "text": "Trainees need a clear plan", "correct": true },
+                    { "index": 2, "text": "Silence is the best feedback", "correct": false },
+                    { "index": 3, "text": "Practice should be observed", "correct": true }
+                  ]
+                },
+                {
+                  "id": 94003,
+                  "title": "Sort connectors",
+                  "question_html": "<p>Drag each connector type to match each picture</p>",
+                  "question_text": "Drag each connector type to match each picture",
+                  "type": "matrix_sort_answer",
+                  "order": 3,
+                  "points_total": 1,
+                  "answers": [
+                    { "index": 1, "text": "", "html": "<img src=\"https://media.blueprintteams.com/2022/10/TRA18.jpg\" alt=\"/\" />", "correct": false, "sort_string": "1/8\" TRS" },
+                    { "index": 2, "text": "", "html": "<img src=\"https://media.blueprintteams.com/2022/10/RCA.png\" alt=\"/\" />", "correct": false, "sort_string": "RCA" },
+                    { "index": 3, "text": "", "html": "<img src=\"https://media.blueprintteams.com/2022/10/TS.jpg\" alt=\"/\" />", "correct": false, "sort_string": "1/4\" TS" },
+                    { "index": 4, "text": "", "html": "<img src=\"https://media.blueprintteams.com/2022/10/XLR1.jpg\" alt=\"/\" />", "correct": false, "sort_string": "XLR (Female)" },
+                    { "index": 5, "text": "", "html": "<img src=\"https://media.blueprintteams.com/2022/10/TRA.jpg\" alt=\"/\" />", "correct": false, "sort_string": "1/4\" TRS" },
+                    { "index": 6, "text": "", "html": "<img src=\"https://media.blueprintteams.com/2022/10/XLR2.jpg\" alt=\"/\" />", "correct": false, "sort_string": "XLR (Male)" },
+                    { "index": 7, "text": "", "html": "<img src=\"https://media.blueprintteams.com/2022/10/RCA.png\" alt=\"spare\" />", "correct": false, "sort_string": "Spare RCA" },
+                    { "index": 8, "text": "", "html": "<img src=\"https://media.blueprintteams.com/2022/10/TS.jpg\" alt=\"spare-ts\" />", "correct": false, "sort_string": "Spare TS" }
+                  ]
+                }
+              ]
+            }
+          ],
+          "topics": [],
+          "timer": { "forced_timer_enabled": false, "amount": 0 },
+          "visibility": { "type": "", "after": 0, "specific_date": "" }
+        }
+      ],
+      "course_quizzes": [
+        {
+          "id": 93001,
+          "title": "Lesson 1 quiz",
+          "lesson_id": 92001,
+          "course_id": 90002,
+          "questions": []
+        }
+      ]
+    }
+  ],
+  "unassigned_lessons": [
+    {
+      "id": 99901,
+      "slug": "orphan-lesson",
+      "title": "Orphan lesson",
+      "course_id": 28421,
+      "status": "publish"
+    }
+  ],
+  "unassigned_quizzes": [
+    {
+      "id": 99902,
+      "title": "Orphan quiz",
+      "lesson_id": 99901,
+      "course_id": 28421
+    }
+  ],
+  "assignment_submissions": [
+    {
+      "id": 99903,
+      "lesson_id": 91001,
+      "course_id": 90001,
+      "author_id": 44,
+      "file_link": "https://example.invalid/private-file",
+      "approval_status": "approved"
+    }
+  ]
+}

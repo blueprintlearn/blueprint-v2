@@ -1,8 +1,8 @@
 # Curriculum import specification
 
-Status: Bravo planning only. **Do not import, seed, or migrate hosted databases from this document.**
+Status: Stage 4.2 mapper exists locally. **Do not import, seed, or migrate hosted databases from this document.**
 
-Source of truth for product rules remains `docs/01`–`05`. This spec only says what Bravo may import later, and from where.
+Source of truth for product rules remains `docs/01`–`05`. Stage 4.2 implementation notes live in `docs/08_LEGACY_CURRICULUM_IMPORT.md`. This spec still says where the export lives and what must stay off `main`.
 
 ## Canonical export
 
@@ -16,20 +16,11 @@ Do not import:
 
 - `assignment_submissions` (9 rows, Cloudways `file_link` + `author_id`)
 - unassigned lessons (20) or unassigned quizzes (16)
-- the full 242-lesson catalog on the first importer
+- trainee accounts or historical progress
 
 Quiz answer keys (`answers[].correct`) are in the JSON. Treat the file as sensitive.
 
-## First import subset (prove the model)
-
-About 20–30 lessons:
-
-1. `beatmixing-basics` — 5 lessons, Vimeo, assignment upload, no quizzes
-2. `how-to-train-an-event-dj-2` — 9 lessons, 8 quizzes, 27 single-choice questions
-3. `onboarding-for-instructors` — 6 lessons, private course, 1 quiz, 1 assignment
-4. Edge course: `the-master-mc-2` — 10 lessons, 4 quizzes, 18 questions, including `matrix_sort_answer`, and 3 assignment-upload lessons
-
-This is enough to prove course → lesson → video → quiz → assignment without Event DJ Foundations (77 lessons) or Event Assistant (42).
+Stage 4.2 maps all 16 assigned courses / 242 in-course lessons into private masters. The earlier Bravo 4-course subset is still a useful smoke path, but it is not the Stage 4.2 scope.
 
 ## Target content model (later, after competency contract)
 
@@ -61,6 +52,6 @@ Bravo will not write competency verifications or advancement rows.
 
 Hosted staging import. Never production seed.
 
-## Out of scope until a later Bravo slice
+## Out of scope until a later slice
 
-Importer code, hosted apply, Vimeo account transfer, Google Drive cleanup, remaining 200+ lessons, learner progress, certificates, drip, topics (export has none).
+Hosted apply, Vimeo account transfer, Google Drive cleanup, learner progress, certificates, drip, topics (export has none), and turning LearnDash course prerequisites into V2 paths.
