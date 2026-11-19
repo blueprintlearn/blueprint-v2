@@ -46,20 +46,18 @@ async function savePlanning(page: Page, typical = "40", target = "80", baseline 
   await page.locator("#targetAnnualBookings").fill(target)
   await page.locator("#expectedBookingsWithoutExpansion").fill(baseline)
   await page.getByRole("radio", { name: "Yes, we can train new DJs" }).check()
+  const reloaded = page.waitForEvent("load")
   await page.getByRole("button", { name: "Save planning answers" }).click()
+  await reloaded
   await expect(page.locator("[data-growth-rec]")).toHaveAttribute("data-growth-rec", /demand|utilize|recruit|beginner|experienced|train/)
 }
 
 async function openRecruit(page: Page) {
   await expect(page.getByRole("heading", { level: 1, name: "Growth planning" })).toBeVisible()
-  for (let attempt = 0; attempt < 3; attempt += 1) {
-    try {
-      await page.goto("/blueprint/recruit", { waitUntil: "domcontentloaded" })
-      return
-    } catch (error) {
-      if (attempt === 2 || !String(error).includes("ERR_ABORTED")) throw error
-    }
-  }
+  await page.waitForLoadState("networkidle")
+  await page.goto("/blueprint/recruit")
+  await expect(page).toHaveURL(/\/blueprint\/recruit/)
+  await expect(page.getByRole("heading", { level: 1, name: "Recruiting" })).toBeVisible()
 }
 
 test.describe("Recruiting", () => {
