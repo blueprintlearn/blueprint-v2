@@ -38,7 +38,7 @@ export const GROWTH_STALE =
   "You changed an earlier answer, so this is no longer the approved version. Approve your Blueprint again before planning growth. Follow-up answers are not used until approval holds."
 export const GROWTH_REVIEW_CTA = "Review your Blueprint"
 export const GROWTH_NOT_A_PLAN =
-  "Accepting, modifying, or rejecting a recommendation does not create a final growth plan. That comes later, and recruiting is not started from this page."
+  "Accepting, modifying, or rejecting a recommendation does not create a final growth plan. Review and approve a growth plan next. Recruiting is not started from this page."
 export const GROWTH_COUNT_MESSAGE = "Enter a whole number from 0 to 9,999."
 export const GROWTH_RATE_MESSAGE = "Enter a closing rate greater than 0 and at most 100. Decimals are allowed."
 export const GROWTH_TRAINING_MESSAGE = "Choose whether you can train new DJs in the next 12 months."

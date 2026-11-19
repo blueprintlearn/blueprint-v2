@@ -182,8 +182,8 @@ export function GrowthPlanningView({
             <Link href="/blueprint/staffing" className="bp-btn bp-btn--plain">
               Previous: Staffing and demand
             </Link>
-            <Link href="/blueprint" className="bp-btn bp-btn--soft">
-              Back to your Blueprint
+            <Link href="/blueprint/growth-plan" id="blueprint-next" className="bp-btn bp-btn--soft">
+              Next: Growth plan
             </Link>
           </div>
         </>

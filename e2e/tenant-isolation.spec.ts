@@ -35,6 +35,9 @@ test.describe("tenant isolation in the browser", () => {
     await page.goto("/blueprint/growth")
     await expect(page.locator("main").getByText("Company A", { exact: true })).toBeVisible()
     await expect(page.getByText(/\bCompany B\b/)).toHaveCount(0)
+    await page.goto("/blueprint/growth-plan")
+    await expect(page.locator("main").getByText("Company A", { exact: true })).toBeVisible()
+    await expect(page.getByText(/\bCompany B\b/)).toHaveCount(0)
   })
 
   test("sign out hides tenant records", async ({ page }) => {

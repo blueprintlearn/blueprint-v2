@@ -150,6 +150,25 @@ isOneToOne: true
       referencedColumns: ["id"]
     }
                   ]
+                },"company_growth_plans": {
+                  Row: {
+                    "approved_at": string | null,"approved_by": string | null,"company_id": string,"created_at": string,"decisions": NonNullable<Json>,"id": string,"recommended": NonNullable<Json>,"source_fingerprint": string,"status": string,"updated_at": string,"version": number,"warnings": NonNullable<Json>
+                  }
+                  Insert: {
+                    "approved_at"?: string | null,"approved_by"?: string | null,"company_id": string,"created_at"?: string,"decisions": NonNullable<Json>,"id"?: string,"recommended": NonNullable<Json>,"source_fingerprint": string,"status": string,"updated_at"?: string,"version": number,"warnings"?: NonNullable<Json>
+                  }
+                  Update: {
+                    "approved_at"?: string | null,"approved_by"?: string | null,"company_id"?: string,"created_at"?: string,"decisions"?: NonNullable<Json>,"id"?: string,"recommended"?: NonNullable<Json>,"source_fingerprint"?: string,"status"?: string,"updated_at"?: string,"version"?: number,"warnings"?: NonNullable<Json>
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_growth_plans_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"company_memberships": {
                   Row: {
                     "company_id": string,"created_at": string,"id": string,"role": Database["public"]['Enums']["system_role"],"status": string,"user_id": string

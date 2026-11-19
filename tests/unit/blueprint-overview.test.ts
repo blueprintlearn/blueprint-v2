@@ -248,6 +248,9 @@ describe("BlueprintOverview", () => {
     expect(anchors(withFindings).some((a) => a.href === "/blueprint/growth" && a.label === "See growth planning")).toBe(
       true,
     )
+    expect(anchors(withFindings).some((a) => a.href === "/blueprint/growth-plan" && a.label === "See your growth plan")).toBe(
+      true,
+    )
     expect(count(withFindings, "bp-btn--primary")).toBe(0)
   })
 })
@@ -281,6 +284,7 @@ describe("BlueprintHomeCard", () => {
       { href: "/blueprint/findings", className: "bp-btn bp-btn--soft self-start", label: "See business findings" },
       { href: "/blueprint/staffing", className: "bp-btn bp-btn--soft self-start", label: "See staffing and demand" },
       { href: "/blueprint/growth", className: "bp-btn bp-btn--soft self-start", label: "See growth planning" },
+      { href: "/blueprint/growth-plan", className: "bp-btn bp-btn--soft self-start", label: "See your growth plan" },
       { href: "/blueprint/review", className: "bp-btn bp-btn--soft self-start", label: "Review your Blueprint" },
     ])
   })

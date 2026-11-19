@@ -200,6 +200,33 @@ export async function getCurrentGrowthPlanning(): Promise<{
   return data
 }
 
+export async function getCurrentGrowthPlans(): Promise<
+  {
+    id: string
+    version: number
+    status: string
+    source_fingerprint: string
+    recommended: unknown
+    decisions: unknown
+    warnings: unknown
+    approved_by: string | null
+    approved_at: string | null
+  }[]
+> {
+  const membership = await getCurrentMembership()
+  if (!membership) return []
+
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("company_growth_plans")
+    .select("id, version, status, source_fingerprint, recommended, decisions, warnings, approved_by, approved_at")
+    .eq("company_id", membership.companyId)
+    .order("version", { ascending: false })
+
+  if (error || !data) return []
+  return data
+}
+
 export async function getCurrentBlueprintProgress(): Promise<CurrentBlueprintProgress | null> {
   const membership = await getCurrentMembership()
   if (!membership) return null
