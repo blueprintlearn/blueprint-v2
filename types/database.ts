@@ -365,6 +365,43 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"company_applicant_training_preparations": {
+                  Row: {
+                    "applicant_id": string,"application_id": string,"approved_at": string | null,"approved_by": string | null,"company_id": string,"created_at": string,"created_by": string,"evidence": NonNullable<Json>,"experience_level": string,"id": string,"intended_role": string,"missing_information": NonNullable<Json>,"owner_notes": string | null,"planned_start_date": string | null,"skills_demonstrated": NonNullable<Json>,"skills_needing_development": NonNullable<Json>,"skills_needing_verification": NonNullable<Json>,"source_outcome_id": string | null,"starting_goals": NonNullable<Json>,"status": string,"suggested_approach": string,"training_approach": string,"updated_at": string,"updated_by": string,"version": number
+                  }
+                  Insert: {
+                    "applicant_id": string,"application_id": string,"approved_at"?: string | null,"approved_by"?: string | null,"company_id": string,"created_at"?: string,"created_by": string,"evidence"?: NonNullable<Json>,"experience_level": string,"id"?: string,"intended_role": string,"missing_information"?: NonNullable<Json>,"owner_notes"?: string | null,"planned_start_date"?: string | null,"skills_demonstrated"?: NonNullable<Json>,"skills_needing_development"?: NonNullable<Json>,"skills_needing_verification"?: NonNullable<Json>,"source_outcome_id"?: string | null,"starting_goals"?: NonNullable<Json>,"status": string,"suggested_approach": string,"training_approach": string,"updated_at"?: string,"updated_by": string,"version": number
+                  }
+                  Update: {
+                    "applicant_id"?: string,"application_id"?: string,"approved_at"?: string | null,"approved_by"?: string | null,"company_id"?: string,"created_at"?: string,"created_by"?: string,"evidence"?: NonNullable<Json>,"experience_level"?: string,"id"?: string,"intended_role"?: string,"missing_information"?: NonNullable<Json>,"owner_notes"?: string | null,"planned_start_date"?: string | null,"skills_demonstrated"?: NonNullable<Json>,"skills_needing_development"?: NonNullable<Json>,"skills_needing_verification"?: NonNullable<Json>,"source_outcome_id"?: string | null,"starting_goals"?: NonNullable<Json>,"status"?: string,"suggested_approach"?: string,"training_approach"?: string,"updated_at"?: string,"updated_by"?: string,"version"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_applicant_training_preparations_applicant_id_fkey"
+      columns: ["applicant_id"]
+isOneToOne: false
+      referencedRelation: "company_applicants"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_applicant_training_preparations_application_id_fkey"
+      columns: ["application_id"]
+isOneToOne: false
+      referencedRelation: "company_applications"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_applicant_training_preparations_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_applicant_training_preparations_source_outcome_id_fkey"
+      columns: ["source_outcome_id"]
+isOneToOne: false
+      referencedRelation: "company_applicant_hiring_outcomes"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"company_applicants": {
                   Row: {
                     "company_id": string,"created_at": string,"email": string,"email_normalized": string | null,"first_name": string,"id": string,"last_name": string,"location": string,"phone": string,"updated_at": string

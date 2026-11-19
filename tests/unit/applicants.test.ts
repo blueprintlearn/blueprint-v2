@@ -82,6 +82,7 @@ function card(overrides: Partial<ApplicantCard> = {}): ApplicantCard {
     auditionStatus: "none",
     checklistComplete: 0,
     checklistTotal: 5,
+    trainingReadiness: "not_prepared",
     ...overrides,
   }
 }

@@ -116,7 +116,7 @@ export const HIRING_OUTCOME_HELP =
 export const HIRING_OUTCOME_ENGAGEMENT_HELP =
   "This is what you intend to use. Blueprint does not classify this person as an employee or contractor."
 export const TRAINING_HANDOFF_HELP =
-  "Training is not enabled yet. Completing this only records that you are ready to hand them to training later."
+  "Training enrollment is not enabled yet. Completing this checklist item does not start a course. Use Prepare for Training below after a current Hired outcome."
 export const AUDITION_SKILLS_INVALID = "Enter 1 to 8 job-related skills."
 export const FORBIDDEN_AUDITION_SKILL_MESSAGE =
   "Use job-related skills. Do not rate personality, protected characteristics, or similar personal traits."
@@ -415,6 +415,12 @@ export function nextHiringOutcomeCode(
   }
   if (latest === "hired" || latest === "corrected") return "reversed"
   return null
+}
+
+export function currentHiredOutcome(outcomes: HiringOutcomeRecord[]): HiringOutcomeRecord | null {
+  const latest = outcomes.at(-1)
+  if (!latest) return null
+  return latest.outcome === "hired" || latest.outcome === "corrected" ? latest : null
 }
 
 export function skillsFromUnknown(value: unknown): string[] | null {

@@ -23,6 +23,12 @@ import {
   loadHiringIndicatorsByApplication,
   loadHiringWorkflow,
 } from "@/lib/blueprint/hiring-workflow-store"
+import { trainingPreparationHandoffFromApproved } from "@/lib/blueprint/training-preparation-handoff"
+import { canPrepareTraining, currentApproved, trainingReadinessFromFacts } from "@/lib/blueprint/training-preparation"
+import {
+  loadTrainingPreparations,
+  loadTrainingReadinessByApplication,
+} from "@/lib/blueprint/training-preparation-store"
 import { loadInterviewStatusByApplication, loadOwnerInterview, purgeExpiredInterviewMedia } from "@/lib/blueprint/interview-store"
 import type { createClient } from "@/lib/supabase/server"
 import type { Json } from "@/types/database"
@@ -71,10 +77,11 @@ export async function loadApplicantCards(client: Client, companyId: string): Pro
     .in("id", applicantIds)
   if (peopleError || !people) return []
   const byId = new Map(people.map((person) => [person.id, person]))
-  const [statuses, indicators, hiring] = await Promise.all([
+  const [statuses, indicators, hiring, training] = await Promise.all([
     loadInterviewStatusByApplication(client, companyId),
     loadReviewIndicatorsByApplication(client, companyId),
     loadHiringIndicatorsByApplication(client, companyId),
+    loadTrainingReadinessByApplication(client, companyId),
     purgeExpiredInterviewMedia(client, companyId),
   ])
   return data
@@ -88,6 +95,7 @@ export async function loadApplicantCards(client: Client, companyId: string): Pro
         interviewStatus: statuses.get(card.applicationId) ?? "not_sent",
         ...indicatorsForCard(card.applicationId, card.stage, indicators),
         ...hiringIndicatorsForCard(card.applicationId, hiring),
+        trainingReadiness: training.get(card.applicationId) ?? "not_prepared",
       }
     })
     .filter((card): card is ApplicantCard => card !== null)
@@ -128,13 +136,14 @@ export async function loadApplicantProfile(
       .eq("application_id", application.id)
       .order("changed_at", { ascending: true }),
   ])
-  const [interview, evaluation, decisions, followUp, evaluationCategories, hiring] = await Promise.all([
+  const [interview, evaluation, decisions, followUp, evaluationCategories, hiring, trainingPreparations] = await Promise.all([
     loadOwnerInterview(client, companyId, application.id),
     loadHumanEvaluation(client, companyId, application.id),
     loadOwnerDecisions(client, companyId, application.id),
     loadApplicantFollowUp(client, companyId, application.id),
     resolveEvaluationCategories(client, companyId, card.slug),
     loadHiringWorkflow(client, companyId, application.id),
+    loadTrainingPreparations(client, companyId, application.id),
   ])
   const latestDecision = decisions.at(-1)?.decision ?? null
   const evaluationStatus = evaluationStatusFromRatings(evaluation?.ratings)
@@ -186,6 +195,8 @@ export async function loadApplicantProfile(
     conversations: hiring.conversations,
     auditions: hiring.auditions,
     hiringOutcomes: hiring.outcomes,
+    trainingPreparations,
+    trainingReadiness: trainingReadinessFromFacts(canPrepareTraining(hiring.outcomes), trainingPreparations),
   }
 }
 
@@ -207,6 +218,13 @@ export function applicantHandoffFromProfile(
     interviewStatus: profile.interviewStatus,
     interviewSubmittedAt: profile.interview?.submittedAt ?? null,
   })
+}
+
+export function applicantTrainingHandoffFromProfile(companyId: string, profile: ApplicantProfile) {
+  if (!canPrepareTraining(profile.hiringOutcomes)) return null
+  const approved = currentApproved(profile.trainingPreparations)
+  if (!approved) return null
+  return trainingPreparationHandoffFromApproved({ ...approved, companyId })
 }
 
 export function applicantHiringHandoffFromProfile(companyId: string, profile: ApplicantProfile) {
