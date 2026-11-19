@@ -314,7 +314,10 @@ export function RecruitStrategyView({
         <Link href="/blueprint/growth-plan" className="bp-btn bp-btn--plain">
           Previous: Growth plan
         </Link>
-        <Link href="/blueprint" className="bp-btn bp-btn--soft">
+        <Link href="/blueprint/recruiting" className="bp-btn bp-btn--soft">
+          Next: Job ads
+        </Link>
+        <Link href="/blueprint" className="bp-btn bp-btn--plain">
           Back to your Blueprint
         </Link>
       </div>

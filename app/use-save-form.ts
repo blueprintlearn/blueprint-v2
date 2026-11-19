@@ -36,6 +36,10 @@ export function useSaveForm(save: (prev: SaveResult, formData: FormData) => Prom
     onSubmit: (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault()
       const formData = new FormData(event.currentTarget)
+      const submitter = "submitter" in event.nativeEvent ? event.nativeEvent.submitter : null
+      if (submitter instanceof HTMLButtonElement && submitter.name) {
+        formData.set(submitter.name, submitter.value)
+      }
       startTransition(() => dispatch(formData))
     },
   }

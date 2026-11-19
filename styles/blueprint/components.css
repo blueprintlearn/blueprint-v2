@@ -172,6 +172,7 @@
 .bp-input[aria-invalid="true"],.bp-select[aria-invalid="true"]{border-color:var(--danger-ink)}
 .bp-input:disabled,.bp-select:disabled{opacity:.55;cursor:not-allowed}
 .bp-input--number{max-width:180px}
+textarea.bp-textarea{height:auto;min-height:160px;padding:12px 14px;line-height:1.45;resize:vertical}
 .bp-select-wrap{position:relative;display:block}
 .bp-select{appearance:none;-webkit-appearance:none;padding-right:42px;cursor:pointer}
 .bp-select-wrap__icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--ink-2);pointer-events:none;display:grid}
