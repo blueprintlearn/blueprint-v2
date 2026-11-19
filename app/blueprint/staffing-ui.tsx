@@ -290,8 +290,8 @@ export function StaffingDemandView({
             <Link href="/blueprint/findings" className="bp-btn bp-btn--plain">
               Previous: Business findings
             </Link>
-            <Link href="/blueprint" className="bp-btn bp-btn--soft">
-              Back to your Blueprint
+            <Link href="/blueprint/growth" id="blueprint-next" className="bp-btn bp-btn--soft">
+              Next: Growth planning
             </Link>
           </div>
         </>

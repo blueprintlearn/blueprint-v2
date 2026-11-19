@@ -182,6 +182,24 @@ export async function getCurrentBlueprintAnswers(): Promise<StoredBlueprintAnswe
   }))
 }
 
+export async function getCurrentGrowthPlanning(): Promise<{
+  inputs: unknown
+  recommendation_response: unknown
+} | null> {
+  const membership = await getCurrentMembership()
+  if (!membership) return null
+
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("company_growth_planning")
+    .select("inputs, recommendation_response")
+    .eq("company_id", membership.companyId)
+    .maybeSingle()
+
+  if (error || !data) return null
+  return data
+}
+
 export async function getCurrentBlueprintProgress(): Promise<CurrentBlueprintProgress | null> {
   const membership = await getCurrentMembership()
   if (!membership) return null

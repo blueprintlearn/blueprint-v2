@@ -130,6 +130,15 @@ test.describe("guided Blueprint accessibility", () => {
     expect(results.violations.filter((item) => item.impact === "serious" || item.impact === "critical")).toEqual([])
   })
 
+  test("Growth planning before approval has no serious or critical axe issues", async ({ page }) => {
+    ensureEmptyGuidedCompany()
+    await signIn(page)
+    await page.goto("/blueprint/growth")
+    await expect(page.getByRole("heading", { level: 1, name: "Growth planning" })).toBeVisible()
+    const growth = await new AxeBuilder({ page }).analyze()
+    expect(growth.violations.filter((item) => item.impact === "serious" || item.impact === "critical")).toEqual([])
+  })
+
   test("Staffing and demand before approval has no serious or critical axe issues", async ({ page }) => {
     ensureEmptyGuidedCompany()
     await signIn(page)

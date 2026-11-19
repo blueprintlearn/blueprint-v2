@@ -192,6 +192,11 @@ export async function runOnboardingJourney(page: Page) {
   await expect(page.locator("[data-staffing-calc='capacity']")).toHaveAttribute("data-staffing-status", "unavailable")
   await expect(page.getByText(/we recommend|hire \d+ DJs/)).toHaveCount(0)
 
+  await page.goto("/blueprint/growth")
+  await expect(page.locator("[data-growth-gate]")).toHaveAttribute("data-growth-gate", "current")
+  await expect(page.locator("[data-growth-rec]")).toHaveAttribute("data-growth-rec", "unavailable")
+  await expect(page.getByText(/not a confirmed forecast|planning proxy/i).first()).toBeVisible()
+
   await page.goto("/blueprint/events")
   await page.locator('#q-E2 input[name="e2"]').fill("90")
   await page.getByRole("button", { name: "Save your events today" }).click()
@@ -202,6 +207,9 @@ export async function runOnboardingJourney(page: Page) {
   await page.goto("/blueprint/staffing")
   await expect(page.locator("[data-staffing-gate]")).toHaveAttribute("data-staffing-gate", "stale")
   await expect(page.locator("[data-staffing-calc]")).toHaveCount(0)
+  await page.goto("/blueprint/growth")
+  await expect(page.locator("[data-growth-gate]")).toHaveAttribute("data-growth-gate", "stale")
+  await expect(page.locator("[data-growth-rec]")).toHaveCount(0)
   await page.goto("/blueprint/review")
   await expect(page.locator("[data-snapshot-key='E2'] .bp-fact__value")).toHaveText("90")
   await expect(page.locator("form[data-card='approve']")).toHaveAttribute("data-saved-r1", "")
@@ -218,4 +226,6 @@ export async function runOnboardingJourney(page: Page) {
   await page.goto("/blueprint/staffing")
   await expect(page.locator("[data-staffing-gate]")).toHaveAttribute("data-staffing-gate", "current")
   await expect(page.locator("[data-staffing-calc='volume'] .bp-fact__value")).toHaveText("90")
+  await page.goto("/blueprint/growth")
+  await expect(page.locator("[data-growth-gate]")).toHaveAttribute("data-growth-gate", "current")
 }

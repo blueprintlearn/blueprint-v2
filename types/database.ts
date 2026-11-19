@@ -131,6 +131,25 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"company_growth_planning": {
+                  Row: {
+                    "company_id": string,"created_at": string,"inputs": NonNullable<Json>,"recommendation_response": Json | null,"updated_at": string,"updated_by": string
+                  }
+                  Insert: {
+                    "company_id": string,"created_at"?: string,"inputs"?: NonNullable<Json>,"recommendation_response"?: Json | null,"updated_at"?: string,"updated_by"?: string
+                  }
+                  Update: {
+                    "company_id"?: string,"created_at"?: string,"inputs"?: NonNullable<Json>,"recommendation_response"?: Json | null,"updated_at"?: string,"updated_by"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_growth_planning_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: true
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"company_memberships": {
                   Row: {
                     "company_id": string,"created_at": string,"id": string,"role": Database["public"]['Enums']["system_role"],"status": string,"user_id": string
