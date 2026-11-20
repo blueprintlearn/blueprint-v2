@@ -30,6 +30,7 @@ Do not apply until separately approved, and not before the previous recruiting/t
 10. Stage 4.3 `20261201120000_training_enrollment` (see `docs/09_TRAINING_ENROLLMENT.md`; do not apply until separately approved)
 11. Stage 4.3 follow-up `20261202120000_training_enrollment_invite_fixes`
 12. Stage 4.4 `20261203120000_training_trainee_viewer` (see `docs/10_TRAINEE_FROZEN_CONTENT.md`; do not apply until separately approved)
+13. Stage 4.4 follow-up `20261204120000_training_trainee_viewer_sanitize`
 
 Stage 2 and Stage 3.1 hosted applies are not required for local 4.1.
 

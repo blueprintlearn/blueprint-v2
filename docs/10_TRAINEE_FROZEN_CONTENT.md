@@ -8,15 +8,12 @@ Source of truth for product rules remains `docs/01`–`05`. Libraries remain in 
 
 ## What this stage provides
 
-- Trainee SELECT of `company_training_course_versions` / `company_training_path_versions` only when:
-  - the viewer has an **active** company membership,
-  - the viewer has an **active** enrollment for that course or path,
-  - the version number matches `content_version`,
-  - the version status is `published` or `superseded` (never `draft`).
+- Trainee reads of frozen course and path snapshots go through `get_assigned_training_snapshot`. The RPC requires the signed-in user, an **active** membership, and an **active** enrollment, then returns the matching `published` or `superseded` version. Course `content` is sanitized first; quiz option `correct`, `sortString`, and `html` never leave Postgres on this path.
+- Trainees have no table SELECT on `company_training_course_versions` or `company_training_path_versions`. Owner library SELECT is unchanged.
 - Trainee SELECT of own active enrollments only while the membership is active.
 - Trainee surfaces at `/training`, `/training/assignments/[enrollmentId]`, and course lesson pages under that assignment.
 - Frozen title and body after a later publish. Path assignments show frozen path metadata only; they do not load live course titles.
-- Read-only quiz prompts/options and assignment instructions. Correct-answer keys are stripped from the trainee DTO.
+- Read-only quiz prompts/options and assignment instructions. The TypeScript trainee DTO also strips answer-bearing option fields.
 
 ## What this stage does not provide
 
@@ -37,12 +34,13 @@ Do not apply until separately approved, and not before Stage 4.3 exists in that 
 5. Stage 4.3 `20261201120000_training_enrollment`
 6. Stage 4.3 follow-up `20261202120000_training_enrollment_invite_fixes`
 7. Stage 4.4 `20261203120000_training_trainee_viewer`
+8. Stage 4.4 follow-up `20261204120000_training_trainee_viewer_sanitize`
 
 ## Permissions
 
 | Actor | View frozen assigned content |
 | --- | --- |
-| Active company member with an active enrollment | Yes, matching `content_version` only |
+| Active company member with an active enrollment | Yes, matching `content_version` only, through `get_assigned_training_snapshot` |
 | Inactive company member, even with an enrollment row | No |
 | Cancelled or revoked enrollment | No |
 | Other company’s member | No |
@@ -50,12 +48,12 @@ Do not apply until separately approved, and not before Stage 4.3 exists in that 
 | Guided owner | Owner library policies unchanged; the trainee viewer still loads the frozen enrollment version, not the current draft |
 | Platform admin | No extra trainee-content rights |
 
-`has_active_company_membership` and `can_view_frozen_training_version` are security-definer read helpers used by RLS. They do not write progress, grades, or memberships.
+`get_assigned_training_snapshot` is the trainee content read path. `has_active_company_membership` is used by enrollment RLS and by the snapshot RPC. `can_view_frozen_training_version` remains as a read helper. `trainee_safe_course_content` is not granted to `authenticated`. These functions do not write progress, grades, or memberships.
 
 ## Remaining limitations
 
 - Invitation email delivery is disabled until separately approved infrastructure exists.
-- Hosted/staging/production must not apply `20261203120000_training_trainee_viewer` (or earlier Stage 4.3 enrollment migrations) until that apply is named.
+- Hosted/staging/production must not apply `20261203120000_training_trainee_viewer`, `20261204120000_training_trainee_viewer_sanitize`, or earlier Stage 4.3 enrollment migrations until that apply is named.
 - Inviting an inactive email can still create a pending enrollment; acceptance stays blocked, and this viewer does not show content to inactive members.
 - Trainees cannot complete lessons or submit work yet.
 - Path assignments do not open nested course lesson pages from the path snapshot.

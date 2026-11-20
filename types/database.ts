@@ -981,6 +981,9 @@ isOneToOne: false
 "expire_stale_video_interviews":
 { Args: { "p_company_id": string }; Returns: number
                            },
+"get_assigned_training_snapshot":
+{ Args: { "p_enrollment_id": string }; Returns: Json
+                           },
 "get_published_recruiting_page":
 { Args: { "p_slug": string }; Returns: Json
                            },
@@ -1051,6 +1054,9 @@ isOneToOne: false
                            },
 "submit_recruiting_application":
 { Args: { "p_idempotency_key": string,"p_ip_hash": string,"p_payload": Json,"p_slug": string }; Returns: Json
+                           },
+"trainee_safe_course_content":
+{ Args: { "p_content": Json }; Returns: Json
                            }
           }
           Enums: {

@@ -4,10 +4,12 @@ import { emptyCourseContent, emptyLesson, emptyPathContent } from "@/lib/bluepri
 import {
   assignedLessonHref,
   assignedTrainingHref,
+  jsonContainsQuizAnswerKeys,
   quizOptionsLeakAnswers,
   STAGE4_VIEWER_STATUS,
   toTraineeCourseView,
   toTraineePathView,
+  traineeCourseViewFromSnapshot,
   visibleLessonText,
 } from "@/lib/blueprint/training-viewer"
 
@@ -114,5 +116,66 @@ describe("training frozen-content viewer", () => {
     expect(quizOptionsLeakAnswers(view)).toBe(false)
     expect(visibleLessonText("<p>Welcome <strong>guests</strong>.</p>", "html")).toBe("Welcome guests.")
     expect(visibleLessonText("A clear welcome.", "plain")).toBe("A clear welcome.")
+  })
+
+  it("builds a trainee course view from sanitized snapshot JSON without answer keys", () => {
+    const view = traineeCourseViewFromSnapshot("enroll-3", 1, "published", {
+      title: "MC Foundations",
+      description: "Learn MC Foundations.",
+      intendedRole: "DJ",
+      estimatedDurationMinutes: 30,
+      lessons: [
+        {
+          id: "lesson-1",
+          title: "Welcome",
+          description: "Open the assigned lesson.",
+          blocks: [
+            { id: "text-1", type: "text", body: "Read MC Foundations snapshot." },
+            {
+              id: "html-1",
+              type: "text",
+              body: "<p>Welcome <strong>guests</strong>.</p>",
+              format: "html",
+            },
+            { id: "video-1", type: "video", url: "https://example.com/welcome.mp4", caption: "A 30-second welcome." },
+            {
+              id: "quiz-1",
+              type: "quiz",
+              title: "Mic check",
+              questions: [
+                {
+                  id: "q-1",
+                  prompt: "When should you test the microphone?",
+                  kind: "single_choice",
+                  options: [
+                    { id: "a", label: "Before guests arrive", correct: true, html: "<b>yes</b>", sortString: "1" },
+                    { id: "b", label: "During the first dance" },
+                  ],
+                },
+              ],
+            },
+            {
+              id: "assign-1",
+              type: "assignment",
+              title: "Record a welcome",
+              instructions: "Record a 30-second welcome.",
+              verification: "online",
+            },
+          ],
+        },
+      ],
+    })
+    expect(view).toMatchObject({
+      kind: "course",
+      enrollmentId: "enroll-3",
+      title: "MC Foundations",
+      description: "Learn MC Foundations.",
+      version: 1,
+    })
+    expect(JSON.stringify(view)).toContain("Read MC Foundations snapshot.")
+    expect(JSON.stringify(view)).toContain("https://example.com/welcome.mp4")
+    expect(JSON.stringify(view)).toContain("Record a 30-second welcome.")
+    expect(quizOptionsLeakAnswers(view!)).toBe(false)
+    expect(jsonContainsQuizAnswerKeys(view)).toBe(false)
   })
 })
