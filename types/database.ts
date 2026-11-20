@@ -953,6 +953,9 @@ isOneToOne: false
             "accept_training_invitation":
 { Args: { "p_token_hash": string }; Returns: Json
                            },
+"can_view_frozen_training_version":
+{ Args: { "p_company_id": string,"p_course_id": string,"p_kind": string,"p_path_id": string,"p_version": number }; Returns: boolean
+                           },
 "cancel_company_training_enrollment":
 { Args: { "p_enrollment_id": string }; Returns: Json
                            },
@@ -983,6 +986,9 @@ isOneToOne: false
                            },
 "get_training_invitation":
 { Args: { "p_token_hash": string }; Returns: Json
+                           },
+"has_active_company_membership":
+{ Args: { "p_company_id": string }; Returns: boolean
                            },
 "import_legacy_master_course":
 { Args: { "p_content": Json,"p_course_id": string,"p_legacy_content_version": string,"p_legacy_source_id": string,"p_published_by": string,"p_title": string,"p_version_id": string }; Returns: string
