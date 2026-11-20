@@ -1,12 +1,11 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
 
-import { Card, Chip } from "@/components/blueprint"
+import { Card } from "@/components/blueprint"
 import { TopNav } from "@/components/blueprint"
 import { SignOutButton } from "@/app/sign-out-button"
+import { TraineeAssignmentList } from "@/app/training-viewer-ui"
 import {
-  ENROLLMENT_SOURCE_LABELS,
-  ENROLLMENT_STATUS_LABELS,
   TRAINING_NO_ASSIGNMENTS,
   TRAINING_TRAINEE_OPENING,
   TRAINING_TRAINEE_TITLE,
@@ -40,19 +39,7 @@ export default async function TraineeTrainingPage() {
           </h2>
           <div data-trainee-assignments="">
           {enrollments.length === 0 ? <p className="bp-card__body">{TRAINING_NO_ASSIGNMENTS}</p> : null}
-          <ul className="m-0 grid list-none gap-4 p-0">
-            {enrollments.map((row) => (
-              <li key={row.id} className="grid gap-1 border-t border-line pt-4 first:border-t-0 first:pt-0" data-trainee-enrollment={row.id}>
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <p className="m-0 font-bold text-ink">{row.contentTitle}</p>
-                  <Chip tone="mint">{ENROLLMENT_STATUS_LABELS[row.status]}</Chip>
-                </div>
-                <p className="m-0 text-[14px] text-muted">
-                  {row.targetKind === "path" ? "Path" : "Course"} v{row.contentVersion} · {ENROLLMENT_SOURCE_LABELS[row.source]}
-                </p>
-              </li>
-            ))}
-          </ul>
+          {enrollments.length > 0 ? <TraineeAssignmentList enrollments={enrollments} /> : null}
           </div>
         </Card>
       </main>

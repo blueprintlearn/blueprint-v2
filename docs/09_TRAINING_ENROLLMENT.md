@@ -33,6 +33,8 @@ Do not apply until separately approved, and not before Stage 4.2 exists in that 
 4. Stage 4.2 `20261130120000_training_legacy_import`
 5. Stage 4.3 `20261201120000_training_enrollment`
 6. Stage 4.3 follow-up `20261202120000_training_enrollment_invite_fixes`
+7. Stage 4.4 `20261203120000_training_trainee_viewer` (see `docs/10_TRAINEE_FROZEN_CONTENT.md`; do not apply until separately approved)
+8. Stage 4.4 follow-up `20261204120000_training_trainee_viewer_sanitize`
 
 ## Lifecycle
 
@@ -92,6 +94,7 @@ Plaintext invite tokens are not stored. After a refresh, the owner copies a new 
 ## Remaining limitations
 
 - Invitation email delivery is disabled until separately approved infrastructure exists.
-- Hosted/staging/production must not apply `20261201120000_training_enrollment` or `20261202120000_training_enrollment_invite_fixes` until that apply is named.
-- Trainees cannot complete lessons or submit work yet.
+- Hosted/staging/production must not apply `20261201120000_training_enrollment`, `20261202120000_training_enrollment_invite_fixes`, `20261203120000_training_trainee_viewer`, or `20261204120000_training_trainee_viewer_sanitize` until that apply is named.
+- Inviting an inactive email can still create a pending enrollment. Acceptance stays blocked (`training-enrollment:inactive-membership`).
+- Trainees cannot complete lessons or submit work yet. Stage 4.4 is read-only frozen content.
 - Private master curriculum stays hidden from company owners.

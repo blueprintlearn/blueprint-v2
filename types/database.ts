@@ -953,6 +953,9 @@ isOneToOne: false
             "accept_training_invitation":
 { Args: { "p_token_hash": string }; Returns: Json
                            },
+"can_view_frozen_training_version":
+{ Args: { "p_company_id": string,"p_course_id": string,"p_kind": string,"p_path_id": string,"p_version": number }; Returns: boolean
+                           },
 "cancel_company_training_enrollment":
 { Args: { "p_enrollment_id": string }; Returns: Json
                            },
@@ -978,11 +981,17 @@ isOneToOne: false
 "expire_stale_video_interviews":
 { Args: { "p_company_id": string }; Returns: number
                            },
+"get_assigned_training_snapshot":
+{ Args: { "p_enrollment_id": string }; Returns: Json
+                           },
 "get_published_recruiting_page":
 { Args: { "p_slug": string }; Returns: Json
                            },
 "get_training_invitation":
 { Args: { "p_token_hash": string }; Returns: Json
+                           },
+"has_active_company_membership":
+{ Args: { "p_company_id": string }; Returns: boolean
                            },
 "import_legacy_master_course":
 { Args: { "p_content": Json,"p_course_id": string,"p_legacy_content_version": string,"p_legacy_source_id": string,"p_published_by": string,"p_title": string,"p_version_id": string }; Returns: string
@@ -1045,6 +1054,9 @@ isOneToOne: false
                            },
 "submit_recruiting_application":
 { Args: { "p_idempotency_key": string,"p_ip_hash": string,"p_payload": Json,"p_slug": string }; Returns: Json
+                           },
+"trainee_safe_course_content":
+{ Args: { "p_content": Json }; Returns: Json
                            }
           }
           Enums: {

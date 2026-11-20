@@ -69,12 +69,13 @@ function asEnrollment(row: {
   }
 }
 
+const ENROLLMENT_COLUMNS =
+  "id, company_id, trainee_user_id, invite_email, source, target_kind, course_id, path_id, content_version, content_title, assigned_by, assigned_at, status, accepted_at, cancelled_at, preparation_id, applicant_id, application_id" as const
+
 export async function loadCompanyEnrollments(client: Client, companyId: string): Promise<StoredTrainingEnrollment[]> {
   const { data, error } = await client
     .from("company_training_enrollments")
-    .select(
-      "id, company_id, trainee_user_id, invite_email, source, target_kind, course_id, path_id, content_version, content_title, assigned_by, assigned_at, status, accepted_at, cancelled_at, preparation_id, applicant_id, application_id",
-    )
+    .select(ENROLLMENT_COLUMNS)
     .eq("company_id", companyId)
     .order("assigned_at", { ascending: false })
   if (error || !data) return []
@@ -84,13 +85,25 @@ export async function loadCompanyEnrollments(client: Client, companyId: string):
 export async function loadTraineeEnrollments(client: Client): Promise<StoredTrainingEnrollment[]> {
   const { data, error } = await client
     .from("company_training_enrollments")
-    .select(
-      "id, company_id, trainee_user_id, invite_email, source, target_kind, course_id, path_id, content_version, content_title, assigned_by, assigned_at, status, accepted_at, cancelled_at, preparation_id, applicant_id, application_id",
-    )
+    .select(ENROLLMENT_COLUMNS)
     .eq("status", "active")
     .order("assigned_at", { ascending: false })
   if (error || !data) return []
   return data.map(asEnrollment).filter((row): row is StoredTrainingEnrollment => row != null)
+}
+
+export async function loadTraineeEnrollment(
+  client: Client,
+  enrollmentId: string,
+): Promise<StoredTrainingEnrollment | null> {
+  const { data, error } = await client
+    .from("company_training_enrollments")
+    .select(ENROLLMENT_COLUMNS)
+    .eq("id", enrollmentId)
+    .eq("status", "active")
+    .maybeSingle()
+  if (error || !data) return null
+  return asEnrollment(data)
 }
 
 export async function loadCompanyStaffForTraining(client: Client, companyId: string): Promise<TrainingStaffMember[]> {

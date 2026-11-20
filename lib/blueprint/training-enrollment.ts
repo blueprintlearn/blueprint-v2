@@ -1,7 +1,8 @@
 /**
  * Stage 4.3 training enrollment. Owners assign published company courses or
- * paths. Trainees see assigned names and status. Lesson progress, grading,
- * and certification stay off. Invitation delivery is copy-link only.
+ * paths. Trainees see assigned names and status, then open the Stage 4.4
+ * frozen viewer. Lesson progress, grading, and certification stay off.
+ * Invitation delivery is copy-link only.
  */
 
 import {
@@ -55,7 +56,8 @@ export const TRAINING_ENROLLMENT_CONFIRM_LABEL = "I have reviewed this assignmen
 export const TRAINING_ENROLLMENT_CONFIRM_MESSAGE = "Confirm that you have reviewed this assignment before enrolling."
 export const TRAINING_TRAINEE_TITLE = "Your training"
 export const TRAINING_TRAINEE_OPENING =
-  "These are the courses and paths assigned to you. Lesson completion and grading are not enabled yet."
+  "These are the courses and paths assigned to you. Open an assignment to read the published version you were given. Lesson completion and grading are not enabled yet."
+export const TRAINING_OPEN_ASSIGNMENT = "Open assigned version"
 export const TRAINING_INVITE_TITLE = "Training invitation"
 export const TRAINING_INVITE_HELP = "Sign in with the invited email to accept. Lesson completion is not enabled yet."
 export const TRAINING_NO_PUBLISHED_TARGET = "Publish a course or path before you enroll someone."

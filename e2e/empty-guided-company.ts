@@ -177,3 +177,11 @@ export function ensureLocalTraineeUser() {
     );
   `)
 }
+
+export function setLocalTraineeMembershipStatus(status: "active" | "inactive") {
+  sql(`
+    update public.company_memberships
+    set status = '${status}'
+    where company_id = '${COMPANY_C_ID}' and user_id = '${TRAINEE_C_ID}';
+  `)
+}
