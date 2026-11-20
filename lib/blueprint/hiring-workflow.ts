@@ -116,7 +116,7 @@ export const HIRING_OUTCOME_HELP =
 export const HIRING_OUTCOME_ENGAGEMENT_HELP =
   "This is what you intend to use. Blueprint does not classify this person as an employee or contractor."
 export const TRAINING_HANDOFF_HELP =
-  "Training enrollment is not enabled yet. Completing this checklist item does not start a course. Use Prepare for Training below after a current Hired outcome."
+  "Completing this checklist item does not start a course. After a current Hired outcome, prepare and approve a training handoff, then enroll the person in a published course or path."
 export const AUDITION_SKILLS_INVALID = "Enter 1 to 8 job-related skills."
 export const FORBIDDEN_AUDITION_SKILL_MESSAGE =
   "Use job-related skills. Do not rate personality, protected characteristics, or similar personal traits."

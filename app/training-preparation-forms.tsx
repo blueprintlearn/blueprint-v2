@@ -37,6 +37,7 @@ import {
   type TrainingPreparationRecord,
 } from "@/lib/blueprint/training-preparation"
 import type { ApplicantProfile } from "@/lib/blueprint/applicants"
+import { EnrollFromHandoffForm } from "@/app/training-enrollment-forms"
 import { useSaveForm } from "./use-save-form"
 
 function useReloadWhenSaved(saveState: string) {
@@ -359,7 +360,15 @@ function TrainingHistory({ rows }: { rows: TrainingPreparationRecord[] }) {
   )
 }
 
-export function TrainingPreparationSection({ profile }: { profile: ApplicantProfile }) {
+export function TrainingPreparationSection({
+  profile,
+  enrollmentTargets = [],
+  recommendation = { kind: "none", pathId: null, courseId: null },
+}: {
+  profile: ApplicantProfile
+  enrollmentTargets?: Array<{ kind: "course" | "path"; id: string; title: string; version: number }>
+  recommendation?: { kind: string; pathId: string | null; courseId: string | null }
+}) {
   const canPrepare = canPrepareTraining(profile.hiringOutcomes)
   const hired = currentHiredOutcome(profile.hiringOutcomes)
   const draft = currentDraft(profile.trainingPreparations)
@@ -401,6 +410,14 @@ export function TrainingPreparationSection({ profile }: { profile: ApplicantProf
       {approved && !draft ? (
         <>
           <TrainingHandoffSnapshot record={approved} />
+          {canPrepare ? (
+            <EnrollFromHandoffForm
+              preparationId={approved.id}
+              applicationId={profile.applicationId}
+              recommended={recommendation}
+              targets={enrollmentTargets}
+            />
+          ) : null}
           {canPrepare ? <ReviseTrainingForm applicationId={profile.applicationId} /> : null}
         </>
       ) : null}

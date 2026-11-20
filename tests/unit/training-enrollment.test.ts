@@ -3,12 +3,19 @@ import { describe, expect, it } from "vitest"
 import { defaultHiringActivities } from "@/lib/blueprint/hiring-workflow"
 import {
   enrollmentIsDisabled,
+  enrollmentIssueFromMessage,
   planFutureEnrollment,
+  publishedEnrollmentTargets,
   STAGE4_ENROLLMENT_STATUS,
+  TRAINING_EMAIL_DELIVERY,
+  TRAINING_INACTIVE_MEMBERSHIP_MESSAGE,
+  TRAINING_NOT_PENDING_INVITE_MESSAGE,
+  trainingInviteUrl,
 } from "@/lib/blueprint/training-enrollment"
 import {
   emptyCourseContent,
   emptyPathContent,
+  TRAINING_ENROLLMENT_CLOSED,
   type StoredCompanyCourse,
   type StoredTrainingPath,
 } from "@/lib/blueprint/training-library"
@@ -71,10 +78,12 @@ function approvedPrep(): TrainingPreparationRecord {
   }
 }
 
-describe("future training enrollment", () => {
-  it("keeps Stage 3.7 not_enabled and does not create an assignment", () => {
+describe("training enrollment contract", () => {
+  it("recommends a published path and keeps enrollment owner-confirmed", () => {
     const handoff = trainingPreparationHandoffFromApproved(approvedPrep())
     expect(handoff?.nextStepDestination).toBe(STAGE4_TRAINING_DESTINATION)
+    expect(STAGE4_TRAINING_DESTINATION).toBe("training_enrollment")
+    expect(TRAINING_EMAIL_DELIVERY).toBe("copy_link_only")
     const pathContent = emptyPathContent("Wedding DJ beginner")
     pathContent.intendedRole = "Wedding DJ"
     pathContent.focus = "beginner"
@@ -110,23 +119,34 @@ describe("future training enrollment", () => {
           {
             id: "cv-1",
             version: 1,
-            status: "published",
+            status: "draft",
             content: emptyCourseContent("MC Foundations"),
-            publishedBy: "owner-a",
-            publishedAt: "2026-04-02T12:00:00.000Z",
+            publishedBy: null,
+            publishedAt: null,
           },
         ],
       },
     ]
     const plan = planFutureEnrollment(handoff, { paths, courses })
     expect(plan?.enrollmentStatus).toBe(STAGE4_ENROLLMENT_STATUS)
-    expect(plan?.destination).toBe("not_enabled")
+    expect(plan?.destination).toBe("training_enrollment")
     expect(plan?.recommended).toEqual({
       kind: "path",
       pathId: "path-1",
       courseId: null,
       reason: "Match a published beginner path for Wedding DJ.",
     })
-    expect(enrollmentIsDisabled(plan)).toBe(true)
+    expect(enrollmentIsDisabled(plan)).toBe(false)
+    expect(publishedEnrollmentTargets({ paths, courses })).toEqual([
+      { kind: "path", id: "path-1", title: "Wedding DJ beginner", version: 1 },
+    ])
+    expect(TRAINING_ENROLLMENT_CLOSED).toMatch(/does not assign anyone/i)
+    expect(trainingInviteUrl("http://127.0.0.1:3000", "tok")).toBe("http://127.0.0.1:3000/training/invite/tok")
+    expect(enrollmentIssueFromMessage("training-enrollment:wrong-account")).toMatch(/invited email/i)
+    expect(enrollmentIssueFromMessage("training-enrollment:duplicate-open")).toMatch(/already has an open enrollment/i)
+    expect(enrollmentIssueFromMessage("training-enrollment:revoked")).toMatch(/no longer valid/i)
+    expect(enrollmentIssueFromMessage("training-enrollment:unpublished-target")).toMatch(/Publish a course or path/i)
+    expect(enrollmentIssueFromMessage("training-enrollment:inactive-membership")).toBe(TRAINING_INACTIVE_MEMBERSHIP_MESSAGE)
+    expect(enrollmentIssueFromMessage("training-enrollment:not-pending-invite")).toBe(TRAINING_NOT_PENDING_INVITE_MESSAGE)
   })
 })

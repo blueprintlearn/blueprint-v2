@@ -225,7 +225,7 @@ describe("hired gate and versioning", () => {
 })
 
 describe("Stage 4 handoff", () => {
-  it("emits a typed contract that stays not_enabled and creates no trainee records", () => {
+  it("emits a typed contract for owner-confirmed enrollment without auto-assigning", () => {
     const approved = record({
       status: "approved",
       approvedBy: "owner-a",
@@ -241,15 +241,15 @@ describe("Stage 4 handoff", () => {
       approvedVersion: 1,
       intendedRole: "Wedding DJ",
       trainingApproach: "full",
-      nextStepDestination: "not_enabled",
+      nextStepDestination: "training_enrollment",
     })
     expect(handoff?.demonstratedSkills[0]).toEqual({
       skill: "Equipment setup",
       evidenceRefs: ["audition:Saturday setup check"],
     })
     expect(trainingPreparationHandoffFromApproved(record())).toBeNull()
-    expect(TRAINING_STAGE4_CLOSED).toMatch(/does not create a trainee account/i)
-    expect(JSON.stringify(handoff)).not.toMatch(/createUser|enroll|invitation|certification record|lesson progress/i)
-    expect(STAGE4_TRAINING_DESTINATION).toBe("not_enabled")
+    expect(TRAINING_STAGE4_CLOSED).toMatch(/does not enroll anyone/i)
+    expect(JSON.stringify(handoff)).not.toMatch(/createUser|certification record|lesson progress/i)
+    expect(STAGE4_TRAINING_DESTINATION).toBe("training_enrollment")
   })
 })

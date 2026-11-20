@@ -750,6 +750,55 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"company_training_enrollments": {
+                  Row: {
+                    "accepted_at": string | null,"applicant_id": string | null,"application_id": string | null,"assigned_at": string,"assigned_by": string,"cancelled_at": string | null,"cancelled_by": string | null,"company_id": string,"content_title": string,"content_version": number,"course_id": string | null,"created_at": string,"id": string,"invitation_token_hash": string | null,"invite_email": string | null,"path_id": string | null,"preparation_id": string | null,"source": string,"status": string,"target_kind": string,"trainee_user_id": string | null,"updated_at": string
+                  }
+                  Insert: {
+                    "accepted_at"?: string | null,"applicant_id"?: string | null,"application_id"?: string | null,"assigned_at"?: string,"assigned_by": string,"cancelled_at"?: string | null,"cancelled_by"?: string | null,"company_id": string,"content_title": string,"content_version": number,"course_id"?: string | null,"created_at"?: string,"id"?: string,"invitation_token_hash"?: string | null,"invite_email"?: string | null,"path_id"?: string | null,"preparation_id"?: string | null,"source": string,"status": string,"target_kind": string,"trainee_user_id"?: string | null,"updated_at"?: string
+                  }
+                  Update: {
+                    "accepted_at"?: string | null,"applicant_id"?: string | null,"application_id"?: string | null,"assigned_at"?: string,"assigned_by"?: string,"cancelled_at"?: string | null,"cancelled_by"?: string | null,"company_id"?: string,"content_title"?: string,"content_version"?: number,"course_id"?: string | null,"created_at"?: string,"id"?: string,"invitation_token_hash"?: string | null,"invite_email"?: string | null,"path_id"?: string | null,"preparation_id"?: string | null,"source"?: string,"status"?: string,"target_kind"?: string,"trainee_user_id"?: string | null,"updated_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "company_training_enrollments_applicant_id_fkey"
+      columns: ["applicant_id"]
+isOneToOne: false
+      referencedRelation: "company_applicants"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_training_enrollments_application_id_fkey"
+      columns: ["application_id"]
+isOneToOne: false
+      referencedRelation: "company_applications"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_training_enrollments_company_id_fkey"
+      columns: ["company_id"]
+isOneToOne: false
+      referencedRelation: "companies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_training_enrollments_course_id_fkey"
+      columns: ["course_id"]
+isOneToOne: false
+      referencedRelation: "company_training_courses"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_training_enrollments_path_id_fkey"
+      columns: ["path_id"]
+isOneToOne: false
+      referencedRelation: "company_training_paths"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "company_training_enrollments_preparation_id_fkey"
+      columns: ["preparation_id"]
+isOneToOne: false
+      referencedRelation: "company_applicant_training_preparations"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"company_training_path_versions": {
                   Row: {
                     "company_id": string,"content": NonNullable<Json>,"created_at": string,"id": string,"path_id": string,"published_at": string | null,"published_by": string | null,"status": string,"updated_at": string,"version": number
@@ -901,7 +950,13 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "complete_video_interview":
+            "accept_training_invitation":
+{ Args: { "p_token_hash": string }; Returns: Json
+                           },
+"cancel_company_training_enrollment":
+{ Args: { "p_enrollment_id": string }; Returns: Json
+                           },
+"complete_video_interview":
 { Args: { "p_ip_hash": string,"p_token": string }; Returns: Json
                            },
 "create_company":
@@ -917,11 +972,17 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"enroll_company_training":
+{ Args: { "p_company_id": string,"p_confirmed"?: boolean,"p_course_id"?: string,"p_invite_email"?: string,"p_path_id"?: string,"p_preparation_id"?: string,"p_source": string,"p_target_kind": string,"p_token_hash"?: string,"p_trainee_user_id"?: string }; Returns: Json
+                           },
 "expire_stale_video_interviews":
 { Args: { "p_company_id": string }; Returns: number
                            },
 "get_published_recruiting_page":
 { Args: { "p_slug": string }; Returns: Json
+                           },
+"get_training_invitation":
+{ Args: { "p_token_hash": string }; Returns: Json
                            },
 "import_legacy_master_course":
 { Args: { "p_content": Json,"p_course_id": string,"p_legacy_content_version": string,"p_legacy_source_id": string,"p_published_by": string,"p_title": string,"p_version_id": string }; Returns: string
@@ -950,6 +1011,11 @@ isOneToOne: false
 "is_training_platform_admin":
 { Args: Record<PropertyKey, never>; Returns: boolean
                            },
+"list_company_staff_for_training":
+{ Args: { "p_company_id": string }; Returns: {
+              "email": string,"role": Database["public"]['Enums']["system_role"],"status": string,"user_id": string
+            }[]
+                           },
 "note_interview_attempt":
 { Args: { "p_ip_hash": string }; Returns: boolean
                            },
@@ -961,6 +1027,9 @@ isOneToOne: false
                            },
 "recruiting_slug_taken":
 { Args: { "p_company_id": string,"p_slug": string }; Returns: boolean
+                           },
+"regenerate_training_invitation":
+{ Args: { "p_enrollment_id": string,"p_token_hash"?: string }; Returns: Json
                            },
 "register_video_answer":
 { Args: { "p_byte_size": number,"p_content_type": string,"p_duration_ms": number,"p_ip_hash": string,"p_question_index": number,"p_storage_path": string,"p_token": string }; Returns: Json

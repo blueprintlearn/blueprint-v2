@@ -18,6 +18,7 @@ const KEY = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"
 
 function clear() {
   querySql(`
+    delete from public.company_training_enrollments where company_id in ('${COMPANY_A_ID}', '${COMPANY_B_ID}');
     delete from public.company_applicant_hiring_outcomes where company_id in ('${COMPANY_A_ID}', '${COMPANY_B_ID}');
     delete from public.company_applicant_auditions where company_id in ('${COMPANY_A_ID}', '${COMPANY_B_ID}');
     delete from public.company_applicant_conversations where company_id in ('${COMPANY_A_ID}', '${COMPANY_B_ID}');

@@ -465,7 +465,8 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
     }
     await page.goto("/")
     await expect(page.locator("form[data-saved-owner-goal]")).toHaveCount(1)
-    await expect(page.getByRole("link")).toHaveCount(0)
+    await expect(page.getByRole("link", { name: "Open assigned training" })).toBeVisible()
+    await expect(page.getByRole("link")).toHaveCount(1)
   })
 
   test("Company A manager is sent home from every Blueprint path and sees today's read-only home", async ({ page }) => {
@@ -477,7 +478,8 @@ test.describe("guided Blueprint (switch on for Company A, off for Company B)", (
       await expect(page.getByRole("heading", { level: 1, name: "Your Company Blueprint" })).toHaveCount(0)
     }
     await expect(page.getByText("Signed in as Manager")).toBeVisible()
-    await expect(page.getByRole("link")).toHaveCount(0)
+    await expect(page.getByRole("link", { name: "Open assigned training" })).toBeVisible()
+    await expect(page.getByRole("link")).toHaveCount(1)
     await expect(page.getByText("Only the company owner can change these.")).toHaveCount(2)
     await expect(page.locator("form")).toHaveCount(1) // the Sign out form only
   })

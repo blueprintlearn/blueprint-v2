@@ -63,9 +63,13 @@ function when(iso: string) {
 export function ApplicantProfileView({
   companyName,
   profile,
+  enrollmentTargets = [],
+  enrollmentRecommendation = { kind: "none", pathId: null, courseId: null },
 }: {
   companyName: string
   profile: ApplicantProfile
+  enrollmentTargets?: Array<{ kind: "course" | "path"; id: string; title: string; version: number }>
+  enrollmentRecommendation?: { kind: string; pathId: string | null; courseId: string | null }
 }) {
   return (
     <>
@@ -238,7 +242,11 @@ export function ApplicantProfileView({
         <h2 id="applicant-training-title" className="bp-card__title">
           {TRAINING_PREP_TITLE}
         </h2>
-        <TrainingPreparationSection profile={profile} />
+        <TrainingPreparationSection
+          profile={profile}
+          enrollmentTargets={enrollmentTargets}
+          recommendation={enrollmentRecommendation}
+        />
       </Card>
       <Card as="section" aria-labelledby="applicant-follow-up-title" className="max-w-[900px] max-[760px]:p-[22px]!">
         <h2 id="applicant-follow-up-title" className="bp-card__title">

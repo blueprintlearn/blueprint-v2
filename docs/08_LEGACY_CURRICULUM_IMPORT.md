@@ -2,7 +2,7 @@
 
 Local-only mapping of the original Blueprint V1 LearnDash catalog into Blueprint V2 **private** master courses. This is a faithful IP migration, not a rewrite.
 
-Do not apply hosted migrations, import trainee accounts, import progress, publish imported courses to the Starter Library, or merge this work without independent review.
+Do not apply hosted migrations, import trainee accounts, import progress, publish imported courses to the Starter Library, or merge this work without independent review. Assigning imported courses to people is Stage 4.3 (`docs/09_TRAINING_ENROLLMENT.md`) and still does not import historical progress.
 
 Source of truth for product rules remains `docs/01`–`05`. Stage 4.1 library rules remain in `docs/07_TRAINING_LIBRARY.md`. The export location remains `docs/06_CURRICULUM_IMPORT_SPEC.md`.
 
