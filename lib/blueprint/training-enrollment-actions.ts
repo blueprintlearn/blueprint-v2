@@ -18,6 +18,7 @@ import {
   acceptTrainingInvitation,
   cancelCompanyTrainingEnrollment,
   enrollCompanyTraining,
+  regenerateTrainingInvitation,
 } from "@/lib/blueprint/training-enrollment-store"
 import { OWNER_ADMIN_ROLE } from "@/lib/rules/system-role"
 import { createClient } from "@/lib/supabase/server"
@@ -114,6 +115,21 @@ export async function cancelEnrollmentAction(
   revalidatePath("/blueprint/training/enrollments")
   revalidatePath("/training")
   return { error: null, savedAt: Date.now(), inviteUrl: null }
+}
+
+export async function regenerateInviteAction(
+  _prev: SaveEnrollmentState,
+  formData: FormData,
+): Promise<SaveEnrollmentState> {
+  const auth = await requireOwnerUser()
+  if (!auth.ok) return fail(auth.error)
+  const enrollmentId = String(formData.get("enrollmentId") ?? "")
+  if (!enrollmentId) return fail("Choose an invitation to copy a new link for.")
+  const result = await regenerateTrainingInvitation(auth.supabase, enrollmentId)
+  if (result.error) return fail(result.error)
+  const inviteUrl = result.token ? trainingInviteUrl(await originFromHeaders(), result.token) : null
+  if (!inviteUrl) return fail("Could not create a new invite link.")
+  return { error: null, savedAt: Date.now(), inviteUrl }
 }
 
 export async function acceptTrainingInviteAction(

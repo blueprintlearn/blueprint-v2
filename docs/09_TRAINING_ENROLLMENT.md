@@ -32,17 +32,20 @@ Do not apply until separately approved, and not before Stage 4.2 exists in that 
 3. Stage 4.1 follow-up `20261129120000_training_publish_atomicity`
 4. Stage 4.2 `20261130120000_training_legacy_import`
 5. Stage 4.3 `20261201120000_training_enrollment`
+6. Stage 4.3 follow-up `20261202120000_training_enrollment_invite_fixes`
 
 ## Lifecycle
 
 | Status | Meaning | Next steps |
 | --- | --- | --- |
-| `pending` | Invitation issued. No trainee user yet. Token hash is stored. | Accept (invited email) or revoke (owner). |
+| `pending` | Invitation issued. No trainee user yet. Only the token hash is stored. | Accept (invited email), owner copies a new link, or revoke. |
 | `active` | Assigned to a user. Staff enrollments start here. Accepted invitations and matching existing members also start here. Accepted copy-links keep their hash so the page can show the assignment; they cannot be accepted again. | Owner can cancel. |
 | `revoked` | Pending invitation closed by the owner. Token hash is cleared. | Cannot be reused. Owner may create a new invitation. |
 | `cancelled` | Active enrollment closed by the owner. | History is kept. A new enrollment may be created later. |
 
-Assignment fields (`company_id`, source, target, published version/title, handoff references, assigned by/at) are immutable after insert. Only acceptance and cancellation may change status, trainee identity (null → accepted user), token hash, and cancellation stamps.
+Assignment fields (`company_id`, source, target, published version/title, handoff references, assigned by/at) are immutable after insert. Only acceptance, cancellation, and owner link regeneration may change status, trainee identity (null → accepted user), token hash, and cancellation stamps.
+
+Accepting an invitation creates an active `dj_trainee` membership only when none exists. If the invited email already has an **inactive** company membership, acceptance fails, the enrollment stays `pending`, and the membership stays inactive. Former staff are not reactivated by accepting training.
 
 ## Entry points
 
@@ -58,7 +61,9 @@ The owner picks an active `company_memberships` row and a published target. The 
 
 ### Invitation
 
-The owner enters an email and a published target. Duplicate pending invitations for the same company, email, and course or path are rejected (the RPC returns the existing row). If that email already belongs to an active member, the enrollment activates on that account instead of creating a new identity.
+The owner enters an email and a published target. Duplicate pending invitations for the same company, email, and course or path are rejected (the RPC returns the existing row without a new link). If that email already belongs to an active member, the enrollment activates on that account instead of creating a new identity.
+
+Plaintext invite tokens are not stored. After a refresh, the owner copies a new link from the pending invitation. `regenerate_training_invitation` atomically replaces the stored hash; the previous link stops working immediately.
 
 ## Permissions
 
@@ -71,7 +76,7 @@ The owner enters an email and a published target. Duplicate pending invitations 
 | Anonymous | No writes | `get_training_invitation` returns title, company name, invited email, and status for a valid token hash. No trainee identity. |
 | Platform admin | No special enrollment rights | No cross-tenant enrollment read |
 
-`enroll_company_training`, `accept_training_invitation`, `cancel_company_training_enrollment`, and `list_company_staff_for_training` are the write/list paths. Table INSERT/UPDATE/DELETE is revoked from `authenticated`.
+`enroll_company_training`, `accept_training_invitation`, `regenerate_training_invitation`, `cancel_company_training_enrollment`, and `list_company_staff_for_training` are the write/list paths. Table INSERT/UPDATE/DELETE is revoked from `authenticated`. Only the guided company owner can regenerate a pending copy-link.
 
 ## Isolation and integrity
 
@@ -81,10 +86,12 @@ The owner enters an email and a published target. Duplicate pending invitations 
 - Repeated enroll requests return the existing open row instead of inserting a second one. A unique-violation race still fails closed as `training-enrollment:duplicate-open`.
 - Publishing a later course or path version does not rewrite `content_title` / `content_version` on existing enrollments.
 - Revoking clears the token hash, so the old link cannot be accepted.
+- Regenerating a pending invitation replaces the token hash in the same update. The previous hash no longer matches `get_training_invitation` or `accept_training_invitation`.
+- Accepting while an inactive membership exists for that company and user fails closed as `training-enrollment:inactive-membership`. The enrollment stays pending. Membership status does not change.
 
 ## Remaining limitations
 
 - Invitation email delivery is disabled until separately approved infrastructure exists.
-- Hosted/staging/production must not apply `20261201120000_training_enrollment` until that apply is named.
+- Hosted/staging/production must not apply `20261201120000_training_enrollment` or `20261202120000_training_enrollment_invite_fixes` until that apply is named.
 - Trainees cannot complete lessons or submit work yet.
 - Private master curriculum stays hidden from company owners.

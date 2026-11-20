@@ -8,6 +8,8 @@ import {
   publishedEnrollmentTargets,
   STAGE4_ENROLLMENT_STATUS,
   TRAINING_EMAIL_DELIVERY,
+  TRAINING_INACTIVE_MEMBERSHIP_MESSAGE,
+  TRAINING_NOT_PENDING_INVITE_MESSAGE,
   trainingInviteUrl,
 } from "@/lib/blueprint/training-enrollment"
 import {
@@ -144,5 +146,7 @@ describe("training enrollment contract", () => {
     expect(enrollmentIssueFromMessage("training-enrollment:duplicate-open")).toMatch(/already has an open enrollment/i)
     expect(enrollmentIssueFromMessage("training-enrollment:revoked")).toMatch(/no longer valid/i)
     expect(enrollmentIssueFromMessage("training-enrollment:unpublished-target")).toMatch(/Publish a course or path/i)
+    expect(enrollmentIssueFromMessage("training-enrollment:inactive-membership")).toBe(TRAINING_INACTIVE_MEMBERSHIP_MESSAGE)
+    expect(enrollmentIssueFromMessage("training-enrollment:not-pending-invite")).toBe(TRAINING_NOT_PENDING_INVITE_MESSAGE)
   })
 })

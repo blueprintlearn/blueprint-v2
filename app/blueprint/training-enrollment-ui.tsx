@@ -6,6 +6,7 @@ import {
   EnrollFromHandoffForm,
   EnrollStaffForm,
   InviteTraineeForm,
+  RegenerateInviteForm,
 } from "@/app/training-enrollment-forms"
 import {
   ENROLLMENT_SOURCE_LABELS,
@@ -57,6 +58,7 @@ function EnrollmentList({
               {ENROLLMENT_SOURCE_LABELS[row.source]} · {row.targetKind} v{row.contentVersion} · {row.inviteEmail ?? "Assigned staff"}
             </p>
             <p className="m-0 text-[13px] text-muted">Assigned {when(row.assignedAt)}</p>
+            {row.status === "pending" ? <RegenerateInviteForm enrollmentId={row.id} /> : null}
             {row.status === "pending" || row.status === "active" ? (
               <CancelEnrollmentForm enrollmentId={row.id} pendingInvite={row.status === "pending"} />
             ) : null}
@@ -147,7 +149,10 @@ export function TrainingEnrollmentView({
         <h2 id="invite-title" className="bp-card__title">
           Invite a trainee
         </h2>
-        <p className="bp-card__body">Invitations stay pending until the invited email accepts. Blueprint does not send email.</p>
+        <p className="bp-card__body">
+          Invitations stay pending until the invited email accepts. Blueprint does not send email. Refreshing hides the
+          local link; copy a new invite link from a pending invitation.
+        </p>
         <InviteTraineeForm targets={targets} />
       </Card>
 

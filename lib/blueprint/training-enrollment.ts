@@ -46,7 +46,11 @@ export const TRAINING_ENROLLMENT_TITLE = "Training enrollment"
 export const TRAINING_ENROLLMENT_OPENING =
   "Assign a published course or path to someone on your team. Existing enrollments keep the version you assigned, even if you publish an update later."
 export const TRAINING_ENROLLMENT_HELP =
-  "Enrollment does not start lesson progress, grade quizzes, or issue certifications. Blueprint does not send invitation email; copy the local invite link."
+  "Enrollment does not start lesson progress, grade quizzes, or issue certifications. Blueprint does not send invitation email; copy the local invite link. Refreshing hides it — copy a new link from a pending invitation."
+export const TRAINING_REGENERATE_INVITE_LABEL = "Copy a new invite link"
+export const TRAINING_INACTIVE_MEMBERSHIP_MESSAGE =
+  "This email already has an inactive company membership. Ask the owner to restore access before accepting training."
+export const TRAINING_NOT_PENDING_INVITE_MESSAGE = "Only a pending invitation can get a new copy-link."
 export const TRAINING_ENROLLMENT_CONFIRM_LABEL = "I have reviewed this assignment and want to enroll this person"
 export const TRAINING_ENROLLMENT_CONFIRM_MESSAGE = "Confirm that you have reviewed this assignment before enrolling."
 export const TRAINING_TRAINEE_TITLE = "Your training"
@@ -250,9 +254,12 @@ export function enrollmentIssueFromMessage(message: string): string {
   if (message.includes("training-enrollment:invalid-email")) return "Enter a valid email address."
   if (message.includes("training-enrollment:wrong-account")) return "Sign in with the invited email address to accept."
   if (message.includes("training-enrollment:revoked")) return "This invitation is no longer valid."
+  if (message.includes("training-enrollment:inactive-membership")) return TRAINING_INACTIVE_MEMBERSHIP_MESSAGE
+  if (message.includes("training-enrollment:not-pending-invite")) return TRAINING_NOT_PENDING_INVITE_MESSAGE
   if (message.includes("training-enrollment:not-pending")) return "This invitation cannot be accepted."
   if (message.includes("training-enrollment:sign-in-required")) return "Sign in to accept this invitation."
   if (message.includes("training-enrollment:already-closed")) return "That enrollment is already closed."
+  if (message.includes("training-enrollment:token-required")) return "Could not create a new invite link."
   if (message.includes("training-enrollment:not-found")) return "That invitation was not found."
   return "Could not save the training enrollment."
 }

@@ -190,6 +190,23 @@ export async function cancelCompanyTrainingEnrollment(client: Client, enrollment
   return { error: null }
 }
 
+export async function regenerateTrainingInvitation(
+  client: Client,
+  enrollmentId: string,
+): Promise<{ error: string | null; token: string | null }> {
+  const { token, tokenHash } = createTrainingInviteToken()
+  const { data, error } = await client.rpc("regenerate_training_invitation", {
+    p_enrollment_id: enrollmentId,
+    p_token_hash: tokenHash,
+  })
+  if (error) return { error: enrollmentIssueFromMessage(error.message), token: null }
+  const payload = data as { ok?: boolean; status?: string } | null
+  if (!payload?.ok || payload.status !== "pending") {
+    return { error: "Could not create a new invite link.", token: null }
+  }
+  return { error: null, token }
+}
+
 export async function loadTrainingInvitation(client: Client, token: string): Promise<TrainingInvitationView | { error: string }> {
   const { data, error } = await client.rpc("get_training_invitation", { p_token_hash: hashTrainingInviteToken(token) })
   if (error) return { error: enrollmentIssueFromMessage(error.message) }

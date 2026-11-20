@@ -1028,6 +1028,9 @@ isOneToOne: false
 "recruiting_slug_taken":
 { Args: { "p_company_id": string,"p_slug": string }; Returns: boolean
                            },
+"regenerate_training_invitation":
+{ Args: { "p_enrollment_id": string,"p_token_hash"?: string }; Returns: Json
+                           },
 "register_video_answer":
 { Args: { "p_byte_size": number,"p_content_type": string,"p_duration_ms": number,"p_ip_hash": string,"p_question_index": number,"p_storage_path": string,"p_token": string }; Returns: Json
                            },

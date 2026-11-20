@@ -28,6 +28,7 @@ Do not apply until separately approved, and not before the previous recruiting/t
 8. Stage 4.1 follow-up `20261129120000_training_publish_atomicity`
 9. Stage 4.2 `20261130120000_training_legacy_import` (schema support and `import_legacy_master_course`; running the importer is a separate local command)
 10. Stage 4.3 `20261201120000_training_enrollment` (see `docs/09_TRAINING_ENROLLMENT.md`; do not apply until separately approved)
+11. Stage 4.3 follow-up `20261202120000_training_enrollment_invite_fixes`
 
 Stage 2 and Stage 3.1 hosted applies are not required for local 4.1.
 

@@ -10,9 +10,11 @@ import {
   enrollStaffAction,
   inviteTraineeAction,
   acceptTrainingInviteAction,
+  regenerateInviteAction,
 } from "@/lib/blueprint/training-enrollment-actions"
 import {
   TRAINING_ENROLLMENT_CONFIRM_LABEL,
+  TRAINING_REGENERATE_INVITE_LABEL,
   type SaveEnrollmentState,
   type TrainingStaffMember,
 } from "@/lib/blueprint/training-enrollment"
@@ -181,6 +183,23 @@ export function CancelEnrollmentForm({ enrollmentId, pendingInvite }: { enrollme
         </Button>
         <SaveStatus state={pending ? "saving" : state.savedAt ? "saved" : "idle"} />
       </div>
+      <ErrorText error={state.error} />
+    </form>
+  )
+}
+
+export function RegenerateInviteForm({ enrollmentId }: { enrollmentId: string }) {
+  const [state, action, pending] = useActionState(regenerateInviteAction, initial)
+  return (
+    <form action={action} className="grid gap-2" data-enrollment-form="regenerate">
+      <input type="hidden" name="enrollmentId" value={enrollmentId} />
+      <div className="flex flex-wrap items-center gap-3">
+        <Button type="submit" variant="soft" disabled={pending}>
+          {TRAINING_REGENERATE_INVITE_LABEL}
+        </Button>
+        <SaveStatus state={pending ? "saving" : state.savedAt ? "saved" : "idle"} />
+      </div>
+      <InviteResult url={state.inviteUrl} />
       <ErrorText error={state.error} />
     </form>
   )

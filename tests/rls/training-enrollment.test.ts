@@ -9,6 +9,7 @@ import {
   COMPANY_A_ID,
   COMPANY_B_ID,
   createAnonClient,
+  INACTIVE_A_EMAIL,
   INACTIVE_A_ID,
   MANAGER_A_EMAIL,
   MANAGER_A_ID,
@@ -607,5 +608,114 @@ describe("training enrollment isolation", () => {
     `)
     expect(mutate.ok).toBe(false)
     expect(mutate.output).toMatch(/immutable/i)
+  })
+
+  it("does not activate an invitation when the invited email has an inactive membership", async () => {
+    const owner = await seedPublishedCourse()
+    const hash = tokenHash("inactive-member-invite")
+    const invited = await owner.rpc(
+      "enroll_company_training",
+      enrollArgs({
+        p_source: "invitation",
+        p_trainee_user_id: undefined,
+        p_invite_email: INACTIVE_A_EMAIL,
+        p_token_hash: hash,
+      }),
+    )
+    expect(invited.error).toBeNull()
+    expect(invited.data).toMatchObject({ ok: true, status: "pending", existing: false })
+    const enrollmentId = (invited.data as { enrollmentId: string }).enrollmentId
+
+    const inactive = await asUser(INACTIVE_A_EMAIL)
+    const accepted = await inactive.rpc("accept_training_invitation", { p_token_hash: hash })
+    expect(accepted.error?.message ?? "").toMatch(/training-enrollment:inactive-membership/)
+
+    const row = await owner
+      .from("company_training_enrollments")
+      .select("status, trainee_user_id")
+      .eq("id", enrollmentId)
+      .single()
+    expect(row.data).toEqual({ status: "pending", trainee_user_id: null })
+
+    const membership = querySql(`
+      select status from public.company_memberships
+      where company_id = '${COMPANY_A_ID}' and user_id = '${INACTIVE_A_ID}';
+    `)
+    expect(membership).toMatch(/inactive/)
+
+    const inactiveRows = await inactive.from("company_training_enrollments").select("id, status")
+    expect(inactiveRows.data ?? []).toEqual([])
+  })
+
+  it("lets the owner rotate a pending copy-link and immediately invalidates the old token", async () => {
+    seedInvitee()
+    const owner = await seedPublishedCourse()
+    const oldHash = tokenHash("invite-token-original")
+    const invited = await owner.rpc(
+      "enroll_company_training",
+      enrollArgs({
+        p_source: "invitation",
+        p_trainee_user_id: undefined,
+        p_invite_email: INVITEE_EMAIL,
+        p_token_hash: oldHash,
+      }),
+    )
+    expect(invited.data).toMatchObject({ ok: true, status: "pending" })
+    const enrollmentId = (invited.data as { enrollmentId: string }).enrollmentId
+
+    const staff = await owner.rpc("enroll_company_training", enrollArgs())
+    expect(staff.data).toMatchObject({ ok: true, status: "active" })
+    const staffRegen = await owner.rpc("regenerate_training_invitation", {
+      p_enrollment_id: (staff.data as { enrollmentId: string }).enrollmentId,
+      p_token_hash: tokenHash("staff-should-not-rotate"),
+    })
+    expect(staffRegen.error?.message ?? "").toMatch(/training-enrollment:not-pending-invite/)
+
+    const manager = await asUser(MANAGER_A_EMAIL)
+    const managerRegen = await manager.rpc("regenerate_training_invitation", {
+      p_enrollment_id: enrollmentId,
+      p_token_hash: tokenHash("manager-should-not-rotate"),
+    })
+    expect(managerRegen.error?.message ?? "").toMatch(/training-enrollment:not-owner/)
+
+    const ownerB = await asUser(OWNER_B_EMAIL)
+    const ownerBRegen = await ownerB.rpc("regenerate_training_invitation", {
+      p_enrollment_id: enrollmentId,
+      p_token_hash: tokenHash("owner-b-should-not-rotate"),
+    })
+    expect(ownerBRegen.error?.message ?? "").toMatch(/training-enrollment:not-owner/)
+
+    const anon = createAnonClient()
+    const anonRegen = await anon.rpc("regenerate_training_invitation", {
+      p_enrollment_id: enrollmentId,
+      p_token_hash: tokenHash("anon-should-not-rotate"),
+    })
+    expect(anonRegen.error).not.toBeNull()
+
+    const newHash = tokenHash("invite-token-rotated")
+    const rotated = await owner.rpc("regenerate_training_invitation", {
+      p_enrollment_id: enrollmentId,
+      p_token_hash: newHash,
+    })
+    expect(rotated.error).toBeNull()
+    expect(rotated.data).toMatchObject({ ok: true, status: "pending", enrollmentId })
+
+    const oldPreview = await anon.rpc("get_training_invitation", { p_token_hash: oldHash })
+    expect(oldPreview.data).toMatchObject({ ok: false, code: "not-found" })
+    const newPreview = await anon.rpc("get_training_invitation", { p_token_hash: newHash })
+    expect(newPreview.data).toMatchObject({ ok: true, status: "pending", inviteEmail: INVITEE_EMAIL })
+
+    const invitee = await asUser(INVITEE_EMAIL)
+    const oldAccept = await invitee.rpc("accept_training_invitation", { p_token_hash: oldHash })
+    expect(oldAccept.error?.message ?? "").toMatch(/training-enrollment:not-found/)
+    const accepted = await invitee.rpc("accept_training_invitation", { p_token_hash: newHash })
+    expect(accepted.error).toBeNull()
+    expect(accepted.data).toMatchObject({ ok: true, status: "active" })
+
+    const afterAccept = await owner.rpc("regenerate_training_invitation", {
+      p_enrollment_id: enrollmentId,
+      p_token_hash: tokenHash("after-accept-should-fail"),
+    })
+    expect(afterAccept.error?.message ?? "").toMatch(/training-enrollment:not-pending-invite/)
   })
 })
