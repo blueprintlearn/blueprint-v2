@@ -62,7 +62,7 @@ export const TRAINING_PREP_MISSING_DRAFT = "Start a training preparation first."
 export const TRAINING_APPROACH_ADVISORY =
   "This suggestion is advisory. You choose the training approach. Blueprint does not certify skills, grant exemptions, or make employment decisions."
 export const TRAINING_STAGE4_CLOSED =
-  "Training is not enabled yet. Approving this handoff does not create a trainee account, assign a course, start lesson progress, send an invitation, or create a certification."
+  "Approving this handoff does not enroll anyone. Use Enroll in training, confirm the assignment, and choose a published course or path. Lesson progress, grading, and certifications stay off."
 export const TRAINING_PREP_CONFIRM_LABEL =
   "I have reviewed this preparation and want to approve the training handoff"
 export const TRAINING_PREP_CONFIRM_MESSAGE = "Confirm that you have reviewed this preparation before approving it."

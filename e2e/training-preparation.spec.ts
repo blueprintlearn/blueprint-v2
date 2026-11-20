@@ -92,7 +92,7 @@ test.describe("Recruitment-to-training handoff", () => {
     await approve.getByRole("button", { name: "Approve training handoff" }).click()
     await expect(page.locator("[data-training-preparation][data-training-readiness=ready]")).toBeVisible()
     await expect(page.locator("[data-training-handoff-approved]")).toContainText("Lead wedding DJ")
-    await expect(page.getByText("does not create a trainee account").first()).toBeVisible()
+    await expect(page.getByText("does not enroll anyone").first()).toBeVisible()
     await page.locator("[data-training-handoff-approved]").screenshot({ path: `${SHOTS}/stage37_approved_handoff.png` })
 
     await page.goto("/blueprint/applicants")

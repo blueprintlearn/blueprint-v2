@@ -39,7 +39,7 @@ test.describe("Training library", () => {
 
     await page.goto("/blueprint/training")
     await expect(page.getByRole("heading", { name: "Training library" })).toBeVisible()
-    await expect(page.getByText("Trainee enrollment is not enabled yet")).toBeVisible()
+    await expect(page.getByText("Building a course or path does not assign anyone")).toBeVisible()
     await expect(page.getByText("Legacy Beatmixing (import)")).toHaveCount(0)
     await expect(page.getByText("Old Photo Booth")).toHaveCount(0)
     await expect(page.getByText("Event DJ Foundations")).toHaveCount(0)
@@ -93,8 +93,9 @@ test.describe("Training library", () => {
     await page.screenshot({ path: `${SHOTS}/stage41-training-paths.png`, fullPage: true })
 
     await page.goto("/blueprint/training")
-    await expect(page.getByText("Trainee enrollment is not enabled yet")).toBeVisible()
+    await expect(page.getByText("Building a course or path does not assign anyone")).toBeVisible()
     await expect(page.getByRole("button", { name: "Prepare for Training" })).toHaveCount(0)
     await expect(page.getByRole("button", { name: "Invite trainee" })).toHaveCount(0)
+    await expect(page.getByRole("link", { name: "Enroll people in training" })).toBeVisible()
   })
 })

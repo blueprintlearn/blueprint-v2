@@ -8,7 +8,7 @@ export const TRAINING_LIBRARY_TITLE = "Training library"
 export const TRAINING_LIBRARY_OPENING =
   "Build the courses your DJs will take. Start from a Blueprint starter course or write your own. Publishing freezes a version, so later edits do not rewrite what someone already completed."
 export const TRAINING_ENROLLMENT_CLOSED =
-  "Trainee enrollment is not enabled yet. Building a course or path does not assign anyone, send invitations, grade work, or issue certifications."
+  "Building a course or path does not assign anyone. Enroll people separately. Lesson progress, grading, and certifications stay off."
 export const TRAINING_STARTER_HELP =
   "These courses are approved for Blueprint companies. Adding one creates your own copy. Changes you make stay in your company and never change Blueprint’s master library."
 export const TRAINING_UPDATE_AVAILABLE =

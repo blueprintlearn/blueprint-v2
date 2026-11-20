@@ -18,6 +18,7 @@ const KEY = "dddddddd-dddd-4ddd-8ddd-dddddddddddd"
 
 function clear() {
   querySql(`
+    delete from public.company_training_enrollments where company_id in ('${COMPANY_A_ID}', '${COMPANY_B_ID}');
     delete from public.company_evaluation_templates where company_id in ('${COMPANY_A_ID}', '${COMPANY_B_ID}');
     delete from public.company_applicants where company_id in ('${COMPANY_A_ID}', '${COMPANY_B_ID}');
     delete from public.company_recruiting_pages where company_id in ('${COMPANY_A_ID}', '${COMPANY_B_ID}');

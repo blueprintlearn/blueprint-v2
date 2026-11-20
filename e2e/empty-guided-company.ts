@@ -5,6 +5,9 @@ const COMPANY_C_ID = "00000000-0000-4000-8000-0000000000c1"
 const OWNER_C_ID = "00000000-0000-4000-8000-0000000000c2"
 export const OWNER_C_EMAIL = "owner-c@blueprint.test"
 export const OWNER_C_PASSWORD = "blueprint-local-password"
+const TRAINEE_C_ID = "00000000-0000-4000-8000-0000000000c3"
+export const TRAINEE_C_EMAIL = "trainee-c@blueprint.test"
+export const TRAINEE_C_PASSWORD = OWNER_C_PASSWORD
 
 const PSQL = [
   "exec",
@@ -25,6 +28,7 @@ function sql(statement: string) {
 
 export function resetGuidedCompanyData(companyId: string) {
   sql(`
+    delete from public.company_training_enrollments where company_id = '${companyId}';
     delete from public.company_training_path_versions where company_id = '${companyId}';
     delete from public.company_training_paths where company_id = '${companyId}';
     delete from public.company_training_course_versions where company_id = '${companyId}';
@@ -108,6 +112,9 @@ export function ensureEmptyGuidedCompany() {
       where company_id = '${COMPANY_C_ID}' and user_id = '${OWNER_C_ID}'
     );
 
+    delete from public.company_training_enrollments where company_id = '${COMPANY_C_ID}';
+    delete from public.company_memberships
+      where company_id = '${COMPANY_C_ID}' and user_id <> '${OWNER_C_ID}';
     delete from public.company_training_path_versions where company_id = '${COMPANY_C_ID}';
     delete from public.company_training_paths where company_id = '${COMPANY_C_ID}';
     delete from public.company_training_course_versions where company_id = '${COMPANY_C_ID}';
@@ -126,5 +133,47 @@ export function ensureEmptyGuidedCompany() {
     delete from public.company_goals where company_id = '${COMPANY_C_ID}';
     delete from public.company_blueprints where company_id = '${COMPANY_C_ID}';
     delete from public.company_team_today where company_id = '${COMPANY_C_ID}';
+  `)
+}
+
+/** Local-only trainee account for invitation acceptance. Not seed data. */
+export function ensureLocalTraineeUser() {
+  sql(`
+    insert into auth.users (
+      instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+      raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+      confirmation_token, email_change, email_change_token_new, recovery_token
+    ) values (
+      '00000000-0000-0000-0000-000000000000',
+      '${TRAINEE_C_ID}',
+      'authenticated',
+      'authenticated',
+      '${TRAINEE_C_EMAIL}',
+      extensions.crypt('${TRAINEE_C_PASSWORD}', extensions.gen_salt('bf')),
+      now(),
+      '{"provider":"email","providers":["email"]}',
+      '{}',
+      now(),
+      now(),
+      '',
+      '',
+      '',
+      ''
+    ) on conflict (id) do nothing;
+
+    insert into auth.identities (
+      user_id, provider_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+    )
+    select
+      '${TRAINEE_C_ID}',
+      '${TRAINEE_C_ID}',
+      jsonb_build_object('sub', '${TRAINEE_C_ID}', 'email', '${TRAINEE_C_EMAIL}', 'email_verified', true),
+      'email',
+      now(),
+      now(),
+      now()
+    where not exists (
+      select 1 from auth.identities where user_id = '${TRAINEE_C_ID}'
+    );
   `)
 }

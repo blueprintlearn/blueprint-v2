@@ -63,6 +63,9 @@ export function TrainingLibraryView({
           <Link href="/blueprint/applicants" className="bp-link self-start font-bold">
             Review applicants
           </Link>
+          <Link href="/blueprint/training/enrollments" className="bp-link self-start font-bold">
+            Enroll people in training
+          </Link>
         </div>
         <p className="bp-type-small font-bold! text-muted">{companyName}</p>
         <h1 className="bp-type-display-xl max-[760px]:text-[46px]!">{TRAINING_LIBRARY_TITLE}</h1>

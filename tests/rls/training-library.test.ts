@@ -47,6 +47,7 @@ function dropFailPublishHook() {
 function clear() {
   dropFailPublishHook()
   querySql(`
+    delete from public.company_training_enrollments where company_id in ('${COMPANY_A_ID}', '${COMPANY_B_ID}');
     delete from public.company_training_path_versions where company_id in ('${COMPANY_A_ID}', '${COMPANY_B_ID}');
     delete from public.company_training_paths where company_id in ('${COMPANY_A_ID}', '${COMPANY_B_ID}');
     delete from public.company_training_course_versions where company_id in ('${COMPANY_A_ID}', '${COMPANY_B_ID}');
@@ -325,7 +326,7 @@ describe("training library RLS", () => {
     expect(freeze?.message ?? "").toMatch(/read-only/i)
   })
 
-  it("isolates company libraries and does not create enrollment tables", async () => {
+  it("isolates company libraries and does not create progress tables", async () => {
     querySql(`
       insert into public.company_training_courses (
         id, company_id, title, origin, library_status
@@ -346,13 +347,12 @@ describe("training library RLS", () => {
       select tablename from pg_tables
       where schemaname = 'public'
         and tablename in (
-          'company_training_enrollments',
           'company_training_progress',
           'company_training_submissions',
           'company_training_certificates'
         );
     `)
-    expect(tables).not.toMatch(/company_training_enrollments|company_training_progress|company_training_submissions|company_training_certificates/)
+    expect(tables).not.toMatch(/company_training_progress|company_training_submissions|company_training_certificates/)
     const anon = createAnonClient()
     const { data: anonMaster } = await anon.from("training_master_courses").select("id")
     expect(anonMaster ?? []).toEqual([])

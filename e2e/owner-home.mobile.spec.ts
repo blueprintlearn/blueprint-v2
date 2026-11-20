@@ -139,7 +139,8 @@ test.describe("owner home on a phone", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Welcome back." })).toBeVisible()
     await expect(page.locator("main").getByText("Company B", { exact: true })).toBeVisible()
     await expect(page.getByRole("heading", { level: 2, name: "Team today" })).toBeVisible()
-    await expect(page.getByRole("link")).toHaveCount(0)
+    await expect(page.getByRole("link", { name: "Open assigned training" })).toBeVisible()
+    await expect(page.getByRole("link")).toHaveCount(1)
 
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
     expect(overflow).toBeLessThanOrEqual(0)

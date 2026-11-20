@@ -70,6 +70,11 @@ export default async function HomePage() {
               </Link>
             </p>
           ) : null}
+          <p>
+            <Link href="/training" className="bp-link font-bold">
+              Open assigned training
+            </Link>
+          </p>
           <div className="grid items-start gap-5 lg:grid-cols-2">
             <TeamTodayCard
               currentDjCount={currentDjCount}

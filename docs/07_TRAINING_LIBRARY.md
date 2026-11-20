@@ -27,6 +27,7 @@ Do not apply until separately approved, and not before the previous recruiting/t
 7. Stage 4.1 `20261128120000_training_library`
 8. Stage 4.1 follow-up `20261129120000_training_publish_atomicity`
 9. Stage 4.2 `20261130120000_training_legacy_import` (schema support and `import_legacy_master_course`; running the importer is a separate local command)
+10. Stage 4.3 `20261201120000_training_enrollment` (see `docs/09_TRAINING_ENROLLMENT.md`; do not apply until separately approved)
 
 Stage 2 and Stage 3.1 hosted applies are not required for local 4.1.
 
@@ -40,7 +41,7 @@ Stage 2 and Stage 3.1 hosted applies are not required for local 4.1.
 
 ## Versioning
 
-Published and superseded version `content` is frozen by trigger. Later edits create or update a draft, then publish a new version. Assigned copies, when enrollment exists later, must keep the version they were given.
+Published and superseded version `content` is frozen by trigger. Later edits create or update a draft, then publish a new version. Stage 4.3 enrollments store the published title and version at assignment time and do not follow later publishes.
 
 Publishing is atomic: `publish_training_version` supersedes the current published snapshot and publishes the draft in one transaction. A deferred constraint also rejects a superseded row unless a published row exists at commit, so a split table update cannot leave a course or path without a published version. If either step fails, the previous published version stays published.
 
@@ -52,7 +53,7 @@ Archiving or privatizing a master course does not freeze existing company copies
 
 ## Stage 3.7 handoff
 
-`trainingPreparationHandoffFromApproved` still sets `nextStepDestination: "not_enabled"`. `planFutureEnrollment` in `lib/blueprint/training-enrollment.ts` can recommend a published path or course from an approved preparation. It does not enroll, invite, or create progress.
+`trainingPreparationHandoffFromApproved` sets `nextStepDestination: "training_enrollment"`. Approving a preparation does not enroll anyone. Stage 4.3 owners confirm a published course or path. See `docs/09_TRAINING_ENROLLMENT.md`.
 
 ## Legacy import contract
 
@@ -62,8 +63,7 @@ Do not import assignment submission files, unassigned lessons/quizzes, trainee a
 
 ## Intentionally deferred
 
-- Trainee accounts and enrollment
-- Grading, submissions, and certification engines
+- Lesson progress, grading, submissions, and certification engines
 - Advancement ladders
 - AI course generation and modernization
 - Marketplace payments and public sharing
